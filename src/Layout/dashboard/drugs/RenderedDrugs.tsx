@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { formatDate } from "../../../../utils/dashboard";
 import Image from "next/image";
 
@@ -22,6 +22,8 @@ interface thisProps {
   finalDurationText: string;
 }
 
+type RefObject<T> = React.RefObject<T>;
+
 const RenderedDrugs: React.FC<thisProps> = ({
   drug,
   frequencyToPlaceholder,
@@ -32,6 +34,28 @@ const RenderedDrugs: React.FC<thisProps> = ({
   setScreen,
 }) => {
   const [options, setOptions] = useState(false);
+  const dropdownRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
+   const handleClickOutside = (event: MouseEvent): void => {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target as Node)
+    ) {
+      setOptions(false);
+    }
+  };
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent): void => {
+      handleClickOutside(event);
+    };
+
+    // add event listener for clicks outside of dropdown
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    return () => {
+      // remove event listener when component unmounts
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
 
   return (
     <div className="relative rounded-lg rounded-bl-none bg-lightBlue p-5 pb-8 flex flex-col gap-2 font-Inter text-[14px]">
@@ -79,6 +103,7 @@ const RenderedDrugs: React.FC<thisProps> = ({
       </button>
       {options && (
         <div
+          ref={dropdownRef}
           className="absolute right-3 top-10 text-[#062863] flex flex-col items-start justify-center mt-3 rounded-[10px] 
         bg-white shadow-md w-[200px] py-3"
         >

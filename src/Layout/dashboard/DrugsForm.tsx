@@ -299,7 +299,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
                   </div>
                 </div>
               )}
-              <div className="flex flex-col mb-8 w-full">
+              <div className="flex flex-col w-full">
                 <label
                   htmlFor="end"
                   className="text-[14px] mb-1 font-semibold text-navyBlue"
@@ -316,7 +316,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
                     className="border bg-[#EDF2F7] border-none outline-none w-full text-navyBlue rounded-md py-4 pl-4"
                   />
                 </div>
-                <div className="flex flex-col mb-4 w-full">
+                <div className="flex flex-col mb-8 w-full">
                   <label
                     htmlFor="end"
                     className="text-[14px] mb-1 font-semibold text-navyBlue"
@@ -355,7 +355,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
             </div>
             <button
               type="submit"
-              className="mt-8 font-semibold bg-darkBlue text-white rounded-[10px] w-full text-center py-4 rounded-bl-none px-4 hover:bg-navyBlue transition duration-300"
+              className="mt-10 font-semibold bg-darkBlue text-white rounded-[10px] w-full text-center py-4 rounded-bl-none px-4 hover:bg-navyBlue transition duration-300"
             >
               PROCEED
             </button>

@@ -100,8 +100,8 @@ const Page = () => {
           />
           <h2
             className={`${
-              active === item.name ? "text-[#062863]" : "text-[#676869]"
-            } text-[12px]`}
+              active === item.name ? "font-semibold" : "font-normal"
+            } text-[12px] text-[#062863]`}
           >
             {item.name}
           </h2>

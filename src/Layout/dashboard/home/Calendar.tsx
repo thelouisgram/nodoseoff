@@ -18,7 +18,7 @@ export default function Calendar() {
   // Return the JSX structure for the calendar component
   return (
     <section className="w-full flex flex-col md:flex-row items-start gap-6 md:gap-10 px-4 ss:px-6 md:px-0 ss:pb-20 md:pb-0 h-auto text-[16px]">
-      <div className="flex gap-10 w-full md:w-1/2 flex-col p-5 bg-[#FA525233] rounded-[12px] rounded-bl-none h-auto">
+      <div className="flex gap-10 w-full md:w-1/2 flex-col p-5 bg-lightBlue rounded-[12px] rounded-bl-none h-auto">
         <div className="w-auto h-full">
           <div className="flex justify-between items-center">
             {/* Displaying the current month and year */}
@@ -78,12 +78,12 @@ export default function Calendar() {
                       className={cn(
                         // Conditionally applying classes based on date properties
                         currentMonth ? "" : "text-gray-400",
-                        today ? "bg-darkPink text-white" : "",
+                        today ? "bg-darkBlue text-white" : "",
                         selectDate.toDate().toDateString() ===
                           date.toDate().toDateString()
-                          ? "bg-black text-white"
+                          ? "bg-navyBlue text-white"
                           : "",
-                        "h-10 w-10 rounded-full grid place-content-center hover:bg-black hover:text-white transition-all cursor-pointer select-none"
+                        "h-10 w-10 rounded-full grid place-content-center hover:bg-navyBlue hover:text-white transition-all cursor-pointer select-none"
                       )}
                       onClick={() => {
                         setSelectDate(date); // Update 'selectDate' state when a date is clicked

@@ -6,10 +6,10 @@ export const tabs = [
 ];
 
 export const tabsMobile = [
-  { name: "Home", logo: "/assets/dashboard/icons8-home-100.png", logoFilled: "/assets/dashboard/icons8-home-100 (1).png" },
-  { name: "Drugs", logo: "/assets/dashboard/icons8-drugs-100 (1).png", logoFilled: "/assets/dashboard/icons8-drugs-100.png" },
-  { name: "Effects", logo: "/assets/dashboard/icons8-runny-nose-100.png", logoFilled: "/assets/dashboard/icons8-runny-nose-100 (1).png" },
-  { name: "Account", logo: "/assets/dashboard/icons8-account-100 (1).png", logoFilled: "/assets/dashboard/icons8-account-100.png" },
+  { name: "Home", logo: "/assets/mobile-dashboard/home.png", logoFilled: "/assets/mobile-dashboard/home (1).png" },
+  { name: "Drugs", logo: "/assets/mobile-dashboard/drugs.png", logoFilled: "/assets/mobile-dashboard/drugs (1).png" },
+  { name: "Effects", logo: "/assets/mobile-dashboard/influenza.png", logoFilled: "/assets/mobile-dashboard/influenza (1).png" },
+  { name: "Account", logo: "/assets/mobile-dashboard/user.png", logoFilled: "/assets/mobile-dashboard/user (1).png" },
 ];
 
 export const dose = [

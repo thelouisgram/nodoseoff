@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/no-unescaped-entities */
 "use-client";
-import React, { useEffect, useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../store";
 import { frequencyToPlaceholder } from "../../../../utils/dashboard";
@@ -25,6 +25,8 @@ interface DrugsProps {
   setModal: Function;
 }
 
+type RefObject<T> = React.RefObject<T>;
+
 const Drugs: React.FC<DrugsProps> = ({
   setScreen,
   setDrugsForm,
@@ -35,6 +37,29 @@ const Drugs: React.FC<DrugsProps> = ({
   const { drugs, schedule } = useSelector((state: RootState) => state.app);
   const dispatch = useDispatch();
   const [activeDrug, setActiveDrug] = useState("");
+  const dropdownRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
+  const handleClickOutside = (event: MouseEvent): void => {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target as Node)
+    ) {
+      setScreen(false);
+      setModal(false);
+    }
+  };
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent): void => {
+      handleClickOutside(event);
+    };
+
+    // add event listener for clicks outside of dropdown
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    return () => {
+      // remove event listener when component unmounts
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
 
   useEffect(() => {
     dispatch(updateActiveDrug(activeDrug));
@@ -142,7 +167,10 @@ const Drugs: React.FC<DrugsProps> = ({
 
       {modal ? (
         <div className="w-full h-full fixed flex top-0 left-0 justify-center items-center z-[143] p-4 font-Inter">
-          <div className="bg-white rounded-[10px] px-2 py-4 ss:p-10 text-white relative flex flex-col justify-center items-center">
+          <div
+            ref={dropdownRef}
+            className="bg-white rounded-[10px] p-4 ss:p-10 text-white relative flex flex-col justify-center items-center"
+          >
             <Image
               src="/assets/x.png"
               alt="cancel"
@@ -168,16 +196,18 @@ const Drugs: React.FC<DrugsProps> = ({
                     setScreen(false),
                     setActiveDrug("");
                 }}
-                className="px-3 py-1 bg-navyBlue rounded-md rounded-bl-none w-[100px]"
+                className="px-3 py-1 flex items-center gap-2 bg-navyBlue rounded-md rounded-bl-none w-[100px]"
               >
+                <Image src='/assets/delete-white.png' width={16} height={16} alt='delete' />
                 Delete
               </button>
               <button
                 onClick={() => {
                   setActiveDrug(""), setModal(false), setScreen(false);
                 }}
-                className="px-3 py-1 bg-none border text-navyBlue border-navyBlue rounded-md rounded-bl-none w-[100px]"
+                className="px-3 py-1 flex items-center gap-2 bg-none border text-navyBlue border-navyBlue rounded-md rounded-bl-none w-[100px]"
               >
+                <Image src='/assets/cancel.png' width={16} height={16} alt='cancel' />
                 Cancel
               </button>
             </div>

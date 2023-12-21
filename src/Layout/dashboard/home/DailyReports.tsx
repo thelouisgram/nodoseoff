@@ -7,7 +7,7 @@ import Image from "next/image";
 
 interface Effect {
   date: string;
-  effect: string;
+  effect: string
   threshold: string;
 }
 

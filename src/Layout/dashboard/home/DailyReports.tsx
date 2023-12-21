@@ -1,5 +1,5 @@
 "use client";
-import { DailyReportsProps } from "@/types/dashboard";
+import { DailyReportsProps } from "./../../../../types/dashboard"
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../store";
 import { FaExclamationTriangle } from "react-icons/fa";

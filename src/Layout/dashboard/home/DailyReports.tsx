@@ -1,9 +1,9 @@
 "use client";
-import { DailyReportsProps } from "./../../../../types/dashboard"
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../store";
 import { FaExclamationTriangle } from "react-icons/fa";
 import Image from "next/image";
+import { DailyReportsProps } from "../../../../types/dashboard";
 
 interface Effect {
   date: string;

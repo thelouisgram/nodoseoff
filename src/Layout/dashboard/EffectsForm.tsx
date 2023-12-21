@@ -129,7 +129,7 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
                   name="effect"
                   value={formData.effect}
                   onChange={handleInputChange}
-                  className="border bg-[#EDF2F7] border-none outline-none rounded-md p-4 mb-4 capitalize"
+                  className="border bg-[#EDF2F7] border-none outline-none rounded-md p-4 mb-4 capitalize h-[56px]"
                   placeholder="Side Effect"
                 />
               </div>
@@ -140,13 +140,13 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
                 >
                   Select Side Effect Threshold
                 </label>
-                <div className="bg-[#EDF2F7] outline-none rounded-md w-full px-4 mb-4">
+                <div className="bg-[#EDF2F7] outline-none rounded-md w-full px-4 mb-4 h-[56px]">
                   <select
                     id="threshold"
                     name="threshold"
                     value={formData.threshold}
                     onChange={handleEffectChange}
-                    className=" bg-[#EDF2F7] border-none w-full outline-none py-4 cursor-pointer"
+                    className=" bg-[#EDF2F7] border-none w-full outline-none py-4 cursor-pointer h-[56px]"
                   >
                     <option value="mild">Mild</option>
                     <option value="intermediate">Intermediate</option>
@@ -161,14 +161,14 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
                 >
                   Select Date
                 </label>
-                <div className="w-full bg-[#EDF2F7] pr-4  rounded-md">
+                <div className="w-full bg-[#EDF2F7] pr-4 h-[56px] rounded-md">
                   <input
                     type="date"
                     id="date"
                     name="date"
                     value={formData.date}
                     onChange={handleInputChange}
-                    className="border border-none bg-[#EDF2F7] outline-none rounded-md p-4 pr-0 w-full"
+                    className="border border-none bg-[#EDF2F7] outline-none rounded-md p-4 pr-0 w-full h-[56px]"
                   />
                 </div>
               </div>

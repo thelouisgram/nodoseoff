@@ -103,14 +103,14 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
 
   const timeInput = formData.time.map((item: string, index: number) => {
     return (
-      <div key={index} className="bg-[#EDF2F7] pr-4 rounded-md">
+      <div key={index} className="bg-[#EDF2F7] pr-4 rounded-md h-[56px]">
         <input
           type="time"
           id={`time-${index}`}
           name={`time-${index}`}
           value={formData.time[index]}
           onChange={handleInputChange}
-          className="border border-none bg-[#EDF2F7] outline-none text-navyBlue p-4 pr-0 w-full rounded-md"
+          className="border border-none bg-[#EDF2F7] outline-none text-navyBlue p-4 pr-0 w-full rounded-md h-[56px]"
         />
       </div>
     );
@@ -229,24 +229,24 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
                   name="drug"
                   value={formData.drug}
                   onChange={handleInputChange}
-                  className="border bg-[#EDF2F7] border-none outline-none rounded-md p-4 mb-4 capitalize"
+                  className="border bg-[#EDF2F7] border-none outline-none rounded-md p-4 mb-4 capitalize h-[56px] "
                   placeholder="Name of Drug"
                 />
               </div>
-              <div className="flex flex-col mb-4">
+              <div className="flex flex-col mb-4 ">
                 <label
                   htmlFor="frequency"
                   className="text-[14px] mb-1 font-semibold text-navyBlue"
                 >
                   Routes of Administration
                 </label>
-                <div className="bg-[#EDF2F7] outline-none rounded-md w-full px-4 mb-4">
+                <div className="bg-[#EDF2F7] outline-none rounded-md w-full px-4 mb-4 h-[56px]">
                   <select
                     id="route"
                     name="route"
                     value={formData.route}
                     onChange={handleSelectChange("route")}
-                    className=" bg-[#EDF2F7] border-none w-full outline-none py-4 text-navyBlue cursor-pointer"
+                    className=" bg-[#EDF2F7] border-none w-full outline-none py-4 text-navyBlue cursor-pointer h-[56px]"
                   >
                     <option value="">Select Route</option>
                     <option value="oral">Oral</option>
@@ -266,13 +266,13 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
                 >
                   Frequency
                 </label>
-                <div className="bg-[#EDF2F7] outline-none rounded-md w-full px-4 mb-4">
+                <div className="bg-[#EDF2F7] outline-none rounded-md w-full px-4 mb-4 h-[56px]">
                   <select
                     id="frequency"
                     name="frequency"
                     value={formData.frequency}
                     onChange={handleSelectChange("frequency")}
-                    className=" bg-[#EDF2F7] border-none w-full outline-none py-4 text-navyBlue cursor-pointer"
+                    className=" bg-[#EDF2F7] border-none w-full outline-none py-4 text-navyBlue cursor-pointer h-[56px]"
                   >
                     <option value="">Select Frequency</option>
                     <option value="QD">Once Daily</option>
@@ -306,14 +306,14 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
                 >
                   Select Start Date
                 </label>
-                <div className="w-full bg-[#EDF2F7] pr-4 pb-0 mb-8 rounded-md">
+                <div className="w-full bg-[#EDF2F7] pr-4 pb-0 mb-8 rounded-md h-[56px]">
                   <input
                     type="date"
                     id="start"
                     name="start"
                     value={formData.start}
                     onChange={handleInputChange}
-                    className="border bg-[#EDF2F7] border-none outline-none w-full text-navyBlue rounded-md py-4 pl-4"
+                    className="border bg-[#EDF2F7] border-none outline-none w-full text-navyBlue rounded-md py-4 pl-4 h-[56px]"
                   />
                 </div>
                 <div className="flex flex-col mb-8 w-full">
@@ -323,14 +323,14 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
                   >
                     Select End Date
                   </label>
-                  <div className="w-full bg-[#EDF2F7] pr-4  rounded-md">
+                  <div className="w-full bg-[#EDF2F7] pr-4  rounded-md h-[56px]">
                     <input
                       type="date"
                       id="end"
                       name="end"
                       value={formData.end}
                       onChange={handleInputChange}
-                      className="border bg-[#EDF2F7] border-none outline-none w-full text-navyBlue rounded-md py-4 pl-4"
+                      className="border bg-[#EDF2F7] border-none outline-none w-full text-navyBlue rounded-md py-4 pl-4 h-[56px]"
                     />
                   </div>
                 </div>

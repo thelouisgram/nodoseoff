@@ -138,13 +138,13 @@ const CreateAccount = () => {
           <label htmlFor="role" className="text-[14px] mb-1 ">
             Select your Role:
           </label>
-          <div className="bg-[#EDF2F7] outline-none rounded-md w-full px-4 mb-4">
+          <div className="bg-[#EDF2F7] outline-none rounded-md w-full px-4 mb-4 h-[56px]">
             <select
               id="role"
               name="role"
               value={formData.role}
               onChange={handleEffectChange}
-              className=" bg-[#EDF2F7] border-none w-full outline-none py-4 cursor-pointer"
+              className=" bg-[#EDF2F7] border-none w-full outline-none py-4 cursor-pointer h-[56px]"
             >
               <option value="">Select Role</option>
               <option value="patient">Patient</option>

@@ -17,7 +17,8 @@ import { toast } from "sonner";
 import {
   setDrugs,
   setEffects,
-  updateInfo, updateUserId,
+  updateInfo,
+  updateUserId,
 } from "../../../store/stateSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store";
@@ -53,7 +54,7 @@ const Page = () => {
     }
   }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     const getInfo = async () => {
       try {
         const { data, error } = await supabase
@@ -71,13 +72,12 @@ const Page = () => {
       try {
         const { data, error } = await supabase
           .from("drugs")
-          .select("drugs")
+          .select("*")
           .eq("userId", userId);
         if (error) {
           console.log("error:", error);
         } else if (data !== null) {
-          const transformedData = data.map((item) => item.drugs);
-          dispatch(setDrugs(transformedData))
+          dispatch(setDrugs(data));
         }
       } catch (error) {}
     };
@@ -85,12 +85,12 @@ const Page = () => {
       try {
         const { data, error } = await supabase
           .from("effects")
-          .select("effects")
+          .select("*")
           .eq("userId", userId);
         if (error) {
           console.log("error:", error);
         } else if (data !== null) {
-          dispatch(setEffects(data))
+          dispatch(setEffects(data));
         }
       } catch (error) {}
     };
@@ -98,13 +98,9 @@ const Page = () => {
     if (userId) {
       getInfo();
       getDrug();
-      getEffects()
+      getEffects();
     }
-  }, [userId])
-
-  console.log(effects)
-
-
+  }, [userId]);
 
   const renderedTabs = tabs.map((item: tabsProps, index: number) => {
     return (
@@ -147,7 +143,7 @@ const Page = () => {
         toast.error("Error signing out");
       }
       router.push("/signIn");
-      dispatch(updateUserId(''))
+      dispatch(updateUserId(""));
       toast.success("Signed Out");
     } catch (error) {
       toast.error("Error signing out: " + error);

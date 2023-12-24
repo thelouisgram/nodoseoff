@@ -20,13 +20,13 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     effect: "",
-    threshold: "mild",
+    severity: "mild",
     date: new Date().toISOString().substr(0, 10),
   });
 
   const [formErrors, setFormErrors] = useState({
     effect: "",
-    threshold: "",
+    severity: "",
     date: "",
   });
 
@@ -40,16 +40,16 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
 
   const handleEffectChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const { value } = e.target;
-    setFormData({ ...formData, threshold: value });
+    setFormData({ ...formData, severity: value });
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const errors: any = {
       effect: formData.effect ? "" : "Please fill in the Side Effect field.",
-      threshold: formData.threshold
+      severity: formData.severity
         ? ""
-        : "Please select a Side Effect Threshold.",
+        : "Please select a Side Effect severity.",
       date: formData.date ? "" : "Please select a Date.",
     };
 
@@ -67,7 +67,9 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
     try {
       const { error } = await supabase.from("effects").insert({
         userId: userId,
-        effects: formData,
+        effects: formData.effect,
+        severity: formData.severity,
+        date: formData.date,
       });
 
       if (error) {
@@ -81,15 +83,17 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
       );
       setFormData({
         effect: "",
-        threshold: "mild",
+        severity: "mild",
         date: new Date().toISOString().substr(0, 10),
       });
-      setFormErrors({ effect: "", threshold: "", date: "" });
+      setFormErrors({ effect: "", severity: "", date: "" });
       setEffectsForm(false);
     } catch (error) {
       console.error("Error adding effect:", error);
     }
   };
+
+  console.log(effects)
   return (
     <div
       className={` ${
@@ -149,16 +153,16 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
               </div>
               <div className="flex flex-col mb-4">
                 <label
-                  htmlFor="threshold"
+                  htmlFor="severity"
                   className="text-[14px] mb-1 font-semibold text-navyBlue"
                 >
-                  Select Side Effect Threshold
+                  Select Side Effect severity
                 </label>
                 <div className="bg-[#EDF2F7] outline-none rounded-md w-full px-4 mb-4 h-[56px]">
                   <select
-                    id="threshold"
-                    name="threshold"
-                    value={formData.threshold}
+                    id="severity"
+                    name="severity"
+                    value={formData.severity}
                     onChange={handleEffectChange}
                     className=" bg-[#EDF2F7] border-none w-full outline-none py-4 cursor-pointer h-[56px]"
                   >

@@ -253,10 +253,10 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
                   className=" bg-[#EDF2F7] border-none w-full outline-none py-4 text-navyBlue cursor-pointer h-[56px]"
                 >
                   <option value="">Select Route</option>
-                  <option value="oral">Oral</option>
-                  <option value="topical">Topical</option>
-                  <option value="intravenous">Intravenously</option>
-                  <option value="intramuscular">Intramuscularly</option>
+                  <option value="orally">Oral</option>
+                  <option value="topically">Topical</option>
+                  <option value="intravenously">Intravenously</option>
+                  <option value="intramuscularly">Intramuscularly</option>
                   <option value="inhalation">Inhalation</option>
                   <option value="rectal">Rectal</option>
                   <option value="sublingual">Sublingual</option>

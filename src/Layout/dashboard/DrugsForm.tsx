@@ -160,10 +160,17 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
   };
 
   const addDrug = async () => {
+    toast.loading("Adding Drug")
     try {
       const { error } = await supabase.from("drugs").insert({
         userId: userId,
-        drugs: formData,
+        drug: formData.drug,
+        frequency: formData.frequency,
+        route: formData.route,
+        start: formData.start,
+        end: formData.end,
+        time: formData.time,
+        reminder: formData.reminder,
       });
 
       if (error) {
@@ -279,10 +286,10 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
                     className=" bg-[#EDF2F7] border-none w-full outline-none py-4 text-navyBlue cursor-pointer h-[56px]"
                   >
                     <option value="">Select Route</option>
-                    <option value="oral">Oral</option>
-                    <option value="topical">Topical</option>
-                    <option value="intravenous">Intravenously (IV)</option>
-                    <option value="intramuscular">Intramuscularly (IM)</option>
+                    <option value="orally">Oral</option>
+                    <option value="topically">Topical</option>
+                    <option value="intravenously">Intravenously (IV)</option>
+                    <option value="intramuscularly">Intramuscularly (IM)</option>
                     <option value="inhalation">Inhalation</option>
                     <option value="rectal">Rectal</option>
                     <option value="sublingual">Sublingual</option>

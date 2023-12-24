@@ -42,13 +42,13 @@ const SignIn = () => {
         if (error) {
           toast.error("Error signing in: " + error.message);
         } else {
-          router.push("/dashboard");
-          toast.success("Signed in");
           const user = await supabase.auth.getUser();
           const userId = user.data.user?.id;
           if (userId) {
             dispatch(updateIsAuthenticated(true));
-            dispatch(updateUserId(userId))
+            dispatch(updateUserId(userId));
+             router.push("/dashboard");
+             toast.success("Signed in");
           }
         }
       } catch (error) {
@@ -129,7 +129,7 @@ const SignIn = () => {
           type="submit"
           className="bg-darkBlue text-white rounded-[10px] w-full text-center py-4 rounded-bl-none px-4 hover:bg-navyBlue transition duration-300"
         >
-          CREATE AN ACCOUNT
+          SIGN IN
         </button>
       </form>
       <div>

@@ -136,7 +136,7 @@ const Drugs: React.FC<DrugsProps> = ({
   });
 
   return (
-    <div className="h-[100dvh] overflow-y-scroll w-full md:py-16 md:px-12 px-4 pt-10 pb-24 ss:p-10 text-navyBlue font-karla relative">
+    <div className="h-[100dvh] ss:pb-28 overflow-y-scroll w-full md:py-16 md:px-12 px-4 pt-10 pb-24 ss:p-10 text-navyBlue font-karla relative">
       <div className="mb-[28px]">
         <h1 className="text-[24px] ss:text-[32px] font-semibold font-montserrant ">
           Drug Regimen
@@ -153,7 +153,7 @@ const Drugs: React.FC<DrugsProps> = ({
         + ADD DRUG
       </button>
       {drugs.length > 0 ? (
-        <div className="w-full grid ss:grid-cols-2 md:grid-cols-3 md:px-0 gap-5">
+        <div className="w-full grid grid-cols-2 md:grid-cols-3 md:px-0 gap-4">
           {renderedDrugs}{" "}
         </div>
       ) : (

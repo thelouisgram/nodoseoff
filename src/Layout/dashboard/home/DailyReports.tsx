@@ -7,8 +7,8 @@ import { DailyReportsProps } from "../../../../types/dashboard";
 
 interface Effect {
   date: string;
-  effect: string
-  threshold: string;
+  effect: string;
+  severity: string;
 }
 
 const DailyReports: React.FC<DailyReportsProps> = ({ today, selectDate }) => {

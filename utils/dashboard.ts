@@ -24,11 +24,11 @@ export const dose = [
 ]
 
 export const frequencyToPlaceholder: { [key: string]: string } = {
-  QD: 'Once Daily',
-  BID: 'Twice Daily',
-  TID: 'Thrice Daily',
-  QID: 'Four Times Daily',
-  EOD: 'Every Other Day',
+  QD: 'Once daily',
+  BID: 'Twice daily',
+  TID: 'Thrice daily',
+  QID: 'Four times daily',
+  EOD: 'Every other day',
   W: 'Weekly',
   BW: 'Biweekly',
   M: 'Monthly',

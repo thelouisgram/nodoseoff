@@ -34,7 +34,7 @@ const Effects: React.FC<EffectsProps> = ({
         </div>
         <div className="flex gap-1">
           <h2 className="font-semibold">Severity:</h2>
-          <h2 className="capitalize">{effect.threshold}</h2>
+          <h2 className="capitalize">{effect.severity}</h2>
         </div>
         <div className="flex gap-1">
           <h2 className="font-semibold">Date:</h2>

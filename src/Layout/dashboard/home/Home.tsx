@@ -25,7 +25,7 @@ interface DoseProps {
 }
 
 const Home: React.FC<HomeProps> = ({ setEffectsForm, setDrugsForm }) => {
-  const { drugs, name, schedule } = useSelector(
+  const { drugs, info, schedule } = useSelector(
     (state: RootState) => state.app
   );
 
@@ -229,7 +229,7 @@ const Home: React.FC<HomeProps> = ({ setEffectsForm, setDrugsForm }) => {
     <div className="w-full h-[100dvh] overflow-y-scroll md:py-16 md:px-12 pt-10 pb-24 ss:py-10 text-navyBlue font-karla relative">
       <div className="mb-[28px] px-4 ss:px-8 md:px-0">
         <h1 className="text-[24px] ss:text-[32px] font-semibold font-montserrant ">
-          {"Hello " + name},
+          {"Hello " + info[0].name},
         </h1>
         <p className="text-[16px] text-[#718096]">Your health matters!</p>
       </div>

@@ -4,9 +4,11 @@ import { RootState } from "../../../store";
 import Image from "next/image";
 
 const Account = () => {
-  const { drugs, name, effects, schedule, email, phoneNumber } = useSelector(
+  const { drugs, info, effects, schedule, } = useSelector(
     (state: RootState) => state.app
   );
+
+  const {name, phone, email, role} = info[0]
 
   const currentTime = new Date(); // Get the current date and time
 
@@ -59,7 +61,7 @@ const Account = () => {
         </div>
         <div className="w-full border border-gray-300 rounded-lg rounded-bl-none py-4 px-4 flex gap-2">
           <h2 className="font-semibold">Phone Number:</h2>
-          <p>{phoneNumber}</p>
+          <p>{phone}</p>
         </div>
       </div>
       <h2 className="text-[18px] font-semibold text-navyBlue mb-3">

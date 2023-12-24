@@ -1,17 +1,15 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AppType } from "../utils/store";
-import { Drug } from "../types";
+import { Info } from "../utils/store";
 
 const initialState: AppType = {
-  name: "John Snow",
-  role: "Patient",
-  email: "johnSnow@gmail.com",
-  phoneNumber: "09076543212",
+  info: [{name: '', phone: '', email: '', role: ''}],
+  isAuthenticated: false,
+  userId: "",
   drugs: [],
   effects: [],
   schedule: [],
   activeDrug: "",
-  dataBase: [],
 };
 
 const stateSlice = createSlice({
@@ -30,9 +28,15 @@ const stateSlice = createSlice({
     updateSchedule: (state, action: PayloadAction<any>) => {
       state.schedule = action.payload;
     },
-    updateDataBase: (state, action: PayloadAction<any>) => {
-      state.dataBase = action.payload;
+    updateIsAuthenticated: (state, action: PayloadAction<boolean>) => {
+      state.isAuthenticated = action.payload;
     },
+    updateUserId: (state, action: PayloadAction<string>) => {
+      state.userId = action.payload;
+    },
+    updateInfo: (state, action: PayloadAction<Info[]>) =>{
+      state.info = action.payload
+    }
   },
 });
 
@@ -42,5 +46,7 @@ export const {
   setEffects,
   updateActiveDrug,
   updateSchedule,
-  updateDataBase,
+  updateIsAuthenticated,
+  updateUserId,
+  updateInfo
 } = stateSlice.actions;

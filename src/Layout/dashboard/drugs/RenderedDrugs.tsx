@@ -72,7 +72,7 @@ const RenderedDrugs: React.FC<thisProps> = ({
       </div>
       <div className="flex gap-2 w-full items-center flex-wrap">
         <h2 className="font-semibold">Dosage Time: </h2>
-        <p>{drug.time.join(", ")}</p>
+        <p>{drug.time?.join(", ")}</p>
       </div>
       <div className="flex gap-2 items-center">
         <h2 className="font-semibold">Start: </h2>

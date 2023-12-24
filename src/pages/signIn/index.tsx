@@ -1,14 +1,18 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/no-unescaped-entities */
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import React, { ChangeEvent, FormEvent, useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import supabase from "../../../utils/supabaseClient";
+import { updateIsAuthenticated, updateUserId } from "../../../store/stateSlice";
+import { useDispatch } from "react-redux";
 
 const SignIn = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -31,16 +35,21 @@ const SignIn = () => {
     } else {
       toast.loading("Signing In");
       try {
-        const { data, error } = await supabase.auth.signInWithPassword({
+        const { error } = await supabase.auth.signInWithPassword({
           email: formData.email,
           password: formData.password,
         });
-
         if (error) {
           toast.error("Error signing in: " + error.message);
         } else {
           router.push("/dashboard");
           toast.success("Signed in");
+          const user = await supabase.auth.getUser();
+          const userId = user.data.user?.id;
+          if (userId) {
+            dispatch(updateIsAuthenticated(true));
+            dispatch(updateUserId(userId))
+          }
         }
       } catch (error) {
         toast.error("Error signing up: " + error);
@@ -53,6 +62,18 @@ const SignIn = () => {
       password: "",
     });
   };
+
+  useEffect(() => {
+    const getUser = async () => {
+      const user = await supabase.auth.getUser();
+      const userId = user.data.user?.id;
+      if (userId) {
+        dispatch(updateIsAuthenticated(true));
+      }
+    };
+    getUser();
+  }, []);
+
   return (
     <div className="min-h-[100dvh] w-[100%] py-8 px-6 flex flex-col justify-center items-center ss:py-10 bg-navyBlue">
       <Image

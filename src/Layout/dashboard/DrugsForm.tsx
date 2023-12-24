@@ -9,6 +9,7 @@ import { RootState } from "../../../store";
 import { setDrugs, updateSchedule } from "../../../store/stateSlice";
 import { generateSchedule } from "../../../utils/dashboard";
 import { Drug } from "../../../types";
+import supabase from "../../../utils/supabaseClient";
 
 interface DrugFormProps {
   drugsForm: boolean;
@@ -22,7 +23,9 @@ interface SelectedDoseTypes {
 }
 
 const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
-  const { drugs, schedule } = useSelector((state: RootState) => state.app);
+  const { drugs, schedule, userId } = useSelector(
+    (state: RootState) => state.app
+  );
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     drug: "",
@@ -133,12 +136,12 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
       end: formData.end ? "" : "Please select an End Date.",
     };
 
-    const errorValues = Object.values(errors);
+    const hasErrors = Object.values(errors).some((err) => err !== "");
 
-    if (errorValues.some((err) => err !== "")) {
-      Object.keys(errors).forEach((field) => {
-        if (errors[field]) {
-          toast.error(errors[field]);
+    if (hasErrors) {
+      Object.entries(errors).forEach(([field, error]) => {
+        if (error) {
+          toast.error(error);
         }
       });
       return;
@@ -149,8 +152,25 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
     );
 
     if (drugAlreadyExists) {
-      toast.error(`'${formData.drug.toUpperCase()}' already exist!`);
-    } else {
+      toast.error(`'${formData.drug.toUpperCase()}' already exists!`);
+      return;
+    }
+
+    addDrug();
+  };
+
+  const addDrug = async () => {
+    try {
+      const { error } = await supabase.from("drugs").insert({
+        userId: userId,
+        drugs: formData,
+      });
+
+      if (error) {
+        toast.error("Failed to add drug");
+        return;
+      }
+
       dispatch(setDrugs([...drugs, formData]));
       toast.success(
         `'${formData.drug.toUpperCase()}' has been added successfully!`
@@ -158,7 +178,15 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
       setDrugsForm(false);
       const data = generateSchedule(formData);
       dispatch(updateSchedule([...schedule, ...data]));
+    } catch (error) {
+      console.error("Error adding drug:", error);
+    } finally {
+      resetFormData();
+      resetFormErrors();
     }
+  };
+
+  const resetFormData = () => {
     setFormData({
       drug: "",
       frequency: "",
@@ -168,7 +196,9 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
       time: [],
       reminder: true,
     });
+  };
 
+  const resetFormErrors = () => {
     setFormErrors({
       drug: "",
       frequency: "",

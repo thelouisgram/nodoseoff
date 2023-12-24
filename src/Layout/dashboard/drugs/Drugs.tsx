@@ -73,7 +73,7 @@ const Drugs: React.FC<DrugsProps> = ({
     );
   };
 
-  const renderedDrugs = drugs.map((drug: any, index: number) => {
+  const renderedDrugs = drugs?.map((drug: any, index: number) => {
     const startDate: any = new Date(drug.start);
     const endDate: any = new Date(drug.end);
     const durationInDays = Math.floor(

@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { tabs, tabsMobile } from "./../../../utils/dashboard";
 import Home from "@/Layout/dashboard/home/Home";
 import EffectsForm from "@/Layout/dashboard/EffectsForm";
@@ -13,6 +14,13 @@ import Link from "next/link";
 import supabase from "../../../utils/supabaseClient";
 import { useRouter } from "next/router";
 import { toast } from "sonner";
+import {
+  setDrugs,
+  setEffects,
+  updateInfo, updateUserId,
+} from "../../../store/stateSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../../store";
 
 interface tabsMobileProps {
   name: string;
@@ -26,6 +34,10 @@ interface tabsProps {
 }
 
 const Page = () => {
+  const { isAuthenticated, userId, effects } = useSelector(
+    (state: RootState) => state.app
+  );
+  const dispatch = useDispatch();
   const [nav, setNav] = useState(true);
   const [active, setActive] = useState("Home");
   const [effectsForm, setEffectsForm] = useState(false);
@@ -34,6 +46,65 @@ const Page = () => {
   const [screen, setScreen] = useState(false);
   const [modal, setModal] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/signIn");
+    }
+  }, []);
+
+  useEffect(()=>{
+    const getInfo = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("users")
+          .select("name, phone, role, email")
+          .eq("userId", userId);
+        if (error) {
+          console.log("error:", error);
+        } else if (data !== null) {
+          dispatch(updateInfo([...data]));
+        }
+      } catch (error) {}
+    };
+    const getDrug = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("drugs")
+          .select("drugs")
+          .eq("userId", userId);
+        if (error) {
+          console.log("error:", error);
+        } else if (data !== null) {
+          const transformedData = data.map((item) => item.drugs);
+          dispatch(setDrugs(transformedData))
+        }
+      } catch (error) {}
+    };
+    const getEffects = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("effects")
+          .select("effects")
+          .eq("userId", userId);
+        if (error) {
+          console.log("error:", error);
+        } else if (data !== null) {
+          dispatch(setEffects(data))
+        }
+      } catch (error) {}
+    };
+
+    if (userId) {
+      getInfo();
+      getDrug();
+      getEffects()
+    }
+  }, [userId])
+
+  console.log(effects)
+
+
 
   const renderedTabs = tabs.map((item: tabsProps, index: number) => {
     return (
@@ -76,6 +147,7 @@ const Page = () => {
         toast.error("Error signing out");
       }
       router.push("/signIn");
+      dispatch(updateUserId(''))
       toast.success("Signed Out");
     } catch (error) {
       toast.error("Error signing out: " + error);

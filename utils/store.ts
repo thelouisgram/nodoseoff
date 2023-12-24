@@ -1,11 +1,16 @@
 export interface AppType {
-  name: string;
-  role: string;
-  email: string;
-  phoneNumber: string;
+  info: Info[]
+  isAuthenticated: boolean;
+  userId: string | undefined;
   drugs: any;
   effects: any;
   schedule: any[]; 
-  activeDrug: "",
-  dataBase: any
+  activeDrug: string;
+}
+
+export interface Info{
+  name: string | undefined;
+  phone: string | undefined;
+  email: string | undefined;
+  role: string | undefined;
 }

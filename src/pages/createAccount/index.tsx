@@ -4,9 +4,12 @@ import React, { ChangeEvent, FormEvent, useState } from "react";
 import { useRouter } from "next/router";
 import supabase from "../../../utils/supabaseClient";
 import { toast } from "sonner";
+import { updateIsAuthenticated, updateUserId } from "../../../store/stateSlice";
+import { useDispatch } from "react-redux";
 
 const CreateAccount = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -28,47 +31,77 @@ const CreateAccount = () => {
     setFormData({ ...formData, role: value });
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    // Password strength validation (can be customized)
-    const strongPasswordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-    if (!strongPasswordRegex.test(formData.password)) {
-      toast.error(
-        "Please enter a strong password (minimum eight characters, at least one letter, and one number)"
-      );
+const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  // Password strength validation (can be customized)
+  const strongPasswordRegex = /^(?=.*\d)[A-Za-z\d]{8,}$/;
+  if (!strongPasswordRegex.test(formData.password)) {
+    toast.error(
+      "Please enter a strong password (minimum eight characters, one small letter, and one number)"
+    );
+    return;
+  }
+
+  for (const key in formData) {
+    if (formData[key as keyof typeof formData] === "") {
+      toast.error("Please fill in all fields");
+      return;
+    }
+  }
+
+  toast.loading("Signing Up");
+
+
+  try {
+    // Sign up the user
+    const { error: signUpError, data } = await supabase.auth.signUp({
+      email: formData.email,
+      password: formData.password,
+    });
+
+    if (signUpError) {
+      toast.error("Error signing up: " + signUpError.message);
       return;
     }
 
-    for (const key in formData) {
-      if (formData[key as keyof typeof formData] === "") {
-        toast.error("Please fill in all fields");
-        return;
-      }
+    const user = await supabase.auth.getUser();
+    const userId = user.data.user?.id;
+    if (userId) {
+      dispatch(updateIsAuthenticated(true));
+      dispatch(updateUserId(userId));
     }
-    toast.loading("Signing Up");
-    try {
-      const { error } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-      });
-      if (error) {
-        toast.error("Error signing up: " + error.message);
-      } else {
-        router.push("/dashboard");
-        toast.success("Signed up");
-      }
-    } catch (error) {
-      toast.error("Error signing up" + error);
+    // Add user info to the database
+    const { error: addInfoError } = await supabase.from("users").insert({
+      name: formData.fullName,
+      role: formData.role,
+      phone: formData.phoneNumber,
+      email: formData.email,
+      userId: userId,
+    });
+
+    if (addInfoError) {
+      toast.error("Failed to insert data into the database");
+      return;
     }
 
-    setFormData({
-      fullName: "",
-      email: "",
-      phoneNumber: "",
-      role: "",
-      password: "",
-    });
-  };
+    // Both operations succeeded
+    router.push("/dashboard");
+    toast.success("Signed up and information added");
+  } catch (error) {
+    // Handle any unexpected errors
+    toast.error("Error: " + error);
+  }
+
+  // Reset form data
+  setFormData({
+    fullName: "",
+    email: "",
+    phoneNumber: "",
+    role: "",
+    password: "",
+  });
+};
+
 
   return (
     <div className="min-h-[100dvh] w-[100%] py-8 px-6 flex flex-col justify-center items-center ss:py-10 bg-navyBlue">

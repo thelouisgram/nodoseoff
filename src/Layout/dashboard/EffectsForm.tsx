@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store";
 import { setEffects } from "../../../store/stateSlice";
+import supabase from "../../../utils/supabaseClient";
 
 interface EffectsFormProps {
   effectsForm: boolean;
@@ -15,7 +16,7 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
   effectsForm,
   setEffectsForm,
 }) => {
-  const { effects } = useSelector((state: RootState) => state.app);
+  const { effects, userId } = useSelector((state: RootState) => state.app);
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     effect: "",
@@ -42,9 +43,8 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
     setFormData({ ...formData, threshold: value });
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     const errors: any = {
       effect: formData.effect ? "" : "Please fill in the Side Effect field.",
       threshold: formData.threshold
@@ -63,19 +63,33 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
       });
       return;
     }
-    dispatch(setEffects([...effects, formData]));
-    toast.success(
-      formData.effect.toUpperCase() + " has been added successfully"
-    );
-    setFormData({
-      effect: "",
-      threshold: "mild",
-      date: new Date().toISOString().substr(0, 10),
-    });
-    setFormErrors({ effect: "", threshold: "", date: "" });
-    setEffectsForm(false);
-  };
 
+    try {
+      const { error } = await supabase.from("effects").insert({
+        userId: userId,
+        effects: formData,
+      });
+
+      if (error) {
+        toast.error("Failed to add effect");
+        return;
+      }
+
+      dispatch(setEffects([...effects, formData]));
+      toast.success(
+        `${formData.effect.toUpperCase()} has been added successfully`
+      );
+      setFormData({
+        effect: "",
+        threshold: "mild",
+        date: new Date().toISOString().substr(0, 10),
+      });
+      setFormErrors({ effect: "", threshold: "", date: "" });
+      setEffectsForm(false);
+    } catch (error) {
+      console.error("Error adding effect:", error);
+    }
+  };
   return (
     <div
       className={` ${

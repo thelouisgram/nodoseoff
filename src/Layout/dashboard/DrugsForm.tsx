@@ -153,7 +153,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
     );
 
     if (drugAlreadyExists) {
-      toast.error(`'${formData.drug.toUpperCase()}' already exists!`);
+      toast.error(`'${formData.drug}' already exists!`);
       return;
     }
 
@@ -181,7 +181,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
 
       dispatch(setDrugs([...drugs, formData]));
       toast.success(
-        `'${formData.drug.toUpperCase()}' has been added successfully!`
+        `'${formData.drug}' has been added successfully!`
       );
       setDrugsForm(false);
       const data = generateSchedule(formData); // Generate updated schedule data based on formData

@@ -75,7 +75,7 @@ const DailyReports: React.FC<DailyReportsProps> = ({ today, selectDate }) => {
           </div>
           <div className="flex gap-3 items-center border border-[#D4389B] rounded-[10px] rounded-bl-none p-5">
             <Image
-              src="/assets/daily-reports/checked.png"
+              src="/assets/daily-reports/check.png"
               width="512"
               height="512"
               alt="check"

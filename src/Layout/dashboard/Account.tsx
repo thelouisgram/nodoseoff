@@ -62,7 +62,7 @@ const Account = () => {
     <div className="h-[100dvh] overflow-y-scroll w-full md:py-16 md:px-12 px-4 pt-10  pb-24 ss:p-10 text-navyBlue font-karla relative">
       <div className="mb-[28px]">
         <h1 className="text-[24px] ss:text-[32px] font-semibold font-montserrant ">
-          Your Account
+          My Account
         </h1>
       </div>
       <div className="w-full items-center flex flex-col  mb-8">
@@ -73,7 +73,7 @@ const Account = () => {
           alt="user"
           quality={100}
         />
-        <h1 className="text-[32px] font-semibold font-montserrant text-center">
+        <h1 className=" text-[20px] ss:text-[32px] font-semibold font-montserrant text-center">
           {name}
         </h1>
       </div>
@@ -114,7 +114,7 @@ const Account = () => {
       <div className="w-full flex justify-center">
         <button
           onClick={logOut}
-          className="flex border-[1px] border-navyBlue rounded-[10px] rounded-bl-none px-4 py-2 mt-8 items-center font-semibold gap-2"
+          className="flex border-[1px] rounded-[10px] rounded-bl-none px-4 py-2 mt-10 items-center font-semibold gap-2"
         >
           <Image
             src="/assets/power-off.png"

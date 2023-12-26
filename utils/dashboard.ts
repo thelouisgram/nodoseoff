@@ -8,7 +8,7 @@ export const tabs = [
 export const tabsMobile = [
   { name: "Home", logo: "/assets/mobile-dashboard/home.png", logoFilled: "/assets/mobile-dashboard/home (1).png" },
   { name: "Drugs", logo: "/assets/mobile-dashboard/drugs.png", logoFilled: "/assets/mobile-dashboard/drugs (1).png" },
-  { name: "Effects", logo: "/assets/mobile-dashboard/influenza.png", logoFilled: "/assets/mobile-dashboard/influenza (1).png" },
+  { name: "Search", logo: "/assets/mobile-dashboard/search.png", logoFilled: "/assets/mobile-dashboard/search (1).png" },
   { name: "Account", logo: "/assets/mobile-dashboard/user.png", logoFilled: "/assets/mobile-dashboard/user (1).png" },
 ];
 

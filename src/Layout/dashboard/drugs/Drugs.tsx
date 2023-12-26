@@ -19,6 +19,7 @@ import {
   uploadScheduleToServer,
   removeActiveDrugFromSchedule,
 } from "../../../../utils/schedule";
+import { drugsTab } from "../../../../utils/drugs";
 
 interface DrugsProps {
   screen: boolean;
@@ -46,6 +47,7 @@ const Drugs: React.FC<DrugsProps> = ({
     (state: RootState) => state.app
   );
 
+  const [tab, setTab] = useState<string>("Regimen");
   const dispatch = useDispatch();
   const [activeDrug, setActiveDrug] = useState("");
   const dropdownRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
@@ -89,7 +91,7 @@ const Drugs: React.FC<DrugsProps> = ({
       dispatch(
         setDrugs(drugs.filter((drug: Drug) => drug.drug !== activeDrug))
       );
-      toast.success(`'${activeDrug.toUpperCase()}' deleted Successfully!`);
+      toast.success(`'${activeDrug}' deleted Successfully!`);
       const updatedSchedule = removeActiveDrugFromSchedule({
         activeDrug,
         schedule,
@@ -166,6 +168,22 @@ const Drugs: React.FC<DrugsProps> = ({
     );
   });
 
+  const renderedTabs = drugsTab.map((item: string, index: number) => {
+    return (
+      <button
+        key={index}
+        onClick={() => {
+          setTab(item);
+        }}
+        className={`${
+          item === tab ? "bg-navyBlue text-white" : "bg-white border-[1px] "
+        } rounded-[10px] rounded-bl-none px-3 py-1 ss:px-4 ss:py-2 text-[13px] ss:text-[16px]`}
+      >
+        {item}
+      </button>
+    );
+  });
+
   return (
     <div className="h-[100dvh] ss:pb-28 overflow-y-scroll w-full md:py-16 md:px-12 px-4 pt-10 pb-24 ss:p-10 text-navyBlue font-karla relative">
       <div className="mb-[28px]">
@@ -174,6 +192,7 @@ const Drugs: React.FC<DrugsProps> = ({
         </h1>
         <p className="text-[16px] text-[#718096]">Manage medications wisely!</p>
       </div>
+      <div className="flex flex-wrap gap-2 ss:gap-4 mb-8">{renderedTabs}</div>
       <button
         onClick={() => {
           setDrugsForm(true);
@@ -240,7 +259,7 @@ const Drugs: React.FC<DrugsProps> = ({
             className="bg-white rounded-[10px] text-white relative flex flex-col justify-center items-center"
           >
             <h1 className="text-navyBlue font-semibold py-4 px-4 border-b-[1px] text-left w-full text-[13px] ss:text-[16px] leading-tight">
-              Continue to Edit '{activeDrug.toUpperCase()}' ?
+              Continue to Edit '{activeDrug}' ?
             </h1>
             <h2 className="text-navyBlue border-b-[1px] text-left px-4 py-4 text-[12px] ss:text-[14px]">
               Editing clears past history of the selected drug? <br /> This
@@ -257,7 +276,10 @@ const Drugs: React.FC<DrugsProps> = ({
               </button>
               <button
                 onClick={() => {
-                  setActiveDrug(""), setScreen(false), setEditForm(false);
+                  setActiveDrug(""),
+                    setScreen(false),
+                    setEditForm(false),
+                    setEditModal(false);
                 }}
                 className="px-4 py-1 flex items-center gap-2 bg-none border text-navyBlue border-navyBlue rounded-md rounded-bl-none "
               >

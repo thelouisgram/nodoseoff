@@ -2,23 +2,32 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../store";
 import Image from "next/image";
+import { toast } from "sonner";
+import supabase from "../../../utils/supabaseClient";
+import {
+  updateIsAuthenticated,
+  updateUserId,
+  updateSchedule,
+} from "../../../store/stateSlice";
+import { useRouter } from "next/router";
 
 const Account = () => {
-  const { drugs, info, effects, schedule, } = useSelector(
+  const { drugs, info, effects, schedule, userId } = useSelector(
     (state: RootState) => state.app
   );
-
-  const {name, phone, email, role} = info[0]
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const { name, phone, email, role } = info[0];
 
   const currentTime = new Date(); // Get the current date and time
 
   const completedBeforeCurrentTime = schedule.filter((dose) => {
-    const doseDateTime = new Date(`${dose.date}T${dose.time}`);
-    return doseDateTime <= currentTime && dose.completed;
+    const doseDateTime = new Date(`${dose?.date}T${dose?.time}`);
+    return doseDateTime <= currentTime && dose?.completed;
   });
 
   const totalBeforeCurrentTime = schedule.filter((dose) => {
-    const doseDateTime = new Date(`${dose.date}T${dose.time}`);
+    const doseDateTime = new Date(`${dose?.date}T${dose?.time}`);
     return doseDateTime <= currentTime;
   });
 
@@ -31,6 +40,23 @@ const Account = () => {
     percentageCompleted =
       (completedBeforeCurrentTime.length / totalBeforeCurrentTime.length) * 100;
   }
+
+  const logOut = async () => {
+    try {
+      toast.loading("Signing Out");
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        toast.error("Error signing out");
+      }
+      dispatch(updateUserId(""));
+      toast.success("Signed Out");
+      dispatch(updateIsAuthenticated(false));
+      router.push("/signIn");
+      dispatch(updateSchedule([]));
+    } catch (error) {
+      toast.error("Error signing out: " + error);
+    }
+  };
 
   return (
     <div className="h-[100dvh] overflow-y-scroll w-full md:py-16 md:px-12 px-4 pt-10  pb-24 ss:p-10 text-navyBlue font-karla relative">
@@ -84,6 +110,20 @@ const Account = () => {
           <h2 className="font-semibold">Missed Doses:</h2>
           <p>{missedDoses}</p>
         </div>
+      </div>
+      <div className="w-full flex justify-center">
+        <button
+          onClick={logOut}
+          className="flex border-[1px] border-navyBlue rounded-[10px] rounded-bl-none px-4 py-2 mt-8 items-center font-semibold gap-2"
+        >
+          <Image
+            src="/assets/power-off.png"
+            width={18}
+            height={18}
+            alt="logout"
+          />
+          Log out
+        </button>
       </div>
     </div>
   );

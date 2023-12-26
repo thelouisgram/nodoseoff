@@ -1,7 +1,7 @@
 export interface AppType {
   info: Info[]
   isAuthenticated: boolean;
-  userId: string | undefined;
+  userId: string;
   drugs: any;
   effects: any;
   schedule: any[]; 

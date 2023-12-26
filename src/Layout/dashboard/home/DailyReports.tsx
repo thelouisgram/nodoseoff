@@ -20,8 +20,8 @@ const DailyReports: React.FC<DailyReportsProps> = ({ today, selectDate }) => {
     (effect: Effect) => effect.date === formattedDate
   );
 
-  const filteredDrugs = schedule.filter(
-    (dose: any) => dose.date === formattedDate
+  const filteredDrugs = schedule?.filter(
+    (dose: any) => dose?.date === formattedDate
   );
 
   const uniqueDrugs: any = Array.from(

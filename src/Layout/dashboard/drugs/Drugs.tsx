@@ -5,7 +5,6 @@ import React, { useState, useRef, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../store";
 import { frequencyToPlaceholder } from "../../../../utils/dashboard";
-import Image from "next/image";
 import {
   setDrugs,
   updateActiveDrug,
@@ -15,14 +14,21 @@ import { useDispatch } from "react-redux";
 import { toast } from "sonner";
 import { Drug } from "./../../../../types";
 import RenderedDrugs from "./RenderedDrugs";
+import supabase from "../../../../utils/supabaseClient";
+import {
+  uploadScheduleToServer,
+  removeActiveDrugFromSchedule,
+} from "../../../../utils/schedule";
 
 interface DrugsProps {
   screen: boolean;
   setScreen: Function;
   setDrugsForm: Function;
   setEditForm: Function;
-  modal: boolean;
-  setModal: Function;
+  setEditModal: Function;
+  setDeleteModal: Function;
+  deleteModal: boolean;
+  editModal: boolean;
 }
 
 type RefObject<T> = React.RefObject<T>;
@@ -31,10 +37,15 @@ const Drugs: React.FC<DrugsProps> = ({
   setScreen,
   setDrugsForm,
   setEditForm,
-  modal,
-  setModal,
+  setEditModal,
+  setDeleteModal,
+  deleteModal,
+  editModal,
 }) => {
-  const { drugs, schedule } = useSelector((state: RootState) => state.app);
+  const { drugs, schedule, userId } = useSelector(
+    (state: RootState) => state.app
+  );
+
   const dispatch = useDispatch();
   const [activeDrug, setActiveDrug] = useState("");
   const dropdownRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
@@ -44,7 +55,8 @@ const Drugs: React.FC<DrugsProps> = ({
       !dropdownRef.current.contains(event.target as Node)
     ) {
       setScreen(false);
-      setModal(false);
+      setEditModal(false);
+      setDeleteModal(false);
     }
   };
   useEffect(() => {
@@ -65,12 +77,31 @@ const Drugs: React.FC<DrugsProps> = ({
     dispatch(updateActiveDrug(activeDrug));
   }, [activeDrug]);
 
-  const handleDelete = () => {
-    dispatch(setDrugs(drugs.filter((drug: Drug) => drug.drug !== activeDrug)));
-    toast.success(`'${activeDrug.toUpperCase()}' deleted Successfully!`);
-    dispatch(
-      updateSchedule(schedule.filter((drug: Drug) => drug.drug !== activeDrug))
-    );
+  const handleDelete = async () => {
+    try {
+      const { error } = await supabase
+        .from("drugs")
+        .delete()
+        .eq("drug", activeDrug);
+      if (error) {
+        toast.error("Failed to add Drug");
+      }
+      dispatch(
+        setDrugs(drugs.filter((drug: Drug) => drug.drug !== activeDrug))
+      );
+      toast.success(`'${activeDrug.toUpperCase()}' deleted Successfully!`);
+      const updatedSchedule = removeActiveDrugFromSchedule({
+        activeDrug,
+        schedule,
+      });
+      dispatch(updateSchedule(updatedSchedule));
+      uploadScheduleToServer({
+        userId: userId,
+        schedule: updatedSchedule, // Pass the updated schedule to the function
+      });
+    } catch (error) {
+      console.error("Error deleting drug:", error);
+    }
   };
 
   const renderedDrugs = drugs?.map((drug: any, index: number) => {
@@ -128,9 +159,9 @@ const Drugs: React.FC<DrugsProps> = ({
         frequencyToPlaceholder={frequencyToPlaceholder}
         finalDurationText={finalDurationText}
         setActiveDrug={setActiveDrug}
-        setEditForm={setEditForm}
-        setModal={setModal}
         setScreen={setScreen}
+        setDeleteModal={setDeleteModal}
+        setEditModal={setEditModal}
       />
     );
   });
@@ -139,7 +170,7 @@ const Drugs: React.FC<DrugsProps> = ({
     <div className="h-[100dvh] ss:pb-28 overflow-y-scroll w-full md:py-16 md:px-12 px-4 pt-10 pb-24 ss:p-10 text-navyBlue font-karla relative">
       <div className="mb-[28px]">
         <h1 className="text-[24px] ss:text-[32px] font-semibold font-montserrant ">
-          Drug Regimen
+          Drugs
         </h1>
         <p className="text-[16px] text-[#718096]">Manage medications wisely!</p>
       </div>
@@ -165,56 +196,76 @@ const Drugs: React.FC<DrugsProps> = ({
         </div>
       )}
 
-      {modal ? (
+      {deleteModal && (
         <div className="w-full h-full fixed flex top-0 left-0 justify-center items-center z-[143] p-4 font-Inter">
           <div
             ref={dropdownRef}
-            className="bg-white rounded-[10px] p-4 ss:p-10 text-white relative flex flex-col justify-center items-center"
+            className="bg-white rounded-[10px] text-white relative flex flex-col justify-center items-center"
           >
-            <Image
-              src="/assets/x.png"
-              alt="cancel"
-              width={18}
-              height={18}
-              quality={100}
-              className="absolute -top-8 right-1 cursor-pointer"
-              onClick={() => {
-                setActiveDrug(""), setModal(false), setScreen(false);
-              }}
-            />
-            <h1 className="text-navyBlue font-semibold text-center text-[20px] leading-tight">
-              Delete Drug
+            <h1 className="text-navyBlue font-semibold py-4 px-4 border-b-[1px] text-left w-full text-[13px] ss:text-[16px] leading-tight">
+              Confirm to delete '{activeDrug.toUpperCase()}' ?
             </h1>
-            <h2 className="text-navyBlue mb-6 text-center">
-              Are you sure you want to delete '{activeDrug.toUpperCase()}' ?
+            <h2 className="text-navyBlue border-b-[1px] text-left px-4 py-4 text-[12px] ss:text-[14px]">
+              Are you sure you want to delete the selected drug? <br /> This
+              action cannot be undone.
             </h2>
-            <div className="w-full flex gap-3 justify-center">
+            <div className="w-full flex gap-3 justify-start flex-row-reverse text-[12px] py-4 px-4">
               <button
                 onClick={() => {
                   handleDelete(),
-                    setModal(false),
                     setScreen(false),
-                    setActiveDrug("");
+                    setActiveDrug(""),
+                    setDeleteModal(false);
                 }}
-                className="px-3 py-1 flex items-center gap-2 bg-navyBlue rounded-md rounded-bl-none w-[100px]"
+                className="px-4 py-1 flex items-center gap-2 bg-navyBlue rounded-md rounded-bl-none "
               >
-                <Image src='/assets/delete-white.png' width={16} height={16} alt='delete' />
                 Delete
               </button>
               <button
                 onClick={() => {
-                  setActiveDrug(""), setModal(false), setScreen(false);
+                  setActiveDrug(""), setScreen(false), setDeleteModal(false);
                 }}
-                className="px-3 py-1 flex items-center gap-2 bg-none border text-navyBlue border-navyBlue rounded-md rounded-bl-none w-[100px]"
+                className="px-4 py-1 flex items-center gap-2 bg-none border text-navyBlue border-navyBlue rounded-md rounded-bl-none "
               >
-                <Image src='/assets/cancel.png' width={16} height={16} alt='cancel' />
                 Cancel
               </button>
             </div>
           </div>
         </div>
-      ) : (
-        ""
+      )}
+      {editModal && (
+        <div className="w-full h-full fixed flex top-0 left-0 justify-center items-center z-[143] p-4 font-Inter">
+          <div
+            ref={dropdownRef}
+            className="bg-white rounded-[10px] text-white relative flex flex-col justify-center items-center"
+          >
+            <h1 className="text-navyBlue font-semibold py-4 px-4 border-b-[1px] text-left w-full text-[13px] ss:text-[16px] leading-tight">
+              Continue to Edit '{activeDrug.toUpperCase()}' ?
+            </h1>
+            <h2 className="text-navyBlue border-b-[1px] text-left px-4 py-4 text-[12px] ss:text-[14px]">
+              Editing clears past history of the selected drug? <br /> This
+              action cannot be undone.
+            </h2>
+            <div className="w-full flex gap-3 justify-start flex-row-reverse text-[12px] py-4 px-4">
+              <button
+                onClick={() => {
+                  setEditForm(true), setScreen(false), setEditModal(false);
+                }}
+                className="px-4 py-1 flex items-center gap-2 bg-navyBlue rounded-md rounded-bl-none "
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => {
+                  setActiveDrug(""), setScreen(false), setEditForm(false);
+                }}
+                className="px-4 py-1 flex items-center gap-2 bg-none border text-navyBlue border-navyBlue rounded-md rounded-bl-none "
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

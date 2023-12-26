@@ -8,7 +8,6 @@ import DrugsForm from "@/Layout/dashboard/DrugsForm";
 import Drugs from "@/Layout/dashboard/drugs/Drugs";
 import Screen from "@/Layout/dashboard/Screen";
 import EditForm from "@/Layout/dashboard/EditForm";
-import Effects from "@/Layout/dashboard/Effects";
 import Account from "@/Layout/dashboard/Account";
 import Link from "next/link";
 import supabase from "../../../utils/supabaseClient";
@@ -18,10 +17,12 @@ import {
   setDrugs,
   setEffects,
   updateInfo,
+  updateSchedule,
   updateUserId,
 } from "../../../store/stateSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store";
+import Search from "@/Layout/dashboard/Search";
 
 interface tabsMobileProps {
   name: string;
@@ -35,7 +36,7 @@ interface tabsProps {
 }
 
 const Page = () => {
-  const { isAuthenticated, userId, effects } = useSelector(
+  const { userId } = useSelector(
     (state: RootState) => state.app
   );
   const dispatch = useDispatch();
@@ -45,11 +46,12 @@ const Page = () => {
   const [editForm, setEditForm] = useState(false);
   const [drugsForm, setDrugsForm] = useState(false);
   const [screen, setScreen] = useState(false);
-  const [modal, setModal] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [editModal, setEditModal] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!userId) {
       router.push("/signIn");
     }
   }, []);
@@ -62,7 +64,7 @@ const Page = () => {
           .select("name, phone, role, email")
           .eq("userId", userId);
         if (error) {
-          console.log("error:", error);
+          console.error("error:", error);
         } else if (data !== null) {
           dispatch(updateInfo([...data]));
         }
@@ -75,7 +77,7 @@ const Page = () => {
           .select("*")
           .eq("userId", userId);
         if (error) {
-          console.log("error:", error);
+          console.error("error:", error);
         } else if (data !== null) {
           dispatch(setDrugs(data));
         }
@@ -88,10 +90,27 @@ const Page = () => {
           .select("*")
           .eq("userId", userId);
         if (error) {
-          console.log("error:", error);
+          console.error("error:", error);
         } else if (data !== null) {
           dispatch(setEffects(data));
         }
+      } catch (error) {}
+    };
+    const getSchedule = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("users")
+          .select("schedule")
+          .eq("userId", userId);
+        if (error) {
+          console.error("error:", error);
+        } 
+          const transformedData = data?.map((item) => [...item.schedule]);
+          const flattenedData = transformedData?.flatMap(
+            (innerArray: any) => innerArray
+          );
+          dispatch(updateSchedule(flattenedData));
+        
       } catch (error) {}
     };
 
@@ -99,12 +118,13 @@ const Page = () => {
       getInfo();
       getDrug();
       getEffects();
+      getSchedule();
     }
   }, [userId]);
 
   const renderedTabs = tabs.map((item: tabsProps, index: number) => {
     return (
-      <div
+      <button
         onClick={() => setActive(item.name)}
         key={index}
         className={` ${
@@ -131,7 +151,7 @@ const Page = () => {
         >
           {item.name}
         </div>
-      </div>
+      </button>
     );
   });
 
@@ -145,6 +165,7 @@ const Page = () => {
       router.push("/signIn");
       dispatch(updateUserId(""));
       toast.success("Signed Out");
+      dispatch(updateSchedule([]))
     } catch (error) {
       toast.error("Error signing out: " + error);
     }
@@ -235,15 +256,13 @@ const Page = () => {
             setScreen={setScreen}
             setDrugsForm={setDrugsForm}
             setEditForm={setEditForm}
-            modal={modal}
-            setModal={setModal}
+            setEditModal={setEditModal}
+            setDeleteModal={setDeleteModal}
+            deleteModal={deleteModal}
+            editModal={editModal}
           />
-        ) : active === "Effects" ? (
-          <Effects
-            screen={screen}
-            setScreen={setScreen}
-            setEffectsForm={setEffectsForm}
-          />
+        ) : active === "Search" ? (
+          <Search />
         ) : (
           <Account />
         )}
@@ -251,7 +270,15 @@ const Page = () => {
       <DrugsForm drugsForm={drugsForm} setDrugsForm={setDrugsForm} />
       <EffectsForm effectsForm={effectsForm} setEffectsForm={setEffectsForm} />
       <EditForm editForm={editForm} setEditForm={setEditForm} />
-      {screen ? <Screen setModal={setModal} setScreen={setScreen} /> : ""}
+      {screen ? (
+        <Screen
+          setDeleteModal={setDeleteModal}
+          setEditModal={setEditModal}
+          setScreen={setScreen}
+        />
+      ) : (
+        ""
+      )}
       <div className="fixed w-full h-[64px] bg-white shadow bottom-0 flex justify-between items-center md:hidden px-4 ss:px-8 ss:pr-12">
         {renderedTabsMobile}
       </div>

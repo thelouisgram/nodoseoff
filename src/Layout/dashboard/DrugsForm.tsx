@@ -10,6 +10,7 @@ import { setDrugs, updateSchedule } from "../../../store/stateSlice";
 import { generateSchedule } from "../../../utils/dashboard";
 import { Drug } from "../../../types";
 import supabase from "../../../utils/supabaseClient";
+import { uploadScheduleToServer } from "../../../utils/schedule";
 
 interface DrugFormProps {
   drugsForm: boolean;
@@ -49,7 +50,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
   useEffect(() => {
     let defaultTimeValues: string[] = [];
 
-    const selectedDose: SelectedDoseTypes | undefined = dose.find(
+    const selectedDose: SelectedDoseTypes | undefined = dose?.find(
       (item) => item.frequency === formData.frequency
     );
     if (selectedDose) {
@@ -160,7 +161,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
   };
 
   const addDrug = async () => {
-    toast.loading("Adding Drug")
+    toast.loading("Adding Drug");
     try {
       const { error } = await supabase.from("drugs").insert({
         userId: userId,
@@ -183,8 +184,14 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
         `'${formData.drug.toUpperCase()}' has been added successfully!`
       );
       setDrugsForm(false);
-      const data = generateSchedule(formData);
-      dispatch(updateSchedule([...schedule, ...data]));
+      const data = generateSchedule(formData); // Generate updated schedule data based on formData
+      const updatedSchedule = [...schedule, ...data]; // Combine current schedule with new data
+
+      dispatch(updateSchedule(updatedSchedule));
+      uploadScheduleToServer({
+        userId: userId,
+        schedule: updatedSchedule, // Pass the updated schedule to the function
+      });
     } catch (error) {
       console.error("Error adding drug:", error);
     } finally {
@@ -289,7 +296,9 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
                     <option value="orally">Oral</option>
                     <option value="topically">Topical</option>
                     <option value="intravenously">Intravenously (IV)</option>
-                    <option value="intramuscularly">Intramuscularly (IM)</option>
+                    <option value="intramuscularly">
+                      Intramuscularly (IM)
+                    </option>
                     <option value="inhalation">Inhalation</option>
                     <option value="rectal">Rectal</option>
                     <option value="sublingual">Sublingual</option>

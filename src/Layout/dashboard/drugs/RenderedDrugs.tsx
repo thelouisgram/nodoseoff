@@ -16,10 +16,10 @@ interface thisProps {
   drug: DrugProps;
   frequencyToPlaceholder: { [key: string]: string };
   setScreen: Function;
-  setEditForm: Function;
-  setModal: Function;
   setActiveDrug: Function;
   finalDurationText: string;
+  setEditModal: Function;
+  setDeleteModal: Function;
 }
 
 type RefObject<T> = React.RefObject<T>;
@@ -29,9 +29,9 @@ const RenderedDrugs: React.FC<thisProps> = ({
   frequencyToPlaceholder,
   finalDurationText,
   setActiveDrug,
-  setEditForm,
-  setModal,
   setScreen,
+  setEditModal,
+  setDeleteModal,
 }) => {
   const [options, setOptions] = useState(false);
   const dropdownRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
@@ -81,7 +81,7 @@ const RenderedDrugs: React.FC<thisProps> = ({
 
   return (
     <div className="relative rounded-lg rounded-bl-none bg-lightBlue py-6 px-3 ss:py-8 ss:px-6 flex flex-col gap-[1px] font-Inter text-[14px] h-auto">
-      <h1 className="capitalize text-[14px] ss:text-[20px] font-montserrant font-bold mb-4">
+      <h1 className="capitalize text-[15px] ss:text-[20px] font-montserrant font-bold mb-4">
         {drug.drug}
       </h1>
       <p className="mb-4 text-[11px] ss:text-[14px] leading-normal">
@@ -89,7 +89,7 @@ const RenderedDrugs: React.FC<thisProps> = ({
         {finalDurationText}
         until {formatDate(drug.end)}.
       </p>
-      <h2 className="capitalize font-semibold text-[18px] leading-none">
+      <h2 className="capitalize font-semibold text-[13px] ss:text-[18px] leading-none">
         {drug.route}
       </h2>
       <button
@@ -106,24 +106,38 @@ const RenderedDrugs: React.FC<thisProps> = ({
         <div
           ref={dropdownRef}
           className="absolute right-3 top-10 text-navyBlue flex flex-col items-start justify-center mt-3 rounded-[10px] 
-        bg-white shadow-md w-[250px] py-3 text-[16px]"
+        bg-white shadow-md w-[150px] ss:w-[250px] py-3 text-[13px] ss:text-[16px]"
         >
           <button
             onClick={() => {
-              setActiveDrug(drug.drug), setEditForm(true);
+              setActiveDrug(drug.drug),
+                setEditModal(true),
+                setScreen(true);
             }}
             className="h-8 hover:bg-gray-100 flex items-center gap-2 w-full px-3"
           >
-            <Image src="/assets/edit.png" alt="edit" width={20} height={20} />
+            <Image
+              src="/assets/edit.png"
+              alt="edit"
+              width={20}
+              height={20}
+              className="ss:w-[20px] w-[16px]"
+            />
             Edit Drug
           </button>
           <button
             onClick={() => {
-              setActiveDrug(drug.drug), setModal(true), setScreen(true);
+              setActiveDrug(drug.drug), setScreen(true), setDeleteModal(true);
             }}
             className="h-8 hover:bg-gray-100 flex items-center gap-2 w-full px-3"
           >
-            <Image src="/assets/delete.png" alt="edit" width={20} height={20} />
+            <Image
+              src="/assets/delete.png"
+              alt="edit"
+              width={20}
+              height={20}
+              className="ss:w-[20px] w-[16px]"
+            />
             Delete Drug
           </button>
         </div>

@@ -1,7 +1,7 @@
 export const tabs = [
   { name: "Home", logo: "/assets/desktop-dashboard/home.png" },
   { name: "Drugs", logo: "/assets/desktop-dashboard/drugs.png" },
-  { name: "Effects", logo: "/assets/desktop-dashboard/influenza.png" },
+  { name: "Search", logo: "/assets/desktop-dashboard/loupe.png" },
   { name: "Account", logo: "/assets/desktop-dashboard/user.png" },
 ];
 
@@ -135,8 +135,6 @@ export const generateSchedule = (drugDetails: any) => {
   return schedule;
 };
 
-
-
 type Drug = {
   date: string;
   time: string;
@@ -149,7 +147,7 @@ function calculateNextDoseTime(schedule: any[], drug?: any): Date | null {
 
   schedule.forEach((dose) => {
     if (!drug || dose?.drug === drug) {
-      const doseTime = new Date(`${dose.date}T${dose.time}`);
+      const doseTime = new Date(`${dose?.date}T${dose?.time}`);
       const currentTime = new Date();
 
       if (doseTime > currentTime && (!nextDoseTime || doseTime < nextDoseTime)) {

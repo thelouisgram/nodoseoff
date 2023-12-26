@@ -10,6 +10,7 @@ import { FaCheck, FaExclamationTriangle } from "react-icons/fa";
 import { updateSchedule } from "../../../../store/stateSlice";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { Drug } from "../../../../types";
+import { uploadScheduleToServer } from "../../../../utils/schedule";
 
 interface HomeProps {
   setEffectsForm: Function;
@@ -24,8 +25,8 @@ interface DoseProps {
   date: string;
 }
 
-const Home: React.FC<HomeProps> = ({ setEffectsForm, setDrugsForm }) => {
-  const { drugs, info, schedule } = useSelector(
+const Home: React.FC<HomeProps> = ({ setDrugsForm }) => {
+  const { drugs, info, schedule, userId } = useSelector(
     (state: RootState) => state.app
   );
 
@@ -58,8 +59,8 @@ const Home: React.FC<HomeProps> = ({ setEffectsForm, setDrugsForm }) => {
   }, [schedule]);
 
   const todaysDose: Drug[] = schedule
-    .filter((drug: Drug) => {
-      return drug.date === formattedToday;
+    ?.filter((drug: Drug) => {
+      return drug?.date === formattedToday;
     })
     .sort((a: Drug, b: Drug) => {
       const timeA = a.time;
@@ -75,8 +76,8 @@ const Home: React.FC<HomeProps> = ({ setEffectsForm, setDrugsForm }) => {
     });
 
   const yesterdaysDose = schedule
-    .filter((drug: Drug) => {
-      return drug.date === formattedYesterday;
+    ?.filter((drug: Drug) => {
+      return drug?.date === formattedYesterday;
     })
     .sort((a: Drug, b: Drug) => {
       const timeA = a.time;
@@ -92,35 +93,32 @@ const Home: React.FC<HomeProps> = ({ setEffectsForm, setDrugsForm }) => {
     });
 
   function updateCompleted(item: DoseProps) {
-    const rightDoseIndex = schedule.findIndex(
-      (dose) =>
+    const updatedSchedule = schedule.map((dose) => {
+      if (
         dose.date === item.date &&
         dose.time === item.time &&
         dose.drug === item.drug
-    );
+      ) {
+        // Create a new object to update completed property
+        return {
+          ...dose,
+          completed: !dose.completed,
+        };
+      }
+      return dose;
+    });
 
-    if (rightDoseIndex !== -1) {
-      // Creating a deep copy of the array segment
-      const updatedScheduleSegment = JSON.parse(
-        JSON.stringify(schedule.slice(0, rightDoseIndex + 1))
-      );
-
-      // Modifying the deep copy
-      updatedScheduleSegment[rightDoseIndex].completed =
-        !updatedScheduleSegment[rightDoseIndex].completed;
-
-      // Combining the updated segment with the remaining schedule
-      const updatedSchedule = [
-        ...updatedScheduleSegment,
-        ...schedule.slice(rightDoseIndex + 1),
-      ];
-
-      // Assuming 'dispatch' is used to update the state (e.g., in Redux)
-      dispatch(updateSchedule(updatedSchedule));
-    }
+    // Make dispatch and upload operations asynchronous using Promise.all
+    Promise.all([dispatch(updateSchedule(updatedSchedule))])
+      .then(() => {
+        return uploadScheduleToServer({ userId, schedule: updatedSchedule });
+      })
+      .catch((error) => {
+        console.error("Error updating schedule:", error);
+      });
   }
 
-  const dosesToRender = (tracker === "Today" ? todaysDose : yesterdaysDose).map(
+  const dosesToRender = (tracker === "Today" ? todaysDose : yesterdaysDose)?.map(
     (item: DoseProps, index: number) => {
       const [hourString, minutes] = item.time.split(":");
       const hour = parseInt(hourString); // Convert the hour string to a number
@@ -142,38 +140,19 @@ const Home: React.FC<HomeProps> = ({ setEffectsForm, setDrugsForm }) => {
       return (
         <div
           key={index}
-          className="py-6 px-4 md:px-6 bg-none border border-gray-300 rounded-[10px] items-center rounded-bl-none flex justify-between w-full font-Inter text-[14px]"
+          className="py-5 px-4 md:p-5 bg-none border border-gray-300 rounded-[10px] items-center rounded-bl-none flex justify-between w-full font-Inter text-[14px]"
         >
-          <div className="flex gap-6 ss:gap-10 text-navyBlue ">
-            <div className="flex items-center gap-3">
-              <Image
-                src="/assets/tablet.png"
-                width={512}
-                height={512}
-                alt="meds"
-                className="w-[26px] h-[26px] hidden ss:flex"
-              />
-              <div className="flex flex-col">
-                <h3 className="font-semibold text-[12px] hidden ss:flex">
-                  Drug
-                </h3>
-                <p className="capitalize ">{item.drug}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <Image
-                src="/assets/clock.png"
-                width={512}
-                height={512}
-                alt="clock"
-                className="w-[24px] h-[24px] hidden ss:flex"
-              />
-              <div className="flex flex-col">
-                <h3 className="font-semibold text-[12px] hidden ss:flex">
-                  Time
-                </h3>
-                <p>{formattedTime}</p>
-              </div>
+          <div className="flex gap-3 text-navyBlue items-center ">
+            <Image
+              src="/assets/shell.png"
+              width={512}
+              height={512}
+              alt="pill"
+              className="w-8 h-8"
+            />
+            <div>
+              <p className="capitalize font-semibold ">{item.drug}</p>
+              <p>{formattedTime}</p>
             </div>
           </div>
           <div className="flex gap-2 items-center">
@@ -192,10 +171,10 @@ const Home: React.FC<HomeProps> = ({ setEffectsForm, setDrugsForm }) => {
     }
   );
 
-  const displayedDoses = dosesToRender.slice(displayIndex, displayIndex + 4);
+  const displayedDoses = dosesToRender?.slice(displayIndex, displayIndex + 4);
 
   const handleNext = () => {
-    if (displayIndex + 4 < dosesToRender.length) {
+    if (displayIndex + 4 < dosesToRender?.length) {
       setDisplayIndex(displayIndex + 4);
     }
   };
@@ -209,12 +188,12 @@ const Home: React.FC<HomeProps> = ({ setEffectsForm, setDrugsForm }) => {
   const currentTime = new Date(); // Get the current date and time
 
   const completedBeforeCurrentTime = schedule.filter((dose) => {
-    const doseDateTime = new Date(`${dose.date}T${dose.time}`);
-    return doseDateTime <= currentTime && dose.completed;
+    const doseDateTime = new Date(`${dose?.date}T${dose?.time}`);
+    return doseDateTime <= currentTime && dose?.completed;
   });
 
   const totalBeforeCurrentTime = schedule.filter((dose) => {
-    const doseDateTime = new Date(`${dose.date}T${dose.time}`);
+    const doseDateTime = new Date(`${dose?.date}T${dose?.time}`);
     return doseDateTime <= currentTime;
   });
 

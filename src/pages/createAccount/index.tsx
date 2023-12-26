@@ -77,6 +77,7 @@ const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
       phone: formData.phoneNumber,
       email: formData.email,
       userId: userId,
+      schedule: {}
     });
 
     if (addInfoError) {

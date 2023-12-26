@@ -93,7 +93,6 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
     }
   };
 
-  console.log(effects)
   return (
     <div
       className={` ${

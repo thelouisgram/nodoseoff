@@ -18,6 +18,7 @@ interface thisProps {
   setScreen: Function;
   setActiveDrug: Function;
   finalDurationText: string;
+  setAllergyModal: Function;
   setEditModal: Function;
   setDeleteModal: Function;
 }
@@ -32,6 +33,7 @@ const RenderedDrugs: React.FC<thisProps> = ({
   setScreen,
   setEditModal,
   setDeleteModal,
+  setAllergyModal,
 }) => {
   const [options, setOptions] = useState(false);
   const dropdownRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
@@ -81,7 +83,13 @@ const RenderedDrugs: React.FC<thisProps> = ({
 
   return (
     <div className="relative rounded-lg rounded-bl-none bg-lightBlue py-6 px-3 ss:py-8 ss:px-6 flex flex-col gap-[1px] font-Inter text-[14px] h-auto">
-      <Image src={`/assets/drugs/${drug.route}.png`} alt='' width={30} height={30} className="mb-4"/>
+      <Image
+        src={`/assets/drugs/${drug.route}.png`}
+        alt=""
+        width={30}
+        height={30}
+        className="mb-4"
+      />
       <h1 className="capitalize text-[15px] ss:text-[20px] font-montserrant font-bold mb-4">
         {drug.drug}
       </h1>
@@ -111,9 +119,7 @@ const RenderedDrugs: React.FC<thisProps> = ({
         >
           <button
             onClick={() => {
-              setActiveDrug(drug.drug),
-                setEditModal(true),
-                setScreen(true);
+              setActiveDrug(drug.drug), setEditModal(true), setScreen(true);
             }}
             className="h-8 hover:bg-gray-100 flex items-center gap-2 w-full px-3"
           >
@@ -140,6 +146,21 @@ const RenderedDrugs: React.FC<thisProps> = ({
               className="ss:w-[20px] w-[16px]"
             />
             Delete Drug
+          </button>
+          <button
+            onClick={() => {
+              setActiveDrug(drug.drug), setScreen(true), setAllergyModal(true);
+            }}
+            className="h-8 hover:bg-gray-100 flex items-center gap-2 w-full px-3 pl-[14px]"
+          >
+            <Image
+              src="/assets/disabled.png"
+              alt="disabled"
+              width={20}
+              height={20}
+              className="ss:w-[16px] w-[12px]"
+            />
+            Add to Allergies
           </button>
         </div>
       )}

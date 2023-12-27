@@ -138,97 +138,106 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
       setFormData({ ...formData, [fieldName]: value });
     };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+ const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+   e.preventDefault();
 
-    const errors: any = {
-      name: formData.drug ? "" : "Please fill in the Name of drug field.",
-      frequency: formData.frequency ? "" : "Please select a Frequency.",
-      route: formData.route ? "" : "Please select a Route.",
-      start: formData.start ? "" : "Please select a Start Date.",
-      end: formData.end ? "" : "Please select an End Date.",
-    };
+   const errors: any = {
+     name: formData.drug ? "" : "Please fill in the Name of drug field.",
+     frequency: formData.frequency ? "" : "Please select a Frequency.",
+     route: formData.route ? "" : "Please select a Route.",
+     start: formData.start ? "" : "Please select a Start Date.",
+     end: formData.end ? "" : "Please select an End Date.",
+   };
 
-    const errorValues = Object.values(errors);
+   const errorValues = Object.values(errors);
 
-    if (errorValues.some((err) => err !== "")) {
-      Object.keys(errors).forEach((field) => {
-        if (errors[field]) {
-          toast.error(errors[field]);
-        }
-      });
-      return;
-    }
+   if (errorValues.some((err) => err !== "")) {
+     Object.keys(errors).forEach((field) => {
+       if (errors[field]) {
+         toast.error(errors[field]);
+       }
+     });
+     return;
+   }
 
-    try {
-      // Update the drug data
-      const updatedDrugs = drugs.map((drug: any) => {
-        if (drug.drug === activeDrug) {
-          return {
-            drug: formData.drug,
-            frequency: formData.frequency,
-            route: formData.route,
-            start: formData.start,
-            end: formData.end,
-            time: formData.time,
-            reminder: formData.reminder,
-          };
-        }
-        return drug;
-      });
+   try {
+     // Update the drug data
+     const updatedDrugs = drugs.map((drug: any) => {
+       if (drug.drug === activeDrug) {
+         return {
+           drug: formData.drug,
+           frequency: formData.frequency,
+           route: formData.route,
+           start: formData.start,
+           end: formData.end,
+           time: formData.time,
+           reminder: formData.reminder,
+         };
+       }
+       return drug;
+     });
 
-      dispatch(setDrugs(updatedDrugs));
+     dispatch(setDrugs(updatedDrugs));
 
-      // Remove active drug from schedule
-      const strippedSchedule = removeActiveDrugFromSchedule({
-        activeDrug,
-        schedule,
-      });
-      const data = generateSchedule(formData);
-      const updatedSchedule = [...strippedSchedule, ...data];
-      dispatch(updateSchedule([...updatedSchedule]));
-      uploadScheduleToServer({
-        userId: userId,
-        schedule: updatedSchedule, // Pass the updated schedule to the function
-      });
+     // Remove active drug from schedule
+     const strippedSchedule = removeActiveDrugFromSchedule({
+       activeDrug,
+       schedule,
+     });
+     const data = generateSchedule(formData);
+     const updatedSchedule = [...strippedSchedule, ...data];
 
-      // Update drug on the server
-      const { error: drugUpdateError } = await supabase
-        .from("drugs")
-        .update({
-          // Update drug information here
-          userId: userId,
-          drug: formData.drug,
-          frequency: formData.frequency,
-          route: formData.route,
-          start: formData.start,
-          end: formData.end,
-          time: formData.time,
-          reminder: formData.reminder,
-        })
-        .eq("drug", activeDrug);
+     // Update Redux state with the new schedule
+     dispatch(updateSchedule([...updatedSchedule]));
 
-      if (drugUpdateError) {
-        toast.error("Failed to update drug on the server");
-        return;
-      }
-      toast.success(
-        `'${formData.drug.toUpperCase()}' has been updated successfully`
-      );
-      setEditForm(false);
-      setFormErrors({
-        drug: "",
-        frequency: "",
-        route: "",
-        start: "",
-        end: "",
-        time: "",
-      });
-    } catch (error) {
-      console.error("Error updating data on the server:", error);
-      toast.error("An error occurred while updating data on the server");
-    }
-  };
+     // Show loading toast while uploading the schedule
+     toast.loading("Saving changes", { duration: 2000 });
+
+     // Upload the updated schedule to the server
+     await uploadScheduleToServer({
+       userId: userId,
+       schedule: updatedSchedule,
+     });
+
+     // Update drug information on the server
+     const { error: drugUpdateError } = await supabase
+       .from("drugs")
+       .update({
+         // Update drug information here
+         userId: userId,
+         drug: formData.drug,
+         frequency: formData.frequency,
+         route: formData.route,
+         start: formData.start,
+         end: formData.end,
+         time: formData.time,
+         reminder: formData.reminder,
+       })
+       .eq("drug", activeDrug);
+
+     if (drugUpdateError) {
+       toast.error("Failed to update drug on the server");
+       return;
+     }
+
+     // Hide loading toast and show success toast
+     toast.success(
+       `'${formData.drug}' has been updated successfully`
+     );
+     setEditForm(false);
+     setFormErrors({
+       drug: "",
+       frequency: "",
+       route: "",
+       start: "",
+       end: "",
+       time: "",
+     });
+   } catch (error) {
+     console.error("Error updating data on the server:", error);
+     toast.error("An error occurred while updating data on the server");
+   }
+ };
 
   return (
     <div

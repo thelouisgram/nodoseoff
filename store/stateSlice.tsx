@@ -10,6 +10,7 @@ const initialState: AppType = {
   effects: [],
   schedule: [],
   activeDrug: "",
+  allergies: [],
 };
 
 const stateSlice = createSlice({
@@ -36,6 +37,9 @@ const stateSlice = createSlice({
     },
     updateInfo: (state, action: PayloadAction<Info[]>) =>{
       state.info = action.payload
+    },
+    updateAllergies: (state, action: PayloadAction<any>) =>{
+      state.allergies = action.payload
     }
   },
 });
@@ -48,5 +52,6 @@ export const {
   updateSchedule,
   updateIsAuthenticated,
   updateUserId,
-  updateInfo
+  updateInfo,
+  updateAllergies,
 } = stateSlice.actions;

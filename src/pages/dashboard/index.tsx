@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import {
   setDrugs,
   setEffects,
+  updateAllergies,
   updateInfo,
   updateSchedule,
   updateUserId,
@@ -23,6 +24,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store";
 import Search from "@/Layout/dashboard/Search";
+import AllergiesForm from "@/Layout/dashboard/AllergiesForm";
 
 interface tabsMobileProps {
   name: string;
@@ -36,21 +38,20 @@ interface tabsProps {
 }
 
 const Page = () => {
-  const { userId } = useSelector(
-    (state: RootState) => state.app
-  );
+  const { userId } = useSelector((state: RootState) => state.app);
   const dispatch = useDispatch();
   const [nav, setNav] = useState(true);
   const [active, setActive] = useState("Home");
   const [effectsForm, setEffectsForm] = useState(false);
   const [editForm, setEditForm] = useState(false);
+  const [allergiesForm, setAllergiesForm] = useState(false);
   const [drugsForm, setDrugsForm] = useState(false);
   const [screen, setScreen] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
+  const [allergyModal, setAllergyModal] = useState(false);
   const router = useRouter();
   const [add, setAdd] = useState(false);
-
 
   useEffect(() => {
     if (!userId) {
@@ -98,6 +99,19 @@ const Page = () => {
         }
       } catch (error) {}
     };
+    const getAllergies = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("allergies")
+          .select("allergy")
+          .eq("userId", userId);
+        if (error) {
+          console.error("error:", error);
+        } else if (data !== null) {
+          dispatch(updateAllergies(data));
+        }
+      } catch (error) {}
+    };
     const getSchedule = async () => {
       try {
         const { data, error } = await supabase
@@ -106,21 +120,20 @@ const Page = () => {
           .eq("userId", userId);
         if (error) {
           console.error("error:", error);
-        } 
-          const transformedData = data?.map((item) => [...item.schedule]);
-          const flattenedData = transformedData?.flatMap(
-            (innerArray: any) => innerArray
-          );
-          dispatch(updateSchedule(flattenedData));
-        
+        }
+        const transformedData = data?.map((item) => [...item.schedule]);
+        const flattenedData = transformedData?.flatMap(
+          (innerArray: any) => innerArray
+        );
+        dispatch(updateSchedule(flattenedData));
       } catch (error) {}
     };
-
     if (userId) {
       getInfo();
       getDrug();
       getEffects();
       getSchedule();
+      getAllergies();
     }
   }, [userId]);
 
@@ -167,7 +180,7 @@ const Page = () => {
       router.push("/signIn");
       dispatch(updateUserId(""));
       toast.success("Signed Out");
-      dispatch(updateSchedule([]))
+      dispatch(updateSchedule([]));
     } catch (error) {
       toast.error("Error signing out: " + error);
     }
@@ -262,12 +275,16 @@ const Page = () => {
             setDeleteModal={setDeleteModal}
             deleteModal={deleteModal}
             editModal={editModal}
+            allergyModal={allergyModal}
+            setAllergyModal={setAllergyModal}
             add={add}
             setAdd={setAdd}
             setEffectsForm={setEffectsForm}
             editForm={editForm}
             drugsForm={drugsForm}
             effectsForm={effectsForm}
+            allergiesForm={allergiesForm}
+            setAllergiesForm={setAllergiesForm}
           />
         ) : active === "Search" ? (
           <Search />
@@ -278,15 +295,19 @@ const Page = () => {
       <DrugsForm drugsForm={drugsForm} setDrugsForm={setDrugsForm} />
       <EffectsForm effectsForm={effectsForm} setEffectsForm={setEffectsForm} />
       <EditForm editForm={editForm} setEditForm={setEditForm} />
-      {screen ? (
+      <AllergiesForm
+        allergiesForm={allergiesForm}
+        setAllergiesForm={setAllergiesForm}
+      />
+      {screen && (
         <Screen
           setDeleteModal={setDeleteModal}
+          setAllergyModal={setAllergyModal}
           setEditModal={setEditModal}
           setScreen={setScreen}
           setAdd={setAdd}
+          screen={screen}
         />
-      ) : (
-        ""
       )}
       <div className="fixed w-full h-[64px] bg-white shadow bottom-0 flex justify-between items-center md:hidden px-4 ss:px-8 ss:pr-12">
         {renderedTabsMobile}

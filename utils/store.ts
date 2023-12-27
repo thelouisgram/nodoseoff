@@ -6,6 +6,7 @@ export interface AppType {
   effects: any;
   schedule: any[]; 
   activeDrug: string;
+  allergies: string[];
 }
 
 export interface Info{

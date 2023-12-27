@@ -154,7 +154,9 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm }) => {
             className="w-10 h-10  ss:flex hidden"
           />
           <div className="flex ss:flex-col gap-4 ss:gap-0 items-center ss:items-start">
-            <p className="capitalize font-semibold ">{item.drug}</p>
+            <p className="capitalize font-semibold w-[125px] ss:w-auto">
+              {item.drug}
+            </p>
             <p>{formattedTime}</p>
           </div>
         </div>
@@ -162,7 +164,9 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm }) => {
           <h2 className="font-montserrant">Taken:</h2>
           <button
             className={`${
-              !item.completed ? "bg-none text-gray-100 ss:text-white" : "bg-navyBlue text-gray-100 ss:text-white"
+              !item.completed
+                ? "bg-none text-gray-100 ss:text-white"
+                : "bg-navyBlue text-gray-100 ss:text-white"
             } border-[1px] border-navyBlue px-1 py-1 rounded-full`}
             onClick={() => updateCompleted(item)}
           >

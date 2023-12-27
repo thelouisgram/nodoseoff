@@ -7,7 +7,7 @@ import { RootState } from "../../../../store";
 import { frequencyToPlaceholder } from "../../../../utils/dashboard";
 import {
   setDrugs,
-  setEffects,
+  updateAllergies,
   updateActiveDrug,
   updateSchedule,
 } from "../../../../store/stateSlice";
@@ -33,14 +33,18 @@ interface DrugsProps {
   setEditForm: Function;
   setEditModal: Function;
   setDeleteModal: Function;
+  setAllergyModal: Function;
   setEffectsForm: Function;
+  setAllergiesForm: Function;
   setAdd: Function;
   deleteModal: boolean;
   editModal: boolean;
+  allergyModal: boolean;
   add: boolean;
   effectsForm: boolean;
   drugsForm: boolean;
   editForm: boolean;
+  allergiesForm: boolean;
 }
 
 type RefObject<T> = React.RefObject<T>;
@@ -51,6 +55,8 @@ const Drugs: React.FC<DrugsProps> = ({
   setEditForm,
   setEditModal,
   setDeleteModal,
+  setAllergiesForm,
+  allergiesForm,
   deleteModal,
   editModal,
   screen,
@@ -60,8 +66,10 @@ const Drugs: React.FC<DrugsProps> = ({
   editForm,
   effectsForm,
   drugsForm,
+  setAllergyModal,
+  allergyModal,
 }) => {
-  const { drugs, schedule, userId } = useSelector(
+  const { drugs, schedule, userId, allergies } = useSelector(
     (state: RootState) => state.app
   );
 
@@ -77,6 +85,7 @@ const Drugs: React.FC<DrugsProps> = ({
       setScreen(false);
       setEditModal(false);
       setDeleteModal(false);
+      setAllergyModal(false);
     }
   };
   useEffect(() => {
@@ -98,31 +107,86 @@ const Drugs: React.FC<DrugsProps> = ({
   }, [activeDrug]);
 
   const handleDelete = async () => {
+    // Show loading toast while uploading the schedule
+    toast.loading("Deleting drug", { duration: 2000 });
+
     try {
       const { error } = await supabase
         .from("drugs")
         .delete()
         .eq("drug", activeDrug);
+
       if (error) {
-        toast.error("Failed to add Drug");
+        toast.error("Failed to delete Drug");
+        return;
       }
-      dispatch(
-        setDrugs(drugs.filter((drug: Drug) => drug.drug !== activeDrug))
-      );
+
       toast.success(`'${activeDrug}' deleted Successfully!`);
+
       const updatedSchedule = removeActiveDrugFromSchedule({
         activeDrug,
         schedule,
       });
-      dispatch(updateSchedule(updatedSchedule));
-      uploadScheduleToServer({
+
+      // Make the uploadScheduleToServer asynchronous
+      await uploadScheduleToServer({
         userId: userId,
-        schedule: updatedSchedule, // Pass the updated schedule to the function
+        schedule: updatedSchedule,
       });
+
+      // Update the Redux state after deleting and uploading the schedule
+      dispatch(
+        setDrugs(drugs.filter((drug: Drug) => drug.drug !== activeDrug))
+      );
+      dispatch(updateSchedule(updatedSchedule));
     } catch (error) {
       console.error("Error deleting drug:", error);
     }
   };
+
+ const handleAllergies = async () => {
+   // Show loading toast while uploading the schedule
+
+   toast.loading("Marking Drug as allergy")
+
+   try {
+     const { error: deleteError } = await supabase
+       .from("drugs")
+       .delete()
+       .eq("drug", activeDrug);
+
+     const { error: insertError } = await supabase.from("allergies").insert({
+       userId: userId,
+       allergy: activeDrug,
+     });
+
+     if (deleteError || insertError) {
+       toast.error("Failed to delete Drug or insert Allergy");
+       return;
+     }
+
+     const updatedSchedule = removeActiveDrugFromSchedule({
+       activeDrug,
+       schedule,
+     });
+
+     toast.success(`'${activeDrug}' has been marked as an allergy!`);
+
+     // Make the uploadScheduleToServer asynchronous
+     await uploadScheduleToServer({
+       userId: userId,
+       schedule: updatedSchedule,
+     });
+
+     dispatch(updateAllergies([...allergies, { allergy: activeDrug }]));
+
+     // Update the Redux state after deleting and uploading the schedule
+     dispatch(setDrugs(drugs.filter((drug: Drug) => drug.drug !== activeDrug)));
+     dispatch(updateSchedule(updatedSchedule));
+   } catch (error) {
+     console.error("Error handling allergies:", error);
+   }
+ };
 
   const renderedDrugs = drugs?.map((drug: any, index: number) => {
     const startDate: any = new Date(drug.start);
@@ -182,6 +246,7 @@ const Drugs: React.FC<DrugsProps> = ({
         setScreen={setScreen}
         setDeleteModal={setDeleteModal}
         setEditModal={setEditModal}
+        setAllergyModal={setAllergyModal}
       />
     );
   });
@@ -216,7 +281,7 @@ const Drugs: React.FC<DrugsProps> = ({
         {renderedTabs}
       </div>
       {tab === "Regimen" ? (
-        <Regimen renderedDrugs={renderedDrugs} drugs={drugs} />
+        <Regimen renderedDrugs={renderedDrugs} drugs={drugs}  />
       ) : tab === "Completed" ? (
         <Completed />
       ) : (
@@ -250,6 +315,40 @@ const Drugs: React.FC<DrugsProps> = ({
               <button
                 onClick={() => {
                   setActiveDrug(""), setScreen(false), setDeleteModal(false);
+                }}
+                className="px-4 py-1 flex items-center gap-2 bg-none border text-navyBlue border-navyBlue rounded-md rounded-bl-none "
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {allergyModal && (
+        <div className="w-full h-full fixed flex top-0 left-0 justify-center items-center z-[143] p-4 font-Inter">
+          <div
+            ref={dropdownRef}
+            className="bg-white rounded-[10px] text-white relative flex flex-col justify-center items-center"
+          >
+            <h1 className="text-navyBlue font-semibold py-4 px-4 border-b-[1px] text-left w-full text-[13px] ss:text-[16px] leading-tight">
+              Confirm to add '{activeDrug}' to Allergies?
+            </h1>
+            <h2 className="text-navyBlue border-b-[1px] text-left px-4 py-4 text-[12px] ss:text-[14px]">
+              Are you sure you want to mark the selected drug as Allergy? <br />{" "}
+              This action cannot be undone.
+            </h2>
+            <div className="w-full flex gap-3 justify-start flex-row-reverse text-[12px] py-4 px-4">
+              <button
+                onClick={() => {
+                  setScreen(false), setActiveDrug(""), setAllergyModal(false), handleAllergies();
+                }}
+                className="px-4 py-1 flex items-center gap-2 bg-navyBlue rounded-md rounded-bl-none "
+              >
+                Add to Allergies
+              </button>
+              <button
+                onClick={() => {
+                  setActiveDrug(""), setScreen(false), setAllergyModal(false);
                 }}
                 className="px-4 py-1 flex items-center gap-2 bg-none border text-navyBlue border-navyBlue rounded-md rounded-bl-none "
               >
@@ -311,7 +410,14 @@ const Drugs: React.FC<DrugsProps> = ({
             >
               + Add drug
             </button>
-            <button className="rounded-md rounded-bl-none text-white font-semibold justify-end flex">
+            <button
+              onClick={() => {
+                setAdd(false);
+                setAllergiesForm(true);
+                setScreen(false);
+              }}
+              className="rounded-md rounded-bl-none text-white font-semibold justify-end flex"
+            >
               + Add Allergies
             </button>
             <button
@@ -333,9 +439,14 @@ const Drugs: React.FC<DrugsProps> = ({
             setScreen((prev: boolean) => !prev);
             setAdd((prev: boolean) => !prev);
           }}
-          disabled={add === false && screen === true}
           className={`rounded-full p-4 bg-navyBlue ${
-            editForm || drugsForm || effectsForm || deleteModal || editModal
+            editForm ||
+            drugsForm ||
+            effectsForm ||
+            deleteModal ||
+            editModal ||
+            allergiesForm ||
+            allergyModal
               ? "hidden"
               : "flex"
           }`}

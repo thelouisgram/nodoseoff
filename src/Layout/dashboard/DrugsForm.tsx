@@ -24,7 +24,7 @@ interface SelectedDoseTypes {
 }
 
 const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
-  const { drugs, schedule, userId } = useSelector(
+  const { drugs, schedule, userId, allergies } = useSelector(
     (state: RootState) => state.app
   );
   const dispatch = useDispatch();
@@ -152,8 +152,19 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
       (drug: Drug) => drug.drug.toLowerCase() === formData.drug.toLowerCase()
     );
 
+    const allergicToDrug = allergies.some(
+      (item: any) => item.allergy.toLowerCase() === formData.drug.toLowerCase()
+    );
+
     if (drugAlreadyExists) {
       toast.error(`'${formData.drug}' already exists!`);
+      resetFormData();
+      return;
+    }
+    
+    if (allergicToDrug) {
+      toast.error(`'${formData.drug}' is a known drug allergy!`);
+      resetFormData();
       return;
     }
 

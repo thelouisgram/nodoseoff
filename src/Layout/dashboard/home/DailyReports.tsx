@@ -52,6 +52,13 @@ const DailyReports: React.FC<DailyReportsProps> = ({ today, selectDate }) => {
       })
       .join(", ");
 
+      const displayValue = isNaN(completedPercentage)
+        ? "0%"
+        : `${completedDoses}/${totalDoses} (${completedPercentage.toFixed(
+            0
+          )}%)`;
+
+
     return (
       <div className="w-full md:w-1/2 h-full rounded-[12px] rounded-bl-none pt-5 text-[15px] text-gray-600">
         <h2 className="font-semibold mb-4 ss:mb-8 text-[16px] leading-none">
@@ -85,11 +92,7 @@ const DailyReports: React.FC<DailyReportsProps> = ({ today, selectDate }) => {
               <h2 className="font-semibold text-[16px] text-[#D4389B]">
                 Dose completed:
               </h2>
-              <p>
-                {`${completedDoses}/${totalDoses} (${completedPercentage.toFixed(
-                  0
-                )}%)` || "N/A"}
-              </p>
+              <p>{displayValue}</p>
             </div>
           </div>
           <div className="flex gap-3 items-center border border-darkBlue rounded-[10px] rounded-bl-none p-4">

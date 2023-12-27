@@ -64,22 +64,25 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
       return;
     }
 
+    // Show loading toast while uploading the schedule
+    toast.loading("Adding Effects", { duration: 2000 });
+
     try {
       const { error } = await supabase.from("effects").insert({
         userId: userId,
-        effects: formData.effect,
+        effect: formData.effect,
         severity: formData.severity,
         date: formData.date,
       });
 
       if (error) {
-        toast.error("Failed to add effect");
+        console.error("Failed to add effect", error);
         return;
       }
 
       dispatch(setEffects([...effects, formData]));
       toast.success(
-        `${formData.effect.toUpperCase()} has been added successfully`
+        `'${formData.effect}' has been added successfully`
       );
       setFormData({
         effect: "",

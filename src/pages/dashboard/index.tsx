@@ -49,6 +49,8 @@ const Page = () => {
   const [deleteModal, setDeleteModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
   const router = useRouter();
+  const [add, setAdd] = useState(false);
+
 
   useEffect(() => {
     if (!userId) {
@@ -260,6 +262,12 @@ const Page = () => {
             setDeleteModal={setDeleteModal}
             deleteModal={deleteModal}
             editModal={editModal}
+            add={add}
+            setAdd={setAdd}
+            setEffectsForm={setEffectsForm}
+            editForm={editForm}
+            drugsForm={drugsForm}
+            effectsForm={effectsForm}
           />
         ) : active === "Search" ? (
           <Search />
@@ -275,6 +283,7 @@ const Page = () => {
           setDeleteModal={setDeleteModal}
           setEditModal={setEditModal}
           setScreen={setScreen}
+          setAdd={setAdd}
         />
       ) : (
         ""

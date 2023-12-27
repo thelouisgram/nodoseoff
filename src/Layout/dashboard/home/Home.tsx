@@ -306,7 +306,7 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm }) => {
         </div>
         {displayedDoses.length > 0 ? (
           <>
-            <div className="grid md:grid-cols-2 gap-6">{displayedDoses}</div>
+            <div className="grid md:grid-cols-2 gap-4 ss:gap-6">{displayedDoses}</div>
             <div className="w-full flex gap-3 justify-center mt-8">
               <button
                 onClick={handlePrev}

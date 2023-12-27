@@ -17,8 +17,8 @@ export default function Calendar() {
 
   // Return the JSX structure for the calendar component
   return (
-    <section className="w-full flex flex-col md:flex-row items-start gap-6 md:gap-10 px-4 ss:px-6 md:px-0 ss:pb-20 md:pb-0 h-auto text-[16px]">
-      <div className="flex gap-10 w-full md:w-1/2 flex-col p-5 bg-lightBlue rounded-[12px] rounded-bl-none h-auto">
+    <section className="w-full flex flex-col ip:flex-row items-start gap-6 md:gap-10 px-4 ss:px-6 md:px-0 ss:pb-20 md:pb-0 h-auto text-[16px]">
+      <div className="flex gap-10 w-full md:w-1/2 flex-col p-3 ss:p-5 bg-lightBlue rounded-[12px] rounded-bl-none h-auto">
         <div className="w-auto h-full">
           <div className="flex justify-between items-center">
             {/* Displaying the current month and year */}
@@ -55,7 +55,7 @@ export default function Calendar() {
               return (
                 <h1
                   key={index}
-                  className=" text-center w-full flex justify-center h-14 items-center text-gray-500 select-none"
+                  className=" text-center w-full flex justify-center h-12 ss:h-14 items-center text-gray-500 select-none"
                 >
                   {day}
                 </h1>
@@ -71,7 +71,7 @@ export default function Calendar() {
                 return (
                   <div
                     key={index}
-                    className="p-2 text-center h-14 grid place-content-center "
+                    className="p-2 text-center h-10 ss:h-14 grid place-content-center "
                   >
                     {/* Rendering individual date cells */}
                     <h1

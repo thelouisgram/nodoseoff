@@ -180,9 +180,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
       }
 
       dispatch(setDrugs([...drugs, formData]));
-      toast.success(
-        `'${formData.drug}' has been added successfully!`
-      );
+      toast.success(`'${formData.drug}' has been added successfully!`);
       setDrugsForm(false);
       const data = generateSchedule(formData); // Generate updated schedule data based on formData
       const updatedSchedule = [...schedule, ...data]; // Combine current schedule with new data
@@ -293,12 +291,10 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
                     className=" bg-[#EDF2F7] border-none w-full outline-none py-4 text-navyBlue cursor-pointer h-[56px]"
                   >
                     <option value="">Select Route</option>
-                    <option value="orally">Oral</option>
-                    <option value="topically">Topical</option>
-                    <option value="intravenously">Intravenously (IV)</option>
-                    <option value="intramuscularly">
-                      Intramuscularly (IM)
-                    </option>
+                    <option value="oral">Oral</option>
+                    <option value="topical">Topical</option>
+                    <option value="intravenous">intravenous (IV)</option>
+                    <option value="intramuscular">intramuscular (IM)</option>
                     <option value="inhalation">Inhalation</option>
                     <option value="rectal">Rectal</option>
                     <option value="sublingual">Sublingual</option>
@@ -401,7 +397,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
             </div>
             <button
               type="submit"
-              className="mt-10 font-semibold bg-darkBlue text-white rounded-[10px] w-full text-center py-4 rounded-bl-none px-4 hover:bg-navyBlue transition duration-300"
+              className="mt-20 font-semibold bg-darkBlue text-white rounded-[10px] w-full text-center py-4 rounded-bl-none px-4 hover:bg-navyBlue transition duration-300"
             >
               PROCEED
             </button>

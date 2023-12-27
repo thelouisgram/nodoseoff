@@ -7,6 +7,7 @@ import { RootState } from "../../../../store";
 import { frequencyToPlaceholder } from "../../../../utils/dashboard";
 import {
   setDrugs,
+  setEffects,
   updateActiveDrug,
   updateSchedule,
 } from "../../../../store/stateSlice";
@@ -20,6 +21,10 @@ import {
   removeActiveDrugFromSchedule,
 } from "../../../../utils/schedule";
 import { drugsTab } from "../../../../utils/drugs";
+import Regimen from "./tabs/Regimen";
+import Completed from "./tabs/Completed";
+import Allergies from "./tabs/Allergies";
+import Image from "next/image";
 
 interface DrugsProps {
   screen: boolean;
@@ -28,8 +33,14 @@ interface DrugsProps {
   setEditForm: Function;
   setEditModal: Function;
   setDeleteModal: Function;
+  setEffectsForm: Function;
+  setAdd: Function;
   deleteModal: boolean;
   editModal: boolean;
+  add: boolean;
+  effectsForm: boolean;
+  drugsForm: boolean;
+  editForm: boolean;
 }
 
 type RefObject<T> = React.RefObject<T>;
@@ -42,6 +53,13 @@ const Drugs: React.FC<DrugsProps> = ({
   setDeleteModal,
   deleteModal,
   editModal,
+  screen,
+  add,
+  setAdd,
+  setEffectsForm,
+  editForm,
+  effectsForm,
+  drugsForm,
 }) => {
   const { drugs, schedule, userId } = useSelector(
     (state: RootState) => state.app
@@ -176,8 +194,10 @@ const Drugs: React.FC<DrugsProps> = ({
           setTab(item);
         }}
         className={`${
-          item === tab ? "bg-navyBlue text-white" : "bg-white border-[1px] "
-        } rounded-[10px] rounded-bl-none px-3 py-1 ss:px-4 ss:py-2 text-[13px] ss:text-[16px]`}
+          item === tab
+            ? "bg-navyBlue text-white"
+            : "bg-white border-[1px] text-navyBlue"
+        } rounded-[5px] px-3 py-2 ss:px-4 text-[13px] ss:text-[16px] w-full ss:w-auto`}
       >
         {item}
       </button>
@@ -192,29 +212,16 @@ const Drugs: React.FC<DrugsProps> = ({
         </h1>
         <p className="text-[16px] text-[#718096]">Manage medications wisely!</p>
       </div>
-      <div className="flex flex-wrap gap-2 ss:gap-4 mb-8">{renderedTabs}</div>
-      <button
-        onClick={() => {
-          setDrugsForm(true);
-        }}
-        className="mb-6 w-[160px] cursor-pointer h-[40px] bg-navyBlue rounded-[10px] rounded-bl-none flex justify-center items-center 
-          font-bold text-white"
-      >
-        + ADD DRUG
-      </button>
-      {drugs.length > 0 ? (
-        <div className="w-full grid grid-cols-2 md:grid-cols-3 md:px-0 gap-4">
-          {renderedDrugs}{" "}
-        </div>
+      <div className="flex w-full ss:w-auto gap-2 ss:gap-4 mb-8">
+        {renderedTabs}
+      </div>
+      {tab === "Regimen" ? (
+        <Regimen renderedDrugs={renderedDrugs} drugs={drugs} />
+      ) : tab === "Completed" ? (
+        <Completed />
       ) : (
-        <div className="w-full h-[400px] flex justify-center items-center">
-          {" "}
-          <h1 className="text-[20px] text-navyBlue font-semibold font-montserrant text-center opacity-30">
-            Add a drug to get started!
-          </h1>
-        </div>
+        <Allergies />
       )}
-
       {deleteModal && (
         <div className="w-full h-full fixed flex top-0 left-0 justify-center items-center z-[143] p-4 font-Inter">
           <div
@@ -289,6 +296,61 @@ const Drugs: React.FC<DrugsProps> = ({
           </div>
         </div>
       )}
+      <div
+        className={`fixed right-4 ss:right-10 md:right-16 bottom-20 md:bottom-6 z-[144]`}
+      >
+        {add ? (
+          <div className="flex flex-col fixed right-4 ss:right-16 bottom-36 md:bottom-24 gap-4">
+            <button
+              onClick={() => {
+                setAdd(false);
+                setDrugsForm(true);
+                setScreen(false);
+              }}
+              className="rounded-md rounded-bl-none text-white font-semibold justify-end flex"
+            >
+              + Add drug
+            </button>
+            <button className="rounded-md rounded-bl-none text-white font-semibold justify-end flex">
+              + Add Allergies
+            </button>
+            <button
+              onClick={() => {
+                setAdd(false);
+                setEffectsForm(true);
+                setScreen(false);
+              }}
+              className="rounded-md rounded-bl-none text-white font-semibold justify-end flex"
+            >
+              + Add Side Effect
+            </button>
+          </div>
+        ) : (
+          ""
+        )}
+        <button
+          onClick={() => {
+            setScreen((prev: boolean) => !prev);
+            setAdd((prev: boolean) => !prev);
+          }}
+          disabled={add === false && screen === true}
+          className={`rounded-full p-4 bg-navyBlue ${
+            editForm || drugsForm || effectsForm || deleteModal || editModal
+              ? "hidden"
+              : "flex"
+          }`}
+        >
+          <Image
+            src={`/assets/x.png`}
+            alt="plus"
+            width={512}
+            height={512}
+            className={`w-4 ss:w-5 ${
+              screen ? "rotate-0" : "rotate-45"
+            }  transition-all`}
+          />
+        </button>
+      </div>
     </div>
   );
 };

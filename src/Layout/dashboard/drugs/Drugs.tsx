@@ -197,7 +197,7 @@ const Drugs: React.FC<DrugsProps> = ({
           item === tab
             ? "bg-navyBlue text-white"
             : "bg-white border-[1px] text-navyBlue"
-        } rounded-[5px] px-3 py-2 ss:px-4 text-[13px] ss:text-[16px] w-full ss:w-auto`}
+        } rounded-[5px] px-3 py-2 ss:px-4 text-[14px] ss:text-[16px] w-full ss:w-auto`}
       >
         {item}
       </button>

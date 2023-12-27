@@ -142,7 +142,8 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm }) => {
     return (
       <div
         key={index}
-        className="p-3 md:p-4 bg-none border border-gray-300 rounded-[10px] items-center rounded-bl-none flex justify-between w-full font-Inter text-[14px]"
+        className="p-5 md:p-4 bg-none ss:border ss:border-gray-300 rounded-[10px] items-center ss:rounded-bl-none flex justify-between bg-gray-100 ss:bg-white
+        w-full font-Inter text-[14px]"
       >
         <div className="flex gap-3 text-navyBlue items-center ">
           <Image
@@ -150,9 +151,9 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm }) => {
             width={512}
             height={512}
             alt="pill"
-            className="w-10 h-10"
+            className="w-10 h-10  ss:flex hidden"
           />
-          <div>
+          <div className="flex ss:flex-col gap-4 ss:gap-0 items-center ss:items-start">
             <p className="capitalize font-semibold ">{item.drug}</p>
             <p>{formattedTime}</p>
           </div>
@@ -161,8 +162,8 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm }) => {
           <h2 className="font-montserrant">Taken:</h2>
           <button
             className={`${
-              !item.completed ? "bg-none text" : "bg-navyBlue text-white"
-            } border-[1px] border-navyBlue text-white px-1 py-1 rounded-full`}
+              !item.completed ? "bg-none text-gray-100 ss:text-white" : "bg-navyBlue text-gray-100 ss:text-white"
+            } border-[1px] border-navyBlue px-1 py-1 rounded-full`}
             onClick={() => updateCompleted(item)}
           >
             <FaCheck className="text-[12px]" />
@@ -307,7 +308,7 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm }) => {
         </div>
         {displayedDoses.length > 0 ? (
           <>
-            <div className="grid md:grid-cols-2 gap-3 ss:gap-6">
+            <div className="grid md:grid-cols-2 gap-4 ss:gap-6">
               {displayedDoses}
             </div>
             <div

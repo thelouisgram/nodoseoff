@@ -58,13 +58,13 @@ const DailyReports: React.FC<DailyReportsProps> = ({ today, selectDate }) => {
           {formattedDateFull}
         </h2>
         <div className="h-full flex gap-6 flex-col leading-tight">
-          <div className="flex gap-3 items-center border border-[#7E1CE6] rounded-[10px] rounded-bl-none p-5">
+          <div className="flex gap-3 items-center border border-[#7E1CE6] rounded-[10px] rounded-bl-none p-4">
             <Image
               src="/assets/daily-reports/drug.png"
               width="512"
               height="512"
               alt="meds"
-              className="w-7 h-7"
+              className="w-6 h-6"
             />
             <div>
               <h2 className="font-semibold text-[16px] text-[#7E1CE6] ">
@@ -73,13 +73,13 @@ const DailyReports: React.FC<DailyReportsProps> = ({ today, selectDate }) => {
               <p className="capitalize">{drugsString || "N/A"}</p>
             </div>
           </div>
-          <div className="flex gap-3 items-center border border-[#D4389B] rounded-[10px] rounded-bl-none p-5">
+          <div className="flex gap-3 items-center border border-[#D4389B] rounded-[10px] rounded-bl-none p-4">
             <Image
               src="/assets/daily-reports/check.png"
               width="512"
               height="512"
               alt="check"
-              className="w-7 h-7"
+              className="w-6 h-6"
             />
             <div className="flex flex-col">
               <h2 className="font-semibold text-[16px] text-[#D4389B]">
@@ -92,13 +92,13 @@ const DailyReports: React.FC<DailyReportsProps> = ({ today, selectDate }) => {
               </p>
             </div>
           </div>
-          <div className="flex gap-3 items-center border border-darkBlue rounded-[10px] rounded-bl-none p-5">
+          <div className="flex gap-3 items-center border border-darkBlue rounded-[10px] rounded-bl-none p-4">
             <Image
               src="/assets/daily-reports/sick.png"
               width="512"
               height="512"
               alt="check"
-              className="w-7 h-7"
+              className="w-6 h-6"
             />
             <div className="flex flex-col">
               <h2 className="font-semibold text-[16px] text-darkBlue">

@@ -99,9 +99,9 @@ const RenderedDrugs: React.FC<thisProps> = ({
         }}
         className="absolute top-5 ss:top-6 right-3 flex flex-col gap-1 cursor-pointer w-7 h-7 justify-center items-center rounded-full"
       >
-        <div className="w-[2px] h-[2px] ss:w-[3px] ss:h-[3px] rounded-full bg-navyBlue" />
-        <div className="w-[2px] h-[2px] ss:w-[3px] ss:h-[3px] rounded-full bg-navyBlue" />
-        <div className="w-[2px] h-[2px] ss:w-[3px] ss:h-[3px] rounded-full bg-navyBlue" />
+        <div className="w-[3px] h-[3px] rounded-full bg-navyBlue" />
+        <div className="w-[3px] h-[3px] rounded-full bg-navyBlue" />
+        <div className="w-[3px] h-[3px] rounded-full bg-navyBlue" />
       </button>
       {options && (
         <div

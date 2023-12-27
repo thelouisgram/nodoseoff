@@ -20,7 +20,7 @@ export default function Calendar() {
     <section className="w-full flex flex-col ip:flex-row items-start gap-6 md:gap-10 px-4 ss:px-6 md:px-0 ss:pb-20 md:pb-0 h-auto text-[16px]">
       <div className="flex gap-10 w-full md:w-1/2 flex-col p-3 ss:p-5 bg-lightBlue rounded-[12px] rounded-bl-none h-auto">
         <div className="w-auto h-full">
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center mb-1">
             {/* Displaying the current month and year */}
             <h1 className="select-none font-semibold">
               {months[today.month()]}, {today.year()}
@@ -55,7 +55,7 @@ export default function Calendar() {
               return (
                 <h1
                   key={index}
-                  className=" text-center w-full flex justify-center h-12 ss:h-14 items-center text-gray-500 select-none"
+                  className=" text-center w-full flex justify-center h-10 ss:h-14 items-center text-gray-500 select-none"
                 >
                   {day}
                 </h1>

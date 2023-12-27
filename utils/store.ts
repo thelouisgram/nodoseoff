@@ -9,8 +9,8 @@ export interface AppType {
 }
 
 export interface Info{
-  name: string | undefined;
-  phone: string | undefined;
-  email: string | undefined;
-  role: string | undefined;
+  name: string ;
+  phone: string ;
+  email: string ;
+  role: string ;
 }

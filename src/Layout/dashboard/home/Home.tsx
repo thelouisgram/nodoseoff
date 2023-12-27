@@ -40,6 +40,7 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm }) => {
 
   const formattedToday = format(today, "yyyy-MM-dd");
   const formattedYesterday = format(yesterday, "yyyy-MM-dd");
+  const { name } = info[0];
 
   useEffect(() => {
     // Function to update the countdown value every second
@@ -118,58 +119,58 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm }) => {
       });
   }
 
-  const dosesToRender = (tracker === "Today" ? todaysDose : yesterdaysDose)?.map(
-    (item: DoseProps, index: number) => {
-      const [hourString, minutes] = item.time.split(":");
-      const hour = parseInt(hourString); // Convert the hour string to a number
+  const dosesToRender = (
+    tracker === "Today" ? todaysDose : yesterdaysDose
+  )?.map((item: DoseProps, index: number) => {
+    const [hourString, minutes] = item.time.split(":");
+    const hour = parseInt(hourString); // Convert the hour string to a number
 
-      let timeSuffix = "";
-      if (hour < 12) {
-        timeSuffix = "AM";
-      } else {
-        timeSuffix = "PM";
-      }
+    let timeSuffix = "";
+    if (hour < 12) {
+      timeSuffix = "AM";
+    } else {
+      timeSuffix = "PM";
+    }
 
-      let convertedHour = hour;
-      if (convertedHour > 12) {
-        convertedHour -= 12;
-      }
+    let convertedHour = hour;
+    if (convertedHour > 12) {
+      convertedHour -= 12;
+    }
 
-      const formattedTime = `${convertedHour}:${minutes}${timeSuffix}`;
+    const formattedTime = `${convertedHour}:${minutes}${timeSuffix}`;
 
-      return (
-        <div
-          key={index}
-          className="py-5 px-4 md:p-5 bg-none border border-gray-300 rounded-[10px] items-center rounded-bl-none flex justify-between w-full font-Inter text-[14px]"
-        >
-          <div className="flex gap-3 text-navyBlue items-center ">
-            <Image
-              src="/assets/shell.png"
-              width={512}
-              height={512}
-              alt="pill"
-              className="w-8 h-8"
-            />
-            <div>
-              <p className="capitalize font-semibold ">{item.drug}</p>
-              <p>{formattedTime}</p>
-            </div>
-          </div>
-          <div className="flex gap-2 items-center">
-            <h2 className="font-montserrant">Taken:</h2>
-            <button
-              className={`${
-                !item.completed ? "bg-none text" : "bg-navyBlue text-white"
-              } border-[2px] border-navyBlue text-white px-1 py-1 rounded-full`}
-              onClick={() => updateCompleted(item)}
-            >
-              <FaCheck className="text-[12px]" />
-            </button>
+    return (
+      <div
+        key={index}
+        className="p-3 md:p-4 bg-none border border-gray-300 rounded-[10px] items-center rounded-bl-none flex justify-between w-full font-Inter text-[14px]"
+      >
+        <div className="flex gap-3 text-navyBlue items-center ">
+          <Image
+            src="/assets/shell.png"
+            width={512}
+            height={512}
+            alt="pill"
+            className="w-10 h-10"
+          />
+          <div>
+            <p className="capitalize font-semibold ">{item.drug}</p>
+            <p>{formattedTime}</p>
           </div>
         </div>
-      );
-    }
-  );
+        <div className="flex gap-2 items-center">
+          <h2 className="font-montserrant">Taken:</h2>
+          <button
+            className={`${
+              !item.completed ? "bg-none text" : "bg-navyBlue text-white"
+            } border-[1px] border-navyBlue text-white px-1 py-1 rounded-full`}
+            onClick={() => updateCompleted(item)}
+          >
+            <FaCheck className="text-[12px]" />
+          </button>
+        </div>
+      </div>
+    );
+  });
 
   const displayedDoses = dosesToRender?.slice(displayIndex, displayIndex + 4);
 
@@ -208,7 +209,7 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm }) => {
     <div className="w-full h-[100dvh] overflow-y-scroll md:py-16 md:px-12 pt-10 pb-24 ss:py-10 text-navyBlue font-karla relative">
       <div className="mb-[28px] px-4 ss:px-8 md:px-0">
         <h1 className="text-[24px] ss:text-[32px] font-semibold font-montserrant ">
-          {"Hello " + info[0].name},
+          {"Hi " + name?.split(" ")[0]},
         </h1>
         <p className="text-[16px] text-[#718096]">Your health matters!</p>
       </div>
@@ -223,7 +224,7 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm }) => {
           + ADD DRUG
         </button>
       </div>
-      <section className="md:w-full flex gap-4 ss:gap-5 mb-10 ss:mb-16 overflow-x-scroll md:overflow-hidden px-4 ss:px-8 md:px-0 bar">
+      <section className="md:w-full flex gap-4 ss:gap-5 mb-8 ss:mb-12 overflow-x-scroll md:overflow-hidden px-4 ss:px-8 md:px-0 bar">
         <div className="min-w-[300px] ss:w-full h-[120px] ss:h-[150px] bg-[#7E1CE6] rounded-[10px] rounded-bl-none flex justify-start items-center p-4 gap-2">
           <Image
             src="/assets/sandclock.png"
@@ -306,8 +307,14 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm }) => {
         </div>
         {displayedDoses.length > 0 ? (
           <>
-            <div className="grid md:grid-cols-2 gap-4 ss:gap-6">{displayedDoses}</div>
-            <div className="w-full flex gap-3 justify-center mt-8">
+            <div className="grid md:grid-cols-2 gap-3 ss:gap-6">
+              {displayedDoses}
+            </div>
+            <div
+              className={`w-full flex gap-3 justify-center mt-8 ${
+                dosesToRender.length > 4 ? "flex" : "hidden"
+              }`}
+            >
               <button
                 onClick={handlePrev}
                 disabled={displayIndex === 0}

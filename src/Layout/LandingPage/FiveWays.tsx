@@ -77,12 +77,14 @@ const FiveWays = () => {
   return (
     <div className="bg-[#F2F7F8] w-full h-full">
       <div className="container w-[1100px] mx-auto py-[50px] ss:py-[100px] px-4 md:px-0">
-        <div className="w-full flex justify-center text-navyBlue mb-[50px] ss:mb-[100px]">
-          <h1 className="ss:w-[550px] text-[28px] ss:text-[40px] font-bold leading-tight text-center">
-            5 ways to improve your drug compliance
-          </h1>
+        <div className="w-full grid md:grid-cols-2 gap-8">
+          <div className='h-full justify-center items-center flex p-3'>
+            <h1 className="ss:w-[550px] text-[28px] ss:text-[40px] font-bold leading-tight text-center text-navyBlue">
+              5 ways to improve your drug compliance
+            </h1>
+          </div>
+          {features}
         </div>
-        <div className="w-full grid md:grid-cols-2 gap-8">{features}</div>
       </div>
     </div>
   );

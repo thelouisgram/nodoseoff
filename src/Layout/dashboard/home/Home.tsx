@@ -288,7 +288,7 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm }) => {
         <h3 className="text-[18px] font-semibold text-navyBlue mb-3">
           Medication Tracker
         </h3>
-        <div className="w-[300px] h-auto flex border border-gray-300 rounded-md rounded-bl-none mb-8 overflow-hidden">
+        <div className="w-[300px] h-auto flex border border-gray-300 rounded-[10px] rounded-bl-none mb-8 overflow-hidden">
           <div
             onClick={() => {
               setTracker("Yesterday");
@@ -325,7 +325,7 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm }) => {
                 disabled={displayIndex === 0}
                 className={` ${
                   displayIndex === 0 ? "opacity-20" : "opacity-100"
-                } border border-gray-300 rounded-md rounded-bl-none px-4 py-1 cursor-pointer`}
+                } border border-gray-300 rounded-[10px] rounded-bl-none px-4 py-1 cursor-pointer`}
               >
                 <FaArrowLeft />
               </button>
@@ -334,7 +334,7 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm }) => {
                   displayIndex + 4 >= dosesToRender.length
                     ? "opacity-20"
                     : "opacity-100"
-                } border border-gray-300 rounded-md rounded-bl-none px-4 py-1 cursor-pointer"`}
+                } border border-gray-300 rounded-[10px] rounded-bl-none px-4 py-1 cursor-pointer"`}
                 onClick={handleNext}
                 disabled={displayIndex + 4 >= dosesToRender.length}
               >
@@ -343,7 +343,7 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm }) => {
             </div>
           </>
         ) : (
-          <div className="w-full md:w-1/2 py-6 px-4  border border-gray-300 rounded-md items-center rounded-bl-none flex gap-3">
+          <div className="w-full md:w-1/2 py-6 px-4  border border-gray-300 rounded-[10px] items-center rounded-bl-none flex gap-3">
             <FaExclamationTriangle /> No dose for this day
           </div>
         )}

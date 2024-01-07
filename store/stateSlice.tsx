@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AppType } from "../utils/store";
 import { Info } from "../utils/store";
+import { AppType } from "../utils/store";
 
 const initialState: AppType = {
-  info: [{name: '', phone: '', email: '', role: ''}],
+  info: [{ name: "", phone: "", email: "", role: "" }],
   isAuthenticated: false,
   userId: "",
   drugs: [],
@@ -11,6 +11,8 @@ const initialState: AppType = {
   schedule: [],
   activeDrug: "",
   allergies: [],
+  searchedWord : "",
+  drugDetails: [],
 };
 
 const stateSlice = createSlice({
@@ -35,12 +37,19 @@ const stateSlice = createSlice({
     updateUserId: (state, action: PayloadAction<string>) => {
       state.userId = action.payload;
     },
-    updateInfo: (state, action: PayloadAction<Info[]>) =>{
-      state.info = action.payload
+    updateSearchedWord: (state, action: PayloadAction<string>) => {
+      state.searchedWord = action.payload;
     },
-    updateAllergies: (state, action: PayloadAction<any>) =>{
-      state.allergies = action.payload
-    }
+    updateInfo: (state, action: PayloadAction<Info[]>) => {
+      state.info = action.payload;
+    },
+    updateAllergies: (state, action: PayloadAction<any>) => {
+      state.allergies = action.payload;
+    },
+    updateDrugDetails: (state, action: PayloadAction<[]>) => {
+      state.drugDetails = action.payload;
+    },
+   
   },
 });
 
@@ -54,4 +63,6 @@ export const {
   updateUserId,
   updateInfo,
   updateAllergies,
+  updateSearchedWord,
+  updateDrugDetails,
 } = stateSlice.actions;

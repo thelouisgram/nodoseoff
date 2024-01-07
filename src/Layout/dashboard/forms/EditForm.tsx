@@ -3,18 +3,18 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
 import Image from "next/image";
-import { dose } from "../../../utils/dashboard";
+import { dose } from "../../../../utils/dashboard";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../../store";
-import { setDrugs } from "../../../store/stateSlice";
-import { Drug } from "../../../types";
-import { generateSchedule } from "../../../utils/dashboard";
-import { updateSchedule } from "../../../store/stateSlice";
-import supabase from "../../../utils/supabaseClient";
+import { RootState } from "../../../../store";
+import { setDrugs } from "../../../../store/stateSlice";
+import { Drug } from "../../../../types";
+import { generateSchedule } from "../../../../utils/dashboard";
+import { updateSchedule } from "../../../../store/stateSlice";
+import supabase from "../../../../utils/supabaseClient";
 import {
   uploadScheduleToServer,
   removeActiveDrugFromSchedule,
-} from "../../../utils/schedule";
+} from "../../../../utils/schedule";
 
 interface DrugFormProps {
   editForm: boolean;
@@ -118,7 +118,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
 
   const timeInput = formData.time.map((item: any, index: number) => {
     return (
-      <div key={index} className="bg-[#EDF2F7] pr-4 rounded-md h-[56px]">
+      <div key={index} className="bg-[#EDF2F7] pr-4 rounded-[10px] h-[56px]">
         <input
           key={index}
           type="time"
@@ -126,7 +126,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
           name={`time-${index}`}
           value={formData.time[index]}
           onChange={handleInputChange}
-          className="border bg-[#EDF2F7] border-none outline-none text-navyBlue rounded-md p-4 h-[56px]"
+          className="border bg-[#EDF2F7] border-none outline-none text-navyBlue rounded-[10px] p-4 h-[56px]"
         />
       </div>
     );
@@ -138,106 +138,104 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
       setFormData({ ...formData, [fieldName]: value });
     };
 
- const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-   e.preventDefault();
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-   const errors: any = {
-     name: formData.drug ? "" : "Please fill in the Name of drug field.",
-     frequency: formData.frequency ? "" : "Please select a Frequency.",
-     route: formData.route ? "" : "Please select a Route.",
-     start: formData.start ? "" : "Please select a Start Date.",
-     end: formData.end ? "" : "Please select an End Date.",
-   };
+    const errors: any = {
+      name: formData.drug ? "" : "Please fill in the Name of drug field.",
+      frequency: formData.frequency ? "" : "Please select a Frequency.",
+      route: formData.route ? "" : "Please select a Route.",
+      start: formData.start ? "" : "Please select a Start Date.",
+      end: formData.end ? "" : "Please select an End Date.",
+    };
 
-   const errorValues = Object.values(errors);
+    const errorValues = Object.values(errors);
 
-   if (errorValues.some((err) => err !== "")) {
-     Object.keys(errors).forEach((field) => {
-       if (errors[field]) {
-         toast.error(errors[field]);
-       }
-     });
-     return;
-   }
+    if (errorValues.some((err) => err !== "")) {
+      Object.keys(errors).forEach((field) => {
+        if (errors[field]) {
+          toast.error(errors[field]);
+        }
+      });
+      return;
+    }
 
-   try {
-     // Update the drug data
-     const updatedDrugs = drugs.map((drug: any) => {
-       if (drug.drug === activeDrug) {
-         return {
-           drug: formData.drug,
-           frequency: formData.frequency,
-           route: formData.route,
-           start: formData.start,
-           end: formData.end,
-           time: formData.time,
-           reminder: formData.reminder,
-         };
-       }
-       return drug;
-     });
+    try {
+      // Update the drug data
+      const updatedDrugs = drugs.map((drug: any) => {
+        if (drug.drug === activeDrug) {
+          return {
+            drug: formData.drug,
+            frequency: formData.frequency,
+            route: formData.route,
+            start: formData.start,
+            end: formData.end,
+            time: formData.time,
+            reminder: formData.reminder,
+          };
+        }
+        return drug;
+      });
 
-     dispatch(setDrugs(updatedDrugs));
+      dispatch(setDrugs(updatedDrugs));
 
-     // Remove active drug from schedule
-     const strippedSchedule = removeActiveDrugFromSchedule({
-       activeDrug,
-       schedule,
-     });
-     const data = generateSchedule(formData);
-     const updatedSchedule = [...strippedSchedule, ...data];
+      // Remove active drug from schedule
+      const strippedSchedule = removeActiveDrugFromSchedule({
+        activeDrug,
+        schedule,
+      });
+      const data = generateSchedule(formData);
+      const updatedSchedule = [...strippedSchedule, ...data];
 
-     // Update Redux state with the new schedule
-     dispatch(updateSchedule([...updatedSchedule]));
+      // Update Redux state with the new schedule
+      dispatch(updateSchedule([...updatedSchedule]));
 
-     // Show loading toast while uploading the schedule
-     toast.loading("Saving changes", { duration: 2000 });
+      // Show loading toast while uploading the schedule
+      toast.loading("Saving changes", { duration: 2000 });
 
-     // Upload the updated schedule to the server
-     await uploadScheduleToServer({
-       userId: userId,
-       schedule: updatedSchedule,
-     });
+      // Upload the updated schedule to the server
+      await uploadScheduleToServer({
+        userId: userId,
+        schedule: updatedSchedule,
+      });
 
-     // Update drug information on the server
-     const { error: drugUpdateError } = await supabase
-       .from("drugs")
-       .update({
-         // Update drug information here
-         userId: userId,
-         drug: formData.drug,
-         frequency: formData.frequency,
-         route: formData.route,
-         start: formData.start,
-         end: formData.end,
-         time: formData.time,
-         reminder: formData.reminder,
-       })
-       .eq("drug", activeDrug);
+      // Update drug information on the server
+      const { error: drugUpdateError } = await supabase
+        .from("drugs")
+        .update({
+          // Update drug information here
+          userId: userId,
+          drug: formData.drug,
+          frequency: formData.frequency,
+          route: formData.route,
+          start: formData.start,
+          end: formData.end,
+          time: formData.time,
+          reminder: formData.reminder,
+        })
+        .eq("drug", activeDrug);
 
-     if (drugUpdateError) {
-       toast.error("Failed to update drug on the server");
-       return;
-     }
+      if (drugUpdateError) {
+        toast.error("Failed to update drug on the server");
+        return;
+      }
 
-     // Hide loading toast and show success toast
-     toast.success(
-       `'${formData.drug}' has been updated successfully`
-     );
-     setEditForm(false);
-     setFormErrors({
-       drug: "",
-       frequency: "",
-       route: "",
-       start: "",
-       end: "",
-       time: "",
-     });
-   } catch (error) {
-     console.error("Error updating data on the server:", error);
-     toast.error("An error occurred while updating data on the server");
-   }
- };
+      // Hide loading toast and show success toast
+      toast.success(`'${formData.drug}' has been updated successfully`);
+      setEditForm(false);
+      setFormErrors({
+        drug: "",
+        frequency: "",
+        route: "",
+        start: "",
+        end: "",
+        time: "",
+      });
+    } catch (error) {
+      console.error("Error updating data on the server:", error);
+      toast.error("An error occurred while updating data on the server");
+    }
+  };
 
   return (
     <div
@@ -290,7 +288,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
                 name="drug"
                 value={formData.drug}
                 onChange={handleInputChange}
-                className="border bg-[#EDF2F7] border-none outline-none rounded-md p-4 mb-4 capitalize h-[56px]"
+                className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4 capitalize h-[56px]"
                 placeholder="Name of Drug"
               />
             </div>
@@ -301,7 +299,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
               >
                 Routes of Administration
               </label>
-              <div className="bg-[#EDF2F7] outline-none rounded-md w-full px-4 mb-4 h-[56px]">
+              <div className="bg-[#EDF2F7] outline-none rounded-[10px] w-full px-4 mb-4 h-[56px]">
                 <select
                   id="route"
                   name="route"
@@ -327,7 +325,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
               >
                 Frequency
               </label>
-              <div className="bg-[#EDF2F7] outline-none rounded-md w-full px-4 mb-4 h-[56px]">
+              <div className="bg-[#EDF2F7] outline-none rounded-[10px] w-full px-4 mb-4 h-[56px]">
                 <select
                   id="frequency"
                   name="frequency"
@@ -367,14 +365,14 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
               >
                 Select Start Date
               </label>
-              <div className="w-full bg-[#EDF2F7] pr-4 mb-8 pb-0 rounded-md h-[56px]">
+              <div className="w-full bg-[#EDF2F7] pr-4 mb-8 pb-0 rounded-[10px] h-[56px]">
                 <input
                   type="date"
                   id="start"
                   name="start"
                   value={formData.start}
                   onChange={handleInputChange}
-                  className="border bg-[#EDF2F7] border-none outline-none w-full text-navyBlue rounded-md py-4 pl-4 h-[56px]"
+                  className="border bg-[#EDF2F7] border-none outline-none w-full text-navyBlue rounded-[10px] py-4 pl-4 h-[56px]"
                 />
               </div>
               <div className="flex flex-col mb-8 w-full">
@@ -384,14 +382,14 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
                 >
                   Select End Date
                 </label>
-                <div className="w-full bg-[#EDF2F7] pr-4 pb-0 rounded-md h-[56px]">
+                <div className="w-full bg-[#EDF2F7] pr-4 pb-0 rounded-[10px] h-[56px]">
                   <input
                     type="date"
                     id="end"
                     name="end"
                     value={formData.end}
                     onChange={handleInputChange}
-                    className="border bg-[#EDF2F7] border-none outline-none w-full text-navyBlue rounded-md py-4 pl-4 h-[56px]"
+                    className="border bg-[#EDF2F7] border-none outline-none w-full text-navyBlue rounded-[10px] py-4 pl-4 h-[56px]"
                   />
                 </div>
               </div>

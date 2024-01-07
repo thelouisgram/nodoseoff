@@ -31,78 +31,76 @@ const CreateAccount = () => {
     setFormData({ ...formData, role: value });
   };
 
-const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
-  // Password strength validation (can be customized)
-  const strongPasswordRegex = /^(?=.*\d)[A-Za-z\d]{8,}$/;
-  if (!strongPasswordRegex.test(formData.password)) {
-    toast.error(
-      "Please enter a strong password (minimum eight characters, one small letter, and one number)"
-    );
-    return;
-  }
-
-  for (const key in formData) {
-    if (formData[key as keyof typeof formData] === "") {
-      toast.error("Please fill in all fields");
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    // Password strength validation (can be customized)
+    const strongPasswordRegex = /^(?=.*\d)[A-Za-z\d]{8,}$/;
+    if (!strongPasswordRegex.test(formData.password)) {
+      toast.error(
+        "Please enter a strong password (minimum eight characters, one small letter, and one number)"
+      );
       return;
     }
-  }
 
-  toast.loading("Signing Up");
+    for (const key in formData) {
+      if (formData[key as keyof typeof formData] === "") {
+        toast.error("Please fill in all fields");
+        return;
+      }
+    }
 
+    toast.loading("Signing Up");
 
-  try {
-    // Sign up the user
-    const { error: signUpError, data } = await supabase.auth.signUp({
-      email: formData.email,
-      password: formData.password,
+    try {
+      // Sign up the user
+      const { error: signUpError, data } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (signUpError) {
+        toast.error("Error signing up: " + signUpError.message);
+        return;
+      }
+
+      const user = await supabase.auth.getUser();
+      const userId = user.data.user?.id;
+      if (userId) {
+        dispatch(updateIsAuthenticated(true));
+        dispatch(updateUserId(userId));
+      }
+      // Add user info to the database
+      const { error: addInfoError } = await supabase.from("users").insert({
+        name: formData.fullName,
+        role: formData.role,
+        phone: formData.phoneNumber,
+        email: formData.email,
+        userId: userId,
+        schedule: {},
+      });
+
+      if (addInfoError) {
+        toast.error("Failed to insert data into the database");
+        return;
+      }
+
+      // Both operations succeeded
+      router.push("/dashboard");
+      toast.success("Signed up and information added");
+    } catch (error) {
+      // Handle any unexpected errors
+      toast.error("Error: " + error);
+    }
+
+    // Reset form data
+    setFormData({
+      fullName: "",
+      email: "",
+      phoneNumber: "",
+      role: "",
+      password: "",
     });
-
-    if (signUpError) {
-      toast.error("Error signing up: " + signUpError.message);
-      return;
-    }
-
-    const user = await supabase.auth.getUser();
-    const userId = user.data.user?.id;
-    if (userId) {
-      dispatch(updateIsAuthenticated(true));
-      dispatch(updateUserId(userId));
-    }
-    // Add user info to the database
-    const { error: addInfoError } = await supabase.from("users").insert({
-      name: formData.fullName,
-      role: formData.role,
-      phone: formData.phoneNumber,
-      email: formData.email,
-      userId: userId,
-      schedule: {}
-    });
-
-    if (addInfoError) {
-      toast.error("Failed to insert data into the database");
-      return;
-    }
-
-    // Both operations succeeded
-    router.push("/dashboard");
-    toast.success("Signed up and information added");
-  } catch (error) {
-    // Handle any unexpected errors
-    toast.error("Error: " + error);
-  }
-
-  // Reset form data
-  setFormData({
-    fullName: "",
-    email: "",
-    phoneNumber: "",
-    role: "",
-    password: "",
-  });
-};
-
+  };
 
   return (
     <div className="min-h-[100dvh] w-[100%] py-8 px-6 flex flex-col justify-center items-center ss:py-10 bg-navyBlue">
@@ -136,7 +134,7 @@ const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
             name="fullName"
             value={formData.fullName}
             onChange={handleInputChange}
-            className="border bg-[#EDF2F7] border-none outline-none rounded-md p-4 mb-4"
+            className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4"
             placeholder="Full Name"
           />
         </div>
@@ -150,7 +148,7 @@ const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
             name="email"
             value={formData.email}
             onChange={handleInputChange}
-            className="border bg-[#EDF2F7] border-none outline-none rounded-md p-4 mb-4"
+            className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4"
             placeholder="Email Address"
           />
         </div>
@@ -164,7 +162,7 @@ const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
             name="phoneNumber"
             value={formData.phoneNumber}
             onChange={handleInputChange}
-            className="border bg-[#EDF2F7] border-none outline-none rounded-md p-4 mb-4"
+            className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4"
             placeholder="Phone Number"
           />
         </div>
@@ -172,7 +170,7 @@ const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
           <label htmlFor="role" className="text-[14px] mb-1 ">
             Select your Role:
           </label>
-          <div className="bg-[#EDF2F7] outline-none rounded-md w-full px-4 mb-4 h-[56px]">
+          <div className="bg-[#EDF2F7] outline-none rounded-[10px] w-full px-4 mb-4 h-[56px]">
             <select
               id="role"
               name="role"
@@ -196,7 +194,7 @@ const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
             name="password"
             value={formData.password}
             onChange={handleInputChange}
-            className="border bg-[#EDF2F7] border-none outline-none rounded-md p-4 mb-4"
+            className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4"
             placeholder="Password"
           />
         </div>

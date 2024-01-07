@@ -1,10 +1,10 @@
 import Image from "next/image";
 import React, { ChangeEvent, FormEvent, useState } from "react";
-import { toast } from "sonner"; 
+import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../../store";
-import { updateAllergies } from "../../../store/stateSlice";
-import supabase from "../../../utils/supabaseClient";
+import { RootState } from "../../../../store";
+import { updateAllergies } from "../../../../store/stateSlice";
+import supabase from "../../../../utils/supabaseClient";
 
 interface AllergiesFormProps {
   allergiesForm: boolean;
@@ -143,10 +143,10 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
                   <input
                     type="text"
                     id="effect"
-                    name="allergy" 
+                    name="allergy"
                     value={formData.allergy}
                     onChange={handleInputChange}
-                    className="border bg-[#EDF2F7] border-none outline-none rounded-md p-4 mb-4 capitalize h-[56px]"
+                    className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4 capitalize h-[56px]"
                     placeholder="Drug Allergy"
                   />
                 </div>

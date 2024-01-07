@@ -1,12 +1,14 @@
 export interface AppType {
-  info: Info[]
+  info: Info[];
   isAuthenticated: boolean;
   userId: string;
-  drugs: any;
-  effects: any;
-  schedule: any[]; 
+  drugs: any[];
+  effects: any[];
+  schedule: any[];
   activeDrug: string;
   allergies: string[];
+  drugDetails: any;
+  searchedWord: string;
 }
 
 export interface Info{

@@ -3,14 +3,14 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
 import Image from "next/image";
-import { dose } from "../../../utils/dashboard";
+import { dose } from "../../../../utils/dashboard";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../../store";
-import { setDrugs, updateSchedule } from "../../../store/stateSlice";
-import { generateSchedule } from "../../../utils/dashboard";
-import { Drug } from "../../../types";
-import supabase from "../../../utils/supabaseClient";
-import { uploadScheduleToServer } from "../../../utils/schedule";
+import { RootState } from "../../../../store";
+import { setDrugs, updateSchedule } from "../../../../store/stateSlice";
+import { generateSchedule } from "../../../../utils/dashboard";
+import { Drug } from "../../../../types";
+import supabase from "../../../../utils/supabaseClient";
+import { uploadScheduleToServer } from "../../../../utils/schedule";
 
 interface DrugFormProps {
   drugsForm: boolean;
@@ -107,14 +107,14 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
 
   const timeInput = formData.time.map((item: string, index: number) => {
     return (
-      <div key={index} className="bg-[#EDF2F7] pr-4 rounded-md h-[56px]">
+      <div key={index} className="bg-[#EDF2F7] pr-4 rounded-[10px] h-[56px]">
         <input
           type="time"
           id={`time-${index}`}
           name={`time-${index}`}
           value={formData.time[index]}
           onChange={handleInputChange}
-          className="border border-none bg-[#EDF2F7] outline-none text-navyBlue p-4 pr-0 w-full rounded-md h-[56px]"
+          className="border border-none bg-[#EDF2F7] outline-none text-navyBlue p-4 pr-0 w-full rounded-[10px] h-[56px]"
         />
       </div>
     );
@@ -161,7 +161,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
       resetFormData();
       return;
     }
-    
+
     if (allergicToDrug) {
       toast.error(`'${formData.drug}' is a known drug allergy!`);
       resetFormData();
@@ -282,7 +282,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
                   name="drug"
                   value={formData.drug}
                   onChange={handleInputChange}
-                  className="border bg-[#EDF2F7] border-none outline-none rounded-md p-4 mb-4 capitalize h-[56px] "
+                  className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4 capitalize h-[56px] "
                   placeholder="Name of Drug"
                 />
               </div>
@@ -293,7 +293,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
                 >
                   Routes of Administration
                 </label>
-                <div className="bg-[#EDF2F7] outline-none rounded-md w-full px-4 mb-4 h-[56px]">
+                <div className="bg-[#EDF2F7] outline-none rounded-[10px] w-full px-4 mb-4 h-[56px]">
                   <select
                     id="route"
                     name="route"
@@ -319,7 +319,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
                 >
                   Frequency
                 </label>
-                <div className="bg-[#EDF2F7] outline-none rounded-md w-full px-4 mb-4 h-[56px]">
+                <div className="bg-[#EDF2F7] outline-none rounded-[10px] w-full px-4 mb-4 h-[56px]">
                   <select
                     id="frequency"
                     name="frequency"
@@ -359,14 +359,14 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
                 >
                   Select Start Date
                 </label>
-                <div className="w-full bg-[#EDF2F7] pr-4 pb-0 mb-8 rounded-md h-[56px]">
+                <div className="w-full bg-[#EDF2F7] pr-4 pb-0 mb-8 rounded-[10px] h-[56px]">
                   <input
                     type="date"
                     id="start"
                     name="start"
                     value={formData.start}
                     onChange={handleInputChange}
-                    className="border bg-[#EDF2F7] border-none outline-none w-full text-navyBlue rounded-md py-4 pl-4 h-[56px]"
+                    className="border bg-[#EDF2F7] border-none outline-none w-full text-navyBlue rounded-[10px] py-4 pl-4 h-[56px]"
                   />
                 </div>
                 <div className="flex flex-col mb-8 w-full">
@@ -376,14 +376,14 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
                   >
                     Select End Date
                   </label>
-                  <div className="w-full bg-[#EDF2F7] pr-4  rounded-md h-[56px]">
+                  <div className="w-full bg-[#EDF2F7] pr-4  rounded-[10px] h-[56px]">
                     <input
                       type="date"
                       id="end"
                       name="end"
                       value={formData.end}
                       onChange={handleInputChange}
-                      className="border bg-[#EDF2F7] border-none outline-none w-full text-navyBlue rounded-md py-4 pl-4 h-[56px]"
+                      className="border bg-[#EDF2F7] border-none outline-none w-full text-navyBlue rounded-[10px] py-4 pl-4 h-[56px]"
                     />
                   </div>
                 </div>

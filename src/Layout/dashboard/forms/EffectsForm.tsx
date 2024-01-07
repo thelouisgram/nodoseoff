@@ -3,9 +3,9 @@ import Image from "next/image";
 import React, { ChangeEvent, FormEvent, useState } from "react";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../../store";
-import { setEffects } from "../../../store/stateSlice";
-import supabase from "../../../utils/supabaseClient";
+import { RootState } from "../../../../store";
+import { setEffects } from "../../../../store/stateSlice";
+import supabase from "../../../../utils/supabaseClient";
 
 interface EffectsFormProps {
   effectsForm: boolean;
@@ -81,9 +81,7 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
       }
 
       dispatch(setEffects([...effects, formData]));
-      toast.success(
-        `'${formData.effect}' has been added successfully`
-      );
+      toast.success(`'${formData.effect}' has been added successfully`);
       setFormData({
         effect: "",
         severity: "mild",
@@ -150,7 +148,7 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
                     name="effect"
                     value={formData.effect}
                     onChange={handleInputChange}
-                    className="border bg-[#EDF2F7] border-none outline-none rounded-md p-4 mb-4 capitalize h-[56px]"
+                    className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4 capitalize h-[56px]"
                     placeholder="Side Effect"
                   />
                 </div>
@@ -161,7 +159,7 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
                   >
                     Select Side Effect severity
                   </label>
-                  <div className="bg-[#EDF2F7] outline-none rounded-md w-full px-4 mb-4 h-[56px]">
+                  <div className="bg-[#EDF2F7] outline-none rounded-[10px] w-full px-4 mb-4 h-[56px]">
                     <select
                       id="severity"
                       name="severity"
@@ -182,14 +180,14 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
                   >
                     Select Date
                   </label>
-                  <div className="w-full bg-[#EDF2F7] pr-4 h-[56px] rounded-md">
+                  <div className="w-full bg-[#EDF2F7] pr-4 h-[56px] rounded-[10px]">
                     <input
                       type="date"
                       id="date"
                       name="date"
                       value={formData.date}
                       onChange={handleInputChange}
-                      className="border border-none bg-[#EDF2F7] outline-none rounded-md p-4 pr-0 w-full h-[56px]"
+                      className="border border-none bg-[#EDF2F7] outline-none rounded-[10px] p-4 pr-0 w-full h-[56px]"
                     />
                   </div>
                 </div>

@@ -1,14 +1,14 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../../../store";
+import { RootState } from "../../../../store";
 import Image from "next/image";
 import { toast } from "sonner";
-import supabase from "../../../utils/supabaseClient";
+import supabase from "../../../../utils/supabaseClient";
 import {
   updateIsAuthenticated,
   updateUserId,
   updateSchedule,
-} from "../../../store/stateSlice";
+} from "../../../../store/stateSlice";
 import { useRouter } from "next/router";
 
 const Account = () => {

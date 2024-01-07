@@ -47,8 +47,8 @@ const SignIn = () => {
           if (userId) {
             dispatch(updateIsAuthenticated(true));
             dispatch(updateUserId(userId));
-             router.push("/dashboard");
-             toast.success("Signed in");
+            router.push("/dashboard");
+            toast.success("Signed in");
           }
         }
       } catch (error) {
@@ -105,7 +105,7 @@ const SignIn = () => {
             name="email"
             value={formData.email}
             onChange={handleInputChange}
-            className="border bg-[#EDF2F7] border-none outline-none rounded-md p-4 mb-4"
+            className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4"
             placeholder="Email Address"
             required
           />
@@ -120,7 +120,7 @@ const SignIn = () => {
             name="password"
             value={formData.password}
             onChange={handleInputChange}
-            className="border bg-[#EDF2F7] border-none outline-none rounded-md p-4 mb-4"
+            className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4"
             placeholder="Password"
             required
           />

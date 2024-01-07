@@ -3,12 +3,12 @@ import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import { tabs, tabsMobile } from "./../../../utils/dashboard";
 import Home from "@/Layout/dashboard/home/Home";
-import EffectsForm from "@/Layout/dashboard/EffectsForm";
-import DrugsForm from "@/Layout/dashboard/DrugsForm";
+import EffectsForm from "@/Layout/dashboard/forms/EffectsForm";
+import DrugsForm from "@/Layout/dashboard/forms/DrugsForm";
 import Drugs from "@/Layout/dashboard/drugs/Drugs";
-import Screen from "@/Layout/dashboard/Screen";
-import EditForm from "@/Layout/dashboard/EditForm";
-import Account from "@/Layout/dashboard/Account";
+import Screen from "@/Layout/dashboard/shared/Screen";
+import EditForm from "@/Layout/dashboard/forms/EditForm";
+import Account from "@/Layout/dashboard/account/Account";
 import Link from "next/link";
 import supabase from "../../../utils/supabaseClient";
 import { useRouter } from "next/router";
@@ -23,8 +23,8 @@ import {
 } from "../../../store/stateSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store";
-import Search from "@/Layout/dashboard/Search";
-import AllergiesForm from "@/Layout/dashboard/AllergiesForm";
+import Search from "@/Layout/dashboard/search/Search";
+import AllergiesForm from "@/Layout/dashboard/forms/AllergiesForm";
 
 interface tabsMobileProps {
   name: string;

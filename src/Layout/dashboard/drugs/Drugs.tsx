@@ -144,49 +144,51 @@ const Drugs: React.FC<DrugsProps> = ({
     }
   };
 
- const handleAllergies = async () => {
-   // Show loading toast while uploading the schedule
+  const handleAllergies = async () => {
+    // Show loading toast while uploading the schedule
 
-   toast.loading("Marking Drug as allergy")
+    toast.loading("Marking Drug as allergy");
 
-   try {
-     const { error: deleteError } = await supabase
-       .from("drugs")
-       .delete()
-       .eq("drug", activeDrug);
+    try {
+      const { error: deleteError } = await supabase
+        .from("drugs")
+        .delete()
+        .eq("drug", activeDrug);
 
-     const { error: insertError } = await supabase.from("allergies").insert({
-       userId: userId,
-       allergy: activeDrug,
-     });
+      const { error: insertError } = await supabase.from("allergies").insert({
+        userId: userId,
+        allergy: activeDrug,
+      });
 
-     if (deleteError || insertError) {
-       toast.error("Failed to delete Drug or insert Allergy");
-       return;
-     }
+      if (deleteError || insertError) {
+        toast.error("Failed to delete Drug or insert Allergy");
+        return;
+      }
 
-     const updatedSchedule = removeActiveDrugFromSchedule({
-       activeDrug,
-       schedule,
-     });
+      const updatedSchedule = removeActiveDrugFromSchedule({
+        activeDrug,
+        schedule,
+      });
 
-     toast.success(`'${activeDrug}' has been marked as an allergy!`);
+      toast.success(`'${activeDrug}' has been marked as an allergy!`);
 
-     // Make the uploadScheduleToServer asynchronous
-     await uploadScheduleToServer({
-       userId: userId,
-       schedule: updatedSchedule,
-     });
+      // Make the uploadScheduleToServer asynchronous
+      await uploadScheduleToServer({
+        userId: userId,
+        schedule: updatedSchedule,
+      });
 
-     dispatch(updateAllergies([...allergies, { allergy: activeDrug }]));
+      dispatch(updateAllergies([...allergies, { allergy: activeDrug }]));
 
-     // Update the Redux state after deleting and uploading the schedule
-     dispatch(setDrugs(drugs.filter((drug: Drug) => drug.drug !== activeDrug)));
-     dispatch(updateSchedule(updatedSchedule));
-   } catch (error) {
-     console.error("Error handling allergies:", error);
-   }
- };
+      // Update the Redux state after deleting and uploading the schedule
+      dispatch(
+        setDrugs(drugs.filter((drug: Drug) => drug.drug !== activeDrug))
+      );
+      dispatch(updateSchedule(updatedSchedule));
+    } catch (error) {
+      console.error("Error handling allergies:", error);
+    }
+  };
 
   const renderedDrugs = drugs?.map((drug: any, index: number) => {
     const startDate: any = new Date(drug.start);
@@ -281,7 +283,7 @@ const Drugs: React.FC<DrugsProps> = ({
         {renderedTabs}
       </div>
       {tab === "Regimen" ? (
-        <Regimen renderedDrugs={renderedDrugs} drugs={drugs}  />
+        <Regimen renderedDrugs={renderedDrugs} drugs={drugs} />
       ) : tab === "Completed" ? (
         <Completed />
       ) : (
@@ -308,7 +310,7 @@ const Drugs: React.FC<DrugsProps> = ({
                     setActiveDrug(""),
                     setDeleteModal(false);
                 }}
-                className="px-4 py-1 flex items-center gap-2 bg-navyBlue rounded-md rounded-bl-none "
+                className="px-4 py-1 flex items-center gap-2 bg-navyBlue rounded-[10px] rounded-bl-none "
               >
                 Delete
               </button>
@@ -316,7 +318,7 @@ const Drugs: React.FC<DrugsProps> = ({
                 onClick={() => {
                   setActiveDrug(""), setScreen(false), setDeleteModal(false);
                 }}
-                className="px-4 py-1 flex items-center gap-2 bg-none border text-navyBlue border-navyBlue rounded-md rounded-bl-none "
+                className="px-4 py-1 flex items-center gap-2 bg-none border text-navyBlue border-navyBlue rounded-[10px] rounded-bl-none "
               >
                 Cancel
               </button>
@@ -340,9 +342,12 @@ const Drugs: React.FC<DrugsProps> = ({
             <div className="w-full flex gap-3 justify-start flex-row-reverse text-[12px] py-4 px-4">
               <button
                 onClick={() => {
-                  setScreen(false), setActiveDrug(""), setAllergyModal(false), handleAllergies();
+                  setScreen(false),
+                    setActiveDrug(""),
+                    setAllergyModal(false),
+                    handleAllergies();
                 }}
-                className="px-4 py-1 flex items-center gap-2 bg-navyBlue rounded-md rounded-bl-none "
+                className="px-4 py-1 flex items-center gap-2 bg-navyBlue rounded-[10px] rounded-bl-none "
               >
                 Add to Allergies
               </button>
@@ -350,7 +355,7 @@ const Drugs: React.FC<DrugsProps> = ({
                 onClick={() => {
                   setActiveDrug(""), setScreen(false), setAllergyModal(false);
                 }}
-                className="px-4 py-1 flex items-center gap-2 bg-none border text-navyBlue border-navyBlue rounded-md rounded-bl-none "
+                className="px-4 py-1 flex items-center gap-2 bg-none border text-navyBlue border-navyBlue rounded-[10px] rounded-bl-none "
               >
                 Cancel
               </button>
@@ -376,7 +381,7 @@ const Drugs: React.FC<DrugsProps> = ({
                 onClick={() => {
                   setEditForm(true), setScreen(false), setEditModal(false);
                 }}
-                className="px-4 py-1 flex items-center gap-2 bg-navyBlue rounded-md rounded-bl-none "
+                className="px-4 py-1 flex items-center gap-2 bg-navyBlue rounded-[10px] rounded-bl-none "
               >
                 Edit
               </button>
@@ -387,7 +392,7 @@ const Drugs: React.FC<DrugsProps> = ({
                     setEditForm(false),
                     setEditModal(false);
                 }}
-                className="px-4 py-1 flex items-center gap-2 bg-none border text-navyBlue border-navyBlue rounded-md rounded-bl-none "
+                className="px-4 py-1 flex items-center gap-2 bg-none border text-navyBlue border-navyBlue rounded-[10px] rounded-bl-none "
               >
                 Cancel
               </button>
@@ -406,7 +411,7 @@ const Drugs: React.FC<DrugsProps> = ({
                 setDrugsForm(true);
                 setScreen(false);
               }}
-              className="rounded-md rounded-bl-none text-white font-semibold justify-end flex"
+              className="rounded-[10px] rounded-bl-none text-white font-semibold justify-end flex"
             >
               + Add drug
             </button>
@@ -416,7 +421,7 @@ const Drugs: React.FC<DrugsProps> = ({
                 setAllergiesForm(true);
                 setScreen(false);
               }}
-              className="rounded-md rounded-bl-none text-white font-semibold justify-end flex"
+              className="rounded-[10px] rounded-bl-none text-white font-semibold justify-end flex"
             >
               + Add Allergies
             </button>
@@ -426,7 +431,7 @@ const Drugs: React.FC<DrugsProps> = ({
                 setEffectsForm(true);
                 setScreen(false);
               }}
-              className="rounded-md rounded-bl-none text-white font-semibold justify-end flex"
+              className="rounded-[10px] rounded-bl-none text-white font-semibold justify-end flex"
             >
               + Add Side Effect
             </button>

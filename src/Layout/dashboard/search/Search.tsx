@@ -10,6 +10,7 @@ import Loader from "@/Layout/dashboard/shared/Loader";
 import axios, { AxiosError } from "axios";
 import Image from "next/image";
 import { sectionDetails } from "../../../../utils/search";
+import { toast } from "sonner";
 
 const Search = () => {
   const [searchedDrug, setSearchedDrug] = useState("");
@@ -30,6 +31,10 @@ const Search = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!searchedDrug) {
+      toast.error("Fill in the drug name");
+      return;
+    }
     setStatus({ isLoading: true, success: false, error: false });
 
     try {
@@ -52,9 +57,9 @@ const Search = () => {
       } else {
         console.error("Error fetching data:", error);
       }
-      // Handle your error state or throw an error if needed
-      throw new Error("Failed to fetch drug data");
+      toast.error("No information on '" + searchedDrug + "' available");
     }
+    setSearchedDrug("");
   };
 
   return (
@@ -63,14 +68,13 @@ const Search = () => {
         <h1 className="text-[24px] ss:text-[32px] font-semibold font-montserrant ">
           Search
         </h1>
+        <p className="text-[16px] text-[#718096]">
+          Search for Drug Details Smartly!
+        </p>
       </div>
-      <p className="text-[16px] text-[#718096] mb-5">
-        Search for Drug Details Smartly!
-      </p>
-
       <form
         onSubmit={handleSubmit}
-        className="w-full sm:w-1/2 bg-lightBlue rounded-[10px] flex items-center overflow-hidden gap-4 pr-4"
+        className="w-full sm:w-1/2 bg-lightGrey rounded-[10px] flex items-center overflow-hidden gap-4 pr-4"
       >
         <input
           type="text"
@@ -78,7 +82,7 @@ const Search = () => {
           name="drug"
           value={searchedDrug}
           onChange={handleInputChange}
-          className="outline-none p-4 capitalize h-[56px] w-full bg-lightBlue"
+          className="outline-none p-4 capitalize h-[56px] w-full bg-lightGrey"
           placeholder="Search for a Drug"
         />
         <button>
@@ -96,14 +100,22 @@ const Search = () => {
         ) : status.success ? (
           <div className="mt-6 font-Inter flex flex-col gap-4">
             <div className="">
-              <h1 className="text-[24px] ss:text-[32px] font-semibold capitalize">{searchedWord}</h1>
+              <h1 className="text-[24px] ss:text-[32px] font-semibold capitalize">
+                {searchedWord}
+              </h1>
+            </div>
+            <div className="">
+              <h1 className="text-[14px] font-bold">Route:</h1>
+              <h1 className="text-[14px] ss:text-16px capitalize">
+                {drugDetails.openfda.route.join(", ").toLowerCase()}
+              </h1>
             </div>
             {sectionDetails.map(
               (section) =>
                 drugDetails?.[section.key] && (
                   <div key={section.key} className="">
                     <h1 className="text-[14px] font-bold">{section.title}:</h1>
-                    <h1 className="text-18px">
+                    <h1 className="text-[14px] ss:text-16px">
                       <ExpandableText
                         text={
                           drugDetails?.[section.key]?.[0]
@@ -119,7 +131,7 @@ const Search = () => {
             )}
             <div className="">
               <h1 className="text-[14px] font-bold">Source:</h1>
-              <h1 className="text-18px">OpenFDA</h1>
+              <h1 className="text-[14px] ss:text-16px">OpenFDA</h1>
             </div>
             <p className="italic">
               Disclaimer: Do not rely on openFDA to make decisions regarding
@@ -128,7 +140,17 @@ const Search = () => {
             </p>
           </div>
         ) : (
-          ""
+          <div className="w-full h-[320px] flex gap-3 flex-col justify-center items-center">
+            <Image
+              src="/assets/no-results.png"
+              width={60}
+              height={60}
+              alt="no results"
+            />
+            <h1 className="text-[#a7a7a7] text-[16px] font-Inter">
+              Search for a drug to get started!
+            </h1>
+          </div>
         )}
       </div>
     </div>

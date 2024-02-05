@@ -1,3 +1,5 @@
+import { ScheduleItem } from "../types/dashboard";
+
 export const tabs = [
   { name: "Home", logo: "/assets/desktop-dashboard/home.png" },
   { name: "Drugs", logo: "/assets/desktop-dashboard/drugs.png" },
@@ -6,32 +8,48 @@ export const tabs = [
 ];
 
 export const tabsMobile = [
-  { name: "Home", logo: "/assets/mobile-dashboard/home.png", logoFilled: "/assets/mobile-dashboard/home (1).png" },
-  { name: "Drugs", logo: "/assets/mobile-dashboard/drugs.png", logoFilled: "/assets/mobile-dashboard/drugs (1).png" },
-  { name: "Search", logo: "/assets/mobile-dashboard/search.png", logoFilled: "/assets/mobile-dashboard/search (1).png" },
-  { name: "Account", logo: "/assets/mobile-dashboard/user.png", logoFilled: "/assets/mobile-dashboard/user (1).png" },
+  {
+    name: "Home",
+    logo: "/assets/mobile-dashboard/home.png",
+    inactiveLogo: "/assets/mobile-dashboard/home (1).png",
+  },
+  {
+    name: "Drugs",
+    logo: "/assets/mobile-dashboard/drugs.png",
+    inactiveLogo: "/assets/mobile-dashboard/drugs (1).png",
+  },
+  {
+    name: "Search",
+    logo: "/assets/mobile-dashboard/search.png",
+    inactiveLogo: "/assets/mobile-dashboard/search (1).png",
+  },
+  {
+    name: "Account",
+    logo: "/assets/mobile-dashboard/user.png",
+    inactiveLogo: "/assets/mobile-dashboard/user (1).png",
+  },
 ];
 
 export const dose = [
-  { frequency: 'QD', times: 1, time: ["08:00"] },
-  { frequency: 'EOD', times: 1, time: ["08:00"] },
-  { frequency: 'W', times: 1, time: ["08:00"] },
-  { frequency: 'BW', times: 1, time: ["08:00"] },
-  { frequency: 'M', times: 1, time: ["08:00"] },
-  { frequency: 'BID', times: 2, time: ["08:00", "20:00"] },
-  { frequency: 'TID', times: 3, time: ["06:00", "14:00", "22:00"] },
-  { frequency: 'QID', times: 4, time: ["06:00", "12:00", "18:00", "00:00"] },
-]
+  { frequency: "QD", times: 1, time: ["08:00"] },
+  { frequency: "EOD", times: 1, time: ["08:00"] },
+  { frequency: "W", times: 1, time: ["08:00"] },
+  { frequency: "BW", times: 1, time: ["08:00"] },
+  { frequency: "M", times: 1, time: ["08:00"] },
+  { frequency: "BID", times: 2, time: ["08:00", "20:00"] },
+  { frequency: "TID", times: 3, time: ["06:00", "14:00", "22:00"] },
+  { frequency: "QID", times: 4, time: ["06:00", "12:00", "18:00", "00:00"] },
+];
 
 export const frequencyToPlaceholder: { [key: string]: string } = {
-  QD: 'Once daily',
-  BID: 'Twice daily',
-  TID: 'Thrice daily',
-  QID: 'Four times daily',
-  EOD: 'Every other day',
-  W: 'Weekly',
-  BW: 'Biweekly',
-  M: 'Monthly',
+  QD: "Once daily",
+  BID: "Twice daily",
+  TID: "Thrice daily",
+  QID: "Four times daily",
+  EOD: "Every other day",
+  W: "Weekly",
+  BW: "Biweekly",
+  M: "Monthly",
 };
 
 export const generateSchedule = (drugDetails: any) => {
@@ -44,12 +62,26 @@ export const generateSchedule = (drugDetails: any) => {
   let uniqueIndex = 1; // Unique index counter
 
   // Calculate the difference in days between start and end dates
-  const differenceInDays = Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24));
+  const differenceInDays = Math.floor(
+    (endDate - startDate) / (1000 * 60 * 60 * 24)
+  );
 
   // Generate the schedule based on frequency and times
   for (let i = 0; i <= differenceInDays; i++) {
-    if (frequency === "QD" || frequency === "BID" || frequency === "TID" || frequency === "QID") {
-      const dosesPerDay = frequency === "BID" ? 2 : frequency === "TID" ? 3 : frequency === "QID" ? 4 : 1;
+    if (
+      frequency === "QD" ||
+      frequency === "BID" ||
+      frequency === "TID" ||
+      frequency === "QID"
+    ) {
+      const dosesPerDay =
+        frequency === "BID"
+          ? 2
+          : frequency === "TID"
+          ? 3
+          : frequency === "QID"
+          ? 4
+          : 1;
 
       for (let j = 0; j < dosesPerDay; j++) {
         const currentDate = new Date(startDate);
@@ -150,7 +182,10 @@ function calculateNextDoseTime(schedule: any[], drug?: any): Date | null {
       const doseTime = new Date(`${dose?.date}T${dose?.time}`);
       const currentTime = new Date();
 
-      if (doseTime > currentTime && (!nextDoseTime || doseTime < nextDoseTime)) {
+      if (
+        doseTime > currentTime &&
+        (!nextDoseTime || doseTime < nextDoseTime)
+      ) {
         nextDoseTime = doseTime;
       }
     }
@@ -158,7 +193,6 @@ function calculateNextDoseTime(schedule: any[], drug?: any): Date | null {
 
   return nextDoseTime;
 }
-
 
 export function calculateClosestDoseCountdown(schedule: DrugSchedule): string {
   let closestDose: Drug | null = null;
@@ -193,7 +227,9 @@ export function calculateClosestDoseCountdown(schedule: DrugSchedule): string {
         const remainingMinutes = Math.floor((timeDiff % 3600000) / 60000); // 1 minute = 60000 milliseconds
         const remainingSeconds = Math.floor((timeDiff % 60000) / 1000); // 1 second = 1000 milliseconds
 
-        return `${remainingHours.toString().padStart(2, '0')}:${remainingMinutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+        return `${remainingHours.toString().padStart(2, "0")}:${remainingMinutes
+          .toString()
+          .padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
       }
     } else {
       // Next dose time has passed, recalculate next dose time and update countdown
@@ -205,13 +241,49 @@ export function calculateClosestDoseCountdown(schedule: DrugSchedule): string {
   return updateCountdown();
 }
 
-
 export function formatDate(dateString: string) {
-    const options: Intl.DateTimeFormatOptions = {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    };
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", options);
-  }
+  const options: Intl.DateTimeFormatOptions = {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  };
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", options);
+}
+
+interface FilteredDosesResult {
+    remainingDoses: ScheduleItem[];
+    filteredDoses: ScheduleItem[];
+}
+
+export function filterPastDoses(doses: ScheduleItem[]): FilteredDosesResult {
+    const twentyFourHoursInMilliseconds: number = 24 * 60 * 60 * 1000;
+    const currentTime: number = Date.now();
+
+    const filteredDoses: ScheduleItem[] = [];
+    const remainingDoses: ScheduleItem[] = doses.filter((dose: ScheduleItem) => {
+        const doseTime: number = new Date(`${dose.date}T${dose.time}`).getTime();
+        const isWithin24Hours: boolean = currentTime - doseTime <= twentyFourHoursInMilliseconds;
+
+        if (isWithin24Hours) {
+            filteredDoses.push(dose);
+            return false;
+        }
+
+        return true;
+    });
+
+    return { remainingDoses, filteredDoses };
+}
+
+
+export function formatDateToSlash(inputDate:string) {
+    // Split the input date string into year, month, and day
+    var parts = inputDate.split('-');
+    
+    // Rearrange the parts into the desired format
+    var formattedDate = parts[2] + '/' + parts[1] + '/' + parts[0];
+    
+    // Return the formatted date
+    return formattedDate;
+}

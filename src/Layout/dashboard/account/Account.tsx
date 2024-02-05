@@ -12,7 +12,7 @@ import {
 import { useRouter } from "next/router";
 
 const Account = () => {
-  const { drugs, info, effects, schedule, userId } = useSelector(
+  const { drugs, info, effects, combinedSchedule } = useSelector(
     (state: RootState) => state.app
   );
   const router = useRouter();
@@ -21,12 +21,12 @@ const Account = () => {
 
   const currentTime = new Date(); // Get the current date and time
 
-  const completedBeforeCurrentTime = schedule.filter((dose) => {
+  const completedBeforeCurrentTime = combinedSchedule.filter((dose) => {
     const doseDateTime = new Date(`${dose?.date}T${dose?.time}`);
     return doseDateTime <= currentTime && dose?.completed;
   });
 
-  const totalBeforeCurrentTime = schedule.filter((dose) => {
+  const totalBeforeCurrentTime = combinedSchedule.filter((dose) => {
     const doseDateTime = new Date(`${dose?.date}T${dose?.time}`);
     return doseDateTime <= currentTime;
   });
@@ -114,7 +114,7 @@ const Account = () => {
       <div className="w-full flex justify-center">
         <button
           onClick={logOut}
-          className="flex border-[1px] rounded-[10px] rounded-bl-none px-4 py-2 mt-10 items-center font-semibold gap-2"
+          className="flex border-[1px] w-full ss:w-[500px] rounded-[10px] rounded-bl-none px-4 py-4 mt-10 items-center font-semibold gap-2"
         >
           <Image
             src="/assets/power-off.png"

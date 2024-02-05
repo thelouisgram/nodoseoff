@@ -55,7 +55,7 @@ export default function Calendar() {
               return (
                 <h1
                   key={index}
-                  className=" text-center w-full flex justify-center h-10 ss:h-14 items-center text-gray-500 select-none"
+                  className=" text-center w-full flex justify-center h-12 ss:h-14 items-center text-gray-500 select-none"
                 >
                   {day}
                 </h1>
@@ -71,7 +71,7 @@ export default function Calendar() {
                 return (
                   <div
                     key={index}
-                    className="p-2 text-center h-10 ss:h-14 grid place-content-center "
+                    className="p-2 text-center h-12 ss:h-14 grid place-content-center "
                   >
                     {/* Rendering individual date cells */}
                     <h1

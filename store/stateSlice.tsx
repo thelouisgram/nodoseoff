@@ -4,15 +4,19 @@ import { AppType } from "../utils/store";
 
 const initialState: AppType = {
   info: [{ name: "", phone: "", email: "", role: "" }],
-  isAuthenticated: false,
+  isAuthenticated: true,
   userId: "",
   drugs: [],
   effects: [],
   schedule: [],
   activeDrug: "",
   allergies: [],
-  searchedWord : "",
+  searchedWord: "",
   drugDetails: [],
+  pastSchedule: [],
+  combinedSchedule: [],
+  activeAllergy: "",
+  active: "Home"
 };
 
 const stateSlice = createSlice({
@@ -31,14 +35,26 @@ const stateSlice = createSlice({
     updateSchedule: (state, action: PayloadAction<any>) => {
       state.schedule = action.payload;
     },
+    updatePastSchedule: (state, action: PayloadAction<any>) => {
+      state.pastSchedule = action.payload;
+    },
+    updateCombinedSchedule: (state, action: PayloadAction<any>) => {
+      state.combinedSchedule = action.payload;
+    },
     updateIsAuthenticated: (state, action: PayloadAction<boolean>) => {
       state.isAuthenticated = action.payload;
     },
     updateUserId: (state, action: PayloadAction<string>) => {
       state.userId = action.payload;
     },
+    updateActive: (state, action: PayloadAction<string>) => {
+      state.active = action.payload;
+    },
     updateSearchedWord: (state, action: PayloadAction<string>) => {
       state.searchedWord = action.payload;
+    },
+    updateActiveAllergy: (state, action: PayloadAction<string>) => {
+      state.activeAllergy = action.payload;
     },
     updateInfo: (state, action: PayloadAction<Info[]>) => {
       state.info = action.payload;
@@ -49,7 +65,6 @@ const stateSlice = createSlice({
     updateDrugDetails: (state, action: PayloadAction<[]>) => {
       state.drugDetails = action.payload;
     },
-   
   },
 });
 
@@ -65,4 +80,8 @@ export const {
   updateAllergies,
   updateSearchedWord,
   updateDrugDetails,
+  updatePastSchedule,
+  updateCombinedSchedule,
+  updateActiveAllergy,
+  updateActive
 } = stateSlice.actions;

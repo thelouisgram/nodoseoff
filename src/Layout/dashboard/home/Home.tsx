@@ -1,34 +1,34 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import Calendar from "./Calendar";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../../store";
-import { calculateClosestDoseCountdown } from "../../../../utils/dashboard";
+import { calculateClosestDoseCountdown, filterPastDoses } from "../../../../utils/dashboard";
 import { format } from "date-fns";
 import { FaCheck, FaExclamationTriangle } from "react-icons/fa";
-import { updateSchedule } from "../../../../store/stateSlice";
+import {
+  updateCombinedSchedule,
+  updateSchedule,
+  updatePastSchedule
+} from "../../../../store/stateSlice";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { Drug } from "../../../../types";
 import { uploadScheduleToServer } from "../../../../utils/schedule";
+import { ScheduleItem } from "../../../../types/dashboard";
+import supabase from "../../../../utils/supabaseClient";
+import Counter from "../shared/Counter";
 
 interface HomeProps {
   setEffectsForm: Function;
   setDrugsForm: Function;
+  runFunction: boolean;
 }
 
-interface DoseProps {
-  id: number;
-  drug: string;
-  time: string;
-  completed: boolean;
-  date: string;
-}
-
-const Home: React.FC<HomeProps> = ({ setDrugsForm }) => {
-  const { drugs, info, schedule, userId } = useSelector(
-    (state: RootState) => state.app
-  );
+const Home: React.FC<HomeProps> = ({ setDrugsForm, runFunction }) => {
+  const { drugs, info, schedule, userId, combinedSchedule, pastSchedule } =
+    useSelector((state: RootState) => state.app);
 
   const dispatch = useDispatch();
   const [displayIndex, setDisplayIndex] = useState(0);
@@ -43,27 +43,73 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm }) => {
   const { name } = info[0];
 
   useEffect(() => {
-    // Function to update the countdown value every second
-    const updateCountdown = () => {
+    // Function to calculate the countdown
+    const calculateAndSetCountdown = () => {
       const newCountdown = calculateClosestDoseCountdown(schedule);
-      setCountDown(newCountdown); // Update the state with the new countdown value
+      setCountDown(newCountdown);
     };
 
-    // Call the function initially when the component mounts
-    updateCountdown();
+    // Initial countdown calculation and process schedule
+    calculateAndSetCountdown();
 
-    // Update the countdown value every second
-    const intervalId = setInterval(updateCountdown, 1000);
+    // Set interval to update countdown every second
+    const intervalId = setInterval(calculateAndSetCountdown, 1000);
 
-    // Clean up the interval to avoid memory leaks
+    // Clear interval on unmount or when 'schedule' changes
     return () => clearInterval(intervalId);
-  }, [schedule]);
+  }, [drugs]);
 
-  const todaysDose: Drug[] = schedule
-    ?.filter((drug: Drug) => {
+  useEffect(() =>{
+    if(runFunction){
+      updateDatabase()
+    }
+    return;
+  }, [runFunction])
+
+  const updateDatabase = async () => {
+    const {remainingDoses, filteredDoses} = filterPastDoses(schedule)
+    const newPastSchedule = [...pastSchedule, ...remainingDoses]
+    try {
+      // Update past schedule
+      const { error: pastScheduleError } = await supabase
+        .from("pastSchedule")
+        .update({
+          pastSchedule: newPastSchedule,
+        })
+        .eq("userId", userId);
+
+      if (pastScheduleError) {
+        console.error("Error updating past schedule:", pastScheduleError);
+        return;
+      }
+
+      // Update current schedule
+      const { error: scheduleError } = await supabase
+        .from("users")
+        .update({
+          schedule: filteredDoses,
+        })
+        .eq("userId", userId);
+
+      if (scheduleError) {
+        console.error("Error updating schedule:", scheduleError);
+        return;
+      }
+
+      // Dispatch Redux state updates
+      dispatch(updatePastSchedule(newPastSchedule));
+      dispatch(updateSchedule(filteredDoses));
+      dispatch(updateCombinedSchedule([...newPastSchedule, ...filteredDoses]));
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const todaysDose: ScheduleItem[] = schedule
+    ?.filter((drug: ScheduleItem) => {
       return drug?.date === formattedToday;
     })
-    .sort((a: Drug, b: Drug) => {
+    .sort((a: ScheduleItem, b: ScheduleItem) => {
       const timeA = a.time;
       const timeB = b.time;
 
@@ -77,10 +123,10 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm }) => {
     });
 
   const yesterdaysDose = schedule
-    ?.filter((drug: Drug) => {
+    ?.filter((drug: ScheduleItem) => {
       return drug?.date === formattedYesterday;
     })
-    .sort((a: Drug, b: Drug) => {
+    .sort((a: ScheduleItem, b: ScheduleItem) => {
       const timeA = a.time;
       const timeB = b.time;
 
@@ -93,7 +139,7 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm }) => {
       }
     });
 
-  function updateCompleted(item: DoseProps) {
+ function updateCompleted(item: ScheduleItem) {
     const updatedSchedule = schedule.map((dose) => {
       if (
         dose.date === item.date &&
@@ -109,8 +155,12 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm }) => {
       return dose;
     });
 
+
     // Make dispatch and upload operations asynchronous using Promise.all
-    Promise.all([dispatch(updateSchedule(updatedSchedule))])
+    Promise.all([
+      dispatch(updateSchedule(updatedSchedule)),
+      dispatch(updateCombinedSchedule([...pastSchedule, ...updatedSchedule])),
+    ])
       .then(() => {
         return uploadScheduleToServer({ userId, schedule: updatedSchedule });
       })
@@ -118,10 +168,9 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm }) => {
         console.error("Error updating schedule:", error);
       });
   }
-
   const dosesToRender = (
     tracker === "Today" ? todaysDose : yesterdaysDose
-  )?.map((item: DoseProps, index: number) => {
+  )?.map((item: ScheduleItem, index: number) => {
     const [hourString, minutes] = item.time.split(":");
     const hour = parseInt(hourString); // Convert the hour string to a number
 
@@ -193,12 +242,12 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm }) => {
 
   const currentTime = new Date(); // Get the current date and time
 
-  const completedBeforeCurrentTime = schedule.filter((dose) => {
+  const completedBeforeCurrentTime = combinedSchedule.filter((dose) => {
     const doseDateTime = new Date(`${dose?.date}T${dose?.time}`);
     return doseDateTime <= currentTime && dose?.completed;
   });
 
-  const totalBeforeCurrentTime = schedule.filter((dose) => {
+  const totalBeforeCurrentTime = combinedSchedule.filter((dose) => {
     const doseDateTime = new Date(`${dose?.date}T${dose?.time}`);
     return doseDateTime <= currentTime;
   });
@@ -206,9 +255,12 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm }) => {
   let percentageCompleted = 0;
 
   if (totalBeforeCurrentTime.length > 0) {
-    percentageCompleted =
-      (completedBeforeCurrentTime.length / totalBeforeCurrentTime.length) * 100;
+    percentageCompleted = Math.round(
+      (completedBeforeCurrentTime.length / totalBeforeCurrentTime.length) * 100
+    );
   }
+
+
 
   return (
     <div className="w-full h-[100dvh] overflow-y-scroll md:py-16 md:px-12 pt-10 pb-24 ss:py-10 text-navyBlue font-karla relative">
@@ -261,7 +313,7 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm }) => {
               Number of Drugs
             </h2>
             <h4 className="font-bold text-[28px] tracking-wider leading-none">
-              {drugs.length}
+              <Counter number={drugs.length} />
             </h4>
           </div>
         </div>
@@ -279,7 +331,7 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm }) => {
               Drug Compliance
             </h2>
             <h4 className="font-bold text-[28px] tracking-wider leading-none">
-              {percentageCompleted.toFixed(0)}%
+              {percentageCompleted}%
             </h4>
           </div>
         </div>

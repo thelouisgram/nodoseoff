@@ -408,7 +408,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
             </div>
             <button
               type="submit"
-              className="mt-20 font-semibold bg-darkBlue text-white rounded-[10px] w-full text-center py-4 rounded-bl-none px-4 hover:bg-navyBlue transition duration-300"
+              className="mt-10 font-semibold bg-darkBlue text-white rounded-[10px] w-full text-center py-4 rounded-bl-none px-4 hover:bg-navyBlue transition duration-300"
             >
               PROCEED
             </button>

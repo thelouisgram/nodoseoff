@@ -173,7 +173,7 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
                     </select>
                   </div>
                 </div>
-                <div className="flex flex-col mb-8 w-full">
+                <div className="flex flex-col w-full">
                   <label
                     htmlFor="end"
                     className="text-[14px] mb-1 font-semibold text-navyBlue"
@@ -195,7 +195,7 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
             </div>
             <button
               type="submit"
-              className="mt-4 font-semibold absolute top-[90%] bg-darkBlue text-white rounded-[10px] w-full text-center py-4 rounded-bl-none px-4 hover:bg-navyBlue transition duration-300"
+              className="font-semibold absolute top-[90%] bg-darkBlue text-white rounded-[10px] w-full text-center py-4 rounded-bl-none px-4 hover:bg-navyBlue transition duration-300"
             >
               PROCEED
             </button>

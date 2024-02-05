@@ -76,8 +76,14 @@ const CreateAccount = () => {
         phone: formData.phoneNumber,
         email: formData.email,
         userId: userId,
-        schedule: {},
+        schedule: [],
       });
+
+      const { error } = await supabase
+        .from("pastSchedule")
+        .insert({
+          pastSchedule: [],
+        });
 
       if (addInfoError) {
         toast.error("Failed to insert data into the database");

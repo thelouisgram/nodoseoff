@@ -6,7 +6,7 @@ import Home from "@/Layout/dashboard/home/Home";
 import EffectsForm from "@/Layout/dashboard/forms/EffectsForm";
 import DrugsForm from "@/Layout/dashboard/forms/DrugsForm";
 import Drugs from "@/Layout/dashboard/drugs/Drugs";
-import Screen from "@/Layout/dashboard/shared/Screen";
+import Screen from "@/Layout/dashboard/Screen";
 import EditForm from "@/Layout/dashboard/forms/EditForm";
 import Account from "@/Layout/dashboard/account/Account";
 import Link from "next/link";
@@ -18,8 +18,10 @@ import {
   setEffects,
   updateAllergies,
   updateInfo,
+  updatePastSchedule,
   updateSchedule,
   updateUserId,
+  updateActive,
 } from "../../../store/stateSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store";
@@ -29,7 +31,7 @@ import AllergiesForm from "@/Layout/dashboard/forms/AllergiesForm";
 interface tabsMobileProps {
   name: string;
   logo: string;
-  logoFilled: string;
+  inactiveLogo: string;
 }
 
 interface tabsProps {
@@ -38,20 +40,22 @@ interface tabsProps {
 }
 
 const Page = () => {
-  const { userId } = useSelector((state: RootState) => state.app);
+  const { userId, active } =
+    useSelector((state: RootState) => state.app);
   const dispatch = useDispatch();
   const [nav, setNav] = useState(true);
-  const [active, setActive] = useState("Home");
   const [effectsForm, setEffectsForm] = useState(false);
   const [editForm, setEditForm] = useState(false);
   const [allergiesForm, setAllergiesForm] = useState(false);
   const [drugsForm, setDrugsForm] = useState(false);
   const [screen, setScreen] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
+  const [deleteAllergyModal, setDeleteAllergyModal] = useState(false)
   const [editModal, setEditModal] = useState(false);
   const [allergyModal, setAllergyModal] = useState(false);
   const router = useRouter();
   const [add, setAdd] = useState(false);
+  const [runFunction, setRunFunction] = useState(false)
 
   useEffect(() => {
     if (!userId) {
@@ -112,6 +116,23 @@ const Page = () => {
         }
       } catch (error) {}
     };
+    const getPastSchedule = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("pastSchedule")
+          .select("pastSchedule")
+          .eq("userId", userId);
+        if (error) {
+          console.error("error:", error);
+        } else if (data !== null) {
+          const transformedData = data?.map((item) => [...item.pastSchedule]);
+          const flattenedData = transformedData?.flatMap(
+            (innerArray: any) => innerArray
+          );
+          dispatch(updatePastSchedule(flattenedData));
+        }
+      } catch (error) {}
+    };
     const getSchedule = async () => {
       try {
         const { data, error } = await supabase
@@ -128,19 +149,34 @@ const Page = () => {
         dispatch(updateSchedule(flattenedData));
       } catch (error) {}
     };
+    
     if (userId) {
-      getInfo();
-      getDrug();
-      getEffects();
-      getSchedule();
-      getAllergies();
+     Promise.all([
+       getInfo(),
+       getDrug(),
+       getEffects(),
+       getAllergies(),
+       getPastSchedule(),
+       getSchedule(),
+     ])
+       .then((results) => {
+         // All asynchronous operations have completed
+         setRunFunction(true);
+         // Process results if needed
+       })
+       .catch((error) => {
+         // Handle errors
+         console.error("Error:", error);
+       });
+
     }
   }, [userId]);
+
 
   const renderedTabs = tabs.map((item: tabsProps, index: number) => {
     return (
       <button
-        onClick={() => setActive(item.name)}
+        onClick={() => dispatch(updateActive(item.name))}
         key={index}
         className={` ${
           item.name === active && nav ? "pl-3" : ""
@@ -190,21 +226,23 @@ const Page = () => {
     (item: tabsMobileProps, index: number) => {
       return (
         <div
-          onClick={() => setActive(item.name)}
+          onClick={() => dispatch(updateActive(item.name))}
           key={index}
           className="flex items-center flex-col cursor-pointer h-full justify-center relative font-Karla"
         >
           <Image
-            src={active === item.name ? item.logoFilled : item.logo}
+            src={active === item.name ? item.logo : item.inactiveLogo}
             width={1000}
             height={1000}
-            className="w-[24px] h-[24px]"
+            className="w-[24px] h-[24px] transition"
             alt={item.name}
             quality={100}
           />
           <h2
             className={`${
-              active === item.name ? "font-semibold" : "font-normal"
+              active === item.name
+                ? "font-semibold"
+                : "font-normal text-[#a7a7a7]"
             } text-[12px] text-[#062863]`}
           >
             {item.name}
@@ -219,7 +257,7 @@ const Page = () => {
       <div
         className={`${
           !nav ? "w-[86px]" : "w-[300px]"
-        } max-h-[100dvh] bg-[#062863] py-10 pl-6 hidden font-montserrant md:flex flex-col justify-between relative transition-all duration-300`}
+        } max-h-[100dvh] bg-navyBlue py-10 pl-6 hidden font-montserrant md:flex flex-col justify-between relative transition-all duration-300`}
       >
         <div>
           <div className="flex gap-5 items-center mb-12 cursor-pointer h-[60.81px]">
@@ -264,7 +302,11 @@ const Page = () => {
       </div>
       <div className="w-full">
         {active === "Home" ? (
-          <Home setEffectsForm={setEffectsForm} setDrugsForm={setDrugsForm} />
+          <Home
+            setEffectsForm={setEffectsForm}
+            setDrugsForm={setDrugsForm}
+            runFunction={runFunction}
+          />
         ) : active === "Drugs" ? (
           <Drugs
             screen={screen}
@@ -285,6 +327,8 @@ const Page = () => {
             effectsForm={effectsForm}
             allergiesForm={allergiesForm}
             setAllergiesForm={setAllergiesForm}
+            deleteAllergyModal={deleteAllergyModal}
+            setDeleteAllergyModal={setDeleteAllergyModal}
           />
         ) : active === "Search" ? (
           <Search />

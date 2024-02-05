@@ -1,4 +1,4 @@
-export interface regimenProps  {
+export interface ongoingProps  {
     drugs: any;
     renderedDrugs: JSX.Element[];
 }

@@ -66,7 +66,7 @@ const Page = () => {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setIsLoading(false);
-    }, 3000);
+    }, 2000);
     const getInfo = async () => {
       try {
         const { data, error } = await supabase
@@ -299,6 +299,7 @@ const Page = () => {
               <Home
                 setEffectsForm={setEffectsForm}
                 setDrugsForm={setDrugsForm}
+                isLoading={isLoading}
               />
             ) : active === "Drugs" ? (
               <Drugs

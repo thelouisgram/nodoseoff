@@ -19,9 +19,10 @@ import { ScheduleItem } from "../../../../types/dashboard";
 interface HomeProps {
   setEffectsForm: Function;
   setDrugsForm: Function;
+  isLoading: boolean;
 }
 
-const Home: React.FC<HomeProps> = ({ setDrugsForm }) => {
+const Home: React.FC<HomeProps> = ({ setDrugsForm, isLoading }) => {
   const { drugs, info, schedule, userId } = useSelector(
     (state: RootState) => state.app
   );
@@ -39,23 +40,21 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm }) => {
   const { name } = info[0];
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      // Function to calculate the countdown
-      const calculateAndSetCountdown = () => {
-        const newCountdown = calculateClosestDoseCountdown(schedule);
-        setCountDown(newCountdown);
-      };
+    // Function to calculate the countdown
+    const calculateAndSetCountdown = () => {
+      const newCountdown = calculateClosestDoseCountdown(schedule);
+      setCountDown(newCountdown);
+    };
 
-      // Initial countdown calculation and process schedule
-      calculateAndSetCountdown();
+    // Initial countdown calculation and process schedule
+    calculateAndSetCountdown();
 
-      // Set interval to update countdown every second
-      const intervalId = setInterval(calculateAndSetCountdown, 1000);
+    // Set interval to update countdown every second
+    const intervalId = setInterval(calculateAndSetCountdown, 1000);
 
-      // Clear interval on unmount or when 'schedule' changes
-      return () => clearInterval(intervalId);
-    }, 500);
-  }, [drugs]);
+    // Clear interval on unmount or when 'schedule' changes
+    return () => clearInterval(intervalId);
+  }, [drugs, isLoading]);
 
   const todaysDose: ScheduleItem[] = schedule
     ?.filter((drug: ScheduleItem) => {

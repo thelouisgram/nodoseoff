@@ -27,7 +27,7 @@ interface thisProps {
   displayDrugs: boolean;
   setDisplayDrugs: Function;
   showEditButton: boolean;
-  tab: string
+  tab: string;
 }
 
 type RefObject<T> = React.RefObject<T>;
@@ -92,17 +92,17 @@ const RenderedDrugs: React.FC<thisProps> = ({
     <div
       className={`relative ${
         id % 2 ? "" : "bg-lightGrey"
-      } flex font-Inter text-[14px] w-full justify-between px-4 text-navyBlue border-b-[1px]`}
+      } flex font-Inter text-[14px] w-full justify-between px-4 text-navyBlue items-center border-b-[1px]`}
     >
-      <h1 className="capitalize text-[11px] sm:text-[13px] font-montserrant font-semibold w-[25%] sm:w-[14%] items-center py-4">
-        {tab !== 'Allergies' ? drug.drug : drug.drug}
+      <h1 className="capitalize text-[11px] sm:text-[13px] font-montserrant font-semibold w-[25%] h-full sm:w-[14%] items-center py-4">
+        {drug.drug}
       </h1>
       {tab !== "Allergies" ? (
         <>
-          <h2 className="capitalize  text-[11px] sm:text-[13px] leading-none w-[30%] sm:w-[10%] flex justify-center items-center py-4">
+          <h2 className="capitalize text-[11px] sm:text-[13px] leading-none w-[30%] sm:w-[10%] flex justify-center items-center py-4">
             {drug.route}
           </h2>
-          <h2 className="capitalize  text-[11px] sm:text-[13px] leading-none  md:w-[14%] hidden md:flex justify-center items-center py-4 text-center">
+          <h2 className="capitalize text-[11px] sm:text-[13px] md:w-[14%] hidden md:flex justify-center items-center py-4 text-center">
             {calculateTimePeriod(drug.start, drug.end)}
           </h2>
           <h2 className=" text-[11px] sm:text-[13px] leading-none w-[35%] sm:w-[14%] flex justify-center items-center py-4">
@@ -140,24 +140,25 @@ const RenderedDrugs: React.FC<thisProps> = ({
           className="absolute border-[1px] border-gray-100 right-8 z-[200] top-5 text-navyBlue flex flex-col items-start justify-center mt-3 rounded-[10px] 
         bg-white shadow-md w-[150px] ss:w-[250px] py-4 text-[13px] ss:text-[16px]"
         >
-          {tab !== "Allergies" &&
-          <button
-            onClick={() => {
-              dispatch(updateActiveDrug(drug.drug));
-              setDisplayDrugs(false);
-              setOptions(false);
-            }}
-            className="h-8 hover:bg-gray-100 flex items-center gap-2 w-full px-3"
-          >
-            <Image
-              src="/assets/info.png"
-              alt="edit"
-              width={20}
-              height={20}
-              className="ss:w-[20px] w-[16px]"
-            /> 
-            View Details
-          </button> }
+          {tab !== "Allergies" && (
+            <button
+              onClick={() => {
+                dispatch(updateActiveDrug(drug.drug));
+                setDisplayDrugs(false);
+                setOptions(false);
+              }}
+              className="h-8 hover:bg-gray-100 flex items-center gap-2 w-full px-3"
+            >
+              <Image
+                src="/assets/info.png"
+                alt="edit"
+                width={20}
+                height={20}
+                className="ss:w-[20px] w-[16px]"
+              />
+              View Details
+            </button>
+          )}
           {showEditButton && (
             <button
               onClick={() => {
@@ -196,24 +197,26 @@ const RenderedDrugs: React.FC<thisProps> = ({
             />
             Delete Drug
           </button>
-           {tab !== "Allergies" && <button
-            onClick={() => {
-              dispatch(updateActiveDrug(drug.drug)),
-                setScreen(true),
-                setAllergyModal(true);
-              setOptions(false);
-            }}
-            className="h-8 hover:bg-gray-100 flex items-center gap-2 w-full px-3 pl-[14px]"
-          >
-            <Image
-              src="/assets/disabled.png"
-              alt="disabled"
-              width={20}
-              height={20}
-              className="ss:w-[16px] w-[12px]"
-            />
-            Add to Allergies
-          </button>}
+          {tab !== "Allergies" && (
+            <button
+              onClick={() => {
+                dispatch(updateActiveDrug(drug.drug)),
+                  setScreen(true),
+                  setAllergyModal(true);
+                setOptions(false);
+              }}
+              className="h-8 hover:bg-gray-100 flex items-center gap-2 w-full px-3 pl-[14px]"
+            >
+              <Image
+                src="/assets/disabled.png"
+                alt="disabled"
+                width={20}
+                height={20}
+                className="ss:w-[16px] w-[12px]"
+              />
+              Add to Allergies
+            </button>
+          )}
         </div>
       )}
     </div>

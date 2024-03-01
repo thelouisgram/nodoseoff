@@ -13,7 +13,7 @@ import { updateSchedule } from "../../../../store/stateSlice";
 import supabase from "../../../../utils/supabaseClient";
 import {
   uploadScheduleToServer,
-  removeActiveDrugFromSchedule,
+  removePastDoses,
 } from "../../../../utils/schedule";
 
 interface DrugFormProps {
@@ -47,6 +47,24 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
     end: "",
     time: "",
   });
+
+  // Function to get today's date in the format "YYYY-MM-DD"
+  function getCurrentDate(): string {
+    const today: Date = new Date();
+    const year: number = today.getFullYear();
+    let month: string | number = today.getMonth() + 1;
+    let day: string | number = today.getDate();
+
+    // Pad single digit month and day with leading zero
+    if (month < 10) {
+      month = `0${month}`;
+    }
+    if (day < 10) {
+      day = `0${day}`;
+    }
+
+    return `${year}-${month}-${day}`;
+  }
 
   useEffect(() => {
     if (currentDrug) {
@@ -180,11 +198,15 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
       dispatch(setDrugs(updatedDrugs));
 
       // Remove active drug from schedule
-      const strippedSchedule = removeActiveDrugFromSchedule({
+      const strippedSchedule = removePastDoses({
         activeDrug,
         schedule,
       });
-      const data = generateSchedule(formData);
+      // Generate schedule with current date as startDate
+      const data = generateSchedule({
+        ...formData,
+        start: getCurrentDate(), // Use current date as startDate
+      });
       const updatedSchedule = [...strippedSchedule, ...data];
 
       // Update Redux state with the new schedule
@@ -283,6 +305,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
                 Name of drug (e.g Rifampicin)
               </label>
               <input
+                disabled={true}
                 type="text"
                 id="drug"
                 name="drug"
@@ -370,7 +393,8 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
                   type="date"
                   id="start"
                   name="start"
-                  value={formData.start}
+                  disabled={true}
+                  value={getCurrentDate()}
                   onChange={handleInputChange}
                   className="border bg-[#EDF2F7] border-none outline-none w-full text-navyBlue rounded-[10px] py-4 pl-4 h-[56px]"
                 />

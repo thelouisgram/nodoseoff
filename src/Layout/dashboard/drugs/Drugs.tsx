@@ -10,7 +10,7 @@ import {
   updateAllergies,
   updateActiveDrug,
   updateSchedule,
-  updateActiveAllergy,
+  updateCompletedDrugs,
 } from "../../../../store/stateSlice";
 import { useDispatch } from "react-redux";
 import { toast } from "sonner";
@@ -19,7 +19,7 @@ import RenderedDrugs from "./RenderedDrugs";
 import supabase from "../../../../utils/supabaseClient";
 import {
   uploadScheduleToServer,
-  removeActiveDrugFromSchedule,
+  removePastDoses,
 } from "../../../../utils/schedule";
 import { drugsTab } from "../../../../utils/drugs";
 import Ongoing from "./tabs/Ongoing";
@@ -27,6 +27,7 @@ import Completed from "./tabs/Completed";
 import Allergies from "./tabs/Allergies";
 import Image from "next/image";
 import DrugDetails from "./DrugDetails";
+import { ScheduleItem } from "../../../../types/dashboard";
 
 interface DrugsProps {
   screen: boolean;
@@ -47,8 +48,6 @@ interface DrugsProps {
   drugsForm: boolean;
   editForm: boolean;
   allergiesForm: boolean;
-  setDeleteAllergyModal: Function;
-  deleteAllergyModal: boolean;
 }
 
 type RefObject<T> = React.RefObject<T>;
@@ -72,15 +71,12 @@ const Drugs: React.FC<DrugsProps> = ({
   drugsForm,
   setAllergyModal,
   allergyModal,
-  deleteAllergyModal,
-  setDeleteAllergyModal,
 }) => {
-  const { drugs, schedule, userId, allergies, activeAllergy, activeDrug } = useSelector(
-    (state: RootState) => state.app
-  );
+  const { drugs, schedule, userId, allergies, activeDrug, completedDrugs } =
+    useSelector((state: RootState) => state.app);
 
   const [tab, setTab] = useState<string>("Ongoing");
-  const [displayDrugs, setDisplayDrugs] = useState(true)
+  const [displayDrugs, setDisplayDrugs] = useState(true);
   const dispatch = useDispatch();
   const dropdownRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
   const handleClickOutside = (event: MouseEvent): void => {
@@ -112,45 +108,112 @@ const Drugs: React.FC<DrugsProps> = ({
     dispatch(updateActiveDrug(activeDrug));
   }, [activeDrug]);
 
-  const handleDelete = async () => {
-    // Show loading toast while uploading the schedule
-    toast.loading("Deleting drug", { duration: 2000 });
-
+  const handleDeleteExpiredDrugs = async (drugName: string) => {
     try {
       const { error } = await supabase
         .from("drugs")
         .delete()
-        .eq("drug", activeDrug);
+        .eq("drug", drugName);
 
       if (error) {
-        toast.error("Failed to delete Drug");
-        return;
+        console.error("Error deleting drug:", error);
       }
-
-      toast.success(`'${activeDrug}' deleted Successfully!`);
-
-      const updatedSchedule = removeActiveDrugFromSchedule({
-        activeDrug,
-        schedule,
-      });
-
-      // Make the uploadScheduleToServer asynchronous
-      await uploadScheduleToServer({
-        userId: userId,
-        schedule: updatedSchedule,
-      });
-
-      // Update the Redux state after deleting and uploading the schedule
-      dispatch(
-        setDrugs(drugs.filter((drug: Drug) => drug.drug !== activeDrug))
-      );
-      dispatch(updateSchedule(updatedSchedule));
     } catch (error) {
       console.error("Error deleting drug:", error);
     }
   };
 
-  const handleDeleteAllergy = async (allergy: string) => {
+  useEffect(() => {
+    const currentDate = new Date();
+    const twoDaysPastDate = new Date();
+    twoDaysPastDate.setDate(currentDate.getDate() - 2);
+
+    const justCompletedDrugs = drugs.filter(
+      (drug) => new Date(drug.end) <= twoDaysPastDate
+    );
+
+    const nonCompletedDrugs = drugs.filter(
+      (drug) => new Date(drug.end) > twoDaysPastDate
+    );
+
+    const newCompletedDrugs = [...completedDrugs, ...justCompletedDrugs];
+
+    // Dispatch nonCompletedDrugs immediately
+    dispatch(setDrugs(nonCompletedDrugs));
+    dispatch(updateCompletedDrugs(newCompletedDrugs));
+
+    // Upload newCompletedDrugs to the database
+    uploadCompletedDrugs(newCompletedDrugs);
+
+    // Delete each non-completed drug
+    justCompletedDrugs.forEach(async (drug) => {
+      await handleDeleteExpiredDrugs(drug.drug);
+    });
+  }, []);
+
+  const uploadCompletedDrugs = async (newCompletedDrugs: any) => {
+    try {
+      const { error } = await supabase
+        .from("users")
+        .update({
+          completedDrugs: newCompletedDrugs,
+        })
+        .eq("userId", userId);
+
+      if (error) {
+        console.error("Error updating past schedule:", error);
+      }
+    } catch (error) {
+      console.error("Error updating past schedule:", error);
+    }
+  };
+
+  const handleDelete = async () => {
+    toast.loading("Deleting drug", { duration: 2000 });
+
+    if (tab === "Ongoing") {
+      try {
+        const { error } = await supabase
+          .from("drugs")
+          .delete()
+          .eq("drug", activeDrug);
+
+        if (error) {
+          toast.error("Failed to delete Drug");
+          return;
+        }
+
+        toast.success(`'${activeDrug}' deleted Successfully!`);
+
+        const updatedSchedule: ScheduleItem[] = removePastDoses({
+          activeDrug,
+          schedule,
+        });
+
+        // Make the uploadScheduleToServer asynchronous
+        await uploadScheduleToServer({
+          userId: userId,
+          schedule: updatedSchedule,
+        });
+
+        // Update the Redux state after deleting and uploading the schedule
+        dispatch(
+          setDrugs(drugs.filter((drug: Drug) => drug.drug !== activeDrug))
+        );
+        dispatch(updateSchedule(updatedSchedule));
+      } catch (error) {
+        console.error("Error deleting drug:", error);
+      }
+    } else if (tab === "Completed") {
+      const newCompletedDrugs = completedDrugs.filter(
+        (drug: any) => drug.drug !== activeDrug
+      );
+      dispatch(updateCompletedDrugs(newCompletedDrugs));
+      uploadCompletedDrugs(newCompletedDrugs);
+    }
+  };
+
+  const handleDeleteAllergy = async (drug: string) => {
     // Show loading toast while uploading the schedule
     toast.loading("Deleting drug", { duration: 2000 });
 
@@ -158,134 +221,73 @@ const Drugs: React.FC<DrugsProps> = ({
       const { error } = await supabase
         .from("allergies")
         .delete()
-        .eq("allergy", allergy);
+        .eq("drug", drug);
 
       if (error) {
         toast.error("Failed to delete Allergy");
         return;
       }
 
-      toast.success(`'${allergy}' deleted Successfully!`);
+      toast.success(`'${drug}' deleted Successfully!`);
 
       const newAllergies = allergies.filter(
-        (allergyItem: any) => allergyItem.allergy !== allergy
+        (allergyItem: any) => allergyItem.drug !== drug
       );
       dispatch(updateAllergies(newAllergies));
     } catch (error) {
-      console.error("Error deleting allergy:", error);
+      console.error("Error deleting drug:", error);
     }
   };
 
   const handleAllergies = async () => {
-    // Show loading toast while uploading the schedule
+    if (allergies.some((drug: any) => drug.drug === activeDrug)) {
+      toast.error("Drug is already marked as an allergy");
+      return null;
+    } else {
+      // Show loading toast while uploading the schedule
+      toast.loading("Marking Drug as allergy");
 
-    toast.loading("Marking Drug as allergy");
+      try {
+        const { error: deleteError } = await supabase
+          .from("drugs")
+          .delete()
+          .eq("drug", activeDrug);
 
-    try {
-      const { error: deleteError } = await supabase
-        .from("drugs")
-        .delete()
-        .eq("drug", activeDrug);
+        const { error: insertError } = await supabase.from("allergies").insert({
+          userId: userId,
+          drug: activeDrug,
+        });
 
-      const { error: insertError } = await supabase.from("allergies").insert({
-        userId: userId,
-        allergy: activeDrug,
-      });
+        if (deleteError || insertError) {
+          toast.error("Failed to delete Drug or insert Allergy");
+          return;
+        }
 
-      if (deleteError || insertError) {
-        toast.error("Failed to delete Drug or insert Allergy");
-        return;
+        const updatedSchedule: ScheduleItem[] = removePastDoses({
+          activeDrug,
+          schedule,
+        });
+
+        toast.success(`'${activeDrug}' has been marked as an allergy!`);
+
+        // Make the uploadScheduleToServer asynchronous
+        await uploadScheduleToServer({
+          userId: userId,
+          schedule: updatedSchedule,
+        });
+
+        dispatch(updateAllergies([...allergies, { drug: activeDrug }]));
+
+        // Update the Redux state after deleting and uploading the schedule
+        dispatch(
+          setDrugs(drugs.filter((drug: Drug) => drug.drug !== activeDrug))
+        );
+        dispatch(updateSchedule(updatedSchedule));
+      } catch (error) {
+        console.error("Error handling allergies:", error);
       }
-
-      const updatedSchedule = removeActiveDrugFromSchedule({
-        activeDrug,
-        schedule,
-      });
-
-      toast.success(`'${activeDrug}' has been marked as an allergy!`);
-
-      // Make the uploadScheduleToServer asynchronous
-      await uploadScheduleToServer({
-        userId: userId,
-        schedule: updatedSchedule,
-      });
-
-      dispatch(updateAllergies([...allergies, { allergy: activeDrug }]));
-
-      // Update the Redux state after deleting and uploading the schedule
-      dispatch(
-        setDrugs(drugs.filter((drug: Drug) => drug.drug !== activeDrug))
-      );
-      dispatch(updateSchedule(updatedSchedule));
-    } catch (error) {
-      console.error("Error handling allergies:", error);
     }
   };
-
-  const renderedDrugs = drugs?.map((drug: any, index: number) => {
-    const startDate: any = new Date(drug.start);
-    const endDate: any = new Date(drug.end);
-    const durationInDays = Math.floor(
-      (endDate - startDate) / (1000 * 60 * 60 * 24)
-    );
-    const durationInYears = Math.floor(durationInDays / 365);
-    const remainingDaysAfterYears = durationInDays % 365;
-
-    const durationInMonths = Math.floor(remainingDaysAfterYears / 30);
-    const remainingDaysAfterMonths = remainingDaysAfterYears % 30;
-
-    const durationInWeeks = Math.floor(remainingDaysAfterMonths / 7);
-    const remainingDaysAfterWeeks = remainingDaysAfterMonths % 7;
-
-    const accurateDurationText = [];
-
-    if (durationInYears > 0) {
-      accurateDurationText.push(
-        `${durationInYears} year${durationInYears > 1 ? "s" : ""}`
-      );
-    }
-
-    if (durationInMonths > 0) {
-      accurateDurationText.push(
-        `${durationInMonths} month${durationInMonths > 1 ? "s" : ""}`
-      );
-    }
-
-    if (durationInWeeks > 0) {
-      accurateDurationText.push(
-        `${durationInWeeks} week${durationInWeeks > 1 ? "s" : ""}`
-      );
-    }
-
-    if (remainingDaysAfterWeeks > 0) {
-      accurateDurationText.push(
-        `${remainingDaysAfterWeeks} day${
-          remainingDaysAfterWeeks > 1 ? "s" : ""
-        }`
-      );
-    }
-
-    const finalDurationText =
-      accurateDurationText.length > 0
-        ? `${accurateDurationText.join(", ")} `
-        : "Less than a day";
-
-    return (
-      <RenderedDrugs
-        key={index}
-        id={index}
-        drug={drug}
-        frequencyToPlaceholder={frequencyToPlaceholder}
-        finalDurationText={finalDurationText}
-        setScreen={setScreen}
-        setDeleteModal={setDeleteModal}
-        setEditModal={setEditModal}
-        setAllergyModal={setAllergyModal}
-        displayDrugs={displayDrugs}
-        setDisplayDrugs={setDisplayDrugs}
-      />
-    );
-  });
 
   const renderedTabs = drugsTab.map((item: string, index: number) => {
     return (
@@ -317,18 +319,33 @@ const Drugs: React.FC<DrugsProps> = ({
               Manage medications wisely!
             </p>
           </div>
-          <div className="flex mb-8 border-b-[1px] w-auto">
-            {renderedTabs}
-          </div>
+          <div className="flex mb-8 border-b-[1px] w-auto">{renderedTabs}</div>
           {tab === "Ongoing" ? (
-            <Ongoing renderedDrugs={renderedDrugs} drugs={drugs} />
+            <Ongoing
+              setScreen={setScreen}
+              setDeleteModal={setDeleteModal}
+              setEditModal={setEditModal}
+              setAllergyModal={setAllergyModal}
+              displayDrugs={displayDrugs}
+              setDisplayDrugs={setDisplayDrugs}
+            />
           ) : tab === "Completed" ? (
-            <Completed />
+            <Completed
+              setScreen={setScreen}
+              setDeleteModal={setDeleteModal}
+              setEditModal={setEditModal}
+              setAllergyModal={setAllergyModal}
+              displayDrugs={displayDrugs}
+              setDisplayDrugs={setDisplayDrugs}
+            />
           ) : (
             <Allergies
-              deleteAllergyModal={deleteAllergyModal}
-              setDeleteAllergyModal={setDeleteAllergyModal}
               setScreen={setScreen}
+              setDeleteModal={setDeleteModal}
+              setEditModal={setEditModal}
+              setAllergyModal={setAllergyModal}
+              displayDrugs={displayDrugs}
+              setDisplayDrugs={setDisplayDrugs}
             />
           )}
           {deleteModal && (
@@ -347,10 +364,12 @@ const Drugs: React.FC<DrugsProps> = ({
                 <div className="w-full flex gap-3 justify-start flex-row-reverse text-[12px] py-4 px-4">
                   <button
                     onClick={() => {
-                      handleDelete(),
+                      tab !== "Allergies"
+                        ? handleDelete()
+                        : handleDeleteAllergy(activeDrug),
                         setScreen(false),
-                        dispatch(updateActiveDrug(''))
-                        setDeleteModal(false);
+                        dispatch(updateActiveDrug(""));
+                      setDeleteModal(false);
                     }}
                     className="px-4 py-1 flex items-center gap-2 bg-navyBlue rounded-[10px] rounded-bl-none "
                   >
@@ -387,8 +406,7 @@ const Drugs: React.FC<DrugsProps> = ({
                   <button
                     onClick={() => {
                       setScreen(false), dispatch(updateActiveDrug(""));
-                        setAllergyModal(false),
-                        handleAllergies();
+                      setAllergyModal(false), handleAllergies();
                     }}
                     className="px-4 py-1 flex items-center gap-2 bg-navyBlue rounded-[10px] rounded-bl-none "
                   >
@@ -396,9 +414,8 @@ const Drugs: React.FC<DrugsProps> = ({
                   </button>
                   <button
                     onClick={() => {
-                     dispatch(updateActiveDrug(""));
-                        setScreen(false),
-                        setAllergyModal(false);
+                      dispatch(updateActiveDrug(""));
+                      setScreen(false), setAllergyModal(false);
                     }}
                     className="px-4 py-1 flex items-center gap-2 bg-none border text-navyBlue border-navyBlue rounded-[10px] rounded-bl-none "
                   >
@@ -432,49 +449,8 @@ const Drugs: React.FC<DrugsProps> = ({
                   </button>
                   <button
                     onClick={() => {
-                     dispatch(updateActiveDrug(""));
-                        setScreen(false),
-                        setEditForm(false),
-                        setEditModal(false);
-                    }}
-                    className="px-4 py-1 flex items-center gap-2 bg-none border text-navyBlue border-navyBlue rounded-[10px] rounded-bl-none "
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-          {deleteAllergyModal && (
-            <div className="w-full h-full fixed flex top-0 left-0 justify-center items-center z-[143] p-4 font-Inter">
-              <div
-                ref={dropdownRef}
-                className="bg-white rounded-[10px] text-white relative flex flex-col justify-center items-center"
-              >
-                <h1 className="text-navyBlue font-semibold py-4 px-4 border-b-[1px] text-left w-full text-[13px] ss:text-[16px] leading-tight">
-                  Confirm to delete '{activeAllergy.toUpperCase()}' ?
-                </h1>
-                <h2 className="text-navyBlue border-b-[1px] text-left px-4 py-4 text-[12px] ss:text-[14px]">
-                  Are you sure you want to delete the selected allergy? <br />{" "}
-                  This action cannot be undone.
-                </h2>
-                <div className="w-full flex gap-3 justify-start flex-row-reverse text-[12px] py-4 px-4">
-                  <button
-                    onClick={() => {
-                      handleDeleteAllergy(activeAllergy),
-                        setScreen(false),
-                        dispatch(updateActiveAllergy("")),
-                        setDeleteAllergyModal(false);
-                    }}
-                    className="px-4 py-1 flex items-center gap-2 bg-navyBlue rounded-[10px] rounded-bl-none "
-                  >
-                    Delete
-                  </button>
-                  <button
-                    onClick={() => {
-                      dispatch(updateActiveAllergy("")),
-                        setScreen(false),
-                        setDeleteAllergyModal(false);
+                      dispatch(updateActiveDrug(""));
+                      setScreen(false), setEditForm(false), setEditModal(false);
                     }}
                     className="px-4 py-1 flex items-center gap-2 bg-none border text-navyBlue border-navyBlue rounded-[10px] rounded-bl-none "
                   >
@@ -556,6 +532,7 @@ const Drugs: React.FC<DrugsProps> = ({
         <DrugDetails
           displayDrugs={displayDrugs}
           setDisplayDrugs={setDisplayDrugs}
+          tab={tab}
         />
       )}
     </div>

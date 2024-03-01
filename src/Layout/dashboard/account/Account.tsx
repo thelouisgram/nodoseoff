@@ -12,7 +12,7 @@ import {
 import { useRouter } from "next/router";
 
 const Account = () => {
-  const { drugs, info, effects, combinedSchedule } = useSelector(
+  const { drugs, info, effects, schedule } = useSelector(
     (state: RootState) => state.app
   );
   const router = useRouter();
@@ -21,12 +21,12 @@ const Account = () => {
 
   const currentTime = new Date(); // Get the current date and time
 
-  const completedBeforeCurrentTime = combinedSchedule.filter((dose) => {
+  const completedBeforeCurrentTime = schedule.filter((dose) => {
     const doseDateTime = new Date(`${dose?.date}T${dose?.time}`);
     return doseDateTime <= currentTime && dose?.completed;
   });
 
-  const totalBeforeCurrentTime = combinedSchedule.filter((dose) => {
+  const totalBeforeCurrentTime = schedule.filter((dose) => {
     const doseDateTime = new Date(`${dose?.date}T${dose?.time}`);
     return doseDateTime <= currentTime;
   });

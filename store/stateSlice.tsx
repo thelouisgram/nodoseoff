@@ -13,10 +13,9 @@ const initialState: AppType = {
   allergies: [],
   searchedWord: "",
   drugDetails: [],
-  pastSchedule: [],
-  combinedSchedule: [],
   activeAllergy: "",
-  active: "Home"
+  active: "Home",
+  completedDrugs:[]
 };
 
 const stateSlice = createSlice({
@@ -34,12 +33,6 @@ const stateSlice = createSlice({
     },
     updateSchedule: (state, action: PayloadAction<any>) => {
       state.schedule = action.payload;
-    },
-    updatePastSchedule: (state, action: PayloadAction<any>) => {
-      state.pastSchedule = action.payload;
-    },
-    updateCombinedSchedule: (state, action: PayloadAction<any>) => {
-      state.combinedSchedule = action.payload;
     },
     updateIsAuthenticated: (state, action: PayloadAction<boolean>) => {
       state.isAuthenticated = action.payload;
@@ -65,6 +58,9 @@ const stateSlice = createSlice({
     updateDrugDetails: (state, action: PayloadAction<[]>) => {
       state.drugDetails = action.payload;
     },
+    updateCompletedDrugs: (state, action: PayloadAction<any>) => {
+      state.completedDrugs = action.payload;
+    },
   },
 });
 
@@ -80,8 +76,6 @@ export const {
   updateAllergies,
   updateSearchedWord,
   updateDrugDetails,
-  updatePastSchedule,
-  updateCombinedSchedule,
   updateActiveAllergy,
-  updateActive
+  updateActive, updateCompletedDrugs
 } = stateSlice.actions;

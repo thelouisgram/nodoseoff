@@ -18,10 +18,10 @@ import {
   setEffects,
   updateAllergies,
   updateInfo,
-  updatePastSchedule,
   updateSchedule,
   updateUserId,
   updateActive,
+  updateCompletedDrugs,
 } from "../../../store/stateSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store";
@@ -40,7 +40,7 @@ interface tabsProps {
 }
 
 const Page = () => {
-  const { userId, active } =
+  const { userId, active, schedule } =
     useSelector((state: RootState) => state.app);
   const dispatch = useDispatch();
   const [nav, setNav] = useState(true);
@@ -50,12 +50,11 @@ const Page = () => {
   const [drugsForm, setDrugsForm] = useState(false);
   const [screen, setScreen] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
-  const [deleteAllergyModal, setDeleteAllergyModal] = useState(false)
   const [editModal, setEditModal] = useState(false);
   const [allergyModal, setAllergyModal] = useState(false);
   const router = useRouter();
   const [add, setAdd] = useState(false);
-  const [runFunction, setRunFunction] = useState(false)
+  const [runFunction, setRunFunction] = useState(false);
 
   useEffect(() => {
     if (!userId) {
@@ -90,6 +89,23 @@ const Page = () => {
         }
       } catch (error) {}
     };
+    const getCompletedDrugs = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("users")
+          .select("completedDrugs")
+          .eq("userId", userId);
+        if (error) {
+          console.error("error:", error);
+        } else if (data !== null) {
+          const transformedData = data?.map((item) => [...item.completedDrugs]);
+          const flattenedData = transformedData?.flatMap(
+            (innerArray: any) => innerArray
+          );
+          dispatch(updateCompletedDrugs(flattenedData));
+        }
+      } catch (error) {}
+    };
     const getEffects = async () => {
       try {
         const { data, error } = await supabase
@@ -107,29 +123,12 @@ const Page = () => {
       try {
         const { data, error } = await supabase
           .from("allergies")
-          .select("allergy")
+          .select("drug")
           .eq("userId", userId);
         if (error) {
           console.error("error:", error);
         } else if (data !== null) {
           dispatch(updateAllergies(data));
-        }
-      } catch (error) {}
-    };
-    const getPastSchedule = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("pastSchedule")
-          .select("pastSchedule")
-          .eq("userId", userId);
-        if (error) {
-          console.error("error:", error);
-        } else if (data !== null) {
-          const transformedData = data?.map((item) => [...item.pastSchedule]);
-          const flattenedData = transformedData?.flatMap(
-            (innerArray: any) => innerArray
-          );
-          dispatch(updatePastSchedule(flattenedData));
         }
       } catch (error) {}
     };
@@ -149,29 +148,16 @@ const Page = () => {
         dispatch(updateSchedule(flattenedData));
       } catch (error) {}
     };
-    
-    if (userId) {
-     Promise.all([
-       getInfo(),
-       getDrug(),
-       getEffects(),
-       getAllergies(),
-       getPastSchedule(),
-       getSchedule(),
-     ])
-       .then((results) => {
-         // All asynchronous operations have completed
-         setRunFunction(true);
-         // Process results if needed
-       })
-       .catch((error) => {
-         // Handle errors
-         console.error("Error:", error);
-       });
 
-    }
+      if (userId) {
+          getInfo();
+          getDrug();
+          getEffects();
+          getAllergies();
+          getSchedule();
+          getCompletedDrugs();
+        } 
   }, [userId]);
-
 
   const renderedTabs = tabs.map((item: tabsProps, index: number) => {
     return (
@@ -327,8 +313,6 @@ const Page = () => {
             effectsForm={effectsForm}
             allergiesForm={allergiesForm}
             setAllergiesForm={setAllergiesForm}
-            deleteAllergyModal={deleteAllergyModal}
-            setDeleteAllergyModal={setDeleteAllergyModal}
           />
         ) : active === "Search" ? (
           <Search />

@@ -47,7 +47,7 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
 
     const drugAlreadyExists = allergies.some(
       (item: any) =>
-        item.allergy.toLowerCase() === formData.allergy.toLowerCase()
+        item.drug.toLowerCase() === formData.allergy.toLowerCase()
     );
 
     if (drugAlreadyExists) {
@@ -72,7 +72,7 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
     try {
       const { error } = await supabase.from("allergies").insert({
         userId: userId,
-        allergy: formData.allergy,
+        drug: formData.allergy,
       });
 
       if (error) {
@@ -80,7 +80,7 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
         return;
       }
 
-      dispatch(updateAllergies([...allergies, { allergy: formData.allergy }]));
+      dispatch(updateAllergies([...allergies, { drug: formData.allergy }]));
       toast.success(`'${formData.allergy}' has been added successfully`);
       setFormData({
         allergy: "",

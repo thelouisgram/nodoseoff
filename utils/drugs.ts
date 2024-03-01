@@ -2,7 +2,7 @@ export const drugsTab: string[] =[
    "Ongoing", "Completed", "Allergies" 
 ]
 
-export function calculateTimePeriod(startDate: Date, endDate: Date): string {
+export function calculateTimePeriod(startDate: string, endDate: string): string {
     const start: any = new Date(startDate);
     const end: any = new Date(endDate);
     const durationInDays = Math.floor(
@@ -37,3 +37,19 @@ export function calculateTimePeriod(startDate: Date, endDate: Date): string {
 
     return durationText.join(", ");
 }
+
+export const convertedTimes = (times: string[]) => {
+
+  return times.map(time => {
+    const [hours, minutes] = time.split(':');
+    let suffix = 'AM';
+    let hours12 = parseInt(hours, 10);
+    if (hours12 >= 12) {
+      suffix = 'PM';
+      if (hours12 > 12) {
+        hours12 -= 12;
+      }
+    }
+    return `${hours12}:${minutes} ${suffix}`;
+  });
+};

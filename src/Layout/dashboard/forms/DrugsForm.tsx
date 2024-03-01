@@ -153,7 +153,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
     );
 
     const allergicToDrug = allergies.some(
-      (item: any) => item.allergy.toLowerCase() === formData.drug.toLowerCase()
+      (item: any) => item.drug.toLowerCase() === formData.drug.toLowerCase()
     );
 
     if (drugAlreadyExists) {

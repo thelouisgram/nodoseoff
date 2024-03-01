@@ -2,34 +2,47 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../../store";
 import Image from "next/image";
-import { formatDate, frequencyToPlaceholder } from "../../../../utils/dashboard";
+import {
+  formatDate,
+  frequencyToPlaceholder,
+} from "../../../../utils/dashboard";
 import { calculateTimePeriod } from "../../../../utils/drugs";
+import { convertedTimes } from "../../../../utils/drugs";
 
-interface drugDetailsProps{
-     displayDrugs: boolean
-    setDisplayDrugs: Function
+interface drugDetailsProps {
+  displayDrugs: boolean;
+  setDisplayDrugs: Function;
+  tab: string;
 }
 
 interface detail {
-    name: string;
-    details: string;
+  name: string;
+  details: string;
 }
 
 const DrugDetails: React.FC<drugDetailsProps> = ({
   displayDrugs,
   setDisplayDrugs,
+  tab,
 }) => {
-  const { drugs, activeDrug } = useSelector((state: RootState) => state.app);
+  const { drugs, completedDrugs, activeDrug } = useSelector(
+    (state: RootState) => state.app
+  );
 
-  const drugDetails = drugs.find((drug) => drug.drug === activeDrug);
+  const drugsArray = tab === "Ongoing" ? drugs : completedDrugs;
+
+  const drugDetails = drugsArray.find((drug) => drug.drug === activeDrug);
   const { drug, route, frequency, start, end, time, reminder } = drugDetails;
   const Duration = calculateTimePeriod(start, end);
 
-
   const Details = [
+    {
+      name: "Current Status",
+      details: tab === "Ongoing" ? "Ongoing" : "Completed",
+    },
     { name: "Route of Administration", details: route },
     { name: "Frequency", details: frequencyToPlaceholder[frequency] },
-    { name: "Time", details: time },
+    { name: "Time", details: convertedTimes(time).join(', ') },
     { name: "Duration", details: Duration },
     { name: "Start Date", details: formatDate(start) },
     { name: "End Date", details: formatDate(end) },
@@ -37,13 +50,13 @@ const DrugDetails: React.FC<drugDetailsProps> = ({
   ];
 
   const RenderedDetails = Details.map((detail: detail, index: number) => {
-    return(
-        <div key={index}>
-            <h2 className="font-semibold text-[16px]">{detail.name}</h2>
-            <h3 className="capitalize">{detail.details}</h3>
-        </div>
-    )
-  })
+    return (
+      <div key={index}>
+        <h2 className="text-[14px] font-bold ">{detail.name}</h2>
+        <h3 className="text-[14px] ss:text-16px capitalize">{detail.details}</h3>
+      </div>
+    );
+  });
 
   return (
     <div className="max-h-[100dvh] px-6 text-navyBlue font-montserrant">
@@ -54,7 +67,7 @@ const DrugDetails: React.FC<drugDetailsProps> = ({
         className="flex gap-3"
       >
         <Image src="/assets/back.png" alt="back" width={24} height={24} />
-        <p className="font-[500]">Drugs</p>
+        <p className="font-semibold text-[18px]">Back</p>
       </button>
 
       <section className="mt-8 ">

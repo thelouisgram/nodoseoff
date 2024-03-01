@@ -12,7 +12,7 @@ interface Effect {
 }
 
 const DailyReports: React.FC<DailyReportsProps> = ({ today, selectDate }) => {
-  const { effects, combinedSchedule } = useSelector((state: RootState) => state.app);
+  const { effects, schedule } = useSelector((state: RootState) => state.app);
 
   const formattedDateFull = (selectDate ?? today).format("DD MMMM, YYYY");
   const formattedDate = (selectDate ?? today).format("YYYY-MM-DD");
@@ -20,7 +20,7 @@ const DailyReports: React.FC<DailyReportsProps> = ({ today, selectDate }) => {
     (effect: Effect) => effect.date === formattedDate
   );
 
-  const filteredDrugs = combinedSchedule?.filter(
+  const filteredDrugs = schedule?.filter(
     (dose: any) => dose?.date === formattedDate
   );
 

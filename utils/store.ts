@@ -5,14 +5,13 @@ export interface AppType {
   isAuthenticated: boolean;
   userId: string;
   drugs: any[];
+  completedDrugs: any[];
   effects: any[];
   schedule: ScheduleItem[];
   activeDrug: string;
   allergies: string[];
   drugDetails: any;
   searchedWord: string;
-  pastSchedule: ScheduleItem[];
-  combinedSchedule: ScheduleItem[];
   activeAllergy: string;
   active: string;
 }

@@ -4,19 +4,27 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../../../store";
 import Image from "next/image";
 import { updateActiveAllergy } from "../../../../../store/stateSlice";
+import RenderedDrugs from "../RenderedDrugs";
+import { frequencyToPlaceholder } from "../../../../../utils/dashboard";
 
 type RefObject<T> = React.RefObject<T>;
 
 interface allergiesProps {
-  setDeleteAllergyModal: Function;
+  setDeleteModal: Function;
   setScreen: Function;
-  deleteAllergyModal: boolean;
+  setEditModal: Function;
+  displayDrugs: boolean;
+  setDisplayDrugs: Function;
+  setAllergyModal: Function;
 }
 
 const Allergies: React.FC<allergiesProps> = ({
-  deleteAllergyModal,
-  setDeleteAllergyModal,
-  setScreen
+  setDeleteModal,
+  setScreen,
+  setAllergyModal,
+  setEditModal,
+  displayDrugs,
+  setDisplayDrugs,
 }) => {
   const { allergies } = useSelector((state: RootState) => state.app);
   const dispatch = useDispatch();
@@ -28,7 +36,7 @@ const Allergies: React.FC<allergiesProps> = ({
       !dropdownRef.current.contains(event.target as Node)
     ) {
       setOptions(false);
-      setScreen(false)
+      setScreen(false);
     }
   };
   useEffect(() => {
@@ -45,55 +53,143 @@ const Allergies: React.FC<allergiesProps> = ({
     };
   }, []);
 
-  const renderedAllergies = allergies.map((item: any, index: number) => {
+  const [searched, setSearched] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setSearched(value);
+    setCurrentPage(1);
+  };
+
+  const findDrug = (searched: string) => {
+    return allergies?.filter((drug: any) =>
+      drug.drug.startsWith(searched.toLowerCase())
+    );
+  };
+
+  const filteredDrugs = searched ? findDrug(searched) : allergies;
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredDrugs.slice(indexOfFirstItem, indexOfLastItem);
+
+  const totalPages = Math.ceil(filteredDrugs.length / itemsPerPage);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const renderedAllergies = currentItems.map((item: any, index: number) => {
     return (
-      <div
+      <RenderedDrugs
         key={index}
-        className="p-5 w-full bg-lightBlue relative text-navyBlue rounded-[10px] rounded-bl-none capitalize flex flex-center h-full"
-      >
-        {index + 1}. {item?.allergy}
-        <button
-          onClick={() => {
-            setOptions((prev) => !prev),
-            dispatch(updateActiveAllergy(item.allergy))
-          }}
-          className="absolute  right-3 flex flex-col gap-1 cursor-pointer w-7 h-7 justify-center items-center rounded-full"
-        >
-          <div className="w-[3px] h-[3px] rounded-full bg-navyBlue" />
-          <div className="w-[3px] h-[3px] rounded-full bg-navyBlue" />
-          <div className="w-[3px] h-[3px] rounded-full bg-navyBlue" />
-        </button>
-        {options && (
-          <div
-            ref={dropdownRef}
-            className="absolute right-3 top-10 text-navyBlue flex flex-col items-start justify-center mt-3 rounded-[10px] 
-        bg-white shadow-md w-[150px] ss:w-[250px] py-3 text-[13px] ss:text-[16px]"
-          >
-            <button
-              onClick={() => {
-                setDeleteAllergyModal(item.allergy),
-                  setScreen(true)
-              }}
-              className="h-8 hover:bg-gray-100 flex items-center gap-2 w-full px-3"
-            >
-              <Image
-                src="/assets/delete.png"
-                alt="edit"
-                width={20}
-                height={20}
-                className="ss:w-[20px] w-[16px]"
-              />
-              Delete Allergy
-            </button>
-          </div>
-        )}
-      </div>
+        id={index}
+        drug={item}
+        frequencyToPlaceholder={frequencyToPlaceholder}
+        setScreen={setScreen}
+        setDeleteModal={setDeleteModal}
+        setEditModal={setEditModal}
+        setAllergyModal={setAllergyModal}
+        displayDrugs={displayDrugs}
+        setDisplayDrugs={setDisplayDrugs}
+        showEditButton={false}
+        tab={"Allergies"}
+      />
     );
   });
 
   return (
-    <div className="w-full gap-4 flex flex-col">
-      {renderedAllergies}
+    <div>
+      {allergies.length > 0 ? (
+        <div className="border-[1px] rounded-lg text-darkGrey">
+          <div className="w-full justify-between flex py-6 px-4 bg-lightGrey rounded-t-lg items-center">
+            <h2 className="font-[500] text-[14px] ss:text-[20px] font-Inter text-navyBlue">
+              Drug Allergies List
+            </h2>
+            <div className="flex w-[150px] ss:w-[300px] items-center py-1 px-2 ss:p-2 border-[1px] rounded-md text-navyBlue gap-1 ss:gap-3">
+              <Image
+                src="/assets/mobile-dashboard/search.png"
+                width="24"
+                height="24"
+                alt="search"
+                className="w-[16px] h-[16px] ss:w-[24px] ss:h-[24px]"
+              />
+              <input
+                placeholder="Search"
+                className="bg-transparent outline-none w-full"
+                value={searched}
+                onChange={handleSearchChange}
+              />
+            </div>
+          </div>
+          <div className="w-full flex justify-between px-4 border-y-[1px]">
+            <h2 className="w-[25%] sm:w-[14%] py-4 uppercase text-[13px] font-semibold">
+              Name
+            </h2>
+            <h2 className="w-[10%] md:w-[6%] flex justify-center py-4 uppercase text-[13px] font-semibold"></h2>
+          </div>
+
+          <div className="w-full flex flex-col">
+            {renderedAllergies.length > 0 ? (
+              renderedAllergies
+            ) : (
+              <div className="w-full flex justify-center py-6 text-[16px] text-navyBlue font-[500]">
+                No drug found with `{searched}`
+              </div>
+            )}
+          </div>
+          {filteredDrugs.length > 0 && (
+            <div className="w-full flex justify-end p-4 gap-3 items-center">
+              <button
+                onClick={handlePreviousPage}
+                disabled={currentPage === 1}
+                className="px-3 py-1 border flex gap-2 items-center rounded-md"
+              >
+                <Image
+                  src="/assets/back.png"
+                  alt="back"
+                  width={18}
+                  height={18}
+                />
+                Previous
+              </button>
+              <span>
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                onClick={handleNextPage}
+                disabled={currentPage === totalPages}
+                className="px-3 py-1 border flex gap-2 items-center rounded-md"
+              >
+                Next
+                <Image
+                  src="/assets/back.png"
+                  alt="back"
+                  width={18}
+                  height={18}
+                  className="rotate-180"
+                />
+              </button>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="w-full h-[400px] flex justify-center items-center">
+          <h1 className="text-[20px] text-navyBlue font-semibold font-montserrant text-center opacity-30">
+            Add an allergic drug to get started!
+          </h1>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import { toast } from "sonner";
 import supabase from "./supabaseClient";
 import { Drug } from "../types";
+import { ScheduleItem } from "../types/dashboard";
 
 export const uploadScheduleToServer = async ({
   userId,
@@ -23,12 +24,26 @@ export const uploadScheduleToServer = async ({
   }
 };
 
-export function removeActiveDrugFromSchedule({
+export function removePastDoses({
   activeDrug,
   schedule,
 }: {
   activeDrug: string;
-  schedule: any[];
+  schedule: ScheduleItem[];
 }) {
-  return schedule.filter((drug: Drug) => drug.drug !== activeDrug);
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1); // Set to yesterday's date
+
+  const updatedSchedule = schedule.filter((item) => {
+    // Parse drug date to create a new Date object
+    const drugDate = new Date(item.date);
+
+    // Compare drug date with yesterday's date
+    if (item.drug === activeDrug) {
+      return drugDate <= yesterday; // Return true if drug date is before or equal to yesterday
+    }
+    return true; // Keep doses for other drugs
+  });
+
+  return updatedSchedule;
 }

@@ -5,12 +5,13 @@ import React, { useState, useEffect } from "react";
 import Calendar from "./Calendar";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../../store";
-import { calculateClosestDoseCountdown, filterPastDoses } from "../../../../utils/dashboard";
+import {
+  calculateClosestDoseCountdown,
+  filterPastDoses,
+} from "../../../../utils/dashboard";
 import { format } from "date-fns";
 import { FaCheck, FaExclamationTriangle } from "react-icons/fa";
-import {
-  updateSchedule,
-} from "../../../../store/stateSlice";
+import { updateSchedule } from "../../../../store/stateSlice";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { uploadScheduleToServer } from "../../../../utils/schedule";
 import { ScheduleItem } from "../../../../types/dashboard";
@@ -18,10 +19,9 @@ import { ScheduleItem } from "../../../../types/dashboard";
 interface HomeProps {
   setEffectsForm: Function;
   setDrugsForm: Function;
-  runFunction: boolean;
 }
 
-const Home: React.FC<HomeProps> = ({ setDrugsForm,  }) => {
+const Home: React.FC<HomeProps> = ({ setDrugsForm }) => {
   const { drugs, info, schedule, userId } = useSelector(
     (state: RootState) => state.app
   );
@@ -39,22 +39,23 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm,  }) => {
   const { name } = info[0];
 
   useEffect(() => {
-    // Function to calculate the countdown
-    const calculateAndSetCountdown = () => {
-      const newCountdown = calculateClosestDoseCountdown(schedule);
-      setCountDown(newCountdown);
-    };
+    const timeoutId = setTimeout(() => {
+      // Function to calculate the countdown
+      const calculateAndSetCountdown = () => {
+        const newCountdown = calculateClosestDoseCountdown(schedule);
+        setCountDown(newCountdown);
+      };
 
-    // Initial countdown calculation and process schedule
-    calculateAndSetCountdown();
+      // Initial countdown calculation and process schedule
+      calculateAndSetCountdown();
 
-    // Set interval to update countdown every second
-    const intervalId = setInterval(calculateAndSetCountdown, 1000);
+      // Set interval to update countdown every second
+      const intervalId = setInterval(calculateAndSetCountdown, 1000);
 
-    // Clear interval on unmount or when 'schedule' changes
-    return () => clearInterval(intervalId);
-  }, [drugs]);  
-
+      // Clear interval on unmount or when 'schedule' changes
+      return () => clearInterval(intervalId);
+    }, 500);
+  }, [drugs]);
 
   const todaysDose: ScheduleItem[] = schedule
     ?.filter((drug: ScheduleItem) => {
@@ -90,7 +91,7 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm,  }) => {
       }
     });
 
- function updateCompleted(item: ScheduleItem) {
+  function updateCompleted(item: ScheduleItem) {
     const updatedSchedule = schedule.map((dose) => {
       if (
         dose.date === item.date &&
@@ -105,7 +106,7 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm,  }) => {
       }
       return dose;
     });
-    dispatch(updateSchedule(updatedSchedule))
+    dispatch(updateSchedule(updatedSchedule));
     uploadScheduleToServer({ userId, schedule: updatedSchedule });
   }
 
@@ -201,8 +202,6 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm,  }) => {
     );
   }
 
-
-
   return (
     <div className="w-full h-[100dvh] overflow-y-scroll md:py-16 md:px-12 pt-10 pb-24 ss:py-10 text-navyBlue font-karla relative">
       <div className="mb-[28px] px-4 ss:px-8 md:px-0">
@@ -254,7 +253,7 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm,  }) => {
               Number of Drugs
             </h2>
             <h4 className="font-bold text-[28px] tracking-wider leading-none">
-              {drugs.length} 
+              {drugs.length}
             </h4>
           </div>
         </div>

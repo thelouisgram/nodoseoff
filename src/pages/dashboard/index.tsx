@@ -27,6 +27,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store";
 import Search from "@/Layout/dashboard/search/Search";
 import AllergiesForm from "@/Layout/dashboard/forms/AllergiesForm";
+import Loader from "@/Layout/dashboard/shared/Loader";
 
 interface tabsMobileProps {
   name: string;
@@ -54,7 +55,7 @@ const Page = () => {
   const [allergyModal, setAllergyModal] = useState(false);
   const router = useRouter();
   const [add, setAdd] = useState(false);
-  const [runFunction, setRunFunction] = useState(false);
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     if (!userId) {
@@ -63,6 +64,9 @@ const Page = () => {
   }, []);
 
   useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
     const getInfo = async () => {
       try {
         const { data, error } = await supabase
@@ -240,86 +244,93 @@ const Page = () => {
 
   return (
     <section className="flex max-h-[100dvh] relative w-full bg-white">
-      <div
-        className={`${
-          !nav ? "w-[86px]" : "w-[300px]"
-        } max-h-[100dvh] bg-navyBlue py-10 pl-6 hidden font-montserrant md:flex flex-col justify-between relative transition-all duration-300`}
-      >
-        <div>
-          <div className="flex gap-5 items-center mb-12 cursor-pointer h-[60.81px]">
-            <Image
-              onClick={() => {
-                setNav(!nav);
-              }}
-              src="/assets/desktop-dashboard/menu.png"
-              width={512}
-              height={512}
-              className="w-[24px] h-[24px]"
-              alt="menu"
-              quality={100}
-            />
-            <Link href={"/"}>
+      {!isLoading && userId ? (
+        <>
+          <div
+            className={`${
+              !nav ? "w-[86px]" : "w-[300px]"
+            } max-h-[100dvh] bg-navyBlue py-10 pl-6 hidden font-montserrant md:flex flex-col justify-between relative transition-all duration-300`}
+          >
+            <div>
+              <div className="flex gap-5 items-center mb-12 cursor-pointer h-[60.81px]">
+                <Image
+                  onClick={() => {
+                    setNav(!nav);
+                  }}
+                  src="/assets/desktop-dashboard/menu.png"
+                  width={512}
+                  height={512}
+                  className="w-[24px] h-[24px]"
+                  alt="menu"
+                  quality={100}
+                />
+                <Link href={"/"}>
+                  <Image
+                    src="/assets/pill perfect png2.png"
+                    alt="logo"
+                    width={4672}
+                    height={1920}
+                    className={`w-[148px] h-auto ${nav ? "flex" : "hidden"}`}
+                    quality={100}
+                  />
+                </Link>
+              </div>
+              <div className="flex flex-col gap-6">{renderedTabs}</div>
+            </div>
+
+            <button onClick={logOut} className="flex items-center gap-6">
               <Image
-                src="/assets/pill perfect png2.png"
-                alt="logo"
-                width={4672}
-                height={1920}
-                className={`w-[148px] h-auto ${nav ? "flex" : "hidden"}`}
+                src="/assets/desktop-dashboard/power-off.png"
+                width={512}
+                height={512}
+                className="w-[24px] h-[24px]"
+                alt="menu"
                 quality={100}
               />
-            </Link>
+              <p
+                className={`text-[16px] text-white ${nav ? "flex" : "hidden"}`}
+              >
+                Logout
+              </p>
+            </button>
           </div>
-          <div className="flex flex-col gap-6">{renderedTabs}</div>
-        </div>
-
-        <button onClick={logOut} className="flex items-center gap-6">
-          <Image
-            src="/assets/desktop-dashboard/power-off.png"
-            width={512}
-            height={512}
-            className="w-[24px] h-[24px]"
-            alt="menu"
-            quality={100}
-          />
-          <p className={`text-[16px] text-white ${nav ? "flex" : "hidden"}`}>
-            Logout
-          </p>
-        </button>
-      </div>
-      <div className="w-full">
-        {active === "Home" ? (
-          <Home
-            setEffectsForm={setEffectsForm}
-            setDrugsForm={setDrugsForm}
-            runFunction={runFunction}
-          />
-        ) : active === "Drugs" ? (
-          <Drugs
-            screen={screen}
-            setScreen={setScreen}
-            setDrugsForm={setDrugsForm}
-            setEditForm={setEditForm}
-            setEditModal={setEditModal}
-            setDeleteModal={setDeleteModal}
-            deleteModal={deleteModal}
-            editModal={editModal}
-            allergyModal={allergyModal}
-            setAllergyModal={setAllergyModal}
-            add={add}
-            setAdd={setAdd}
-            setEffectsForm={setEffectsForm}
-            editForm={editForm}
-            drugsForm={drugsForm}
-            effectsForm={effectsForm}
-            allergiesForm={allergiesForm}
-            setAllergiesForm={setAllergiesForm}
-          />
-        ) : active === "Search" ? (
-          <Search />
-        ) : (
-          <Account />
-        )}
-      </div>
+          <div className="w-full">
+            {active === "Home" ? (
+              <Home
+                setEffectsForm={setEffectsForm}
+                setDrugsForm={setDrugsForm}
+              />
+            ) : active === "Drugs" ? (
+              <Drugs
+                screen={screen}
+                setScreen={setScreen}
+                setDrugsForm={setDrugsForm}
+                setEditForm={setEditForm}
+                setEditModal={setEditModal}
+                setDeleteModal={setDeleteModal}
+                deleteModal={deleteModal}
+                editModal={editModal}
+                allergyModal={allergyModal}
+                setAllergyModal={setAllergyModal}
+                add={add}
+                setAdd={setAdd}
+                setEffectsForm={setEffectsForm}
+                editForm={editForm}
+                drugsForm={drugsForm}
+                effectsForm={effectsForm}
+                allergiesForm={allergiesForm}
+                setAllergiesForm={setAllergiesForm}
+              />
+            ) : active === "Search" ? (
+              <Search />
+            ) : (
+              <Account />
+            )}
+          </div>
+        </>
+      ) : (
+        <Loader />
+      )}
       <DrugsForm drugsForm={drugsForm} setDrugsForm={setDrugsForm} />
       <EffectsForm effectsForm={effectsForm} setEffectsForm={setEffectsForm} />
       <EditForm editForm={editForm} setEditForm={setEditForm} />

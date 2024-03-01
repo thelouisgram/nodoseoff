@@ -41,7 +41,7 @@ interface tabsProps {
 }
 
 const Page = () => {
-  const { userId, active, schedule } =
+  const { userId, active } =
     useSelector((state: RootState) => state.app);
   const dispatch = useDispatch();
   const [nav, setNav] = useState(true);

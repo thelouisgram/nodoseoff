@@ -41,8 +41,7 @@ interface tabsProps {
 }
 
 const Page = () => {
-  const { userId, active } =
-    useSelector((state: RootState) => state.app);
+  const { userId, active } = useSelector((state: RootState) => state.app);
   const dispatch = useDispatch();
   const [nav, setNav] = useState(true);
   const [effectsForm, setEffectsForm] = useState(false);
@@ -55,7 +54,7 @@ const Page = () => {
   const [allergyModal, setAllergyModal] = useState(false);
   const router = useRouter();
   const [add, setAdd] = useState(false);
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (!userId) {
@@ -153,14 +152,14 @@ const Page = () => {
       } catch (error) {}
     };
 
-      if (userId) {
-          getInfo();
-          getDrug();
-          getEffects();
-          getAllergies();
-          getSchedule();
-          getCompletedDrugs();
-        } 
+    if (userId) {
+      getInfo();
+      getDrug();
+      getEffects();
+      getAllergies();
+      getSchedule();
+      getCompletedDrugs();
+    }
   }, [userId]);
 
   const renderedTabs = tabs.map((item: tabsProps, index: number) => {
@@ -243,9 +242,9 @@ const Page = () => {
   );
 
   return (
-    <section className="flex max-h-[100dvh] relative w-full bg-white">
+    <>
       {!isLoading && userId ? (
-        <>
+        <section className="flex max-h-[100dvh] relative w-full bg-white">
           <div
             className={`${
               !nav ? "w-[86px]" : "w-[300px]"
@@ -328,31 +327,35 @@ const Page = () => {
               <Account />
             )}
           </div>
-        </>
+
+          <DrugsForm drugsForm={drugsForm} setDrugsForm={setDrugsForm} />
+          <EffectsForm
+            effectsForm={effectsForm}
+            setEffectsForm={setEffectsForm}
+          />
+          <EditForm editForm={editForm} setEditForm={setEditForm} />
+          <AllergiesForm
+            allergiesForm={allergiesForm}
+            setAllergiesForm={setAllergiesForm}
+          />
+          {screen && (
+            <Screen
+              setDeleteModal={setDeleteModal}
+              setAllergyModal={setAllergyModal}
+              setEditModal={setEditModal}
+              setScreen={setScreen}
+              setAdd={setAdd}
+              screen={screen}
+            />
+          )}
+          <div className="fixed w-full h-[64px] bg-white shadow bottom-0 flex justify-between items-center md:hidden px-4 ss:px-8 ss:pr-12">
+            {renderedTabsMobile}
+          </div>
+        </section>
       ) : (
         <Loader />
       )}
-      <DrugsForm drugsForm={drugsForm} setDrugsForm={setDrugsForm} />
-      <EffectsForm effectsForm={effectsForm} setEffectsForm={setEffectsForm} />
-      <EditForm editForm={editForm} setEditForm={setEditForm} />
-      <AllergiesForm
-        allergiesForm={allergiesForm}
-        setAllergiesForm={setAllergiesForm}
-      />
-      {screen && (
-        <Screen
-          setDeleteModal={setDeleteModal}
-          setAllergyModal={setAllergyModal}
-          setEditModal={setEditModal}
-          setScreen={setScreen}
-          setAdd={setAdd}
-          screen={screen}
-        />
-      )}
-      <div className="fixed w-full h-[64px] bg-white shadow bottom-0 flex justify-between items-center md:hidden px-4 ss:px-8 ss:pr-12">
-        {renderedTabsMobile}
-      </div>
-    </section>
+    </>
   );
 };
 

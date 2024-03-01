@@ -59,19 +59,19 @@ const DrugDetails: React.FC<drugDetailsProps> = ({
   });
 
   return (
-    <div className="max-h-[100dvh] px-6 text-navyBlue font-montserrant">
+    <div className="max-h-[100dvh] px-4 ss:px-6 text-navyBlue font-montserrant">
       <button
         onClick={() => {
           setDisplayDrugs(true);
         }}
-        className="flex gap-3"
+        className="flex gap-3 items-center"
       >
         <Image src="/assets/back.png" alt="back" width={24} height={24} />
         <p className="font-semibold text-[18px]">Back</p>
       </button>
 
       <section className="mt-8 ">
-        <h1 className="text-[24px] ss:text-[32px] font-semibold font-montserrant capitalize mb-[28px]">
+        <h1 className="text-[28px] ss:text-[36px] font-semibold font-montserrant capitalize mb-[28px]">
           {drug}
         </h1>
         <div className="flex flex-col gap-4">{RenderedDetails}</div>

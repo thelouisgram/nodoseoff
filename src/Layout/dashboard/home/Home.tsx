@@ -7,7 +7,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../../store";
 import {
   calculateClosestDoseCountdown,
-  filterPastDoses,
 } from "../../../../utils/dashboard";
 import { format } from "date-fns";
 import { FaCheck, FaExclamationTriangle } from "react-icons/fa";

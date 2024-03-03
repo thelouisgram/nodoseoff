@@ -3,7 +3,7 @@ import { ScheduleItem } from "../types/dashboard";
 export const tabs = [
   { name: "Home", logo: "/assets/desktop-dashboard/home.png" },
   { name: "Drugs", logo: "/assets/desktop-dashboard/drugs.png" },
-  { name: "Search", logo: "/assets/desktop-dashboard/loupe.png" },
+  { name: "Share", logo: "/assets/desktop-dashboard/send.png" },
   { name: "Account", logo: "/assets/desktop-dashboard/user.png" },
 ];
 
@@ -19,9 +19,9 @@ export const tabsMobile = [
     inactiveLogo: "/assets/mobile-dashboard/drugs (1).png",
   },
   {
-    name: "Search",
-    logo: "/assets/mobile-dashboard/search.png",
-    inactiveLogo: "/assets/mobile-dashboard/search (1).png",
+    name: "Share",
+    logo: "/assets/mobile-dashboard/send.png",
+    inactiveLogo: "/assets/mobile-dashboard/send (1).png",
   },
   {
     name: "Account",

@@ -9,7 +9,7 @@ export interface AppType {
   effects: any[];
   schedule: ScheduleItem[];
   activeDrug: string;
-  allergies: string[];
+  allergies: any[];
   drugDetails: any;
   searchedWord: string;
   activeAllergy: string;

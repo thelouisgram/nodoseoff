@@ -59,7 +59,7 @@ const Account = () => {
   };
 
   return (
-    <div className="h-[100dvh] overflow-y-scroll w-full md:py-16 md:px-12 px-4 pt-10  pb-24 ss:p-10 text-navyBlue font-karla relative">
+    <div className="h-[100dvh] overflow-y-scroll w-full md:py-16 md:px-12 px-4 pt-10  pb-24 ss:p-10 mb-10 text-navyBlue font-karla relative">
       <div className="mb-[28px]">
         <h1 className="text-[24px] ss:text-[32px] font-semibold font-montserrant ">
           My Account
@@ -111,10 +111,10 @@ const Account = () => {
           <p>{missedDoses}</p>
         </div>
       </div>
-      <div className="w-full flex justify-center">
+      <div className="w-[full] flex justify-center mb-10 md:mb-0">
         <button
           onClick={logOut}
-          className="flex border-[1px] w-full ss:w-[500px] rounded-[10px] rounded-bl-none px-4 py-4 mt-10 items-center font-semibold gap-2"
+          className="flex border-[1px] w-full rounded-[10px] rounded-bl-none px-4 py-4 mt-10 items-center font-semibold gap-2"
         >
           <Image
             src="/assets/power-off.png"

@@ -25,9 +25,9 @@ import {
 } from "../../../store/stateSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store";
-import Search from "@/Layout/dashboard/search/Search";
 import AllergiesForm from "@/Layout/dashboard/forms/AllergiesForm";
 import Loader from "@/Layout/dashboard/shared/Loader";
+import Share from "@/Layout/dashboard/share/share";
 
 interface tabsMobileProps {
   name: string;
@@ -321,8 +321,8 @@ const Page = () => {
                 allergiesForm={allergiesForm}
                 setAllergiesForm={setAllergiesForm}
               />
-            ) : active === "Search" ? (
-              <Search />
+            ) : active === "Share" ? (
+              <Share />
             ) : (
               <Account />
             )}

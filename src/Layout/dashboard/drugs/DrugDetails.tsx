@@ -42,7 +42,7 @@ const DrugDetails: React.FC<drugDetailsProps> = ({
     },
     { name: "Route of Administration", details: route },
     { name: "Frequency", details: frequencyToPlaceholder[frequency] },
-    { name: "Time", details: convertedTimes(time).join(', ') },
+    { name: "Time", details: convertedTimes(time).join(", ") },
     { name: "Duration", details: Duration },
     { name: "Start Date", details: formatDate(start) },
     { name: "End Date", details: formatDate(end) },
@@ -51,9 +51,11 @@ const DrugDetails: React.FC<drugDetailsProps> = ({
 
   const RenderedDetails = Details.map((detail: detail, index: number) => {
     return (
-      <div key={index}>
+      <div key={index} className="border rounded-md rounded-bl-none p-5">
         <h2 className="text-[14px] font-bold ">{detail.name}</h2>
-        <h3 className="text-[14px] ss:text-16px capitalize">{detail.details}</h3>
+        <h3 className="text-[14px] ss:text-16px capitalize">
+          {detail.details}
+        </h3>
       </div>
     );
   });
@@ -74,7 +76,7 @@ const DrugDetails: React.FC<drugDetailsProps> = ({
         <h1 className="text-[28px] ss:text-[36px] font-semibold font-montserrant capitalize mb-[28px]">
           {drug}
         </h1>
-        <div className="flex flex-col gap-4">{RenderedDetails}</div>
+        <div className="grid ss:grid-cols-2 gap-4">{RenderedDetails}</div>
       </section>
     </div>
   );

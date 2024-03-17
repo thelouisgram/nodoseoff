@@ -7,6 +7,8 @@ interface ScreenProps {
   screen: boolean;
   setAdd: Function;
   setAllergyModal: Function;
+  setProfileForm: Function;
+  setShowStats: Function;
 }
 
 const Screen: React.FC<ScreenProps> = ({
@@ -15,13 +17,17 @@ const Screen: React.FC<ScreenProps> = ({
   setScreen,
   setAdd,
   setAllergyModal,
+  setProfileForm,
+  setShowStats,
 }) => {
   const handleClose = () => {
     setEditModal(false);
     setDeleteModal(false);
-    setScreen(false);
     setAdd(false);
     setAllergyModal(false);
+    setProfileForm(false);
+    setShowStats(false);
+    setScreen(false);
   };
 
   return (

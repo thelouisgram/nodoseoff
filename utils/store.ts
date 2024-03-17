@@ -21,4 +21,6 @@ export interface Info{
   phone: string ;
   email: string ;
   role: string ;
+  otcDrugs: string;
+  herbs: string;
 }

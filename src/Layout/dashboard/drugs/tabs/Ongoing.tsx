@@ -84,7 +84,7 @@ const Ongoing: React.FC<thisProps> = ({
         displayDrugs={displayDrugs}
         setDisplayDrugs={setDisplayDrugs}
         showEditButton={true}
-        tab={'Ongoing'}
+        tab={"Ongoing"}
       />
     );
   });
@@ -144,33 +144,40 @@ const Ongoing: React.FC<thisProps> = ({
               </div>
             )}
           </div>
-          {filteredDrugs.length > 0 && <div className="w-full flex justify-end p-4 gap-3 items-center">
-            <button
-              onClick={handlePreviousPage}
-              disabled={currentPage === 1}
-              className="px-3 py-1 border flex gap-2 items-center rounded-md"
-            >
-              <Image src="/assets/back.png" alt="back" width={18} height={18} />
-              Previous
-            </button>
-            <span>
-              Page {currentPage} of {totalPages}
-            </span>
-            <button
-              onClick={handleNextPage}
-              disabled={currentPage === totalPages}
-              className="px-3 py-1 border flex gap-2 items-center rounded-md"
-            >
-              Next
-              <Image
-                src="/assets/back.png"
-                alt="back"
-                width={18}
-                height={18}
-                className="rotate-180"
-              />
-            </button>
-          </div>}
+          {filteredDrugs.length > 0 && (
+            <div className="w-full flex justify-end p-4 gap-3 items-center">
+              <button
+                onClick={handlePreviousPage}
+                disabled={currentPage === 1}
+                className="px-3 py-1 border flex gap-2 items-center rounded-md"
+              >
+                <Image
+                  src="/assets/back.png"
+                  alt="back"
+                  width={16}
+                  height={16}
+                />
+                Prev
+              </button>
+              <span>
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                onClick={handleNextPage}
+                disabled={currentPage === totalPages}
+                className="px-3 py-1 border flex gap-2 items-center rounded-md"
+              >
+                Next
+                <Image
+                  src="/assets/back.png"
+                  alt="back"
+                  width={16}
+                  height={16}
+                  className="rotate-180"
+                />
+              </button>
+            </div>
+          )}
         </div>
       ) : (
         <div className="w-full h-[400px] flex justify-center items-center">

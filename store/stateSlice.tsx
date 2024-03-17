@@ -3,7 +3,7 @@ import { Info } from "../utils/store";
 import { AppType } from "../utils/store";
 
 const initialState: AppType = {
-  info: [{ name: "", phone: "", email: "", role: "" }],
+  info: [{ name: "", phone: "", email: "", role: "", otcDrugs: '', herbs: '' }],
   isAuthenticated: true,
   userId: "",
   drugs: [],

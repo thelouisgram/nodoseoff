@@ -105,10 +105,10 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
             : "-left-[450px] ss:w-[450px] h-full"
         } transition-all duration-300 absolute  bg-white h-full w-full z-[4] `}
       >
-        <div className={` h-[100dvh] w-full bg-white p-8 `}>
+        <div className={`h-[100dvh] w-full bg-white p-8 overflow-y-scroll app`}>
           <form
             onSubmit={handleSubmit}
-            className="h-full relative flex flex-col justify-between w-auto"
+            className="h-full relative flex flex-col justify-between w-auto "
           >
             <div>
               <div className="w-full flex justify-end mb-10">

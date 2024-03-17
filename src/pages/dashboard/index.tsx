@@ -27,7 +27,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store";
 import AllergiesForm from "@/Layout/dashboard/forms/AllergiesForm";
 import Loader from "@/Layout/dashboard/shared/Loader";
-import Share from "@/Layout/dashboard/share/share";
+import ProfileForm from "@/Layout/dashboard/forms/ProfileForm";
+import Statistics from "@/Layout/dashboard/account/Statistics";
+import DrugHxForm from '@/Layout/dashboard/forms/DrugHxForm'
+import Tips from "@/Layout/dashboard/Tips/Tips";
 
 interface tabsMobileProps {
   name: string;
@@ -48,6 +51,9 @@ const Page = () => {
   const [editForm, setEditForm] = useState(false);
   const [allergiesForm, setAllergiesForm] = useState(false);
   const [drugsForm, setDrugsForm] = useState(false);
+  const [profileForm, setProfileForm] = useState(false);
+  const [drugHxForm, setDrugHxForm] = useState(false);
+  const [showStats, setShowStats] = useState(false)
   const [screen, setScreen] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
@@ -70,7 +76,7 @@ const Page = () => {
       try {
         const { data, error } = await supabase
           .from("users")
-          .select("name, phone, role, email")
+          .select("name, phone, role, email, otcDrugs, herbs")
           .eq("userId", userId);
         if (error) {
           console.error("error:", error);
@@ -321,10 +327,14 @@ const Page = () => {
                 allergiesForm={allergiesForm}
                 setAllergiesForm={setAllergiesForm}
               />
-            ) : active === "Share" ? (
-              <Share />
+            ) : active === "Tips" ? (
+              <Tips />
             ) : (
-              <Account />
+              <Account
+                setDrugHxForm={setDrugHxForm}
+                setProfileForm={setProfileForm}
+                setShowStats={setShowStats}
+              />
             )}
           </div>
 
@@ -338,14 +348,25 @@ const Page = () => {
             allergiesForm={allergiesForm}
             setAllergiesForm={setAllergiesForm}
           />
+          <ProfileForm
+            setProfileForm={setProfileForm}
+            profileForm={profileForm}
+          />
+          <Statistics
+            setShowStats={setShowStats}
+            showStats={showStats}
+          />
+          <DrugHxForm drugHxForm={drugHxForm} setDrugHxForm={setDrugHxForm} />
           {screen && (
             <Screen
               setDeleteModal={setDeleteModal}
               setAllergyModal={setAllergyModal}
               setEditModal={setEditModal}
+              setProfileForm={setProfileForm}
               setScreen={setScreen}
               setAdd={setAdd}
               screen={screen}
+              setShowStats={setShowStats}
             />
           )}
           <div className="fixed w-full h-[64px] bg-white shadow bottom-0 flex justify-between items-center md:hidden px-4 ss:px-8 ss:pr-12">

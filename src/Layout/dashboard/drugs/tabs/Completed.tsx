@@ -145,7 +145,7 @@ const Completed: React.FC<thisProps> = ({
             )}
           </div>
           {filteredDrugs.length > 0 && (
-            <div className="w-full flex justify-end p-4 gap-3 items-center">
+            <div className="w-full flex justify-end p-4 gap-3 items-center text-[13px] ss:text-[16px]">
               <button
                 onClick={handlePreviousPage}
                 disabled={currentPage === 1}
@@ -154,10 +154,10 @@ const Completed: React.FC<thisProps> = ({
                 <Image
                   src="/assets/back.png"
                   alt="back"
-                  width={18}
-                  height={18}
+                  width={16}
+                  height={16}
                 />
-                Previous
+                Prev
               </button>
               <span>
                 Page {currentPage} of {totalPages}
@@ -171,8 +171,8 @@ const Completed: React.FC<thisProps> = ({
                 <Image
                   src="/assets/back.png"
                   alt="back"
-                  width={18}
-                  height={18}
+                  width={16}
+                  height={16}
                   className="rotate-180"
                 />
               </button>

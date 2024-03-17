@@ -94,30 +94,30 @@ const RenderedDrugs: React.FC<thisProps> = ({
         id % 2 ? "" : "bg-lightGrey"
       } flex font-Inter text-[14px] w-full justify-between px-4 text-navyBlue items-center border-b-[1px]`}
     >
-      <h1 className="capitalize text-[11px] sm:text-[13px] font-montserrant font-semibold w-[25%] h-full sm:w-[14%] items-center py-4">
+      <h1 className="capitalize text-[12px] sm:text-[13px] font-montserrant font-semibold w-[25%] h-full sm:w-[14%] items-center py-4">
         {drug.drug}
       </h1>
       {tab !== "Allergies" ? (
         <>
-          <h2 className="capitalize text-[11px] sm:text-[13px] leading-none w-[30%] sm:w-[10%] flex justify-center items-center py-4">
+          <h2 className="capitalize text-[12px] sm:text-[13px] leading-none w-[30%] sm:w-[10%] flex justify-center items-center py-4">
             {drug.route}
           </h2>
-          <h2 className="capitalize text-[11px] sm:text-[13px] md:w-[14%] hidden md:flex justify-center items-center py-4 text-center">
+          <h2 className="capitalize text-[12px] sm:text-[13px] md:w-[14%] hidden md:flex justify-center items-center py-4 text-center">
             {calculateTimePeriod(drug.start, drug.end)}
           </h2>
-          <h2 className=" text-[11px] sm:text-[13px] leading-none w-[35%] sm:w-[14%] flex justify-center items-center py-4">
+          <h2 className=" text-[12px] sm:text-[13px] leading-none w-[35%] sm:w-[14%] flex justify-center items-center py-4">
             {frequencyToPlaceholder[drug.frequency]}
           </h2>
-          <h2 className="capitalize md:hidden text-[11px] sm:text-[13px] leading-none md:w-[20%] hidden sm:flex justify-center items-center py-4">
+          <h2 className="capitalize md:hidden text-[12px] sm:text-[13px] leading-none md:w-[20%] hidden sm:flex justify-center items-center py-4">
             {formatDateToSlash(drug.start)}
           </h2>
-          <h2 className="capitalize md:hidden hidden sm:flex text-[11px] sm:text-[13px] leading-none md:w-[20%] justify-center items-center py-4">
+          <h2 className="capitalize md:hidden hidden sm:flex text-[12px] sm:text-[13px] leading-none md:w-[20%] justify-center items-center py-4">
             {formatDateToSlash(drug.end)}
           </h2>
-          <h2 className="capitalize hidden md:flex text-[11px] sm:text-[13px] leading-none md:w-[20%] justify-center items-center py-4">
+          <h2 className="capitalize hidden md:flex text-[12px] sm:text-[13px] leading-none md:w-[20%] justify-center items-center py-4">
             {formatDate(drug.start)}
           </h2>
-          <h2 className="capitalize hidden md:flex text-[11px] sm:text-[13px] leading-none md:w-[20%] justify-center items-center py-4">
+          <h2 className="capitalize hidden md:flex text-[12px] sm:text-[13px] leading-none md:w-[20%] justify-center items-center py-4">
             {formatDate(drug.end)}
           </h2>
         </>

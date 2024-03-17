@@ -5,9 +5,7 @@ import React, { useState, useEffect } from "react";
 import Calendar from "./Calendar";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../../store";
-import {
-  calculateClosestDoseCountdown,
-} from "../../../../utils/dashboard";
+import { calculateClosestDoseCountdown } from "../../../../utils/dashboard";
 import { format } from "date-fns";
 import { FaCheck, FaExclamationTriangle } from "react-icons/fa";
 import { updateSchedule } from "../../../../store/stateSlice";
@@ -108,63 +106,74 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm, isLoading }) => {
     uploadScheduleToServer({ userId, schedule: updatedSchedule });
   }
 
-  const dosesToRender = (
-    tracker === "Today" ? todaysDose : yesterdaysDose
-  )?.map((item: ScheduleItem, index: number) => {
-    const [hourString, minutes] = item.time.split(":");
-    const hour = parseInt(hourString); // Convert the hour string to a number
+  const dosesToRender = (tracker === "Today" ? todaysDose : yesterdaysDose)
+    ?.slice()
+    .sort((a, b) => {
+      // Sort based on completion status (completed doses come last)
+      if (a.completed && !b.completed) {
+        return 1;
+      } else if (!a.completed && b.completed) {
+        return -1;
+      } else {
+        // If both completed or both not completed, maintain the original order
+        return 0;
+      }
+    })
+    .map((item: ScheduleItem, index: number) => {
+      const [hourString, minutes] = item.time.split(":");
+      const hour = parseInt(hourString);
 
-    let timeSuffix = "";
-    if (hour < 12) {
-      timeSuffix = "AM";
-    } else {
-      timeSuffix = "PM";
-    }
+      let timeSuffix = "";
+      if (hour < 12) {
+        timeSuffix = "AM";
+      } else {
+        timeSuffix = "PM";
+      }
 
-    let convertedHour = hour;
-    if (convertedHour > 12) {
-      convertedHour -= 12;
-    }
+      let convertedHour = hour;
+      if (convertedHour > 12) {
+        convertedHour -= 12;
+      }
 
-    const formattedTime = `${convertedHour}:${minutes}${timeSuffix}`;
+      const formattedTime = `${convertedHour}:${minutes}${timeSuffix}`;
 
-    return (
-      <div
-        key={index}
-        className="p-5 md:p-4 bg-none ss:border ss:border-gray-300 rounded-[10px] items-center ss:rounded-bl-none flex justify-between bg-gray-100 ss:bg-white
-        w-full font-Inter text-[14px]"
-      >
-        <div className="flex gap-3 text-navyBlue items-center ">
-          <Image
-            src="/assets/shell.png"
-            width={512}
-            height={512}
-            alt="pill"
-            className="w-10 h-10  ss:flex hidden"
-          />
-          <div className="flex ss:flex-col gap-4 ss:gap-0 items-center ss:items-start">
-            <p className="capitalize font-semibold w-[125px] ss:w-auto">
-              {item.drug}
-            </p>
-            <p>{formattedTime}</p>
+      return (
+        <div
+          key={index}
+          className="p-5 md:p-4 border border-gray-300 rounded-[10px] items-center rounded-bl-none flex justify-between
+          bg-white w-full font-Inter text-[14px]"
+        >
+          <div className="flex gap-3 text-navyBlue items-center ">
+            <Image
+              src="/assets/shell.png"
+              width={512}
+              height={512}
+              alt="pill"
+              className="w-10 h-10 "
+            />
+            <div className="flex flex-col gap-0 items-start">
+              <p className="capitalize font-semibold w-[125px] ss:w-auto">
+                {item.drug}
+              </p>
+              <p>{formattedTime}</p>
+            </div>
+          </div>
+          <div className="flex gap-2 items-center">
+            <h2 className="font-montserrant">Taken:</h2>
+            <button
+              className={`${
+                !item.completed
+                  ? "bg-none text-gray-100 ss:text-white"
+                  : "bg-navyBlue text-gray-100 ss:text-white"
+              } border-[1px] border-navyBlue px-1 py-1 rounded-full`}
+              onClick={() => updateCompleted(item)}
+            >
+              <FaCheck className="text-[12px]" />
+            </button>
           </div>
         </div>
-        <div className="flex gap-2 items-center">
-          <h2 className="font-montserrant">Taken:</h2>
-          <button
-            className={`${
-              !item.completed
-                ? "bg-none text-gray-100 ss:text-white"
-                : "bg-navyBlue text-gray-100 ss:text-white"
-            } border-[1px] border-navyBlue px-1 py-1 rounded-full`}
-            onClick={() => updateCompleted(item)}
-          >
-            <FaCheck className="text-[12px]" />
-          </button>
-        </div>
-      </div>
-    );
-  });
+      );
+    });
 
   const displayedDoses = dosesToRender?.slice(displayIndex, displayIndex + 4);
 
@@ -203,7 +212,7 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm, isLoading }) => {
   return (
     <div className="w-full h-[100dvh] overflow-y-scroll md:py-16 md:px-12 pt-10 pb-24 ss:py-10 text-navyBlue font-karla relative">
       <div className="mb-[28px] px-4 ss:px-8 md:px-0">
-        <h1 className="text-[24px] ss:text-[32px] font-semibold font-montserrant ">
+        <h1 className="text-[24px] ss:text-[32px] font-semibold font-montserrant capitalize">
           {"Hi " + name?.split(" ")[0]},
         </h1>
         <p className="text-[16px] text-[#718096]">Your health matters!</p>

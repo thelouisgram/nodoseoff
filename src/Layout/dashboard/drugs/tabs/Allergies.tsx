@@ -116,13 +116,13 @@ const Allergies: React.FC<allergiesProps> = ({
             <h2 className="font-[500] text-[14px] ss:text-[20px] font-Inter text-navyBlue">
               Drug Allergies List
             </h2>
-            <div className="flex w-[150px] ss:w-[300px] items-center py-1 px-2 ss:p-2 border-[1px] rounded-md text-navyBlue gap-1 ss:gap-3">
+            <div className="flex w-[150px] ss:w-[300px] items-center py-1 px-2 ss:px-3 ss:py-2 border-[1px] rounded-md text-navyBlue gap-1 ss:gap-3">
               <Image
-                src="/assets/mobile-dashboard/search.png"
+                src="/assets/loupe.png"
                 width="24"
                 height="24"
                 alt="search"
-                className="w-[16px] h-[16px] ss:w-[24px] ss:h-[24px]"
+                className="w-[16px] h-[16px] ss:w-[20px] ss:h-[20px]"
               />
               <input
                 placeholder="Search"

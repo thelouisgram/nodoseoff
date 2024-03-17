@@ -102,7 +102,7 @@ const RenderedDrugs: React.FC<thisProps> = ({
           <h2 className="capitalize text-[12px] sm:text-[13px] leading-none w-[30%] sm:w-[10%] flex justify-center items-center py-4">
             {drug.route}
           </h2>
-          <h2 className="capitalize text-[12px] sm:text-[13px] md:w-[14%] hidden md:flex justify-center items-center py-4 text-center">
+          <h2 className="capitalize text-[12px] sm:text-[13px] md:w-[24%] hidden md:flex justify-center items-center py-4 text-center">
             {calculateTimePeriod(drug.start, drug.end)}
           </h2>
           <h2 className=" text-[12px] sm:text-[13px] leading-none w-[35%] sm:w-[14%] flex justify-center items-center py-4">
@@ -114,10 +114,10 @@ const RenderedDrugs: React.FC<thisProps> = ({
           <h2 className="capitalize md:hidden hidden sm:flex text-[12px] sm:text-[13px] leading-none md:w-[20%] justify-center items-center py-4">
             {formatDateToSlash(drug.end)}
           </h2>
-          <h2 className="capitalize hidden md:flex text-[12px] sm:text-[13px] leading-none md:w-[20%] justify-center items-center py-4">
+          <h2 className="capitalize hidden md:flex text-[12px] sm:text-[13px] leading-none md:w-[15%] justify-center items-center py-4">
             {formatDate(drug.start)}
           </h2>
-          <h2 className="capitalize hidden md:flex text-[12px] sm:text-[13px] leading-none md:w-[20%] justify-center items-center py-4">
+          <h2 className="capitalize hidden md:flex text-[12px] sm:text-[13px] leading-none md:w-[15%] justify-center items-center py-4">
             {formatDate(drug.end)}
           </h2>
         </>
@@ -137,7 +137,7 @@ const RenderedDrugs: React.FC<thisProps> = ({
       {options && (
         <div
           ref={dropdownRef}
-          className="absolute border-[1px] border-gray-100 right-8 z-[200] top-5 text-navyBlue flex flex-col items-start justify-center mt-3 rounded-[10px] 
+          className="absolute border-[1px] border-gray-300 right-8 z-[200] top-5 text-navyBlue flex flex-col items-start justify-center mt-3 rounded-[10px] 
         bg-white shadow-md w-[150px] ss:w-[250px] py-4 text-[13px] ss:text-[16px]"
         >
           {tab !== "Allergies" && (

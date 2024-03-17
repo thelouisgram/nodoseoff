@@ -11,7 +11,7 @@ export const tips = [
     desc: "Always read medication labels carefully. Note the dosage, frequency, special instructions (like taking with food), and warnings about side effects or interactions.",
     bgColor: "rgb(255,234,245)",
     textColor: "rgb(231,67,156)",
-    image: "/assets/tips/check-mark.png",
+    image: "/assets/tips/books.png",
   },
   {
     title: "Store Medications Properly",

@@ -107,10 +107,10 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
             : "-left-[450px] ss:w-[450px] h-full"
         } transition-all duration-300 absolute  bg-white h-full w-full z-[4] `}
       >
-        <div className={` h-[100dvh] w-full bg-white p-8 `}>
+        <div className={`h-[100dvh] w-full bg-white p-8 overflow-y-scroll`}>
           <form
             onSubmit={handleSubmit}
-            className="h-full relative flex flex-col justify-between w-auto"
+            className="h-auto md:h-full relative flex flex-col justify-between w-auto"
           >
             <div>
               <div className="w-full flex justify-end mb-10">
@@ -195,7 +195,7 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
             </div>
             <button
               type="submit"
-              className="font-semibold absolute top-[90%] bg-darkBlue text-white rounded-[10px] w-full text-center py-4 rounded-bl-none px-4 hover:bg-navyBlue transition duration-300"
+              className="mt-8 md:mt-0 font-semibold md:absolute md:top-[90%] bg-darkBlue text-white rounded-[10px] w-full text-center py-4 rounded-bl-none px-4 hover:bg-navyBlue transition duration-300"
             >
               PROCEED
             </button>

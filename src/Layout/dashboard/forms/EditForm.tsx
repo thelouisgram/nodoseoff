@@ -136,7 +136,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
 
   const timeInput = formData.time.map((item: any, index: number) => {
     return (
-      <div key={index} className="bg-[#EDF2F7] pr-4 rounded-[10px] h-[56px]">
+      <div key={index} className="bg-[#EDF2F7] rounded-[10px] h-[56px] w-full">
         <input
           key={index}
           type="time"
@@ -144,7 +144,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
           name={`time-${index}`}
           value={formData.time[index]}
           onChange={handleInputChange}
-          className="border bg-[#EDF2F7] border-none outline-none text-navyBlue rounded-[10px] p-4 h-[56px]"
+          className="border bg-[#EDF2F7] border-none outline-none text-navyBlue rounded-[10px] p-4 w-full h-[56px]"
         />
       </div>
     );
@@ -436,7 +436,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
             </div>
             <button
               type="submit"
-              className="mt-10 font-semibold bg-darkBlue text-white rounded-[10px] w-full text-center py-4 rounded-bl-none px-4 
+              className="mt-8 font-semibold bg-darkBlue text-white rounded-[10px] w-full text-center py-4 rounded-bl-none px-4 
               hover:bg-navyBlue transition duration-300"
             >
               PROCEED

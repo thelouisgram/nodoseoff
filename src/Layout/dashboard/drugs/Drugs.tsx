@@ -15,7 +15,6 @@ import {
 import { useDispatch } from "react-redux";
 import { toast } from "sonner";
 import { Drug } from "./../../../../types";
-import RenderedDrugs from "./RenderedDrugs";
 import supabase from "../../../../utils/supabaseClient";
 import {
   uploadScheduleToServer,
@@ -308,9 +307,9 @@ const Drugs: React.FC<DrugsProps> = ({
   });
 
   return (
-    <div className="h-[100dvh] ss:pb-28 overflow-y-scroll w-full md:py-16 md:px-12 px-4 pt-10 pb-24 ss:p-10 text-navyBlue font-karla relative">
+    <>
       {displayDrugs ? (
-        <>
+        <div className="h-[100dvh] ss:pb-28 overflow-y-scroll w-full md:py-16 md:px-12 px-4 pt-10 pb-24 ss:p-10 text-navyBlue font-karla relative">
           <div className="mb-[28px]">
             <h1 className="text-[24px] ss:text-[32px] font-semibold font-montserrant ">
               Drugs
@@ -435,8 +434,8 @@ const Drugs: React.FC<DrugsProps> = ({
                   Continue to Edit '{activeDrug}' ?
                 </h1>
                 <h2 className="text-navyBlue border-b-[1px] text-left px-4 py-4 text-[12px] ss:text-[14px]">
-                  Editing clears past history of the selected drug? <br /> This
-                  action cannot be undone.
+                  Your engagement in this process allows for the refinement and <br className="hidden ss:flex"/>
+                  adjustment of the chosen medication
                 </h2>
                 <div className="w-full flex gap-3 justify-start flex-row-reverse text-[12px] py-4 px-4">
                   <button
@@ -461,19 +460,27 @@ const Drugs: React.FC<DrugsProps> = ({
             </div>
           )}
           <div
-            className={`fixed right-4 ss:right-10 md:right-16 bottom-20 md:bottom-6 z-[144]`}
+            className={`fixed right-4 ss:right-10 md:right-16 bottom-20 md:bottom-6 z-[144] font-montserrant`}
           >
             {add ? (
-              <div className="flex flex-col fixed right-4 ss:right-16 bottom-36 md:bottom-24 gap-4">
+              <div className="flex flex-col fixed right-6 ss:right-12 md:right-[72px] bottom-36 md:bottom-24 gap-4">
                 <button
                   onClick={() => {
                     setAdd(false);
                     setDrugsForm(true);
                     setScreen(false);
                   }}
-                  className="rounded-[10px] rounded-bl-none text-white font-semibold justify-end flex"
+                  className="rounded-[10px] rounded-bl-none text-white font-semibold justify-end flex gap-2 ss:gap-3 items-center"
                 >
-                  + Add drug
+                  Add drug
+                  <div className="bg-white rounded-full p-2">
+                    <Image
+                      src="/assets/add/medicine.png"
+                      width={24}
+                      height={24}
+                      alt="add drug"
+                    />
+                  </div>
                 </button>
                 <button
                   onClick={() => {
@@ -481,9 +488,17 @@ const Drugs: React.FC<DrugsProps> = ({
                     setAllergiesForm(true);
                     setScreen(false);
                   }}
-                  className="rounded-[10px] rounded-bl-none text-white font-semibold justify-end flex"
+                  className="rounded-[10px] rounded-bl-none text-white font-semibold justify-end flex gap-2 ss:gap-3 items-center"
                 >
-                  + Add Allergies
+                  Add Allergies
+                  <div className="bg-white rounded-full p-2">
+                    <Image
+                      src="/assets/add/drug-allergy.png"
+                      width={24}
+                      height={24}
+                      alt="add drug"
+                    />
+                  </div>
                 </button>
                 <button
                   onClick={() => {
@@ -491,9 +506,17 @@ const Drugs: React.FC<DrugsProps> = ({
                     setEffectsForm(true);
                     setScreen(false);
                   }}
-                  className="rounded-[10px] rounded-bl-none text-white font-semibold justify-end flex"
+                  className="rounded-[10px] rounded-bl-none text-white font-semibold justify-end flex gap-2 ss:gap-3 items-center"
                 >
-                  + Add Side Effect
+                  Add Side Effect
+                  <div className="bg-white rounded-full p-2">
+                    <Image
+                      src="/assets/add/cough.png"
+                      width={24}
+                      height={24}
+                      alt="add drug"
+                    />
+                  </div>
                 </button>
               </div>
             ) : (
@@ -522,12 +545,12 @@ const Drugs: React.FC<DrugsProps> = ({
                 width={512}
                 height={512}
                 className={`w-4 ss:w-5 ${
-                  screen ? "rotate-0" : "rotate-45"
+                  screen ? "rotate-180" : "rotate-45"
                 }  transition-all`}
               />
             </button>
           </div>
-        </>
+        </div>
       ) : (
         <DrugDetails
           displayDrugs={displayDrugs}
@@ -535,7 +558,7 @@ const Drugs: React.FC<DrugsProps> = ({
           tab={tab}
         />
       )}
-    </div>
+    </>
   );
 };
 

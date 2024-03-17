@@ -163,8 +163,8 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm, isLoading }) => {
             <button
               className={`${
                 !item.completed
-                  ? "bg-none text-gray-100 ss:text-white"
-                  : "bg-navyBlue text-gray-100 ss:text-white"
+                  ? "bg-none text-white"
+                  : "bg-navyBlue text-white"
               } border-[1px] border-navyBlue px-1 py-1 rounded-full`}
               onClick={() => updateCompleted(item)}
             >

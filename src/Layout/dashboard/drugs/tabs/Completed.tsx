@@ -97,13 +97,13 @@ const Completed: React.FC<thisProps> = ({
             <h2 className="font-[500] text-[14px] ss:text-[20px] font-Inter text-navyBlue">
               Completed Drug List
             </h2>
-            <div className="flex w-[150px] ss:w-[300px] items-center py-1 px-2 ss:p-2 border-[1px] rounded-md text-navyBlue gap-1 ss:gap-3">
+            <div className="flex w-[150px] ss:w-[300px] items-center py-1 px-2 ss:px-3 ss:py-2 border-[1px] rounded-md text-navyBlue gap-1 ss:gap-3">
               <Image
-                src="/assets/mobile-dashboard/search.png"
+                src="/assets/loupe.png"
                 width="24"
                 height="24"
                 alt="search"
-                className="w-[16px] h-[16px] ss:w-[24px] ss:h-[24px]"
+                className="w-[16px] h-[16px] ss:w-[20px] ss:h-[20px]"
               />
               <input
                 placeholder="Search"
@@ -120,16 +120,16 @@ const Completed: React.FC<thisProps> = ({
             <h2 className="w-[30%] sm:w-[10%] flex justify-center py-4 uppercase text-[13px] font-semibold">
               Route
             </h2>
-            <h2 className="md:w-[14%] hidden md:flex justify-center py-4 uppercase text-[13px] font-semibold">
+            <h2 className="md:w-[24%] hidden md:flex justify-center py-4 uppercase text-[13px] font-semibold">
               Duration
             </h2>
             <h2 className="w-[35%] sm:w-[14%] flex justify-center py-4 uppercase text-[13px] font-semibold">
               Frequency
             </h2>
-            <h2 className="md:w-[20%] hidden sm:flex justify-center py-4 uppercase text-[13px] font-semibold">
+            <h2 className="md:w-[15%] hidden sm:flex justify-center py-4 uppercase text-[13px] font-semibold">
               Start Date
             </h2>
-            <h2 className="md:w-[20%] hidden sm:flex justify-center py-4 uppercase text-[13px] font-semibold">
+            <h2 className="md:w-[15%] hidden sm:flex justify-center py-4 uppercase text-[13px] font-semibold">
               End Date
             </h2>
             <h2 className="w-[10%] md:w-[6%] flex justify-center py-4 uppercase text-[13px] font-semibold"></h2>

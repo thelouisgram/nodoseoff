@@ -90,7 +90,7 @@ const DailyReports: React.FC<DailyReportsProps> = ({ today, selectDate }) => {
             />
             <div className="flex flex-col">
               <h2 className="font-semibold text-[16px] text-[#D4389B]">
-                Dose completed:
+                Dose Status:
               </h2>
               <p>{displayValue}</p>
             </div>

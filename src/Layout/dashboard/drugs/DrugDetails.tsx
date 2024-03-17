@@ -61,7 +61,7 @@ const DrugDetails: React.FC<drugDetailsProps> = ({
   });
 
   return (
-    <div className="max-h-[100dvh] px-4 ss:px-6 text-navyBlue font-montserrant">
+    <div className="h-[100dvh] ss:pb-28 overflow-y-scroll w-full md:py-16 md:px-12 px-4 pt-10 pb-24 ss:p-10 text-navyBlue font-karla relative">
       <button
         onClick={() => {
           setDisplayDrugs(true);

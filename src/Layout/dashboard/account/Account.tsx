@@ -50,7 +50,7 @@ const Account: React.FC<AccountProps> = ({
   };
 
   return (
-    <div className="w-full">
+    <>
       {tab === "Account" ? (
         <div className="h-[100dvh] overflow-y-scroll w-full md:py-16 md:px-12 px-4 pt-10 pb-24 ss:p-10 ss:pb-24  mb-10 text-navyBlue font-karla relative">
           <div className="mb-[28px]">
@@ -83,12 +83,11 @@ const Account: React.FC<AccountProps> = ({
                 </div>
                 <div className="w-full border border-gray-300 rounded-lg rounded-bl-none py-4 px-4 flex gap-2 capitalize">
                   <h2 className="font-semibold">OTC Drugs:</h2>
-                  <p>{otcDrugs || '--'}</p>
-
+                  <p>{otcDrugs || "--"}</p>
                 </div>
                 <div className="w-full border border-gray-300 rounded-lg rounded-bl-none py-4 px-4 flex gap-2 capitalize">
-                  <h2 className="font-semibold">Herbs:</h2>
-                  <p>{herbs || '--'}</p>
+                  <h2 className="font-semibold">Herbs & Concoctions:</h2>
+                  <p>{herbs || "--"}</p>
                 </div>
               </div>
             </div>
@@ -176,7 +175,7 @@ const Account: React.FC<AccountProps> = ({
       ) : (
         <Report setTab={setTab} />
       )}
-    </div>
+    </>
   );
 };
 

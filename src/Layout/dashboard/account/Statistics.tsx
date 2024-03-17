@@ -78,7 +78,7 @@ const Statistics: React.FC<Stats> = ({
             : "-right-[450px] ss:w-[450px] h-full"
         } transition-all duration-300 absolute  bg-white h-full w-full z-[4] `}
       >
-        <div className={` h-[100dvh] w-full bg-white p-8 `}>
+        <div className={` h-[100dvh] w-full bg-white p-8 overflow-y-scroll`}>
           <div className="w-full flex justify-end mb-10">
             <Image
               src="/assets/x (1).png"

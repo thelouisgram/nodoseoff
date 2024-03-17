@@ -169,7 +169,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
             </div>
             <button
               type="submit"
-              className="mt-10 font-semibold bg-darkBlue text-white rounded-[10px] w-full text-center py-4 rounded-bl-none px-4 hover:bg-navyBlue transition duration-300"
+              className="mt-8 font-semibold bg-darkBlue text-white rounded-[10px] w-full text-center py-4 rounded-bl-none px-4 hover:bg-navyBlue transition duration-300"
             >
               UPDATE PROFILE
             </button>

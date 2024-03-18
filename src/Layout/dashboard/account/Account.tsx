@@ -82,7 +82,7 @@ const Account: React.FC<AccountProps> = ({
                   <p>{phone}</p>
                 </div>
                 <div className="w-full border border-gray-300 rounded-lg rounded-bl-none py-4 px-4 flex gap-2 capitalize">
-                  <h2 className="font-semibold">OTC Drugs:</h2>
+                  <h2 className="font-semibold">Over-The-Counter Drugs:</h2>
                   <p>{otcDrugs || "--"}</p>
                 </div>
                 <div className="w-full border border-gray-300 rounded-lg rounded-bl-none py-4 px-4 flex gap-2 capitalize">
@@ -96,33 +96,35 @@ const Account: React.FC<AccountProps> = ({
                 onClick={() => {
                   setProfileForm(true);
                 }}
-                className="w-full border border-gray-300 rounded-lg rounded-bl-none py-4 px-4 flex justify-between gap-2 cursor-pointer"
+                className="w-full border h-full border-gray-300 rounded-lg rounded-bl-none py-4 px-4 flex justify-between gap-2 cursor-pointer"
               >
-                <h2 className="font-semibold">Profile Settings</h2>
-                <Image
-                  src="/assets/down.png"
-                  width={512}
-                  height={512}
-                  alt="download"
-                  quality={100}
-                  className="w-[20px] h-auto -rotate-90"
-                />
+                <div className="flex gap-2 h-full w-full">
+                  <Image
+                    src="/assets/account/profile.png"
+                    width={24}
+                    height={24}
+                    alt="Profile"
+                    className="w-6 h-auto"
+                  />
+                  <h2 className="">Profile Settings</h2>
+                </div>
               </div>
               <div
                 onClick={() => {
                   setDrugHxForm(true);
                 }}
-                className="w-full border border-gray-300 rounded-lg rounded-bl-none py-4 px-4 flex justify-between gap-2 cursor-pointer"
+                className="w-full border border-gray-300 rounded-lg rounded-bl-none py-4 px-4 flex cursor-pointer"
               >
-                <h2 className="font-semibold">Drug History</h2>
-                <Image
-                  src="/assets/down.png"
-                  width={512}
-                  height={512}
-                  alt="download"
-                  quality={100}
-                  className="w-[20px] h-auto -rotate-90"
-                />
+                <div className="flex gap-2">
+                  <Image
+                    src="/assets/account/medical-report.png"
+                    width={24}
+                    height={24}
+                    alt="Drug History"
+                    className="w-6 h-auto"
+                  />
+                  <h2 className="">Drug History</h2>
+                </div>
               </div>
               <div
                 onClick={() => {
@@ -130,15 +132,16 @@ const Account: React.FC<AccountProps> = ({
                 }}
                 className="w-full border border-gray-300 rounded-lg rounded-bl-none py-4 px-4 flex justify-between gap-2 cursor-pointer"
               >
-                <h2 className="font-semibold">Statistics</h2>
-                <Image
-                  src="/assets/down.png"
-                  width={512}
-                  height={512}
-                  alt="download"
-                  quality={100}
-                  className="w-[20px] h-auto -rotate-90"
-                />
+                <div className="flex gap-2">
+                  <Image
+                    src="/assets/account/diagram.png"
+                    width={24}
+                    height={24}
+                    alt="Statistics"
+                    className="w-6 h-auto"
+                  />
+                  <h2 className="">Statistics</h2>
+                </div>
               </div>
               <div
                 onClick={() => {
@@ -146,7 +149,43 @@ const Account: React.FC<AccountProps> = ({
                 }}
                 className="w-full border border-gray-300 rounded-lg rounded-bl-none py-4 px-4 flex justify-between gap-2 cursor-pointer"
               >
-                <h2 className="font-semibold">Drug Report</h2>
+                <div className="flex gap-2">
+                  <Image
+                    src="/assets/account/graph.png"
+                    width={24}
+                    height={24}
+                    alt="Report"
+                    className="w-6 h-auto"
+                  />
+                  <h2 className="">Drug Report</h2>
+                </div>
+              </div>
+              <div className="w-full border border-gray-300 rounded-lg rounded-bl-none py-4 px-4 flex justify-between gap-2 cursor-pointer">
+                <div className="flex gap-2">
+                  <Image
+                    src="/assets/account/support.png"
+                    width={24}
+                    height={24}
+                    alt="contact"
+                    className="w-6 h-auto"
+                  />
+                  <h2 className="">Contact Us</h2>
+                </div>
+              </div>
+
+              <button
+                onClick={logOut}
+                className="flex justify-between border-[1px] ss:w-[1/2] text-red w-full rounded-[10px] rounded-bl-none px-4 py-4 items-center  gap-2"
+              >
+                <div className="flex gap-2 items-center h-full">
+                  <Image
+                    src="/assets/exit.png"
+                    width={18}
+                    height={18}
+                    alt="logout"
+                  />
+                  Log out
+                </div>
                 <Image
                   src="/assets/down.png"
                   width={512}
@@ -155,19 +194,6 @@ const Account: React.FC<AccountProps> = ({
                   quality={100}
                   className="w-[20px] h-auto -rotate-90"
                 />
-              </div>
-
-              <button
-                onClick={logOut}
-                className="flex flex-row-reverse justify-between border-[1px] ss:w-[1/2] text-red w-full rounded-[10px] rounded-bl-none px-4 py-4 items-center font-semibold gap-2"
-              >
-                <Image
-                  src="/assets/exit.png"
-                  width={18}
-                  height={18}
-                  alt="logout"
-                />
-                Log out
               </button>
             </div>
           </div>

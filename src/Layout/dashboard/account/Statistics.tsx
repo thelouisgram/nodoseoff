@@ -98,19 +98,19 @@ const Statistics: React.FC<Stats> = ({
           </div>
           <div className="w-full flex flex-col gap-4">
             <div className="w-full border border-gray-300 rounded-lg rounded-bl-none py-4 px-4 flex gap-2">
-              <h2 className="font-semibold">Number of Drugs:</h2>
+              <h2 className="">Number of Drugs:</h2>
               <p>{drugs.length}</p>
             </div>
             <div className="w-full border border-gray-300 rounded-lg rounded-bl-none py-4 px-4 flex gap-2">
-              <h2 className="font-semibold">Number of side effects:</h2>
+              <h2 className="">Number of side effects:</h2>
               <p>{effects.length}</p>
             </div>
             <div className="w-full border border-gray-300 rounded-lg rounded-bl-none py-4 px-4 flex gap-2">
-              <h2 className="font-semibold">Drug compliance:</h2>
+              <h2 className="">Drug compliance:</h2>
               <p>{percentageCompleted.toFixed(1)}%</p>
             </div>
             <div className="w-full border border-gray-300 rounded-lg rounded-bl-none py-4 px-4 flex gap-2">
-              <h2 className="font-semibold">Missed Doses:</h2>
+              <h2 className="">Missed Doses:</h2>
               <p>{missedDoses}</p>
             </div>
           </div>

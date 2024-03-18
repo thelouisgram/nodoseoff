@@ -18,7 +18,7 @@ export default function Calendar() {
   // Return the JSX structure for the calendar component
   return (
     <section className="w-full flex flex-col ip:flex-row items-start gap-4 md:gap-10 px-4 ss:px-6 md:px-0 ss:pb-20 md:pb-0 h-auto text-[16px] font-Karla text-white">
-      <div className="flex gap-10 w-full md:w-1/2 flex-col p-3 ss:p-5 bg-[#0C174F] rounded-[12px] rounded-bl-none h-auto pb-4 ss:pb-5">
+      <div className="flex gap-10 w-full md:w-1/2 flex-col p-3 ss:p-5 bg-[#0C174F] rounded-[16px] h-auto pb-4 ss:pb-5">
         <div className="w-auto h-full">
           <div className="flex justify-between items-center">
             {/* Displaying the current month and year */}

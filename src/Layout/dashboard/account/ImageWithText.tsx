@@ -6,8 +6,9 @@ import Image from "next/image";
 import { toast } from "sonner";
 
 const ImageWithText: React.FC = () => {
-  const { drugs, schedule, info, allergies, completedDrugs } =
-    useSelector((state: RootState) => state.app);
+  const { drugs, schedule, info, allergies, completedDrugs } = useSelector(
+    (state: RootState) => state.app
+  );
 
   const { name, phone, email, otcDrugs, herbs } = info[0];
   const currentDrugs = drugs.map((drug) => drug.drug);
@@ -47,14 +48,14 @@ const ImageWithText: React.FC = () => {
       link.href = canvas.toDataURL();
       link.click();
     });
-    toast.loading("Downloading Report")
+    toast.loading("Downloading Report");
   };
 
   return (
     <div className="flex flex-col items-start w-full font-Inter">
       <button
         onClick={handleDownload}
-        className="mb-6 px-4 py-3 flex gap-2 items-center text-navyBlue rounded-bl-none rounded-md border-navyBlue border"
+        className="mb-6 px-4 py-3 flex gap-2 items-center text-navyBlue  rounded-md border-navyBlue border"
       >
         Download Report
         <Image

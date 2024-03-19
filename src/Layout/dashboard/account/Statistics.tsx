@@ -11,10 +11,7 @@ interface Stats {
 
 type RefObject<T> = React.RefObject<T>;
 
-const Statistics: React.FC<Stats> = ({
-  setShowStats,
-  showStats,
-}) => {
+const Statistics: React.FC<Stats> = ({ setShowStats, showStats }) => {
   const { drugs, effects, schedule } = useSelector(
     (state: RootState) => state.app
   );
@@ -82,8 +79,8 @@ const Statistics: React.FC<Stats> = ({
           <div className="w-full flex justify-end mb-10">
             <Image
               src="/assets/x (1).png"
-              width={24}
-              height={24}
+              width={18}
+              height={18}
               alt="cancel"
               onClick={() => {
                 setShowStats(false);
@@ -97,19 +94,19 @@ const Statistics: React.FC<Stats> = ({
             </h1>
           </div>
           <div className="w-full flex flex-col gap-4">
-            <div className="w-full border border-gray-300 rounded-lg rounded-bl-none py-4 px-4 flex gap-2">
+            <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex gap-2">
               <h2 className="">Number of Drugs:</h2>
               <p>{drugs.length}</p>
             </div>
-            <div className="w-full border border-gray-300 rounded-lg rounded-bl-none py-4 px-4 flex gap-2">
+            <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex gap-2">
               <h2 className="">Number of side effects:</h2>
               <p>{effects.length}</p>
             </div>
-            <div className="w-full border border-gray-300 rounded-lg rounded-bl-none py-4 px-4 flex gap-2">
+            <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex gap-2">
               <h2 className="">Drug compliance:</h2>
               <p>{percentageCompleted.toFixed(1)}%</p>
             </div>
-            <div className="w-full border border-gray-300 rounded-lg rounded-bl-none py-4 px-4 flex gap-2">
+            <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex gap-2">
               <h2 className="">Missed Doses:</h2>
               <p>{missedDoses}</p>
             </div>

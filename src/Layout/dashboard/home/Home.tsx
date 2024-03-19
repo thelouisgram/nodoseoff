@@ -6,21 +6,27 @@ import Calendar from "./Calendar";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../../store";
 import { calculateClosestDoseCountdown } from "../../../../utils/dashboard";
-import { format } from "date-fns";
-import { FaCheck, FaExclamationTriangle } from "react-icons/fa";
-import { updateSchedule } from "../../../../store/stateSlice";
-import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import { uploadScheduleToServer } from "../../../../utils/schedule";
-import { ScheduleItem } from "../../../../types/dashboard";
+import { FaExclamationTriangle } from "react-icons/fa";
 
 interface HomeProps {
   setEffectsForm: Function;
   setDrugsForm: Function;
   isLoading: boolean;
+  setAllDoses: Function;
+  setTracker: Function;
+  tracker: string;
+  dosesToRender: JSX.Element[];
 }
 
-const Home: React.FC<HomeProps> = ({ setDrugsForm, isLoading }) => {
-  const { drugs, info, schedule, userId } = useSelector(
+const Home: React.FC<HomeProps> = ({
+  setDrugsForm,
+  isLoading,
+  setAllDoses,
+  setTracker,
+  tracker,
+  dosesToRender,
+}) => {
+  const { drugs, info, schedule } = useSelector(
     (state: RootState) => state.app
   );
 
@@ -28,12 +34,7 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm, isLoading }) => {
   const [displayIndex, setDisplayIndex] = useState(0);
 
   const [countDown, setCountDown] = useState("");
-  const [tracker, setTracker] = useState("Today");
-  const today = new Date();
-  const yesterday = new Date(today.getTime() - 86400000);
 
-  const formattedToday = format(today, "yyyy-MM-dd");
-  const formattedYesterday = format(yesterday, "yyyy-MM-dd");
   const { name } = info[0];
 
   useEffect(() => {
@@ -53,141 +54,7 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm, isLoading }) => {
     return () => clearInterval(intervalId);
   }, [drugs, isLoading]);
 
-  const todaysDose: ScheduleItem[] = schedule
-    ?.filter((drug: ScheduleItem) => {
-      return drug?.date === formattedToday;
-    })
-    .sort((a: ScheduleItem, b: ScheduleItem) => {
-      const timeA = a.time;
-      const timeB = b.time;
-
-      if (timeA < timeB) {
-        return -1;
-      } else if (timeA > timeB) {
-        return 1;
-      } else {
-        return 0;
-      }
-    });
-
-  const yesterdaysDose = schedule
-    ?.filter((drug: ScheduleItem) => {
-      return drug?.date === formattedYesterday;
-    })
-    .sort((a: ScheduleItem, b: ScheduleItem) => {
-      const timeA = a.time;
-      const timeB = b.time;
-
-      if (timeA < timeB) {
-        return -1;
-      } else if (timeA > timeB) {
-        return 1;
-      } else {
-        return 0;
-      }
-    });
-
-  function updateCompleted(item: ScheduleItem) {
-    const updatedSchedule = schedule.map((dose) => {
-      if (
-        dose.date === item.date &&
-        dose.time === item.time &&
-        dose.drug === item.drug
-      ) {
-        // Create a new object to update completed property
-        return {
-          ...dose,
-          completed: !dose.completed,
-        };
-      }
-      return dose;
-    });
-    dispatch(updateSchedule(updatedSchedule));
-    uploadScheduleToServer({ userId, schedule: updatedSchedule });
-  }
-
-  const dosesToRender = (tracker === "Today" ? todaysDose : yesterdaysDose)
-    ?.slice()
-    .sort((a, b) => {
-      // Sort based on completion status (completed doses come last)
-      if (a.completed && !b.completed) {
-        return 1;
-      } else if (!a.completed && b.completed) {
-        return -1;
-      } else {
-        // If both completed or both not completed, maintain the original order
-        return 0;
-      }
-    })
-    .map((item: ScheduleItem, index: number) => {
-      const [hourString, minutes] = item.time.split(":");
-      const hour = parseInt(hourString);
-
-      let timeSuffix = "";
-      if (hour < 12) {
-        timeSuffix = "AM";
-      } else {
-        timeSuffix = "PM";
-      }
-
-      let convertedHour = hour;
-      if (convertedHour > 12) {
-        convertedHour -= 12;
-      }
-
-      const formattedTime = `${convertedHour}:${minutes}${timeSuffix}`;
-
-      return (
-        <div
-          key={index}
-          className="p-5 md:p-4 border border-gray-300 rounded-[10px] items-center rounded-bl-none flex justify-between
-          bg-white w-full font-Inter text-[14px]"
-        >
-          <div className="flex gap-3 text-navyBlue items-center ">
-            <Image
-              src="/assets/shell.png"
-              width={512}
-              height={512}
-              alt="pill"
-              className="w-10 h-10 "
-            />
-            <div className="flex flex-col gap-0 items-start">
-              <p className="capitalize font-semibold w-[125px] ss:w-auto">
-                {item.drug}
-              </p>
-              <p>{formattedTime}</p>
-            </div>
-          </div>
-          <div className="flex gap-2 items-center">
-            <h2 className="font-montserrant">Taken:</h2>
-            <button
-              className={`${
-                !item.completed
-                  ? "bg-none text-white"
-                  : "bg-navyBlue text-white"
-              } border-[1px] border-navyBlue px-1 py-1 rounded-full`}
-              onClick={() => updateCompleted(item)}
-            >
-              <FaCheck className="text-[12px]" />
-            </button>
-          </div>
-        </div>
-      );
-    });
-
   const displayedDoses = dosesToRender?.slice(displayIndex, displayIndex + 4);
-
-  const handleNext = () => {
-    if (displayIndex + 4 < dosesToRender?.length) {
-      setDisplayIndex(displayIndex + 4);
-    }
-  };
-
-  const handlePrev = () => {
-    if (displayIndex - 4 >= 0) {
-      setDisplayIndex(displayIndex - 4);
-    }
-  };
 
   const currentTime = new Date(); // Get the current date and time
 
@@ -222,14 +89,14 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm, isLoading }) => {
           onClick={() => {
             setDrugsForm(true);
           }}
-          className="mb-3 w-[160px] cursor-pointer h-[40px] bg-navyBlue rounded-[10px] rounded-bl-none flex justify-center items-center 
+          className="mb-3 w-[160px] cursor-pointer h-[40px] bg-navyBlue rounded-[6px] flex justify-center items-center 
           font-bold text-white"
         >
           + ADD DRUG
         </button>
       </div>
       <section className="md:w-full flex gap-4 ss:gap-5 mb-8 ss:mb-12 overflow-x-scroll md:overflow-hidden px-4 ss:px-8 md:px-0 bar">
-        <div className="min-w-[300px] ss:w-full h-[120px] ss:h-[150px] bg-[#7E1CE6] rounded-[10px] rounded-bl-none flex justify-start items-center p-4 gap-2">
+        <div className="min-w-[300px] ss:w-full h-[120px] ss:h-[150px] bg-[#7E1CE6] rounded-[10px]  flex justify-start items-center p-4 gap-2">
           <Image
             src="/assets/sandclock.png"
             alt="clock"
@@ -247,7 +114,7 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm, isLoading }) => {
             </h4>
           </div>
         </div>
-        <div className="min-w-[300px] ss:w-full h-[120px] ss:h-[150px] bg-blackBlue rounded-[10px] rounded-bl-none flex justify-start items-center p-4 gap-2">
+        <div className="min-w-[300px] ss:w-full h-[120px] ss:h-[150px] bg-blackBlue rounded-[10px]  flex justify-start items-center p-4 gap-2">
           <Image
             src="/assets/pills.png"
             alt="drugs"
@@ -264,7 +131,7 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm, isLoading }) => {
             </h4>
           </div>
         </div>
-        <div className="min-w-[300px] ss:w-full h-[120px] ss:h-[150px] bg-darkBlue rounded-[10px] rounded-bl-none flex justify-start items-center py-4 pl-4 gap-2">
+        <div className="min-w-[300px] ss:w-full h-[120px] ss:h-[150px] bg-darkBlue rounded-[10px]  flex justify-start items-center py-4 pl-4 gap-2">
           <Image
             src="/assets/shield.png"
             alt="shield"
@@ -287,7 +154,7 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm, isLoading }) => {
         <h3 className="text-[18px] font-semibold text-navyBlue mb-3">
           Medication Tracker
         </h3>
-        <div className="w-[300px] h-auto flex border border-gray-300 rounded-[10px] rounded-bl-none mb-8 overflow-hidden">
+        <div className="w-[300px] h-auto flex border border-gray-300 rounded-[6px]  mb-8 overflow-hidden">
           <div
             onClick={() => {
               setTracker("Yesterday");
@@ -311,38 +178,29 @@ const Home: React.FC<HomeProps> = ({ setDrugsForm, isLoading }) => {
         </div>
         {displayedDoses.length > 0 ? (
           <>
-            <div className="grid md:grid-cols-2 gap-4 ss:gap-6">
+            <div className="grid md:grid-cols-2 gap-4 ss:gap-6 mb-6">
               {displayedDoses}
             </div>
-            <div
-              className={`w-full flex gap-3 justify-center mt-8 ${
-                dosesToRender.length > 4 ? "flex" : "hidden"
-              }`}
-            >
+            <div className="w-full flex justify-center">
               <button
-                onClick={handlePrev}
-                disabled={displayIndex === 0}
-                className={` ${
-                  displayIndex === 0 ? "opacity-20" : "opacity-100"
-                } border border-gray-300 rounded-[10px] rounded-bl-none px-4 py-1 cursor-pointer`}
+                onClick={() => {
+                  setAllDoses(true);
+                }}
+                className=" text-navyBlue gap-1 flex items-center "
               >
-                <FaArrowLeft />
-              </button>
-              <button
-                className={` ${
-                  displayIndex + 4 >= dosesToRender.length
-                    ? "opacity-20"
-                    : "opacity-100"
-                } border border-gray-300 rounded-[10px] rounded-bl-none px-4 py-1 cursor-pointer"`}
-                onClick={handleNext}
-                disabled={displayIndex + 4 >= dosesToRender.length}
-              >
-                <FaArrowRight />
+                VIEW ALL
+                <Image
+                  src="/assets/down.png"
+                  width="16"
+                  height="16"
+                  alt="turned down"
+                  className="-rotate-90"
+                />
               </button>
             </div>
           </>
         ) : (
-          <div className="w-full md:w-1/2 py-6 px-4  border border-gray-300 rounded-[10px] items-center rounded-bl-none flex gap-3">
+          <div className="w-full md:w-1/2 py-6 px-4  border border-gray-300 rounded-[10px] items-center  flex gap-3">
             <FaExclamationTriangle /> No dose for this day
           </div>
         )}

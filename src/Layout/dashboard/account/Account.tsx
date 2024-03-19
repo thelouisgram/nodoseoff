@@ -73,19 +73,19 @@ const Account: React.FC<AccountProps> = ({
                 </h1>
               </div>
               <div className="w-full grid ss:grid-cols-2 gap-4 mb-10">
-                <div className="w-full border border-gray-300 rounded-lg rounded-bl-none py-4 px-4 flex gap-2">
+                <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex gap-2">
                   <h2 className="font-semibold">Email:</h2>
                   <p>{email}</p>
                 </div>
-                <div className="w-full border border-gray-300 rounded-lg rounded-bl-none py-4 px-4 flex gap-2">
+                <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex gap-2">
                   <h2 className="font-semibold">Phone Number:</h2>
                   <p>{phone}</p>
                 </div>
-                <div className="w-full border border-gray-300 rounded-lg rounded-bl-none py-4 px-4 flex gap-2 capitalize">
+                <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex gap-2 capitalize">
                   <h2 className="font-semibold">Over-The-Counter Drugs:</h2>
                   <p>{otcDrugs || "--"}</p>
                 </div>
-                <div className="w-full border border-gray-300 rounded-lg rounded-bl-none py-4 px-4 flex gap-2 capitalize">
+                <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex gap-2 capitalize">
                   <h2 className="font-semibold">Herbs & Concoctions:</h2>
                   <p>{herbs || "--"}</p>
                 </div>
@@ -96,7 +96,7 @@ const Account: React.FC<AccountProps> = ({
                 onClick={() => {
                   setProfileForm(true);
                 }}
-                className="w-full border h-full border-gray-300 rounded-lg rounded-bl-none py-4 px-4 flex justify-between gap-2 cursor-pointer"
+                className="w-full border h-full border-gray-300 rounded-lg  py-4 px-4 flex justify-between gap-2 cursor-pointer"
               >
                 <div className="flex gap-2 h-full w-full">
                   <Image
@@ -113,7 +113,7 @@ const Account: React.FC<AccountProps> = ({
                 onClick={() => {
                   setDrugHxForm(true);
                 }}
-                className="w-full border border-gray-300 rounded-lg rounded-bl-none py-4 px-4 flex cursor-pointer"
+                className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex cursor-pointer"
               >
                 <div className="flex gap-2">
                   <Image
@@ -130,7 +130,7 @@ const Account: React.FC<AccountProps> = ({
                 onClick={() => {
                   setShowStats(true);
                 }}
-                className="w-full border border-gray-300 rounded-lg rounded-bl-none py-4 px-4 flex justify-between gap-2 cursor-pointer"
+                className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex justify-between gap-2 cursor-pointer"
               >
                 <div className="flex gap-2">
                   <Image
@@ -147,7 +147,7 @@ const Account: React.FC<AccountProps> = ({
                 onClick={() => {
                   setTab("Report");
                 }}
-                className="w-full border border-gray-300 rounded-lg rounded-bl-none py-4 px-4 flex justify-between gap-2 cursor-pointer"
+                className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex justify-between gap-2 cursor-pointer"
               >
                 <div className="flex gap-2">
                   <Image
@@ -160,7 +160,7 @@ const Account: React.FC<AccountProps> = ({
                   <h2 className="">Drug Report</h2>
                 </div>
               </div>
-              <div className="w-full border border-gray-300 rounded-lg rounded-bl-none py-4 px-4 flex justify-between gap-2 cursor-pointer">
+              <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex justify-between gap-2 cursor-pointer">
                 <div className="flex gap-2">
                   <Image
                     src="/assets/account/support.png"
@@ -175,7 +175,7 @@ const Account: React.FC<AccountProps> = ({
 
               <button
                 onClick={logOut}
-                className="flex justify-between border-[1px] ss:w-[1/2] text-red w-full rounded-[10px] rounded-bl-none px-4 py-4 items-center  gap-2"
+                className="flex justify-between border-[1px] ss:w-[1/2] text-red w-full rounded-[10px]  px-4 py-4 items-center  gap-2"
               >
                 <div className="flex gap-2 items-center h-full">
                   <Image

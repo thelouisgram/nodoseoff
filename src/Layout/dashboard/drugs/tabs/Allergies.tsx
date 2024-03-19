@@ -114,7 +114,7 @@ const Allergies: React.FC<allergiesProps> = ({
         <div className="border-[1px] rounded-lg text-darkGrey">
           <div className="w-full justify-between flex py-6 px-4 bg-lightGrey rounded-t-lg items-center">
             <h2 className="font-[500] text-[14px] ss:text-[20px] font-Inter text-navyBlue">
-              Drug Allergies List
+              Allergic Drugs
             </h2>
             <div className="flex w-[150px] ss:w-[300px] items-center py-1 px-2 ss:px-3 ss:py-2 border-[1px] rounded-md text-navyBlue gap-1 ss:gap-3">
               <Image

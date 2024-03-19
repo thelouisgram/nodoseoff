@@ -52,20 +52,17 @@ const DailyReports: React.FC<DailyReportsProps> = ({ today, selectDate }) => {
       })
       .join(", ");
 
-      const displayValue = isNaN(completedPercentage)
-        ? "0%"
-        : `${completedDoses}/${totalDoses} (${completedPercentage.toFixed(
-            0
-          )}%)`;
-
+    const displayValue = isNaN(completedPercentage)
+      ? "0%"
+      : `${completedDoses}/${totalDoses} (${completedPercentage.toFixed(0)}%)`;
 
     return (
-      <div className="w-full md:w-1/2 h-full rounded-[12px] rounded-bl-none pt-5 text-[15px] text-gray-600 font-spartan">
+      <div className="w-full md:w-1/2 h-full rounded-[12px]  pt-5 text-[15px] text-gray-600 font-spartan">
         <h2 className="font-semibold mb-4 ss:mb-6 text-[16px] leading-none">
           {formattedDateFull}
         </h2>
         <div className="h-full flex gap-6 flex-col leading-tight">
-          <div className="flex gap-3 items-center border border-[#7E1CE6] rounded-[10px] rounded-bl-none p-4">
+          <div className="flex gap-3 items-center border border-[#7E1CE6] rounded-[10px]  p-4">
             <Image
               src="/assets/daily-reports/drug.png"
               width="512"
@@ -80,7 +77,7 @@ const DailyReports: React.FC<DailyReportsProps> = ({ today, selectDate }) => {
               <p className="capitalize">{drugsString || "N/A"}</p>
             </div>
           </div>
-          <div className="flex gap-3 items-center border border-[#D4389B] rounded-[10px] rounded-bl-none p-4">
+          <div className="flex gap-3 items-center border border-[#D4389B] rounded-[10px]  p-4">
             <Image
               src="/assets/daily-reports/check.png"
               width="512"
@@ -95,7 +92,7 @@ const DailyReports: React.FC<DailyReportsProps> = ({ today, selectDate }) => {
               <p>{displayValue}</p>
             </div>
           </div>
-          <div className="flex gap-3 items-center border border-darkBlue rounded-[10px] rounded-bl-none p-4">
+          <div className="flex gap-3 items-center border border-darkBlue rounded-[10px]  p-4">
             <Image
               src="/assets/daily-reports/sick.png"
               width="512"
@@ -115,11 +112,11 @@ const DailyReports: React.FC<DailyReportsProps> = ({ today, selectDate }) => {
     );
   } else {
     return (
-      <div className="w-full md:w-1/2 h-full rounded-[12px] rounded-bl-none py-6 text-gray-600">
+      <div className="w-full md:w-1/2 h-full rounded-[12px]  py-6 text-gray-600">
         <h2 className="font-semibold text-[16px] leading-none mb-4 ss:mb-8">
           {formattedDateFull}
         </h2>
-        <div className="h-full flex gap-3 items-center border border-gray-300 p-5 rounded-[10px] rounded-bl-none">
+        <div className="h-full flex gap-3 items-center border border-gray-300 p-5 rounded-[10px] ">
           <FaExclamationTriangle /> No data for this day
         </div>
       </div>

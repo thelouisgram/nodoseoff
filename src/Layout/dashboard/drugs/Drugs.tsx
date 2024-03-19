@@ -370,7 +370,7 @@ const Drugs: React.FC<DrugsProps> = ({
                         dispatch(updateActiveDrug(""));
                       setDeleteModal(false);
                     }}
-                    className="px-4 py-1 flex items-center gap-2 bg-navyBlue rounded-[10px] rounded-bl-none "
+                    className="px-4 py-1 flex items-center gap-2 bg-navyBlue rounded-[10px]  "
                   >
                     Delete
                   </button>
@@ -380,7 +380,7 @@ const Drugs: React.FC<DrugsProps> = ({
                         setScreen(false),
                         setDeleteModal(false);
                     }}
-                    className="px-4 py-1 flex items-center gap-2 bg-none border text-navyBlue border-navyBlue rounded-[10px] rounded-bl-none "
+                    className="px-4 py-1 flex items-center gap-2 bg-none border text-navyBlue border-navyBlue rounded-[10px]  "
                   >
                     Cancel
                   </button>
@@ -407,7 +407,7 @@ const Drugs: React.FC<DrugsProps> = ({
                       setScreen(false), dispatch(updateActiveDrug(""));
                       setAllergyModal(false), handleAllergies();
                     }}
-                    className="px-4 py-1 flex items-center gap-2 bg-navyBlue rounded-[10px] rounded-bl-none "
+                    className="px-4 py-1 flex items-center gap-2 bg-navyBlue rounded-[10px]  "
                   >
                     Add to Allergies
                   </button>
@@ -416,7 +416,7 @@ const Drugs: React.FC<DrugsProps> = ({
                       dispatch(updateActiveDrug(""));
                       setScreen(false), setAllergyModal(false);
                     }}
-                    className="px-4 py-1 flex items-center gap-2 bg-none border text-navyBlue border-navyBlue rounded-[10px] rounded-bl-none "
+                    className="px-4 py-1 flex items-center gap-2 bg-none border text-navyBlue border-navyBlue rounded-[10px]  "
                   >
                     Cancel
                   </button>
@@ -434,7 +434,8 @@ const Drugs: React.FC<DrugsProps> = ({
                   Continue to Edit '{activeDrug}' ?
                 </h1>
                 <h2 className="text-navyBlue border-b-[1px] text-left px-4 py-4 text-[12px] ss:text-[14px]">
-                  Your engagement in this process allows for the refinement and <br className="hidden ss:flex"/>
+                  Your engagement in this process allows for the refinement and{" "}
+                  <br className="hidden ss:flex" />
                   adjustment of the chosen medication
                 </h2>
                 <div className="w-full flex gap-3 justify-start flex-row-reverse text-[12px] py-4 px-4">
@@ -442,7 +443,7 @@ const Drugs: React.FC<DrugsProps> = ({
                     onClick={() => {
                       setEditForm(true), setScreen(false), setEditModal(false);
                     }}
-                    className="px-4 py-1 flex items-center gap-2 bg-navyBlue rounded-[10px] rounded-bl-none "
+                    className="px-4 py-1 flex items-center gap-2 bg-navyBlue rounded-[10px]  "
                   >
                     Edit
                   </button>
@@ -451,7 +452,7 @@ const Drugs: React.FC<DrugsProps> = ({
                       dispatch(updateActiveDrug(""));
                       setScreen(false), setEditForm(false), setEditModal(false);
                     }}
-                    className="px-4 py-1 flex items-center gap-2 bg-none border text-navyBlue border-navyBlue rounded-[10px] rounded-bl-none "
+                    className="px-4 py-1 flex items-center gap-2 bg-none border text-navyBlue border-navyBlue rounded-[10px]  "
                   >
                     Cancel
                   </button>
@@ -470,7 +471,7 @@ const Drugs: React.FC<DrugsProps> = ({
                     setDrugsForm(true);
                     setScreen(false);
                   }}
-                  className="rounded-[10px] rounded-bl-none text-white font-semibold justify-end flex gap-2 ss:gap-3 items-center"
+                  className="rounded-[10px]  text-white font-semibold justify-end flex gap-2 ss:gap-3 items-center"
                 >
                   Add drug
                   <div className="bg-white rounded-full p-2">
@@ -488,7 +489,7 @@ const Drugs: React.FC<DrugsProps> = ({
                     setAllergiesForm(true);
                     setScreen(false);
                   }}
-                  className="rounded-[10px] rounded-bl-none text-white font-semibold justify-end flex gap-2 ss:gap-3 items-center"
+                  className="rounded-[10px]  text-white font-semibold justify-end flex gap-2 ss:gap-3 items-center"
                 >
                   Add Allergies
                   <div className="bg-white rounded-full p-2">
@@ -506,7 +507,7 @@ const Drugs: React.FC<DrugsProps> = ({
                     setEffectsForm(true);
                     setScreen(false);
                   }}
-                  className="rounded-[10px] rounded-bl-none text-white font-semibold justify-end flex gap-2 ss:gap-3 items-center"
+                  className="rounded-[10px]  text-white font-semibold justify-end flex gap-2 ss:gap-3 items-center"
                 >
                   Add Side Effect
                   <div className="bg-white rounded-full p-2">

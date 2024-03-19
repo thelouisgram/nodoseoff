@@ -79,11 +79,9 @@ const CreateAccount = () => {
         schedule: [],
       });
 
-      const { error } = await supabase
-        .from("pastSchedule")
-        .insert({
-          pastSchedule: [],
-        });
+      const { error } = await supabase.from("pastSchedule").insert({
+        pastSchedule: [],
+      });
 
       if (addInfoError) {
         toast.error("Failed to insert data into the database");
@@ -119,7 +117,7 @@ const CreateAccount = () => {
         className="w-[200px] h-auto mb-10"
       />
       <form
-        className="bg-white rounded-[15px] rounded-bl-none w-full ss:w-[450px] h-auto p-7 ss:p-10 mb-10"
+        className="bg-white rounded-[15px]  w-full ss:w-[450px] h-auto p-7 ss:p-10 mb-10"
         onSubmit={handleSubmit}
       >
         <div className="mb-10">
@@ -206,7 +204,7 @@ const CreateAccount = () => {
         </div>
         <button
           type="submit"
-          className="bg-darkBlue text-white rounded-[10px] w-full text-center py-4 rounded-bl-none px-4 hover:bg-navyBlue transition duration-300"
+          className="bg-darkBlue text-white rounded-[10px] w-full text-center py-4  px-4 hover:bg-navyBlue transition duration-300"
         >
           CREATE AN ACCOUNT
         </button>

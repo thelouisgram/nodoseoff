@@ -29,8 +29,13 @@ import AllergiesForm from "@/Layout/dashboard/forms/AllergiesForm";
 import Loader from "@/Layout/dashboard/shared/Loader";
 import ProfileForm from "@/Layout/dashboard/forms/ProfileForm";
 import Statistics from "@/Layout/dashboard/account/Statistics";
-import DrugHxForm from '@/Layout/dashboard/forms/DrugHxForm'
+import DrugHxForm from "@/Layout/dashboard/forms/DrugHxForm";
 import Tips from "@/Layout/dashboard/Tips/Tips";
+import AllDoses from "@/Layout/dashboard/home/AllDoses";
+import { ScheduleItem } from "../../../types/dashboard";
+import { uploadScheduleToServer } from "../../../utils/schedule";
+import { format } from "date-fns";
+import { FaCheck, FaExclamationTriangle } from "react-icons/fa";
 
 interface tabsMobileProps {
   name: string;
@@ -44,7 +49,9 @@ interface tabsProps {
 }
 
 const Page = () => {
-  const { userId, active } = useSelector((state: RootState) => state.app);
+  const { userId, active, schedule } = useSelector(
+    (state: RootState) => state.app
+  );
   const dispatch = useDispatch();
   const [nav, setNav] = useState(true);
   const [effectsForm, setEffectsForm] = useState(false);
@@ -53,14 +60,17 @@ const Page = () => {
   const [drugsForm, setDrugsForm] = useState(false);
   const [profileForm, setProfileForm] = useState(false);
   const [drugHxForm, setDrugHxForm] = useState(false);
-  const [showStats, setShowStats] = useState(false)
+  const [showStats, setShowStats] = useState(false);
+  const [allDoses, setAllDoses] = useState(false);
   const [screen, setScreen] = useState(false);
+  const [tracker, setTracker] = useState("Today");
   const [deleteModal, setDeleteModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
   const [allergyModal, setAllergyModal] = useState(false);
   const router = useRouter();
   const [add, setAdd] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
 
   useEffect(() => {
     if (!userId) {
@@ -188,7 +198,7 @@ const Page = () => {
         <div
           className={` ${
             nav ? "flex" : "hidden"
-          } text-[16px] rounded-bl-none rounded-[8px] py-1   
+          } text-[16px]  rounded-[8px] py-1   
         ${
           active === item.name
             ? "bg-white text-[#062863] font-[500] w-[100px] pl-4"
@@ -246,6 +256,132 @@ const Page = () => {
       );
     }
   );
+
+  const today = new Date();
+  const yesterday = new Date(today.getTime() - 86400000);
+  const formattedToday = format(today, "yyyy-MM-dd");
+  const formattedYesterday = format(yesterday, "yyyy-MM-dd");
+  const todaysDose: ScheduleItem[] = schedule
+    ?.filter((drug: ScheduleItem) => {
+      return drug?.date === formattedToday;
+    })
+    .sort((a: ScheduleItem, b: ScheduleItem) => {
+      const timeA = a.time;
+      const timeB = b.time;
+
+      if (timeA < timeB) {
+        return -1;
+      } else if (timeA > timeB) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+
+  const yesterdaysDose = schedule
+    ?.filter((drug: ScheduleItem) => {
+      return drug?.date === formattedYesterday;
+    })
+    .sort((a: ScheduleItem, b: ScheduleItem) => {
+      const timeA = a.time;
+      const timeB = b.time;
+
+      if (timeA < timeB) {
+        return -1;
+      } else if (timeA > timeB) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+
+  function updateCompleted(item: ScheduleItem) {
+    const updatedSchedule = schedule.map((dose) => {
+      if (
+        dose.date === item.date &&
+        dose.time === item.time &&
+        dose.drug === item.drug
+      ) {
+        // Create a new object to update completed property
+        return {
+          ...dose,
+          completed: !dose.completed,
+        };
+      }
+      return dose;
+    });
+    dispatch(updateSchedule(updatedSchedule));
+    uploadScheduleToServer({ userId, schedule: updatedSchedule });
+  }
+
+  const dosesToRender = (tracker === "Today" ? todaysDose : yesterdaysDose)
+    ?.slice()
+    .sort((a, b) => {
+      // Sort based on completion status (completed doses come last)
+      if (a.completed && !b.completed) {
+        return 1;
+      } else if (!a.completed && b.completed) {
+        return -1;
+      } else {
+        // If both completed or both not completed, maintain the original order
+        return 0;
+      }
+    })
+    .map((item: ScheduleItem, index: number) => {
+      const [hourString, minutes] = item.time.split(":");
+      const hour = parseInt(hourString);
+
+      let timeSuffix = "";
+      if (hour < 12) {
+        timeSuffix = "AM";
+      } else {
+        timeSuffix = "PM";
+      }
+
+      let convertedHour = hour;
+      if (convertedHour > 12) {
+        convertedHour -= 12;
+      }
+
+      const formattedTime = `${convertedHour}:${minutes}${timeSuffix}`;
+
+      return (
+        <div
+          key={index}
+          className="p-5 md:p-4 border border-gray-300 rounded-[10px] items-center  flex justify-between
+          bg-white w-full font-Inter text-[14px]"
+        >
+          <div className="flex gap-3 text-navyBlue items-center ">
+            <Image
+              src="/assets/shell.png"
+              width={512}
+              height={512}
+              alt="pill"
+              className="w-10 h-10 "
+            />
+            <div className="flex flex-col gap-0 items-start">
+              <p className="capitalize font-semibold w-[125px] ss:w-auto">
+                {item.drug}
+              </p>
+              <p>{formattedTime}</p>
+            </div>
+          </div>
+          <div className="flex gap-2 items-center">
+            <h2 className="font-montserrant">Taken:</h2>
+            <button
+              className={`${
+                !item.completed
+                  ? "bg-none text-white"
+                  : "bg-navyBlue text-white"
+              } border-[1px] border-navyBlue px-1 py-1 rounded-full`}
+              onClick={() => updateCompleted(item)}
+            >
+              <FaCheck className="text-[12px]" />
+            </button>
+          </div>
+        </div>
+      );
+    });
 
   return (
     <>
@@ -305,6 +441,10 @@ const Page = () => {
                 setEffectsForm={setEffectsForm}
                 setDrugsForm={setDrugsForm}
                 isLoading={isLoading}
+                setAllDoses={setAllDoses}
+                tracker={tracker}
+                setTracker={setTracker}
+                dosesToRender={dosesToRender}
               />
             ) : active === "Drugs" ? (
               <Drugs
@@ -352,11 +492,13 @@ const Page = () => {
             setProfileForm={setProfileForm}
             profileForm={profileForm}
           />
-          <Statistics
-            setShowStats={setShowStats}
-            showStats={showStats}
-          />
+          <Statistics setShowStats={setShowStats} showStats={showStats} />
           <DrugHxForm drugHxForm={drugHxForm} setDrugHxForm={setDrugHxForm} />
+          <AllDoses
+            allDoses={allDoses}
+            setAllDoses={setAllDoses}
+            dosesToRender={dosesToRender}
+          />
           {screen && (
             <Screen
               setDeleteModal={setDeleteModal}

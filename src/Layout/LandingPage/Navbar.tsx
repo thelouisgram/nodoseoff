@@ -40,7 +40,7 @@ const Navbar = () => {
         </Link>
       </div>
       <div
-        className={`w-full bg-[#F2F7F8] rounded-xl rounded-bl-none border border-navyBlue ${
+        className={`w-full bg-[#F2F7F8] rounded-xl  border border-navyBlue ${
           nav ? "top-20" : "-top-[160px]"
         } transitions-all 
       duration-300 p-6 absolute  flex-col flex gap-3 `}

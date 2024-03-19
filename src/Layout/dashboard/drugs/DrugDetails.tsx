@@ -51,7 +51,7 @@ const DrugDetails: React.FC<drugDetailsProps> = ({
 
   const RenderedDetails = Details.map((detail: detail, index: number) => {
     return (
-      <div key={index} className="border rounded-md rounded-bl-none p-5">
+      <div key={index} className="border rounded-md  p-5">
         <h2 className="text-[14px] font-bold ">{detail.name}</h2>
         <h3 className="text-[14px] ss:text-16px capitalize">
           {detail.details}

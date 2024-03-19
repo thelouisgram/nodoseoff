@@ -116,8 +116,8 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
               <div className="w-full flex justify-end mb-10">
                 <Image
                   src="/assets/x (1).png"
-                  width={24}
-                  height={24}
+                  width={18}
+                  height={18}
                   quality={100}
                   alt="cancel"
                   onClick={() => {
@@ -195,7 +195,7 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
             </div>
             <button
               type="submit"
-              className="mt-8 md:mt-0 font-semibold md:absolute md:top-[90%] bg-darkBlue text-white rounded-[10px] w-full text-center py-4 rounded-bl-none px-4 hover:bg-navyBlue transition duration-300"
+              className="mt-8 md:mt-0 font-semibold md:absolute md:top-[90%] bg-darkBlue text-white rounded-[10px] w-full text-center py-4  px-4 hover:bg-navyBlue transition duration-300"
             >
               PROCEED
             </button>

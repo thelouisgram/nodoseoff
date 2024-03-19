@@ -1,13 +1,12 @@
-import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../../../store";
 import Image from "next/image";
+import React from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../store";
 import {
   formatDate,
   frequencyToPlaceholder,
 } from "../../../../utils/dashboard";
-import { calculateTimePeriod } from "../../../../utils/drugs";
-import { convertedTimes } from "../../../../utils/drugs";
+import { calculateTimePeriod, convertedTimes } from "../../../../utils/drugs";
 
 interface drugDetailsProps {
   displayDrugs: boolean;
@@ -32,7 +31,13 @@ const DrugDetails: React.FC<drugDetailsProps> = ({
   const drugsArray = tab === "Ongoing" ? drugs : completedDrugs;
 
   const drugDetails = drugsArray.find((drug) => drug.drug === activeDrug);
+
+  if (!drugDetails) {
+    return setDisplayDrugs(false);
+  }
+
   const { drug, route, frequency, start, end, time, reminder } = drugDetails;
+
   const Duration = calculateTimePeriod(start, end);
 
   const Details = [

@@ -1,32 +1,30 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/no-unescaped-entities */
 "use-client";
-import React, { useState, useRef, useEffect } from "react";
-import { useSelector } from "react-redux";
+import Image from "next/image";
+import React, { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "sonner";
 import { RootState } from "../../../../store";
 import {
   setDrugs,
-  updateAllergies,
   updateActiveDrug,
-  updateSchedule,
+  updateAllergies,
   updateCompletedDrugs,
+  updateSchedule,
 } from "../../../../store/stateSlice";
-import { useDispatch } from "react-redux";
-import { toast } from "sonner";
-import supabase from "../../../../utils/supabaseClient";
-import {
-  uploadScheduleToServer,
-  removePastDoses,
-} from "../../../../utils/schedule";
-import { drugsTab } from "../../../../utils/drugs";
-import Ongoing from "./tabs/Ongoing";
-import Completed from "./tabs/Completed";
-import Allergies from "./tabs/Allergies";
-import Image from "next/image";
-import DrugDetails from "./DrugDetails";
 import { DrugProps, ScheduleItem } from "../../../../types/dashboard";
-import { Drug } from "./../../../../types";
 import { AllergicItemProps } from "../../../../types/dashboardDrugs";
+import { drugsTab } from "../../../../utils/drugs";
+import {
+  removePastDoses,
+  uploadScheduleToServer,
+} from "../../../../utils/schedule";
+import supabase from "../../../../utils/supabaseClient";
+import DrugDetails from "./DrugDetails";
+import Allergies from "./tabs/Allergies";
+import Completed from "./tabs/Completed";
+import Ongoing from "./tabs/Ongoing";
 
 interface DrugsProps {
   screen: boolean;

@@ -1,20 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use-client";
-import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import { toast } from "sonner";
 import Image from "next/image";
-import { dose } from "../../../../utils/dashboard";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "sonner";
 import { RootState } from "../../../../store";
-import { setDrugs } from "../../../../store/stateSlice";
-import { Drug } from "../../../../types";
-import { generateSchedule } from "../../../../utils/dashboard";
-import { updateSchedule } from "../../../../store/stateSlice";
-import supabase from "../../../../utils/supabaseClient";
+import { setDrugs, updateSchedule } from "../../../../store/stateSlice";
+import { dose, generateSchedule } from "../../../../utils/dashboard";
 import {
-  uploadScheduleToServer,
   removePastDoses,
+  uploadScheduleToServer,
 } from "../../../../utils/schedule";
+import supabase from "../../../../utils/supabaseClient";
 
 interface DrugFormProps {
   editForm: boolean;
@@ -37,7 +34,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
   );
   const dispatch = useDispatch();
 
-  const currentDrug = drugs.find((drug: Drug) => drug.drug === activeDrug);
+  const currentDrug = drugs.find((drug) => drug.drug === activeDrug);
 
   const [formData, setFormData] = useState({
     drug: "",
@@ -45,7 +42,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
     route: "",
     start: new Date().toISOString().substr(0, 10),
     end: "",
-    time: [''],
+    time: [""],
     reminder: false,
   });
 
@@ -190,7 +187,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
 
     try {
       // Update the drug data
-      const updatedDrugs = drugs.map((drug: Drug) => {
+      const updatedDrugs = drugs.map((drug) => {
         if (drug.drug === activeDrug) {
           return {
             drug: formData.drug,

@@ -1,11 +1,11 @@
 import Image from "next/image";
 import React, { ChangeEvent, FormEvent, useState } from "react";
-import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "sonner";
 import { RootState } from "../../../../store";
 import { updateAllergies } from "../../../../store/stateSlice";
-import supabase from "../../../../utils/supabaseClient";
 import { AllergicItemProps } from "../../../../types/dashboardDrugs";
+import supabase from "../../../../utils/supabaseClient";
 
 interface AllergiesFormProps {
   allergiesForm: boolean;

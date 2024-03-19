@@ -1,7 +1,6 @@
 import { Effect } from "@/Layout/dashboard/home/DailyReports";
 import { DrugProps, ScheduleItem } from "../types/dashboard";
 import { AllergicItemProps } from "../types/dashboardDrugs";
-import { Drug } from "../types";
 
 export interface AppType {
   info: Info[];

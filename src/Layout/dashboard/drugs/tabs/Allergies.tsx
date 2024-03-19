@@ -9,6 +9,7 @@ import {
   AllergicItemProps,
   ExtendedAllergicItemProps,
 } from "../../../../../types/dashboardDrugs";
+import { DrugProps } from "../../../../../types/dashboard";
 
 type RefObject<T> = React.RefObject<T>;
 
@@ -93,7 +94,7 @@ const Allergies: React.FC<allergiesProps> = ({
   };
 
   const renderedAllergies = currentItems.map(
-    (item: ExtendedAllergicItemProps, index: number) => {
+    (item: any, index: number) => {
       return (
         <RenderedDrugs
           key={index}

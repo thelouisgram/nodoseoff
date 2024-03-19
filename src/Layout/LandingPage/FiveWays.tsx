@@ -7,7 +7,7 @@ import Image from "next/image";
 
 const FiveWays = () => {
   const [active, setActive] = useState(0);
-  let timeoutId: any = null;
+  let timeoutId: NodeJS.Timeout | undefined;
   const [isHovered, setIsHovered] = useState(false);
 
   const handleHover = (index: number) => {

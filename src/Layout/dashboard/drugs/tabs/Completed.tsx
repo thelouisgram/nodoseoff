@@ -4,6 +4,7 @@ import RenderedDrugs from "../RenderedDrugs";
 import { RootState } from "../../../../../store";
 import { useSelector } from "react-redux";
 import { frequencyToPlaceholder } from "../../../../../utils/dashboard";
+import { Drug } from "../../../../../types";
 
 interface DrugProps {
   drug: string;
@@ -45,7 +46,7 @@ const Completed: React.FC<thisProps> = ({
   };
 
   const findDrug = (searched: string) => {
-    return completedDrugs.filter((drug: any) =>
+    return completedDrugs.filter((drug: Drug) =>
       drug.drug.startsWith(searched.toLowerCase())
     );
   };

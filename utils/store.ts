@@ -1,16 +1,19 @@
-import { ScheduleItem } from "../types/dashboard";
+import { Effect } from "@/Layout/dashboard/home/DailyReports";
+import { DrugProps, ScheduleItem } from "../types/dashboard";
+import { AllergicItemProps } from "../types/dashboardDrugs";
+import { Drug } from "../types";
 
 export interface AppType {
   info: Info[];
   isAuthenticated: boolean;
   userId: string;
-  drugs: any[];
-  completedDrugs: any[];
-  effects: any[];
+  drugs: DrugProps[];
+  completedDrugs: DrugProps[];
+  effects: Effect[];
   schedule: ScheduleItem[];
   activeDrug: string;
-  allergies: any[];
-  drugDetails: any;
+  allergies: AllergicItemProps[];
+  drugDetails: DrugProps[];
   searchedWord: string;
   activeAllergy: string;
   active: string;

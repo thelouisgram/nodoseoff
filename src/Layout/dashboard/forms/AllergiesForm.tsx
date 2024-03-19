@@ -5,10 +5,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../../store";
 import { updateAllergies } from "../../../../store/stateSlice";
 import supabase from "../../../../utils/supabaseClient";
+import { AllergicItemProps } from "../../../../types/dashboardDrugs";
 
 interface AllergiesFormProps {
   allergiesForm: boolean;
   setAllergiesForm: Function;
+}
+
+interface FormErrors {
+  [key: string]: string;
 }
 
 const AllergiesForm: React.FC<AllergiesFormProps> = ({
@@ -41,12 +46,13 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const errors: any = {
+    const errors: FormErrors = {
       allergy: formData.allergy ? "" : "Please fill in the Drug field.",
     };
 
     const drugAlreadyExists = allergies.some(
-      (item: any) => item.drug.toLowerCase() === formData.allergy.toLowerCase()
+      (item: AllergicItemProps) =>
+        item.drug.toLowerCase() === formData.allergy.toLowerCase()
     );
 
     if (drugAlreadyExists) {

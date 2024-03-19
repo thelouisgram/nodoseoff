@@ -3,10 +3,10 @@ export const drugsTab: string[] =[
 ]
 
 export function calculateTimePeriod(startDate: string, endDate: string): string {
-    const start: any = new Date(startDate);
-    const end: any = new Date(endDate);
+    const start = new Date(startDate);
+    const end = new Date(endDate);
     const durationInDays = Math.floor(
-      (end - start) / (1000 * 60 * 60 * 24)
+      (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
     );
     const durationInYears = Math.floor(durationInDays / 365);
     const remainingDaysAfterYears = durationInDays % 365;

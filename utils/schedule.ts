@@ -1,14 +1,13 @@
 import { toast } from "sonner";
-import supabase from "./supabaseClient";
-import { Drug } from "../types";
 import { ScheduleItem } from "../types/dashboard";
+import supabase from "./supabaseClient";
 
 export const uploadScheduleToServer = async ({
   userId,
   schedule,
 }: {
   userId: string;
-  schedule: any[];
+  schedule: ScheduleItem[];
 }) => {
   try {
     const { error } = await supabase

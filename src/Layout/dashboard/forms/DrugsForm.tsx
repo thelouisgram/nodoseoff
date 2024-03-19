@@ -11,6 +11,7 @@ import { generateSchedule } from "../../../../utils/dashboard";
 import { Drug } from "../../../../types";
 import supabase from "../../../../utils/supabaseClient";
 import { uploadScheduleToServer } from "../../../../utils/schedule";
+import { AllergicItemProps } from "../../../../types/dashboardDrugs";
 
 interface DrugFormProps {
   drugsForm: boolean;
@@ -88,7 +89,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
 
       setFormErrors({
         ...formErrors,
-        time: updatedTime.some((time: any) => !time)
+        time: updatedTime.some((time: string) => !time)
           ? "Please fill in all time fields."
           : "",
       });
@@ -153,7 +154,8 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
     );
 
     const allergicToDrug = allergies.some(
-      (item: any) => item.drug.toLowerCase() === formData.drug.toLowerCase()
+      (item: AllergicItemProps) =>
+        item.drug.toLowerCase() === formData.drug.toLowerCase()
     );
 
     if (drugAlreadyExists) {

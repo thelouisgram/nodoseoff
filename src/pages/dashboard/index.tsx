@@ -1,41 +1,41 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import Image from "next/image";
-import React, { useState, useEffect } from "react";
-import { tabs, tabsMobile } from "./../../../utils/dashboard";
-import Home from "@/Layout/dashboard/home/Home";
-import EffectsForm from "@/Layout/dashboard/forms/EffectsForm";
-import DrugsForm from "@/Layout/dashboard/forms/DrugsForm";
-import Drugs from "@/Layout/dashboard/drugs/Drugs";
 import Screen from "@/Layout/dashboard/Screen";
-import EditForm from "@/Layout/dashboard/forms/EditForm";
+import Tips from "@/Layout/dashboard/Tips/Tips";
 import Account from "@/Layout/dashboard/account/Account";
+import Statistics from "@/Layout/dashboard/account/Statistics";
+import Drugs from "@/Layout/dashboard/drugs/Drugs";
+import AllergiesForm from "@/Layout/dashboard/forms/AllergiesForm";
+import DrugHxForm from "@/Layout/dashboard/forms/DrugHxForm";
+import DrugsForm from "@/Layout/dashboard/forms/DrugsForm";
+import EditForm from "@/Layout/dashboard/forms/EditForm";
+import EffectsForm from "@/Layout/dashboard/forms/EffectsForm";
+import ProfileForm from "@/Layout/dashboard/forms/ProfileForm";
+import AllDoses from "@/Layout/dashboard/home/AllDoses";
+import Home from "@/Layout/dashboard/home/Home";
+import Loader from "@/Layout/dashboard/shared/Loader";
+import { format } from "date-fns";
+import Image from "next/image";
 import Link from "next/link";
-import supabase from "../../../utils/supabaseClient";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { FaCheck } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
+import { RootState } from "../../../store";
 import {
   setDrugs,
   setEffects,
+  updateActive,
   updateAllergies,
+  updateCompletedDrugs,
   updateInfo,
   updateSchedule,
   updateUserId,
-  updateActive,
-  updateCompletedDrugs,
 } from "../../../store/stateSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../../store";
-import AllergiesForm from "@/Layout/dashboard/forms/AllergiesForm";
-import Loader from "@/Layout/dashboard/shared/Loader";
-import ProfileForm from "@/Layout/dashboard/forms/ProfileForm";
-import Statistics from "@/Layout/dashboard/account/Statistics";
-import DrugHxForm from "@/Layout/dashboard/forms/DrugHxForm";
-import Tips from "@/Layout/dashboard/Tips/Tips";
-import AllDoses from "@/Layout/dashboard/home/AllDoses";
-import { ScheduleItem } from "../../../types/dashboard";
+import { DrugProps, ScheduleItem } from "../../../types/dashboard";
 import { uploadScheduleToServer } from "../../../utils/schedule";
-import { format } from "date-fns";
-import { FaCheck, FaExclamationTriangle } from "react-icons/fa";
+import supabase from "../../../utils/supabaseClient";
+import { tabs, tabsMobile } from "./../../../utils/dashboard";
 
 interface tabsMobileProps {
   name: string;
@@ -79,9 +79,6 @@ const Page = () => {
   }, []);
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
     const getInfo = async () => {
       try {
         const { data, error } = await supabase
@@ -119,7 +116,7 @@ const Page = () => {
         } else if (data !== null) {
           const transformedData = data?.map((item) => [...item.completedDrugs]);
           const flattenedData = transformedData?.flatMap(
-            (innerArray: any) => innerArray
+            (innerArray: DrugProps[]) => innerArray
           );
           dispatch(updateCompletedDrugs(flattenedData));
         }
@@ -161,9 +158,11 @@ const Page = () => {
           console.error("error:", error);
         }
         const transformedData = data?.map((item) => [...item.schedule]);
-        const flattenedData = transformedData?.flatMap(
-          (innerArray: any) => innerArray
-        );
+        const flattenedData =
+          transformedData?.flatMap(
+            (innerArray: ScheduleItem[]) => innerArray
+          ) ?? []; // Provide an empty array as a default value if transformedData is undefined
+
         dispatch(updateSchedule(flattenedData));
       } catch (error) {}
     };

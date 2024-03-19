@@ -12,6 +12,10 @@ interface EffectsFormProps {
   setEffectsForm: Function;
 }
 
+interface FormErrors {
+  [key: string]: string;
+}
+
 const EffectsForm: React.FC<EffectsFormProps> = ({
   effectsForm,
   setEffectsForm,
@@ -45,7 +49,7 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const errors: any = {
+    const errors: FormErrors = {
       effect: formData.effect ? "" : "Please fill in the Side Effect field.",
       severity: formData.severity
         ? ""

@@ -1,4 +1,5 @@
-import { ScheduleItem } from "../types/dashboard";
+import { Drug } from "../types";
+import { DrugProps, ScheduleItem } from "../types/dashboard";
 
 export const tabs = [
   { name: "Home", logo: "/assets/desktop-dashboard/home.png" },
@@ -52,19 +53,19 @@ export const frequencyToPlaceholder: { [key: string]: string } = {
   M: "Monthly",
 };
 
-export const generateSchedule = (drugDetails: any) => {
+export const generateSchedule = (drugDetails: DrugProps) => {
   const { drug, start, end, frequency, time } = drugDetails;
 
-  const startDate: any = new Date(start);
-  const endDate: any = new Date(end);
+  const startDate = new Date(start);
+  const endDate = new Date(end);
 
   const schedule = [];
   let uniqueIndex = 1; // Unique index counter
 
   // Calculate the difference in days between start and end dates
-  const differenceInDays = Math.floor(
-    (endDate - startDate) / (1000 * 60 * 60 * 24)
-  );
+  const differenceInDays: number = Math.floor(
+  (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
+);
 
   // Generate the schedule based on frequency and times
   for (let i = 0; i <= differenceInDays; i++) {
@@ -167,34 +168,27 @@ export const generateSchedule = (drugDetails: any) => {
   return schedule;
 };
 
-type Drug = {
-  date: string;
-  time: string;
-};
-
-type DrugSchedule = Array<Drug>;
-
-function calculateNextDoseTime(schedule: any[], drug?: any): Date | null {
+function calculateNextDoseTime(schedule: ScheduleItem[], drug?: Drug): Date | null {
   let nextDoseTime: Date | null = null;
 
   schedule.forEach((dose) => {
-    if (!drug || dose?.drug === drug) {
-      const doseTime = new Date(`${dose?.date}T${dose?.time}`);
-      const currentTime = new Date();
+  if (!drug || dose?.drug === drug.drug) { // Compare with the drug property of the Drug object
+    const doseTime = new Date(`${dose?.date}T${dose?.time}`);
+    const currentTime = new Date();
 
-      if (
-        doseTime > currentTime &&
-        (!nextDoseTime || doseTime < nextDoseTime)
-      ) {
-        nextDoseTime = doseTime;
-      }
+    if (
+      doseTime > currentTime &&
+      (!nextDoseTime || doseTime < nextDoseTime)
+    ) {
+      nextDoseTime = doseTime;
     }
-  });
+  }
+});
 
   return nextDoseTime;
 }
 
-export function calculateClosestDoseCountdown(schedule: DrugSchedule): string {
+export function calculateClosestDoseCountdown(schedule: ScheduleItem[]): string {
   let closestDose: Drug | null = null;
   let nextDoseTime: Date | null = null;
 

@@ -3,9 +3,9 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../../store";
 import { FaExclamationTriangle } from "react-icons/fa";
 import Image from "next/image";
-import { DailyReportsProps } from "../../../../types/dashboard";
+import { DailyReportsProps, ScheduleItem } from "../../../../types/dashboard";
 
-interface Effect {
+export interface Effect {
   date: string;
   effect: string;
   severity: string;
@@ -21,13 +21,13 @@ const DailyReports: React.FC<DailyReportsProps> = ({ today, selectDate }) => {
   );
 
   const filteredDrugs = schedule?.filter(
-    (dose: any) => dose?.date === formattedDate
+    (dose: ScheduleItem) => dose?.date === formattedDate
   );
 
-  const uniqueDrugs: any = Array.from(
+  const uniqueDrugs: string[] = Array.from(
     new Set(filteredDrugs.map((drug) => drug.drug))
   );
-  const drugsString: any = uniqueDrugs.join(", ");
+  const drugsString: string = uniqueDrugs.join(", ");
 
   const totalDoses = filteredDrugs.length;
   const completedDoses = filteredDrugs.filter((drug) => drug.completed).length;

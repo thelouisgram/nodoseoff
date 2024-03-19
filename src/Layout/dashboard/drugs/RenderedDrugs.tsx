@@ -5,16 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../../store";
 import { updateActiveDrug } from "../../../../store/stateSlice";
 import { calculateTimePeriod } from "../../../../utils/drugs";
-
-interface DrugProps {
-  drug: string;
-  end: string;
-  frequency: string;
-  reminder: boolean;
-  route: string;
-  start: string;
-  time: string[];
-}
+import { DrugProps } from "../../../../types/dashboard";
 
 interface thisProps {
   drug: DrugProps;

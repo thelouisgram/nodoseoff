@@ -3,9 +3,12 @@ import React, { useState, useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../../../store";
 import Image from "next/image";
-import { updateActiveAllergy } from "../../../../../store/stateSlice";
 import RenderedDrugs from "../RenderedDrugs";
 import { frequencyToPlaceholder } from "../../../../../utils/dashboard";
+import {
+  AllergicItemProps,
+  ExtendedAllergicItemProps,
+} from "../../../../../types/dashboardDrugs";
 
 type RefObject<T> = React.RefObject<T>;
 
@@ -64,7 +67,7 @@ const Allergies: React.FC<allergiesProps> = ({
   };
 
   const findDrug = (searched: string) => {
-    return allergies?.filter((drug: any) =>
+    return allergies?.filter((drug: AllergicItemProps) =>
       drug.drug.startsWith(searched.toLowerCase())
     );
   };
@@ -89,24 +92,26 @@ const Allergies: React.FC<allergiesProps> = ({
     }
   };
 
-  const renderedAllergies = currentItems.map((item: any, index: number) => {
-    return (
-      <RenderedDrugs
-        key={index}
-        id={index}
-        drug={item}
-        frequencyToPlaceholder={frequencyToPlaceholder}
-        setScreen={setScreen}
-        setDeleteModal={setDeleteModal}
-        setEditModal={setEditModal}
-        setAllergyModal={setAllergyModal}
-        displayDrugs={displayDrugs}
-        setDisplayDrugs={setDisplayDrugs}
-        showEditButton={false}
-        tab={"Allergies"}
-      />
-    );
-  });
+  const renderedAllergies = currentItems.map(
+    (item: ExtendedAllergicItemProps, index: number) => {
+      return (
+        <RenderedDrugs
+          key={index}
+          id={index}
+          drug={item}
+          frequencyToPlaceholder={frequencyToPlaceholder}
+          setScreen={setScreen}
+          setDeleteModal={setDeleteModal}
+          setEditModal={setEditModal}
+          setAllergyModal={setAllergyModal}
+          displayDrugs={displayDrugs}
+          setDisplayDrugs={setDisplayDrugs}
+          showEditButton={false}
+          tab={"Allergies"}
+        />
+      );
+    }
+  );
 
   return (
     <div>

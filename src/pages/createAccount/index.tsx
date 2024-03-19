@@ -92,7 +92,7 @@ const CreateAccount = () => {
       router.push("/dashboard");
       toast.success("Signed up and information added");
     } catch (error) {
-      // Handle any unexpected errors
+      // Handle all unexpected errors
       toast.error("Error: " + error);
     }
 

@@ -21,13 +21,23 @@ interface DrugFormProps {
   setEditForm: Function;
 }
 
+interface SelectedDoseTypes {
+  frequency: string;
+  times: number;
+  time: string[];
+}
+
+interface FormErrors {
+  [key: string]: string;
+}
+
 const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
   const { drugs, activeDrug, schedule, userId } = useSelector(
     (state: RootState) => state.app
   );
   const dispatch = useDispatch();
 
-  const currentDrug = drugs.find((drug: any) => drug.drug === activeDrug);
+  const currentDrug = drugs.find((drug: Drug) => drug.drug === activeDrug);
 
   const [formData, setFormData] = useState({
     drug: "",
@@ -35,7 +45,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
     route: "",
     start: new Date().toISOString().substr(0, 10),
     end: "",
-    time: [],
+    time: [''],
     reminder: false,
   });
 
@@ -81,9 +91,9 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
   }, [currentDrug]);
 
   useEffect(() => {
-    let defaultTimeValues: any = [];
+    let defaultTimeValues: string[] = [];
 
-    const selectedDose: any = dose?.find(
+    const selectedDose: SelectedDoseTypes | undefined = dose?.find(
       (item) => item.frequency === formData.frequency
     );
 
@@ -107,7 +117,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
       });
     } else if (name.startsWith("time-")) {
       const timeIndex = Number(name.split("-")[1]);
-      const updatedTime: any = [...formData.time];
+      const updatedTime: string[] = [...formData.time];
       updatedTime[timeIndex] = value;
 
       setFormData({
@@ -117,7 +127,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
 
       setFormErrors({
         ...formErrors,
-        time: updatedTime.some((time: any) => !time)
+        time: updatedTime.some((time: string) => !time)
           ? "Please fill in all time fields."
           : "",
       });
@@ -134,7 +144,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
     }
   };
 
-  const timeInput = formData.time.map((item: any, index: number) => {
+  const timeInput = formData.time.map((item: string, index: number) => {
     return (
       <div key={index} className="bg-[#EDF2F7] rounded-[10px] h-[56px] w-full">
         <input
@@ -159,7 +169,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const errors: any = {
+    const errors: FormErrors = {
       name: formData.drug ? "" : "Please fill in the Name of drug field.",
       frequency: formData.frequency ? "" : "Please select a Frequency.",
       route: formData.route ? "" : "Please select a Route.",
@@ -180,7 +190,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
 
     try {
       // Update the drug data
-      const updatedDrugs = drugs.map((drug: any) => {
+      const updatedDrugs = drugs.map((drug: Drug) => {
         if (drug.drug === activeDrug) {
           return {
             drug: formData.drug,

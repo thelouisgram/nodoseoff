@@ -5,7 +5,7 @@ const Loader = () => {
   const [lineWidth, setLineWidth] = useState(0);
 
   useEffect(() => {
-    let interval:any;
+    let interval: NodeJS.Timeout | undefined;
     let currentWidth = 0;
 
     const fillLine = () => {

@@ -4,7 +4,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../store";
-import { frequencyToPlaceholder } from "../../../../utils/dashboard";
 import {
   setDrugs,
   updateAllergies,
@@ -14,7 +13,6 @@ import {
 } from "../../../../store/stateSlice";
 import { useDispatch } from "react-redux";
 import { toast } from "sonner";
-import { Drug } from "./../../../../types";
 import supabase from "../../../../utils/supabaseClient";
 import {
   uploadScheduleToServer,
@@ -26,7 +24,9 @@ import Completed from "./tabs/Completed";
 import Allergies from "./tabs/Allergies";
 import Image from "next/image";
 import DrugDetails from "./DrugDetails";
-import { ScheduleItem } from "../../../../types/dashboard";
+import { DrugProps, ScheduleItem } from "../../../../types/dashboard";
+import { Drug } from "./../../../../types";
+import { AllergicItemProps } from "../../../../types/dashboardDrugs";
 
 interface DrugsProps {
   screen: boolean;
@@ -150,7 +150,7 @@ const Drugs: React.FC<DrugsProps> = ({
     });
   }, []);
 
-  const uploadCompletedDrugs = async (newCompletedDrugs: any) => {
+  const uploadCompletedDrugs = async (newCompletedDrugs: DrugProps[]) => {
     try {
       const { error } = await supabase
         .from("users")
@@ -197,7 +197,7 @@ const Drugs: React.FC<DrugsProps> = ({
 
         // Update the Redux state after deleting and uploading the schedule
         dispatch(
-          setDrugs(drugs.filter((drug: Drug) => drug.drug !== activeDrug))
+          setDrugs(drugs.filter((drug) => drug.drug !== activeDrug))
         );
         dispatch(updateSchedule(updatedSchedule));
       } catch (error) {
@@ -205,7 +205,7 @@ const Drugs: React.FC<DrugsProps> = ({
       }
     } else if (tab === "Completed") {
       const newCompletedDrugs = completedDrugs.filter(
-        (drug: any) => drug.drug !== activeDrug
+        (drug) => drug.drug !== activeDrug
       );
       dispatch(updateCompletedDrugs(newCompletedDrugs));
       uploadCompletedDrugs(newCompletedDrugs);
@@ -230,7 +230,7 @@ const Drugs: React.FC<DrugsProps> = ({
       toast.success(`'${drug}' deleted Successfully!`);
 
       const newAllergies = allergies.filter(
-        (allergyItem: any) => allergyItem.drug !== drug
+        (allergyItem: AllergicItemProps) => allergyItem.drug !== drug
       );
       dispatch(updateAllergies(newAllergies));
     } catch (error) {
@@ -239,7 +239,7 @@ const Drugs: React.FC<DrugsProps> = ({
   };
 
   const handleAllergies = async () => {
-    if (allergies.some((drug: any) => drug.drug === activeDrug)) {
+    if (allergies.some((drug: AllergicItemProps) => drug.drug === activeDrug)) {
       toast.error("Drug is already marked as an allergy");
       return null;
     } else {
@@ -279,7 +279,7 @@ const Drugs: React.FC<DrugsProps> = ({
 
         // Update the Redux state after deleting and uploading the schedule
         dispatch(
-          setDrugs(drugs.filter((drug: Drug) => drug.drug !== activeDrug))
+          setDrugs(drugs.filter((drug) => drug.drug !== activeDrug))
         );
         dispatch(updateSchedule(updatedSchedule));
       } catch (error) {

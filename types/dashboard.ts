@@ -1,6 +1,8 @@
+import { Dayjs } from "dayjs";
+
 export interface DailyReportsProps {
-    selectDate: any
-    today: any
+    selectDate: Dayjs
+    today: Dayjs
 }
 
 export interface ScheduleItem {
@@ -9,5 +11,14 @@ export interface ScheduleItem {
    date: string;
    time: string;
    completed: boolean;
-   // Add any other properties if present in the actual data structure
  }
+
+ export interface DrugProps {
+  drug: string;
+  end: string;
+  frequency: string;
+  reminder: boolean;
+  route: string;
+  start: string;
+  time: string[];
+}

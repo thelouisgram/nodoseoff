@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import { RootState } from "../../../../store";
 import { updateAllergies } from "../../../../store/stateSlice";
-import { AllergicItemProps } from "../../../../types/dashboardDrugs";
+import { DrugProps } from "../../../../types/dashboardDrugs";
 import supabase from "../../../../utils/supabaseClient";
 
 interface AllergiesFormProps {
@@ -23,11 +23,17 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
   const { allergies, userId } = useSelector((state: RootState) => state.app);
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
-    allergy: "",
+    drug: "",
+    frequency: "",
+    route: "",
+    start: '',
+    end: "",
+    time: [""],
+    reminder: true,
   });
 
   const [formErrors, setFormErrors] = useState({
-    allergy: "",
+    drug: "",
   });
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -40,23 +46,29 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
 
   const resetFormData = () => {
     setFormData({
-      allergy: "",
+      drug: "",
+      frequency: "",
+      route: "",
+      start: "",
+      end: "",
+      time: [""],
+      reminder: true,
     });
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const errors: FormErrors = {
-      allergy: formData.allergy ? "" : "Please fill in the Drug field.",
+      allergy: formData.drug ? "" : "Please fill in the Drug field.",
     };
 
     const drugAlreadyExists = allergies.some(
-      (item: AllergicItemProps) =>
-        item.drug.toLowerCase() === formData.allergy.toLowerCase()
+      (item: DrugProps) =>
+        item.drug.toLowerCase() === formData.drug.toLowerCase()
     );
 
     if (drugAlreadyExists) {
-      toast.error(`'${formData.allergy}' already exists!`);
+      toast.error(`'${formData.drug}' already exists!`);
       resetFormData();
       return;
     }
@@ -77,7 +89,13 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
     try {
       const { error } = await supabase.from("allergies").insert({
         userId: userId,
-        drug: formData.allergy,
+        drug: formData.drug,
+        frequency: "",
+        route: "",
+        start: "",
+        end: "",
+        time: [""],
+        reminder: true,
       });
 
       if (error) {
@@ -85,12 +103,18 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
         return;
       }
 
-      dispatch(updateAllergies([...allergies, { drug: formData.allergy }]));
-      toast.success(`'${formData.allergy}' has been added successfully`);
+      dispatch(updateAllergies([...allergies, formData]));
+      toast.success(`'${formData.drug}' has been added successfully`);
       setFormData({
-        allergy: "",
+        drug: "",
+        frequency: "",
+        route: "",
+        start: "",
+        end: "",
+        time: [""],
+        reminder: true,
       });
-      setFormErrors({ allergy: "" });
+      setFormErrors({ drug: "" });
       setAllergiesForm(false);
     } catch (error) {
       console.error("Error adding Allergy:", error);
@@ -149,7 +173,7 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
                     type="text"
                     id="effect"
                     name="allergy"
-                    value={formData.allergy}
+                    value={formData.drug}
                     onChange={handleInputChange}
                     className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4 capitalize h-[56px]"
                     placeholder="Drug Allergy"

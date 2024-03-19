@@ -139,7 +139,7 @@ const Page = () => {
       try {
         const { data, error } = await supabase
           .from("allergies")
-          .select("drug")
+          .select("*")
           .eq("userId", userId);
         if (error) {
           console.error("error:", error);

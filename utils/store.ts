@@ -1,6 +1,5 @@
 import { Effect } from "@/Layout/dashboard/home/DailyReports";
 import { DrugProps, ScheduleItem } from "../types/dashboard";
-import { AllergicItemProps } from "../types/dashboardDrugs";
 
 export interface AppType {
   info: Info[];
@@ -11,7 +10,7 @@ export interface AppType {
   effects: Effect[];
   schedule: ScheduleItem[];
   activeDrug: string;
-  allergies: AllergicItemProps[];
+  allergies: DrugProps[];
   drugDetails: DrugProps[];
   searchedWord: string;
   activeAllergy: string;

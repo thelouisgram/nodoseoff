@@ -14,7 +14,6 @@ import {
   updateSchedule,
 } from "../../../../store/stateSlice";
 import { DrugProps, ScheduleItem } from "../../../../types/dashboard";
-import { AllergicItemProps } from "../../../../types/dashboardDrugs";
 import { drugsTab } from "../../../../utils/drugs";
 import {
   removePastDoses,
@@ -194,9 +193,7 @@ const Drugs: React.FC<DrugsProps> = ({
         });
 
         // Update the Redux state after deleting and uploading the schedule
-        dispatch(
-          setDrugs(drugs.filter((drug) => drug.drug !== activeDrug))
-        );
+        dispatch(setDrugs(drugs.filter((drug) => drug.drug !== activeDrug)));
         dispatch(updateSchedule(updatedSchedule));
       } catch (error) {
         console.error("Error deleting drug:", error);
@@ -228,7 +225,7 @@ const Drugs: React.FC<DrugsProps> = ({
       toast.success(`'${drug}' deleted Successfully!`);
 
       const newAllergies = allergies.filter(
-        (allergyItem: AllergicItemProps) => allergyItem.drug !== drug
+        (allergyItem: DrugProps) => allergyItem.drug !== drug
       );
       dispatch(updateAllergies(newAllergies));
     } catch (error) {
@@ -237,7 +234,7 @@ const Drugs: React.FC<DrugsProps> = ({
   };
 
   const handleAllergies = async () => {
-    if (allergies.some((drug: AllergicItemProps) => drug.drug === activeDrug)) {
+    if (allergies.some((drug: DrugProps) => drug.drug === activeDrug)) {
       toast.error("Drug is already marked as an allergy");
       return null;
     } else {
@@ -253,6 +250,12 @@ const Drugs: React.FC<DrugsProps> = ({
         const { error: insertError } = await supabase.from("allergies").insert({
           userId: userId,
           drug: activeDrug,
+          frequency: "",
+          route: "",
+          start: "",
+          end: "",
+          time: [""],
+          reminder: true,
         });
 
         if (deleteError || insertError) {
@@ -273,12 +276,13 @@ const Drugs: React.FC<DrugsProps> = ({
           schedule: updatedSchedule,
         });
 
-        dispatch(updateAllergies([...allergies, { drug: activeDrug }]));
+        const allergicDrug = drugs?.find((drug) => drug.drug === activeDrug);
+        if (allergicDrug) {
+          dispatch(updateAllergies([...allergies, allergicDrug]));
+        }
 
         // Update the Redux state after deleting and uploading the schedule
-        dispatch(
-          setDrugs(drugs.filter((drug) => drug.drug !== activeDrug))
-        );
+        dispatch(setDrugs(drugs.filter((drug) => drug.drug !== activeDrug)));
         dispatch(updateSchedule(updatedSchedule));
       } catch (error) {
         console.error("Error handling allergies:", error);

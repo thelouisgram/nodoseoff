@@ -31,7 +31,6 @@ const RenderedDrugs: React.FC<thisProps> = ({
   setDeleteModal,
   setAllergyModal,
   frequencyToPlaceholder,
-  displayDrugs,
   tab,
   showEditButton,
   setDisplayDrugs,
@@ -62,22 +61,6 @@ const RenderedDrugs: React.FC<thisProps> = ({
     };
   }, []);
 
-  function convertTo12Hour(time: string) {
-    if (!time) return ""; // Handle the case where time is undefined or null
-
-    const [hours, minutes] = time.split(":");
-    let period = "am";
-    let hour = parseInt(hours, 10);
-
-    if (hour >= 12) {
-      period = "pm";
-      if (hour > 12) {
-        hour -= 12;
-      }
-    }
-
-    return `${hour}:${minutes}${period}`;
-  }
 
   return (
     <div

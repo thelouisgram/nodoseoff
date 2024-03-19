@@ -1,12 +1,10 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Info } from "../utils/store";
-import { AppType } from "../utils/store";
-import { DrugProps, ScheduleItem } from "../types/dashboard";
 import { Effect } from "@/Layout/dashboard/home/DailyReports";
-import { AllergicItemProps } from "../types/dashboardDrugs";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { DrugProps, ScheduleItem } from "../types/dashboard";
+import { AppType, Info } from "../utils/store";
 
 const initialState: AppType = {
-  info: [{ name: "", phone: "", email: "", role: "", otcDrugs: '', herbs: '' }],
+  info: [{ name: "", phone: "", email: "", role: "", otcDrugs: "", herbs: "" }],
   isAuthenticated: true,
   userId: "",
   drugs: [],
@@ -18,7 +16,7 @@ const initialState: AppType = {
   drugDetails: [],
   activeAllergy: "",
   active: "Home",
-  completedDrugs:[]
+  completedDrugs: [],
 };
 
 const stateSlice = createSlice({
@@ -55,7 +53,7 @@ const stateSlice = createSlice({
     updateInfo: (state, action: PayloadAction<Info[]>) => {
       state.info = action.payload;
     },
-    updateAllergies: (state, action: PayloadAction<AllergicItemProps[]>) => {
+    updateAllergies: (state, action: PayloadAction<DrugProps[]>) => {
       state.allergies = action.payload;
     },
     updateDrugDetails: (state, action: PayloadAction<DrugProps[]>) => {
@@ -80,5 +78,6 @@ export const {
   updateSearchedWord,
   updateDrugDetails,
   updateActiveAllergy,
-  updateActive, updateCompletedDrugs
+  updateActive,
+  updateCompletedDrugs,
 } = stateSlice.actions;

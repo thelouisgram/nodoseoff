@@ -8,7 +8,7 @@ interface DrugProps {
   time: string[];
 }
 
-export interface AllergicItemProps {
+export interface DrugProps {
     drug: string
 }
 

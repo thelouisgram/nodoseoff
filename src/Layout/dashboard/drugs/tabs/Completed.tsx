@@ -1,10 +1,9 @@
-import React, { useState } from "react";
 import Image from "next/image";
-import RenderedDrugs from "../RenderedDrugs";
-import { RootState } from "../../../../../store";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
+import { RootState } from "../../../../../store";
 import { frequencyToPlaceholder } from "../../../../../utils/dashboard";
-import { Drug } from "../../../../../types";
+import RenderedDrugs from "../RenderedDrugs";
 
 interface DrugProps {
   drug: string;
@@ -46,7 +45,7 @@ const Completed: React.FC<thisProps> = ({
   };
 
   const findDrug = (searched: string) => {
-    return completedDrugs.filter((drug: Drug) =>
+    return completedDrugs.filter((drug) =>
       drug.drug.startsWith(searched.toLowerCase())
     );
   };

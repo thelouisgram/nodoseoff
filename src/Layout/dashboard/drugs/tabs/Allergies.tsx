@@ -1,15 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useRef, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../../../../../store";
 import Image from "next/image";
-import RenderedDrugs from "../RenderedDrugs";
-import { frequencyToPlaceholder } from "../../../../../utils/dashboard";
+import React, { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../../../../store";
 import {
-  AllergicItemProps,
-  ExtendedAllergicItemProps,
+  DrugProps
 } from "../../../../../types/dashboardDrugs";
-import { DrugProps } from "../../../../../types/dashboard";
+import { frequencyToPlaceholder } from "../../../../../utils/dashboard";
+import RenderedDrugs from "../RenderedDrugs";
 
 type RefObject<T> = React.RefObject<T>;
 
@@ -68,7 +66,7 @@ const Allergies: React.FC<allergiesProps> = ({
   };
 
   const findDrug = (searched: string) => {
-    return allergies?.filter((drug: AllergicItemProps) =>
+    return allergies?.filter((drug: DrugProps) =>
       drug.drug.startsWith(searched.toLowerCase())
     );
   };
@@ -93,8 +91,10 @@ const Allergies: React.FC<allergiesProps> = ({
     }
   };
 
+  console.log(currentItems)
+
   const renderedAllergies = currentItems.map(
-    (item: any, index: number) => {
+    (item, index: number) => {
       return (
         <RenderedDrugs
           key={index}

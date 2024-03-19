@@ -46,7 +46,7 @@ const Ongoing: React.FC<thisProps> = ({
   };
 
   const findDrug = (searched: string) => {
-    return drugs.filter((drug: Drug) =>
+    return drugs.filter((drug) =>
       drug.drug.startsWith(searched.toLowerCase())
     );
   };

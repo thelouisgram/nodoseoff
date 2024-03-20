@@ -96,7 +96,7 @@ const Home: React.FC<HomeProps> = ({
         </button>
       </div>
       <section className="md:w-full flex gap-4 ss:gap-5 mb-8 ss:mb-12 overflow-x-scroll md:overflow-hidden px-4 ss:px-8 md:px-0 bar">
-        <div className="min-w-[300px] ss:w-full h-[120px] ss:h-[150px] bg-[#7E1CE6] rounded-[10px]  flex justify-start items-center p-4 gap-2">
+        <div className="min-w-[300px] ss:w-full h-[120px] ss:h-[150px] bg-[#A755F7] rounded-[10px]  flex justify-start items-center p-4 gap-2">
           <Image
             src="/assets/sandclock.png"
             alt="clock"
@@ -114,7 +114,7 @@ const Home: React.FC<HomeProps> = ({
             </h4>
           </div>
         </div>
-        <div className="min-w-[300px] ss:w-full h-[120px] ss:h-[150px] bg-[#FF1493] rounded-[10px]  flex justify-start items-center p-4 gap-2">
+        <div className="min-w-[300px] ss:w-full h-[120px] ss:h-[150px] bg-[#EB4899] rounded-[10px]  flex justify-start items-center p-4 gap-2">
           <Image
             src="/assets/pills.png"
             alt="drugs"
@@ -131,7 +131,7 @@ const Home: React.FC<HomeProps> = ({
             </h4>
           </div>
         </div>
-        <div className="min-w-[300px] ss:w-full h-[120px] ss:h-[150px] bg-blackII rounded-[10px]  flex justify-start items-center py-4 pl-4 gap-2">
+        <div className="min-w-[300px] ss:w-full h-[120px] ss:h-[150px] bg-[#3B82F6] rounded-[10px]  flex justify-start items-center py-4 pl-4 gap-2">
           <Image
             src="/assets/shield.png"
             alt="shield"

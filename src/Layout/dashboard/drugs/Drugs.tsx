@@ -269,7 +269,6 @@ const Drugs: React.FC<DrugsProps> = ({
         });
 
         toast.success(`'${activeDrug}' has been marked as an allergy!`);
-
         // Make the uploadScheduleToServer asynchronous
         await uploadScheduleToServer({
           userId: userId,

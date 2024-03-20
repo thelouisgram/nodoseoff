@@ -79,6 +79,9 @@ const Page = () => {
   }, []);
 
   useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
     const getInfo = async () => {
       try {
         const { data, error } = await supabase

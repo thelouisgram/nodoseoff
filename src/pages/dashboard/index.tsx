@@ -327,6 +327,7 @@ const Page = () => {
 
       if (uncompletedDosesCount === 1) {
         dispatch(updateConfetti(true));
+        toast.success(`You've completed today's dose, Well done!!!`);
         const timeoutId = setTimeout(() => {
           dispatch(updateConfetti(false));
         }, 5000);

@@ -19,6 +19,7 @@ const SignIn = () => {
     phoneNumber: "",
     password: "",
   });
+  const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -33,7 +34,7 @@ const SignIn = () => {
     if (!formData.password || !formData.email) {
       toast.error("Input Email & Password");
     } else {
-      toast.loading("Signing In");
+      setLoading(true)
       try {
         const { error } = await supabase.auth.signInWithPassword({
           email: formData.email,
@@ -41,6 +42,7 @@ const SignIn = () => {
         });
         if (error) {
           toast.error("Error signing in: " + error.message);
+          setLoading(false)
         } else {
           const user = await supabase.auth.getUser();
           const userId = user.data.user?.id;
@@ -48,19 +50,13 @@ const SignIn = () => {
             dispatch(updateIsAuthenticated(true));
             dispatch(updateUserId(userId));
             router.push("/dashboard");
-            toast.success("Signed in");
           }
         }
       } catch (error) {
         toast.error("Error signing up: " + error);
+          setLoading(false);
       }
     }
-    setFormData({
-      fullName: "",
-      email: "",
-      phoneNumber: "",
-      password: "",
-    });
   };
 
   useEffect(() => {
@@ -127,9 +123,10 @@ const SignIn = () => {
         </div>
         <button
           type="submit"
-          className="bg-darkBlue text-white rounded-[10px] w-full text-center py-4  px-4 hover:bg-navyBlue transition duration-300"
+          disabled={loading}
+          className="bg-darkBlue text-white rounded-[10px] h-[56px] w-full items-center justify-center flex transition duration-300"
         >
-          SIGN IN
+          {loading ? <div className="loaderInfinity"></div> : "LOG IN"}
         </button>
       </form>
       <div>

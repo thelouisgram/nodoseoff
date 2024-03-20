@@ -98,7 +98,6 @@
   }
 }
 
-/* HTML: <div class="loader"></div> */
 .loader {
   display: inline-flex;
   gap: 5px;
@@ -126,4 +125,14 @@
 @keyframes l3-2{
   0%   {transform:scaleX(var(--s,1)) rotate(0deg)}
   100% {transform:scaleX(var(--s,1)) rotate(-360deg)}
+}
+
+.loaderInfinity {
+  width: calc(80px / cos(45deg));
+  height: 14px;
+  background: repeating-linear-gradient(-45deg,#fff 0 15px,#dbdbdb00 0 20px) left/200% 100%;
+  animation: l3 2s infinite linear;
+}
+@keyframes l3 {
+    100% {background-position:right}
 }

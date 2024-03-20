@@ -17,7 +17,7 @@ import { format } from "date-fns";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { FaCheck } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
@@ -216,14 +216,12 @@ const Page = () => {
 
   const logOut = async () => {
     try {
-      toast.loading("Signing Out");
       const { error } = await supabase.auth.signOut();
       if (error) {
         toast.error("Error signing out");
       }
       router.push("/signIn");
       dispatch(updateUserId(""));
-      toast.success("Signed Out");
       dispatch(updateSchedule([]));
     } catch (error) {
       toast.error("Error signing out: " + error);
@@ -407,7 +405,7 @@ const Page = () => {
     });
 
   return (
-    <>
+    <Suspense fallback={<Loader />}>
       {!isLoading && userId ? (
         <section className="flex max-h-[100dvh] relative w-full bg-white">
           {confetti && (
@@ -546,7 +544,7 @@ const Page = () => {
       ) : (
         <Loader />
       )}
-    </>
+    </Suspense>
   );
 };
 

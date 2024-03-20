@@ -34,13 +34,11 @@ const Account: React.FC<AccountProps> = ({
 
   const logOut = async () => {
     try {
-      toast.loading("Signing Out");
       const { error } = await supabase.auth.signOut();
       if (error) {
         toast.error("Error signing out");
       }
       dispatch(updateUserId(""));
-      toast.success("Signed Out");
       dispatch(updateIsAuthenticated(false));
       router.push("/signIn");
       dispatch(updateSchedule([]));

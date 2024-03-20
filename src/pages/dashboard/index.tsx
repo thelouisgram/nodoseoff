@@ -36,6 +36,7 @@ import { DrugProps, ScheduleItem } from "../../../types/dashboard";
 import { uploadScheduleToServer } from "../../../utils/schedule";
 import supabase from "../../../utils/supabaseClient";
 import { tabs, tabsMobile } from "./../../../utils/dashboard";
+import Confetti from "react-confetti";
 
 interface tabsMobileProps {
   name: string;
@@ -49,7 +50,7 @@ interface tabsProps {
 }
 
 const Page = () => {
-  const { userId, active, schedule } = useSelector(
+  const { userId, active, schedule, confetti } = useSelector(
     (state: RootState) => state.app
   );
   const dispatch = useDispatch();
@@ -70,7 +71,6 @@ const Page = () => {
   const router = useRouter();
   const [add, setAdd] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-
 
   useEffect(() => {
     if (!userId) {
@@ -297,7 +297,7 @@ const Page = () => {
       }
     });
 
-  function updateCompleted(item: ScheduleItem) {
+  async function updateCompleted(item: ScheduleItem) {
     const updatedSchedule = schedule.map((dose) => {
       if (
         dose.date === item.date &&
@@ -312,8 +312,16 @@ const Page = () => {
       }
       return dose;
     });
-    dispatch(updateSchedule(updatedSchedule));
-    uploadScheduleToServer({ userId, schedule: updatedSchedule });
+
+    try {
+      // Upload schedule to the server
+      await uploadScheduleToServer({ userId, schedule: updatedSchedule });
+      // If upload is successful, dispatch the updated schedule to Redux state
+      dispatch(updateSchedule(updatedSchedule));
+    } catch (error) {
+      console.error("An error occurred:", error);
+      // Handle the error (e.g., show error message)
+    }
   }
 
   const dosesToRender = (tracker === "Today" ? todaysDose : yesterdaysDose)
@@ -389,6 +397,13 @@ const Page = () => {
     <>
       {!isLoading && userId ? (
         <section className="flex max-h-[100dvh] relative w-full bg-white">
+          {confetti && (
+            <div className="z-[2000]">
+              <Confetti
+                numberOfPieces={200}
+              />
+            </div>
+          )}
           <div
             className={`${
               !nav ? "w-[86px]" : "w-[300px]"

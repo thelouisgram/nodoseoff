@@ -163,15 +163,15 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
               <div>
                 <div className="flex flex-col mb-4">
                   <label
-                    htmlFor="effect"
+                    htmlFor="drug"
                     className="text-[14px] mb-1 font-semibold text-navyBlue"
                   >
                     Drug
                   </label>
                   <input
                     type="text"
-                    id="effect"
-                    name="allergy"
+                    id="drug"
+                    name="drug"
                     value={formData.drug}
                     onChange={handleInputChange}
                     className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4 capitalize h-[56px]"

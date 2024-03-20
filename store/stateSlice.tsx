@@ -17,6 +17,7 @@ const initialState: AppType = {
   activeAllergy: "",
   active: "Home",
   completedDrugs: [],
+  confetti: false
 };
 
 const stateSlice = createSlice({
@@ -37,6 +38,9 @@ const stateSlice = createSlice({
     },
     updateIsAuthenticated: (state, action: PayloadAction<boolean>) => {
       state.isAuthenticated = action.payload;
+    },
+    updateConfetti: (state, action: PayloadAction<boolean>) => {
+      state.confetti = action.payload;
     },
     updateUserId: (state, action: PayloadAction<string>) => {
       state.userId = action.payload;
@@ -80,4 +84,5 @@ export const {
   updateActiveAllergy,
   updateActive,
   updateCompletedDrugs,
+  updateConfetti
 } = stateSlice.actions;

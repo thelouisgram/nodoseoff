@@ -1,10 +1,13 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../store";
-import { FaExclamationTriangle } from "react-icons/fa";
 import Image from "next/image";
+import React, { useEffect } from 'react';
+import { FaExclamationTriangle } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../../../store";
 import { DailyReportsProps, ScheduleItem } from "../../../../types/dashboard";
-import React from 'react'
+import { updateConfetti } from "../../../../store/stateSlice";
+import { toast } from "sonner";
 
 export interface Effect {
   date: string;
@@ -14,6 +17,7 @@ export interface Effect {
 
 const DailyReports: React.FC<DailyReportsProps> = ({ today, selectDate }) => {
   const { effects, schedule } = useSelector((state: RootState) => state.app);
+  const dispatch = useDispatch()
 
   const formattedDateFull = (selectDate ?? today).format("DD MMMM, YYYY");
   const formattedDate = (selectDate ?? today).format("YYYY-MM-DD");
@@ -34,6 +38,16 @@ const DailyReports: React.FC<DailyReportsProps> = ({ today, selectDate }) => {
   const completedDoses = filteredDrugs.filter((drug) => drug.completed).length;
   const completedFraction = completedDoses / totalDoses;
   const completedPercentage = completedFraction * 100;
+
+  useEffect(() => {
+    if(completedPercentage === 100){
+      toast.success(`You've completed today's dose, Well done!!!`);
+      dispatch(updateConfetti(true))
+      const timeoutId = setTimeout(() => {
+        dispatch(updateConfetti(false));
+      }, 5000);
+    }
+  }, [completedPercentage]);
 
   if (uniqueDrugs.length > 0 || dateEffects.length > 0) {
     const effectCount: Record<string, number> = dateEffects.reduce(
@@ -56,6 +70,8 @@ const DailyReports: React.FC<DailyReportsProps> = ({ today, selectDate }) => {
     const displayValue = isNaN(completedPercentage)
       ? "0%"
       : `${completedDoses}/${totalDoses} (${completedPercentage.toFixed(0)}%)`;
+
+      
 
     return (
       <div className="w-full md:w-1/2 h-full rounded-[12px]  pt-5 text-[15px] text-gray-600 font-spartan">

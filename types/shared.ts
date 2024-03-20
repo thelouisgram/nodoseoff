@@ -1,1 +1,0 @@
-export type RefObject<T> = React.RefObject<T>;

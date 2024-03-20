@@ -15,6 +15,7 @@ export interface AppType {
   searchedWord: string;
   activeAllergy: string;
   active: string;
+  confetti: boolean;
 }
 
 export interface Info{

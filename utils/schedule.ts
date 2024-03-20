@@ -16,7 +16,7 @@ export const uploadScheduleToServer = async ({
       .eq("userId", userId);
 
     if (error) {
-      toast.error("Failed to update schedule on the server");
+      toast.error("An error has occurred, try again!");
     }
   } catch (error) {
     console.error("Error updating schedule on the server:", error);

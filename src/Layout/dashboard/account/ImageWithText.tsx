@@ -91,7 +91,7 @@ const ImageWithText: React.FC = () => {
                 Patient&apos;s Information
               </h2>
               <div className="border border-navyBlue mb-2 ss:mb-4 md:mb-10 w-full text-[10px] ss:text-[14px] md:text-[16px]">
-                <div className="flex items-center gap-2 border-b border-navyBlue w-full">
+                <div className="flex items-center gap-2 border-b border-navyBlue w-full capitalize">
                   <div className="w-[105px] ss:w-[150px] py-1 md:py-3 px-2 bg-lightBlue border-r border-navyBlue font-semibold">
                     Name:
                   </div>

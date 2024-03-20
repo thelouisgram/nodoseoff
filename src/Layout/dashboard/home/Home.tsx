@@ -114,7 +114,7 @@ const Home: React.FC<HomeProps> = ({
             </h4>
           </div>
         </div>
-        <div className="min-w-[300px] ss:w-full h-[120px] ss:h-[150px] bg-blackBlue rounded-[10px]  flex justify-start items-center p-4 gap-2">
+        <div className="min-w-[300px] ss:w-full h-[120px] ss:h-[150px] bg-[#FF1493] rounded-[10px]  flex justify-start items-center p-4 gap-2">
           <Image
             src="/assets/pills.png"
             alt="drugs"
@@ -131,7 +131,7 @@ const Home: React.FC<HomeProps> = ({
             </h4>
           </div>
         </div>
-        <div className="min-w-[300px] ss:w-full h-[120px] ss:h-[150px] bg-darkBlue rounded-[10px]  flex justify-start items-center py-4 pl-4 gap-2">
+        <div className="min-w-[300px] ss:w-full h-[120px] ss:h-[150px] bg-blackII rounded-[10px]  flex justify-start items-center py-4 pl-4 gap-2">
           <Image
             src="/assets/shield.png"
             alt="shield"

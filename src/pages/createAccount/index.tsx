@@ -18,6 +18,8 @@ const CreateAccount = () => {
     password: "",
   });
 
+  const [loading, setLoading] = useState(false);
+
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({
@@ -48,9 +50,7 @@ const CreateAccount = () => {
         return;
       }
     }
-
-    toast.loading("Signing Up");
-
+      setLoading(true);
     try {
       // Sign up the user
       const { error: signUpError, data } = await supabase.auth.signUp({
@@ -94,6 +94,7 @@ const CreateAccount = () => {
     } catch (error) {
       // Handle all unexpected errors
       toast.error("Error: " + error);
+        setLoading(false);
     }
 
     // Reset form data
@@ -204,9 +205,12 @@ const CreateAccount = () => {
         </div>
         <button
           type="submit"
-          className="bg-darkBlue text-white rounded-[10px] w-full text-center py-4  px-4 hover:bg-navyBlue transition duration-300"
+          disabled={loading}
+          className={`bg-darkBlue text-white rounded-[10px] h-[56px] w-full items-center justify-center flex transition duration-300 ${
+            loading ? "bg-navyBlue" : "after:"
+          }`}
         >
-          CREATE AN ACCOUNT
+          {loading ? <div className="loaderInfinity"></div> : "CREATE AN ACCOUNT"}
         </button>
       </form>
       <Link href="/signIn" className="text-white">

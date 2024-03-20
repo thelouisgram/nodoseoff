@@ -34,7 +34,7 @@ const SignIn = () => {
     if (!formData.password || !formData.email) {
       toast.error("Input Email & Password");
     } else {
-      setLoading(true)
+      setLoading(true);
       try {
         const { error } = await supabase.auth.signInWithPassword({
           email: formData.email,
@@ -42,7 +42,7 @@ const SignIn = () => {
         });
         if (error) {
           toast.error("Error signing in: " + error.message);
-          setLoading(false)
+          setLoading(false);
         } else {
           const user = await supabase.auth.getUser();
           const userId = user.data.user?.id;
@@ -54,7 +54,7 @@ const SignIn = () => {
         }
       } catch (error) {
         toast.error("Error signing up: " + error);
-          setLoading(false);
+        setLoading(false);
       }
     }
   };
@@ -124,7 +124,9 @@ const SignIn = () => {
         <button
           type="submit"
           disabled={loading}
-          className="bg-darkBlue text-white rounded-[10px] h-[56px] w-full items-center justify-center flex transition duration-300"
+          className={`bg-darkBlue text-white rounded-[10px] h-[56px] w-full items-center justify-center flex transition duration-300 ${
+            loading ? "bg-navyBlue" : "after:"
+          }`}
         >
           {loading ? <div className="loaderInfinity"></div> : "LOG IN"}
         </button>

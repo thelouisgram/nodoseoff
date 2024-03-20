@@ -313,7 +313,6 @@ const Page = () => {
     });
 
     try {
-      // Upload schedule to the server
       await uploadScheduleToServer({ userId, schedule: updatedSchedule });
 
       // If upload is successful, dispatch the updated schedule to Redux state

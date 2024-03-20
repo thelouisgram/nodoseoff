@@ -61,7 +61,6 @@ const RenderedDrugs: React.FC<thisProps> = ({
     };
   }, []);
 
-
   return (
     <div
       className={`relative ${
@@ -112,7 +111,7 @@ const RenderedDrugs: React.FC<thisProps> = ({
         <div
           ref={dropdownRef}
           className="absolute border-[1px] border-gray-300 right-8 z-[200] top-5 text-navyBlue flex flex-col items-start justify-center mt-3 rounded-[10px] 
-        bg-white shadow-md w-[150px] ss:w-[250px] py-4 text-[13px] ss:text-[16px]"
+        bg-white shadow-md w-[175px] ss:w-[250px] py-4 text-[13px] ss:text-[16px]"
         >
           {tab !== "Allergies" && (
             <button

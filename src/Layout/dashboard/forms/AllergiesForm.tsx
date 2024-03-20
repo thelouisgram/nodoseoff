@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import { RootState } from "../../../../store";
 import { updateAllergies } from "../../../../store/stateSlice";
-import { DrugProps } from "../../../../types/dashboardDrugs";
 import supabase from "../../../../utils/supabaseClient";
 
 interface AllergiesFormProps {
@@ -63,7 +62,7 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
     };
 
     const drugAlreadyExists = allergies.some(
-      (item: DrugProps) =>
+      (item) =>
         item.drug.toLowerCase() === formData.drug.toLowerCase()
     );
 

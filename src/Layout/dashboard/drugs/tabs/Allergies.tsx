@@ -3,9 +3,6 @@ import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../../../store";
-import {
-  DrugProps
-} from "../../../../../types/dashboardDrugs";
 import { frequencyToPlaceholder } from "../../../../../utils/dashboard";
 import RenderedDrugs from "../RenderedDrugs";
 
@@ -66,7 +63,7 @@ const Allergies: React.FC<allergiesProps> = ({
   };
 
   const findDrug = (searched: string) => {
-    return allergies?.filter((drug: DrugProps) =>
+    return allergies?.filter((drug) =>
       drug.drug.startsWith(searched.toLowerCase())
     );
   };

@@ -4,6 +4,7 @@ import { RootState } from "../../../../store";
 import { FaExclamationTriangle } from "react-icons/fa";
 import Image from "next/image";
 import { DailyReportsProps, ScheduleItem } from "../../../../types/dashboard";
+import React from 'react'
 
 export interface Effect {
   date: string;

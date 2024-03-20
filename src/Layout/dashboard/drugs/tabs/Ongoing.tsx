@@ -4,17 +4,8 @@ import RenderedDrugs from "../RenderedDrugs";
 import { RootState } from "../../../../../store";
 import { useSelector } from "react-redux";
 import { frequencyToPlaceholder } from "../../../../../utils/dashboard";
-import { Drug } from "../../../../../types";
+import { DrugProps } from "../../../../../types/dashboard";
 
-interface DrugProps {
-  drug: string;
-  end: string;
-  frequency: string;
-  reminder: boolean;
-  route: string;
-  start: string;
-  time: string[];
-}
 
 interface thisProps {
   setScreen: Function;

@@ -1,16 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use-client";
-import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import { toast } from "sonner";
 import Image from "next/image";
-import { dose } from "../../../../utils/dashboard";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "sonner";
 import { RootState } from "../../../../store";
 import { setDrugs, updateSchedule } from "../../../../store/stateSlice";
-import { generateSchedule } from "../../../../utils/dashboard";
-import { Drug } from "../../../../types";
-import supabase from "../../../../utils/supabaseClient";
+import { dose, generateSchedule } from "../../../../utils/dashboard";
 import { uploadScheduleToServer } from "../../../../utils/schedule";
+import supabase from "../../../../utils/supabaseClient";
 
 interface DrugFormProps {
   drugsForm: boolean;

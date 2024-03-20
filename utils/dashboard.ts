@@ -1,4 +1,3 @@
-import { Drug } from "../types";
 import { DrugProps, ScheduleItem } from "../types/dashboard";
 
 export const tabs = [
@@ -168,11 +167,10 @@ export const generateSchedule = (drugDetails: DrugProps) => {
   return schedule;
 };
 
-function calculateNextDoseTime(schedule: ScheduleItem[], drug?: Drug): Date | null {
+function calculateNextDoseTime(schedule: ScheduleItem[]): Date | null {
   let nextDoseTime: Date | null = null;
 
   schedule.forEach((dose) => {
-  if (!drug || dose?.drug === drug.drug) { // Compare with the drug property of the Drug object
     const doseTime = new Date(`${dose?.date}T${dose?.time}`);
     const currentTime = new Date();
 
@@ -182,14 +180,13 @@ function calculateNextDoseTime(schedule: ScheduleItem[], drug?: Drug): Date | nu
     ) {
       nextDoseTime = doseTime;
     }
-  }
 });
 
   return nextDoseTime;
 }
 
 export function calculateClosestDoseCountdown(schedule: ScheduleItem[]): string {
-  let closestDose: Drug | null = null;
+  let closestDose: DrugProps | null = null;
   let nextDoseTime: Date | null = null;
 
   function updateCountdown() {

@@ -28,6 +28,7 @@ import {
   updateActive,
   updateAllergies,
   updateCompletedDrugs,
+  updateConfetti,
   updateInfo,
   updateSchedule,
   updateUserId,
@@ -316,11 +317,22 @@ const Page = () => {
     try {
       // Upload schedule to the server
       await uploadScheduleToServer({ userId, schedule: updatedSchedule });
+
       // If upload is successful, dispatch the updated schedule to Redux state
       dispatch(updateSchedule(updatedSchedule));
+
+      const uncompletedDosesCount = todaysDose.filter(
+        (dose: ScheduleItem) => !dose.completed
+      ).length;
+
+      if (uncompletedDosesCount === 1) {
+        dispatch(updateConfetti(true));
+        const timeoutId = setTimeout(() => {
+          dispatch(updateConfetti(false));
+        }, 5000);
+      }
     } catch (error) {
       console.error("An error occurred:", error);
-      // Handle the error (e.g., show error message)
     }
   }
 
@@ -398,10 +410,8 @@ const Page = () => {
       {!isLoading && userId ? (
         <section className="flex max-h-[100dvh] relative w-full bg-white">
           {confetti && (
-            <div className="z-[2000]">
-              <Confetti
-                numberOfPieces={200}
-              />
+            <div className=" z-[2000]">
+              <Confetti numberOfPieces={200} className="w-full md:w-auto h-full" />
             </div>
           )}
           <div

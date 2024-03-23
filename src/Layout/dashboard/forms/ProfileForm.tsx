@@ -11,7 +11,8 @@ import { RootState } from "../../../../store";
 import { useSelector, useDispatch } from "react-redux";
 import supabase from "../../../../utils/supabaseClient";
 import { toast } from "sonner";
-import { updateInfo } from "../../../../store/stateSlice";
+import { updateInfo, updateProfilePicture } from "../../../../store/stateSlice";
+import { v4 as uuidv4 } from "uuid";
 
 type RefObject<T> = React.RefObject<T>;
 
@@ -24,7 +25,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
   setProfileForm,
   profileForm,
 }) => {
-  const { info, userId } = useSelector((state: RootState) => state.app);
+  const { info, userId, profilePicture } = useSelector(
+    (state: RootState) => state.app
+  );
   const { name, phone, email, role, otcDrugs, herbs } = info[0];
   const dispatch = useDispatch();
 
@@ -93,6 +96,51 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
     });
   };
 
+  const avatar = `/${profilePicture}`;
+
+  async function updateImage(e: ChangeEvent<HTMLInputElement>) {
+    if (!e.target.files || e.target.files.length === 0) {
+      console.error("No files selected");
+      return;
+    }
+
+    let file = e.target.files[0];
+
+    toast.success("Profile Picture updated");
+
+    const { data, error } = await supabase.storage
+      .from("profile-picture")
+      .update(userId + avatar, file, {
+        cacheControl: "3600",
+        upsert: true,
+      });
+
+    if (data) {
+      getMedia();
+    } else {
+      console.error("Error uploading image:", error);
+      toast.error("error");
+    }
+  }
+
+  async function getMedia() {
+    const { data, error } = await supabase.storage
+      .from("profile-picture")
+      .list(userId + avatar, {
+        limit: 1,
+        offset: 0,
+      });
+
+    if (data) {
+      dispatch(updateProfilePicture([data]));
+    } else {
+      console.log(71, error);
+    }
+  }
+
+  const CDNURL =
+    "https://opshqmqagtfidynwftzk.supabase.co/storage/v1/object/public/profile-picture/";
+
   return (
     <div
       className={` ${
@@ -127,6 +175,31 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
             onSubmit={handleSubmit}
             className="h-auto flex flex-col justify-between w-full"
           >
+            <div className=" mb-4 text-navyBlue">
+              <div className="text-[14px] mb-1 font-semibold ">
+                Change your Avatar
+              </div>
+              <div className="flex items-center h-full gap-4">
+                <label htmlFor="avatarInput" className="cursor-pointer">
+                  <input
+                    type="file"
+                    id="avatarInput"
+                    accept="image/*"
+                    style={{ display: "none" }}
+                    onChange={updateImage}
+                  />
+                  <Image
+                    src={CDNURL + userId + avatar}
+                    width={100}
+                    height={100}
+                    alt="user"
+                    quality={100}
+                    className="cursor-pointer"
+                  />
+                </label>
+                <p>Tap to change</p>
+              </div>
+            </div>
             <div className="w-full">
               <div className="flex flex-col mb-4">
                 <label

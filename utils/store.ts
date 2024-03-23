@@ -16,6 +16,7 @@ export interface AppType {
   activeAllergy: string;
   active: string;
   confetti: boolean;
+  profilePicture: any;
 }
 
 export interface Info{

@@ -30,6 +30,7 @@ import {
   updateCompletedDrugs,
   updateConfetti,
   updateInfo,
+  updateProfilePicture,
   updateSchedule,
   updateUserId,
 } from "../../../store/stateSlice";
@@ -51,7 +52,7 @@ interface tabsProps {
 }
 
 const Page = () => {
-  const { userId, active, schedule, confetti } = useSelector(
+  const { userId, active, schedule, confetti, profilePicture } = useSelector(
     (state: RootState) => state.app
   );
   const dispatch = useDispatch();
@@ -93,6 +94,22 @@ const Page = () => {
           console.error("error:", error);
         } else if (data !== null) {
           dispatch(updateInfo([...data]));
+        }
+      } catch (error) {}
+    };
+    const getProfilePicture = async () => {
+      try {
+        const { data, error } = await supabase.storage
+          .from("profile-picture")
+          .list(userId + "/", {
+            limit: 1,
+            offset: 0,
+          });
+
+        if (data) {
+          dispatch(updateProfilePicture([data[0]?.name]))
+        } else {
+          console.log(71, error);
         }
       } catch (error) {}
     };
@@ -173,6 +190,7 @@ const Page = () => {
 
     if (userId) {
       getInfo();
+      getProfilePicture()
       getDrug();
       getEffects();
       getAllergies();

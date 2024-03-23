@@ -17,7 +17,8 @@ const initialState: AppType = {
   activeAllergy: "",
   active: "Home",
   completedDrugs: [],
-  confetti: false
+  confetti: false,
+  profilePicture: []
 };
 
 const stateSlice = createSlice({
@@ -66,6 +67,9 @@ const stateSlice = createSlice({
     updateCompletedDrugs: (state, action: PayloadAction<DrugProps[]>) => {
       state.completedDrugs = action.payload;
     },
+    updateProfilePicture: (state, action: PayloadAction<any>) => {
+      state.profilePicture = action.payload;
+    },
   },
 });
 
@@ -84,5 +88,6 @@ export const {
   updateActiveAllergy,
   updateActive,
   updateCompletedDrugs,
-  updateConfetti
+  updateConfetti,
+  updateProfilePicture,
 } = stateSlice.actions;

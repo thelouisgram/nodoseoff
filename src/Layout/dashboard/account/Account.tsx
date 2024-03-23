@@ -23,7 +23,7 @@ const Account: React.FC<AccountProps> = ({
   setDrugHxForm,
   setShowStats,
 }) => {
-  const { drugs, info, effects, schedule } = useSelector(
+  const { info, profilePicture, userId } = useSelector(
     (state: RootState) => state.app
   );
   const router = useRouter();
@@ -47,6 +47,11 @@ const Account: React.FC<AccountProps> = ({
     }
   };
 
+  const avatar = `/${profilePicture}`;
+
+  const CDNURL =
+    "https://opshqmqagtfidynwftzk.supabase.co/storage/v1/object/public/profile-picture/";
+
   return (
     <>
       {tab === "Account" ? (
@@ -60,7 +65,7 @@ const Account: React.FC<AccountProps> = ({
             <div className="w-full">
               <div className="w-full items-center flex flex-col  mb-8">
                 <Image
-                  src="/assets/icons8-user-100.png"
+                  src={CDNURL + userId + avatar}
                   width={100}
                   height={100}
                   alt="user"

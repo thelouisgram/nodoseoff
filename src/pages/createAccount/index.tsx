@@ -33,7 +33,26 @@ const CreateAccount = () => {
     setFormData({ ...formData, role: value });
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  async function fetchLocalImage() {
+    try {
+      // Fetch the image from your local assets directory
+      const response = await fetch("/assets/icons8-user-100.png");
+      if (!response.ok) {
+        throw new Error("Failed to fetch image");
+      }
+
+      // Convert the image response to a blob
+      const blob = await response.blob();
+
+      return blob; // Return the image blob
+    } catch (error) {
+      console.error("Error fetching local image:", error);
+      throw new Error("Error fetching local image");
+    }
+  }
+
+
+const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Password strength validation (can be customized)
     const strongPasswordRegex = /^(?=.*\d)[A-Za-z\d]{8,}$/;
@@ -78,13 +97,20 @@ const CreateAccount = () => {
         userId: userId,
         schedule: [],
       });
-
-      const { error } = await supabase.from("pastSchedule").insert({
-        pastSchedule: [],
-      });
-
       if (addInfoError) {
         toast.error("Failed to insert data into the database");
+        return;
+      }
+
+      // Fetch local image and upload
+      const file = await fetchLocalImage(); // Fetch local image
+      const { error: uploadError } = await supabase.storage
+        .from("profile-picture")
+        .upload(`${userId}/avatar.png`, file); // Upload fetched image
+
+      if (uploadError) {
+        console.error("Error uploading image:", uploadError);
+        toast.error("Error uploading image");
         return;
       }
 
@@ -105,7 +131,7 @@ const CreateAccount = () => {
       role: "",
       password: "",
     });
-  };
+  };  
 
   return (
     <div className="min-h-[100dvh] w-[100%] py-8 px-6 flex flex-col justify-center items-center ss:py-10 bg-navyBlue">

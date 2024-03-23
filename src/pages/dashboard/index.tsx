@@ -52,7 +52,7 @@ interface tabsProps {
 }
 
 const Page = () => {
-  const { userId, active, schedule, confetti, profilePicture } = useSelector(
+  const { userId, active, schedule, confetti } = useSelector(
     (state: RootState) => state.app
   );
   const dispatch = useDispatch();

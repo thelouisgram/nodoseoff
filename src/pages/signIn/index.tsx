@@ -124,8 +124,8 @@ const SignIn = () => {
         <button
           type="submit"
           disabled={loading}
-          className={`bg-darkBlue text-white rounded-[10px] h-[56px] w-full items-center justify-center flex transition duration-300 ${
-            loading ? "bg-navyBlue" : "after:"
+          className={`bg-darkBlue font-semibold text-white rounded-[10px] h-[56px] w-full items-center justify-center flex transition duration-300 ${
+            loading ? "bg-navyBlue opacity-85" : "after:"
           }`}
         >
           {loading ? <div className="loaderInfinity"></div> : "LOG IN"}

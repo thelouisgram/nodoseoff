@@ -173,7 +173,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
             onSubmit={handleSubmit}
             className="h-auto flex flex-col justify-between w-full"
           >
-            <div className=" mb-4 text-navyBlue">
+            <div className=" mb-8 text-navyBlue">
               <div className="text-[14px] mb-1 font-semibold ">
                 Change your Avatar
               </div>
@@ -186,14 +186,20 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                     style={{ display: "none" }}
                     onChange={updateImage}
                   />
-                  <Image
-                    src={CDNURL + userId + avatar}
-                    width={100}
-                    height={100}
-                    alt="user"
-                    quality={100}
-                    className="cursor-pointer"
-                  />
+                  <div className="w-[100px] h-[100px] rounded-full overflow-hidden">
+                    <Image
+                      src={
+                        CDNURL + userId + avatar ||
+                        "/assets/icons8-user-100.png"
+                      }
+                      width={3000}
+                      height={3000}
+                      alt="user"
+                      quality={100}
+                      className="w-[150px] h-[100px] object-cover"
+                      priority
+                    />
+                  </div>
                 </label>
                 <p>Tap to change</p>
               </div>

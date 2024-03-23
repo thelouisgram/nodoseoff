@@ -66,7 +66,9 @@ const Account: React.FC<AccountProps> = ({
               <div className="w-full items-center flex flex-col  mb-8">
                 <div className="w-[150px] h-[150px] rounded-full overflow-hidden">
                   <Image
-                    src={CDNURL + userId + avatar}
+                    src={
+                      CDNURL + userId + avatar || "/assets/icons8-user-100.png"
+                    }
                     width={100}
                     height={100}
                     alt="user"

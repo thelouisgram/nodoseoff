@@ -64,13 +64,17 @@ const Account: React.FC<AccountProps> = ({
           <div className="w-full flex-col flex md:flex-row-reverse gap-8 ss:gap-20 ">
             <div className="w-full">
               <div className="w-full items-center flex flex-col  mb-8">
-                <Image
-                  src={CDNURL + userId + avatar}
-                  width={100}
-                  height={100}
-                  alt="user"
-                  quality={100}
-                />
+                <div className="w-[150px] h-[150px] rounded-full overflow-hidden">
+                  <Image
+                    src={CDNURL + userId + avatar}
+                    width={100}
+                    height={100}
+                    alt="user"
+                    quality={100}
+                    className="w-auto h-[150px] object-cover"
+                    priority
+                  />
+                </div>
                 <h1 className=" text-[20px] ss:text-[32px] font-semibold font-montserrant text-center capitalize">
                   {name}
                 </h1>

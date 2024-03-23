@@ -106,8 +106,6 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 
     let file = e.target.files[0];
 
-    toast.success("Profile Picture updated");
-
     const { data, error } = await supabase.storage
       .from("profile-picture")
       .update(userId + avatar, file, {

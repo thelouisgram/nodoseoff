@@ -1,7 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import Image from "next/image";
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../../store";
+import { updateActiveDrug } from "../../../../store/stateSlice";
 import {
   formatDate,
   frequencyToPlaceholder,
@@ -9,10 +11,22 @@ import {
 import { calculateTimePeriod, convertedTimes } from "../../../../utils/drugs";
 
 interface drugDetailsProps {
-  displayDrugs: boolean;
   setDisplayDrugs: Function;
   tab: string;
+  setAllergyModal: Function;
+  setDeleteModal: Function;
+  setEditModal: Function;
+  setScreen: Function;
+  handleAllergies: Function;
+  handleDelete: Function;
+  deleteModal: boolean;
+  editModal: boolean;
+  allergyModal: boolean;
+  handleDeleteAllergy: Function;
+  setEditForm: Function
 }
+
+type RefObject<T> = React.RefObject<T>;
 
 interface detail {
   name: string;
@@ -20,26 +34,59 @@ interface detail {
 }
 
 const DrugDetails: React.FC<drugDetailsProps> = ({
-  displayDrugs,
   setDisplayDrugs,
   tab,
+  setAllergyModal,
+  setDeleteModal,
+  setEditModal,
+  setScreen,
+  handleAllergies,
+  handleDelete,
+  deleteModal,
+  editModal,
+  allergyModal,
+  handleDeleteAllergy,
+  setEditForm,
 }) => {
   const { drugs, completedDrugs, activeDrug } = useSelector(
     (state: RootState) => state.app
   );
+  const dropdownRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
+  const handleClickOutside = (event: MouseEvent): void => {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target as Node)
+    ) {
+      setOptions(false);
+      setDeleteModal(false)
+      setEditModal(false)
+      setAllergyModal(false)
+      setScreen(false)
+    }
+  };
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent): void => {
+      handleClickOutside(event);
+    };
 
+    // add event listener for clicks outside of dropdown
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    return () => {
+      // remove event listener when component unmounts
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
+  
+  const dispatch = useDispatch();
+  const [options, setOptions] = useState(false);
   const drugsArray = tab === "Ongoing" ? drugs : completedDrugs;
-
   const drugDetails = drugsArray.find((drug) => drug.drug === activeDrug);
-
   if (!drugDetails) {
-    return setDisplayDrugs(false);
+    return setDisplayDrugs(true);
   }
-
   const { drug, route, frequency, start, end, time, reminder } = drugDetails;
-
   const Duration = calculateTimePeriod(start, end);
-
   const Details = [
     {
       name: "Current Status",
@@ -57,8 +104,10 @@ const DrugDetails: React.FC<drugDetailsProps> = ({
   const RenderedDetails = Details.map((detail: detail, index: number) => {
     return (
       <div key={index} className="border rounded-md  p-5">
-        <h2 className="text-[14px] font-bold ">{detail.name}</h2>
-        <h3 className="text-[14px] ss:text-16px capitalize">
+        <h2 className="text-[12px] ss:text-[14px] font-semibold text-blackII">
+          {detail.name}
+        </h2>
+        <h3 className="text-[14px] ss:text-[16px] capitalize">
           {detail.details}
         </h3>
       </div>
@@ -78,11 +127,200 @@ const DrugDetails: React.FC<drugDetailsProps> = ({
       </button>
 
       <section className="mt-8 ">
-        <h1 className="text-[28px] ss:text-[36px] font-semibold font-montserrant capitalize mb-[28px]">
-          {drug}
-        </h1>
+        <div className="w-full flex justify-between relative items-center mb-[28px]">
+          <h1 className="text-[28px] ss:text-[36px] font-semibold font-montserrant capitalize">
+            {drug}
+          </h1>
+          <button
+            onClick={() => {
+              setOptions((prev) => !prev), dispatch(updateActiveDrug(drug));
+            }}
+            className="flex gap-[5px] cursor-pointer justify-center items-center rounded-full rotate-90 w-[50px] h-[50px]"
+          >
+            <div className="w-[5px] h-[5px] rounded-full bg-navyBlue" />
+            <div className="w-[5px] h-[5px] rounded-full bg-navyBlue" />
+            <div className="w-[5px] h-[5px] rounded-full bg-navyBlue" />
+          </button>
+          {options && (
+            <div
+              ref={dropdownRef}
+              className="absolute border-[1px] border-gray-300 right-0 z-[200] top-10 text-navyBlue flex flex-col items-start justify-center mt-3 rounded-[10px] 
+        bg-white shadow-md w-[175px] ss:w-[250px] py-4 text-[13px] ss:text-[16px]"
+            >
+              {tab !== "Completed" && (
+                <button
+                  onClick={() => {
+                    dispatch(updateActiveDrug(drug)),
+                      setEditModal(true),
+                      setScreen(true);
+                    setOptions(false);
+                  }}
+                  className="h-8 hover:bg-gray-100 flex items-center gap-2 w-full px-3"
+                >
+                  <Image
+                    src="/assets/edit.png"
+                    alt="edit"
+                    width={20}
+                    height={20}
+                    className="ss:w-[20px] w-[16px]"
+                  />
+                  Edit Drug
+                </button>
+              )}
+              <button
+                onClick={() => {
+                  dispatch(updateActiveDrug(drug)),
+                    setScreen(true),
+                    setDeleteModal(true);
+                  setOptions(false);
+                }}
+                className="h-8 hover:bg-gray-100 flex items-center gap-2 w-full px-3"
+              >
+                <Image
+                  src="/assets/delete.png"
+                  alt="edit"
+                  width={20}
+                  height={20}
+                  className="ss:w-[20px] w-[16px]"
+                />
+                Delete Drug
+              </button>
+              {tab !== "Allergies" && (
+                <button
+                  onClick={() => {
+                    dispatch(updateActiveDrug(drug)),
+                      setScreen(true),
+                      setAllergyModal(true);
+                    setOptions(false);
+                  }}
+                  className="h-8 hover:bg-gray-100 flex items-center gap-2 w-full px-3 pl-[14px]"
+                >
+                  <Image
+                    src="/assets/disabled.png"
+                    alt="disabled"
+                    width={20}
+                    height={20}
+                    className="ss:w-[16px] w-[12px]"
+                  />
+                  Add to Allergies
+                </button>
+              )}
+            </div>
+          )}
+        </div>
         <div className="grid ss:grid-cols-2 gap-4">{RenderedDetails}</div>
       </section>
+      {deleteModal && (
+        <div className="w-full h-full fixed flex top-0 left-0 justify-center items-center z-[143] p-4 font-Inter">
+          <div
+            ref={dropdownRef}
+            className="bg-white rounded-[10px] text-white relative flex flex-col justify-center items-center"
+          >
+            <h1 className="text-navyBlue font-semibold py-4 px-4 border-b-[1px] text-left w-full text-[13px] ss:text-[16px] leading-tight">
+              Confirm to delete &apos;{activeDrug.toUpperCase()}&apos; ?
+            </h1>
+            <h2 className="text-navyBlue border-b-[1px] text-left px-4 py-4 text-[12px] ss:text-[14px]">
+              Are you sure you want to delete the selected drug? <br /> This
+              action cannot be undone.
+            </h2>
+            <div className="w-full flex gap-3 justify-start flex-row-reverse text-[12px] py-4 px-4">
+              <button
+                onClick={() => {
+                  tab !== "Allergies"
+                    ? handleDelete()
+                    : handleDeleteAllergy(activeDrug),
+                    setScreen(false),
+                    dispatch(updateActiveDrug(""));
+                  setDisplayDrugs(true);
+                  setDeleteModal(false);
+                }}
+                className="px-4 py-1 flex items-center gap-2 bg-navyBlue rounded-[10px]  "
+              >
+                Delete
+              </button>
+              <button
+                onClick={() => {
+                  setScreen(false), setDeleteModal(false);
+                }}
+                className="px-4 py-1 flex items-center gap-2 bg-none border text-navyBlue border-navyBlue rounded-[10px]  "
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {allergyModal && (
+        <div className="w-full h-full fixed flex top-0 left-0 justify-center items-center z-[143] p-4 font-Inter">
+          <div
+            ref={dropdownRef}
+            className="bg-white rounded-[10px] text-white relative flex flex-col justify-center items-center"
+          >
+            <h1 className="text-navyBlue font-semibold py-4 px-4 border-b-[1px] text-left w-full text-[13px] ss:text-[16px] leading-tight">
+              Confirm to add &apos;{activeDrug}&apos; to Allergies?
+            </h1>
+            <h2 className="text-navyBlue border-b-[1px] text-left px-4 py-4 text-[12px] ss:text-[14px]">
+              Are you sure you want to mark the selected drug as Allergy? <br />{" "}
+              This action cannot be undone.
+            </h2>
+            <div className="w-full flex gap-3 justify-start flex-row-reverse text-[12px] py-4 px-4">
+              <button
+                onClick={() => {
+                  setScreen(false), setAllergyModal(false), handleAllergies();
+                  tab !== "Allergies" &&
+                    (dispatch(updateActiveDrug("")), setDisplayDrugs(true));
+                }}
+                className="px-4 py-1 flex items-center gap-2 bg-navyBlue rounded-[10px]  "
+              >
+                Add to Allergies
+              </button>
+              <button
+                onClick={() => {
+                  setScreen(false), setAllergyModal(false);
+                }}
+                className="px-4 py-1 flex items-center gap-2 bg-none border text-navyBlue border-navyBlue rounded-[10px]  "
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {editModal && (
+        <div className="w-full h-full fixed flex top-0 left-0 justify-center items-center z-[143] p-4 font-Inter">
+          <div
+            ref={dropdownRef}
+            className="bg-white rounded-[10px] text-white relative flex flex-col justify-center items-center"
+          >
+            <h1 className="text-navyBlue font-semibold py-4 px-4 border-b-[1px] text-left w-full text-[13px] ss:text-[16px] leading-tight">
+              Continue to Edit &apos;{activeDrug}&apos; ?
+            </h1>
+            <h2 className="text-navyBlue border-b-[1px] text-left px-4 py-4 text-[12px] ss:text-[14px]">
+              Your engagement in this process allows for the refinement and{" "}
+              <br className="hidden ss:flex" />
+              adjustment of the chosen medication
+            </h2>
+            <div className="w-full flex gap-3 justify-start flex-row-reverse text-[12px] py-4 px-4">
+              <button
+                onClick={() => {
+                  setEditForm(true), setScreen(false), setEditModal(false);
+                }}
+                className="px-4 py-1 flex items-center gap-2 bg-navyBlue rounded-[10px]  "
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => {
+                  setScreen(false), setEditForm(false), setEditModal(false);
+                }}
+                className="px-4 py-1 flex items-center gap-2 bg-none border text-navyBlue border-navyBlue rounded-[10px]  "
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

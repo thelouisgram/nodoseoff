@@ -47,8 +47,6 @@ const Account: React.FC<AccountProps> = ({
     }
   };
 
-  const avatar = `/${profilePicture}`;
-
   const CDNURL =
     "https://opshqmqagtfidynwftzk.supabase.co/storage/v1/object/public/profile-picture/";
 
@@ -60,14 +58,15 @@ const Account: React.FC<AccountProps> = ({
             <h1 className="text-[24px] ss:text-[32px] font-semibold font-montserrant ">
               My Account
             </h1>
+            <p className="text-[16px] text-[#718096] capitalize">{name}</p>
           </div>
-          <div className="w-full flex-col flex md:flex-row-reverse gap-8 ss:gap-20 ">
+          <div className="w-full flex-col flex md:flex-row-reverse gap-8 ss:gap-30 ">
             <div className="w-full">
-              <div className="w-full items-center flex flex-col  mb-8">
+              <div className="w-full items-center flex flex-col mb-8">
                 <div className="w-[150px] h-[150px] rounded-full overflow-hidden">
                   <Image
                     src={
-                      CDNURL + userId + avatar || "/assets/icons8-user-100.png"
+                      CDNURL + userId + '/avatar.png' || "/assets/icons8-user-100.png"
                     }
                     width={100}
                     height={100}
@@ -77,24 +76,24 @@ const Account: React.FC<AccountProps> = ({
                     priority
                   />
                 </div>
-                <h1 className=" text-[20px] ss:text-[32px] font-semibold font-montserrant text-center capitalize">
+                <h1 className=" text-[20px] ss:text-[32px] mt-4 font-semibold font-montserrant text-center capitalize">
                   {name}
                 </h1>
               </div>
               <div className="w-full grid ss:grid-cols-2 gap-4 mb-10">
-                <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex gap-2">
+                <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex gap-3">
                   <h2 className="font-semibold">Email:</h2>
                   <p>{email}</p>
                 </div>
-                <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex gap-2">
+                <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex gap-3">
                   <h2 className="font-semibold">Phone Number:</h2>
                   <p>{phone}</p>
                 </div>
-                <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex gap-2 capitalize">
+                <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex gap-3 capitalize">
                   <h2 className="font-semibold">Over-The-Counter Drugs:</h2>
                   <p>{otcDrugs || "--"}</p>
                 </div>
-                <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex gap-2 capitalize">
+                <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex gap-3 capitalize">
                   <h2 className="font-semibold">Herbs & Concoctions:</h2>
                   <p>{herbs || "--"}</p>
                 </div>
@@ -105,9 +104,9 @@ const Account: React.FC<AccountProps> = ({
                 onClick={() => {
                   setProfileForm(true);
                 }}
-                className="w-full border h-full border-gray-300 rounded-lg  py-4 px-4 flex justify-between gap-2 cursor-pointer"
+                className="w-full border h-full border-gray-300 rounded-lg  py-4 px-4 flex justify-between gap-3 cursor-pointer"
               >
-                <div className="flex gap-2 h-full w-full">
+                <div className="flex gap-3 h-full w-full">
                   <Image
                     src="/assets/account/profile.png"
                     width={24}
@@ -124,7 +123,7 @@ const Account: React.FC<AccountProps> = ({
                 }}
                 className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex cursor-pointer"
               >
-                <div className="flex gap-2">
+                <div className="flex gap-3">
                   <Image
                     src="/assets/account/medical-report.png"
                     width={24}
@@ -139,9 +138,9 @@ const Account: React.FC<AccountProps> = ({
                 onClick={() => {
                   setShowStats(true);
                 }}
-                className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex justify-between gap-2 cursor-pointer"
+                className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex justify-between gap-3 cursor-pointer"
               >
-                <div className="flex gap-2">
+                <div className="flex gap-3">
                   <Image
                     src="/assets/account/diagram.png"
                     width={24}
@@ -156,9 +155,9 @@ const Account: React.FC<AccountProps> = ({
                 onClick={() => {
                   setTab("Report");
                 }}
-                className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex justify-between gap-2 cursor-pointer"
+                className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex justify-between gap-3 cursor-pointer"
               >
-                <div className="flex gap-2">
+                <div className="flex gap-3">
                   <Image
                     src="/assets/account/graph.png"
                     width={24}
@@ -169,8 +168,8 @@ const Account: React.FC<AccountProps> = ({
                   <h2 className="">Drug Report</h2>
                 </div>
               </div>
-              <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex justify-between gap-2 cursor-pointer">
-                <div className="flex gap-2">
+              <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex justify-between gap-3 cursor-pointer">
+                <div className="flex gap-3">
                   <Image
                     src="/assets/account/support.png"
                     width={24}
@@ -184,9 +183,9 @@ const Account: React.FC<AccountProps> = ({
 
               <button
                 onClick={logOut}
-                className="flex justify-between border-[1px] ss:w-[1/2] text-red w-full rounded-[10px]  px-4 py-4 items-center  gap-2"
+                className="flex justify-between border-[1px] ss:w-[1/2] text-red w-full rounded-[10px]  px-4 py-4 items-center  gap-3"
               >
-                <div className="flex gap-2 items-center h-full">
+                <div className="flex gap-3 items-center h-full">
                   <Image
                     src="/assets/exit.png"
                     width={18}

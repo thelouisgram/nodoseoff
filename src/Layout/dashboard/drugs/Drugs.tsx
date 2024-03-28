@@ -555,9 +555,19 @@ const Drugs: React.FC<DrugsProps> = ({
         </div>
       ) : (
         <DrugDetails
-          displayDrugs={displayDrugs}
           setDisplayDrugs={setDisplayDrugs}
+          setScreen={setScreen}
+          setAllergyModal={setAllergyModal}
+          setDeleteModal={setDeleteModal}
+          setEditModal={setEditModal}
           tab={tab}
+          handleAllergies={handleAllergies}
+          deleteModal={deleteModal}
+          editModal={editModal}
+          allergyModal={allergyModal}
+          setEditForm={setEditForm}
+          handleDeleteAllergy={handleDeleteAllergy}
+          handleDelete={handleDelete}
         />
       )}
     </>

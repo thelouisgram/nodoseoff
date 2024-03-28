@@ -314,43 +314,57 @@ const Page = () => {
       }
     });
 
-  async function updateCompleted(item: ScheduleItem) {
-    const updatedSchedule = schedule.map((dose) => {
-      if (
-        dose.date === item.date &&
-        dose.time === item.time &&
-        dose.drug === item.drug
-      ) {
-        // Create a new object to update completed property
-        return {
-          ...dose,
-          completed: !dose.completed,
-        };
-      }
-      return dose;
-    });
+ async function updateCompleted(item: ScheduleItem) {
+   try {
+     const updatedSchedule = schedule.map((dose) => {
+       if (
+         dose.date === item.date &&
+         dose.time === item.time &&
+         dose.drug === item.drug
+       ) {
+         return {
+           ...dose,
+           completed: !dose.completed,
+         };
+       }
+       return dose;
+     });
 
-    try {
-      await uploadScheduleToServer({ userId, schedule: updatedSchedule });
+     dispatch(updateSchedule(updatedSchedule));
 
-      // If upload is successful, dispatch the updated schedule to Redux state
-      dispatch(updateSchedule(updatedSchedule));
+     await uploadScheduleToServer({ userId, schedule: updatedSchedule });
 
-      const uncompletedDosesCount = todaysDose.filter(
-        (dose: ScheduleItem) => !dose.completed
-      ).length;
+     const uncompletedDosesCount = todaysDose.filter(
+       (dose: ScheduleItem) => !dose.completed
+     ).length;
 
-      if (uncompletedDosesCount === 1) {
-        dispatch(updateConfetti(true));
-        toast.success(`You've completed today's dose, Well done!!!`);
-        const timeoutId = setTimeout(() => {
-          dispatch(updateConfetti(false));
-        }, 5000);
-      }
-    } catch (error) {
-      console.error("An error occurred:", error);
-    }
-  }
+     if (uncompletedDosesCount === 1) {
+       dispatch(updateConfetti(true));
+       toast.success(`You've completed today's dose, Well done!!!`);
+       const timeoutId = setTimeout(() => {
+         dispatch(updateConfetti(false));
+       }, 5000);
+     }
+   } catch (error) {
+     toast.error("An error occurred! Check Internet connection");
+     // Revert to the previous state if an error occurs
+     const previousSchedule = schedule.map((dose) => {
+       if (
+         dose.date === item.date &&
+         dose.time === item.time &&
+         dose.drug === item.drug
+       ) {
+         return {
+           ...dose,
+           completed: !dose.completed, // Toggle completion status
+         };
+       }
+       return dose;
+     });
+     dispatch(updateSchedule(previousSchedule));
+   }
+ }
+
 
   const dosesToRender = (tracker === "Today" ? todaysDose : yesterdaysDose)
     ?.slice()

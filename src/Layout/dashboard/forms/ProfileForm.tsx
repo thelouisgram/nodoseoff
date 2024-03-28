@@ -12,7 +12,6 @@ import { useSelector, useDispatch } from "react-redux";
 import supabase from "../../../../utils/supabaseClient";
 import { toast } from "sonner";
 import { updateInfo, updateProfilePicture } from "../../../../store/stateSlice";
-import { v4 as uuidv4 } from "uuid";
 
 type RefObject<T> = React.RefObject<T>;
 
@@ -109,30 +108,13 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
     const { data, error } = await supabase.storage
       .from("profile-picture")
       .update(userId + avatar, file, {
-        cacheControl: "3600",
         upsert: true,
       });
 
     if (data) {
-      getMedia();
     } else {
       console.error("Error uploading image:", error);
       toast.error("error");
-    }
-  }
-
-  async function getMedia() {
-    const { data, error } = await supabase.storage
-      .from("profile-picture")
-      .list(userId + avatar, {
-        limit: 1,
-        offset: 0,
-      });
-
-    if (data) {
-      dispatch(updateProfilePicture([data]));
-    } else {
-      console.log(71, error);
     }
   }
 
@@ -189,7 +171,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                   <div className="w-[100px] h-[100px] rounded-full overflow-hidden">
                     <Image
                       src={
-                        CDNURL + userId + avatar ||
+                        CDNURL + userId + '/avatar.png' ||
                         "/assets/icons8-user-100.png"
                       }
                       width={3000}

@@ -143,7 +143,7 @@ const Home: React.FC<HomeProps> = ({
           className="w-[60px] h-[60px] rounded-full overflow-hidden cursor-pointer"
         >
           <Image
-            src={CDNURL + userId + avatar || '/assets/icons8-user-100.png'}
+            src={CDNURL + userId + '/avatar.png' || '/assets/icons8-user-100.png'}
             width={100}
             height={100}
             alt="user"

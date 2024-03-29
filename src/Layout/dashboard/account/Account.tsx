@@ -58,7 +58,7 @@ const Account: React.FC<AccountProps> = ({
             <h1 className="text-[24px] ss:text-[32px] font-semibold font-montserrant ">
               My Account
             </h1>
-            <p className="text-[16px] text-[#718096] capitalize">{name}</p>
+            <p className="text-[16px] text-blackII capitalize">{name}</p>
           </div>
           <div className="w-full flex-col flex md:flex-row-reverse gap-8 ss:gap-30 ">
             <div className="w-full">
@@ -66,7 +66,8 @@ const Account: React.FC<AccountProps> = ({
                 <div className="w-[150px] h-[150px] rounded-full overflow-hidden">
                   <Image
                     src={
-                      CDNURL + userId + '/avatar.png' || "/assets/icons8-user-100.png"
+                      CDNURL + userId + "/avatar.png" ||
+                      "/assets/icons8-user-100.png"
                     }
                     width={100}
                     height={100}
@@ -88,14 +89,6 @@ const Account: React.FC<AccountProps> = ({
                 <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex gap-3">
                   <h2 className="font-semibold">Phone Number:</h2>
                   <p>{phone}</p>
-                </div>
-                <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex gap-3 capitalize">
-                  <h2 className="font-semibold">Over-The-Counter Drugs:</h2>
-                  <p>{otcDrugs || "--"}</p>
-                </div>
-                <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex gap-3 capitalize">
-                  <h2 className="font-semibold">Herbs & Concoctions:</h2>
-                  <p>{herbs || "--"}</p>
                 </div>
               </div>
             </div>

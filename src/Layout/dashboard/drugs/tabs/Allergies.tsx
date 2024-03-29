@@ -8,7 +8,7 @@ import RenderedDrugs from "../RenderedDrugs";
 
 type RefObject<T> = React.RefObject<T>;
 
-interface allergiesProps {
+interface AllergiesProps {
   setDeleteModal: Function;
   setScreen: Function;
   setEditModal: Function;
@@ -17,7 +17,7 @@ interface allergiesProps {
   setAllergyModal: Function;
 }
 
-const Allergies: React.FC<allergiesProps> = ({
+const Allergies: React.FC<AllergiesProps> = ({
   setDeleteModal,
   setScreen,
   setAllergyModal,
@@ -26,8 +26,8 @@ const Allergies: React.FC<allergiesProps> = ({
   setDisplayDrugs,
 }) => {
   const { allergies } = useSelector((state: RootState) => state.app);
-  const dispatch = useDispatch();
   const [options, setOptions] = useState(false);
+
   const dropdownRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
   const handleClickOutside = (event: MouseEvent): void => {
     if (
@@ -88,8 +88,6 @@ const Allergies: React.FC<allergiesProps> = ({
     }
   };
 
-  console.log(currentItems)
-
   const renderedAllergies = currentItems.map(
     (item, index: number) => {
       return (
@@ -129,25 +127,25 @@ const Allergies: React.FC<allergiesProps> = ({
               />
               <input
                 placeholder="Search"
-                className="bg-transparent outline-none w-full"
+                className="bg-transparent outline-none w-full text-blackII"
                 value={searched}
                 onChange={handleSearchChange}
               />
             </div>
           </div>
           <div className="w-full flex justify-between px-4 border-y-[1px]">
-            <h2 className="w-[25%] sm:w-[14%] py-4 uppercase text-[13px] font-semibold">
+            <h2 className="w-[31%] sm:w-[15%] md:w-[16%] py-4 uppercase text-[13px] font-semibold">
               Name
             </h2>
-            <h2 className="w-[10%] md:w-[6%] flex justify-center py-4 uppercase text-[13px] font-semibold"></h2>
+            <h2 className="w-[7%] sm:w-[4%] md:w-[6%] flex justify-center py-4 uppercase text-[13px] font-semibold"></h2>
           </div>
 
           <div className="w-full flex flex-col">
             {renderedAllergies.length > 0 ? (
               renderedAllergies
             ) : (
-              <div className="w-full flex justify-center py-6 text-[16px] text-navyBlue font-[500]">
-                No drug found with `{searched}`
+              <div className="w-full flex justify-center py-6 text-[16px] text-blackII font-[500]">
+                No Results Found
               </div>
             )}
           </div>

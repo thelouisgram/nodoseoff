@@ -6,8 +6,7 @@ import { useSelector } from "react-redux";
 import { frequencyToPlaceholder } from "../../../../../utils/dashboard";
 import { DrugProps } from "../../../../../types/dashboard";
 
-
-interface thisProps {
+interface OngoingProps {
   setScreen: Function;
   setAllergyModal: Function;
   setEditModal: Function;
@@ -16,7 +15,7 @@ interface thisProps {
   setDisplayDrugs: Function;
 }
 
-const Ongoing: React.FC<thisProps> = ({
+const Ongoing: React.FC<OngoingProps> = ({
   setScreen,
   setEditModal,
   setDeleteModal,
@@ -37,9 +36,7 @@ const Ongoing: React.FC<thisProps> = ({
   };
 
   const findDrug = (searched: string) => {
-    return drugs.filter((drug) =>
-      drug.drug.startsWith(searched.toLowerCase())
-    );
+    return drugs.filter((drug) => drug.drug.startsWith(searched.toLowerCase()));
   };
 
   const filteredDrugs = searched ? findDrug(searched) : drugs;
@@ -87,7 +84,7 @@ const Ongoing: React.FC<thisProps> = ({
         <div className="border-[1px] rounded-lg text-darkGrey">
           <div className="w-full justify-between flex py-6 px-4 bg-lightGrey rounded-t-lg items-center">
             <h2 className="font-[500] text-[14px] ss:text-[20px] font-Inter text-navyBlue">
-              Current Drugs
+              Ongoing Drugs
             </h2>
             <div className="flex w-[150px] ss:w-[300px] items-center py-1 px-2 ss:px-3 ss:py-2 border-[1px] rounded-md text-navyBlue gap-1 ss:gap-3">
               <Image
@@ -99,40 +96,40 @@ const Ongoing: React.FC<thisProps> = ({
               />
               <input
                 placeholder="Search"
-                className="bg-transparent outline-none w-full"
+                className="bg-transparent outline-none w-full text-blackII"
                 value={searched}
                 onChange={handleSearchChange}
               />
             </div>
           </div>
           <div className="w-full flex justify-between px-4 border-y-[1px]">
-            <h2 className="w-[25%] sm:w-[14%] py-4 uppercase text-[13px] font-semibold">
+            <h2 className="w-[31%] sm:w-[15%] md:w-[16%] py-4 uppercase text-[13px] font-semibold">
               Name
             </h2>
-            <h2 className="w-[30%] sm:w-[10%] flex justify-center py-4 uppercase text-[13px] font-semibold">
+            <h2 className="w-[31%] sm:w-[13.5%] md:w-[12.2%] flex justify-center py-4 uppercase text-[13px] font-semibold">
               Route
             </h2>
-            <h2 className="md:w-[24%] hidden md:flex justify-center py-4 uppercase text-[13px] font-semibold">
+            <h2 className="md:w-[18.2%] hidden md:flex justify-center py-4 uppercase text-[13px] font-semibold">
               Duration
             </h2>
-            <h2 className="w-[35%] sm:w-[14%] flex justify-center py-4 uppercase text-[13px] font-semibold">
+            <h2 className="w-[31%] sm:w-[20.5%] md:w-[17.2%] flex justify-center py-4 uppercase text-[13px] font-semibold">
               Frequency
             </h2>
-            <h2 className="md:w-[15%] hidden sm:flex justify-center py-4 uppercase text-[13px] font-semibold">
+            <h2 className="sm:w-[23.5%] md:w-[15.2%] hidden sm:flex justify-center py-4 uppercase text-[13px] font-semibold">
               Start Date
             </h2>
-            <h2 className="md:w-[15%] hidden sm:flex justify-center py-4 uppercase text-[13px] font-semibold">
+            <h2 className="sm:w-[23.5%] md:w-[15.2%] hidden sm:flex justify-center py-4 uppercase text-[13px] font-semibold">
               End Date
             </h2>
-            <h2 className="w-[10%] md:w-[6%] flex justify-center py-4 uppercase text-[13px] font-semibold"></h2>
+            <h2 className="w-[7%] sm:w-[4%] md:w-[6%] flex justify-center py-4 uppercase text-[13px] font-semibold"></h2>
           </div>
 
           <div className="w-full flex flex-col">
             {renderedDrugs.length > 0 ? (
               renderedDrugs
             ) : (
-              <div className="w-full flex justify-center py-6 text-[16px] text-navyBlue font-[500]">
-                No drug found with `{searched}`
+              <div className="w-full flex justify-center py-6 text-[16px] text-blackII font-[500]">
+                No Results Found
               </div>
             )}
           </div>

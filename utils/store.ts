@@ -1,4 +1,4 @@
-import { Effect } from "@/Layout/dashboard/home/DailyReports";
+import { Effect } from "@/Layout/dashboard/home/Reports";
 import { DrugProps, ScheduleItem } from "../types/dashboard";
 
 export interface AppType {

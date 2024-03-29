@@ -23,7 +23,7 @@ interface drugDetailsProps {
   editModal: boolean;
   allergyModal: boolean;
   handleDeleteAllergy: Function;
-  setEditForm: Function
+  setEditForm: Function;
 }
 
 type RefObject<T> = React.RefObject<T>;
@@ -58,10 +58,10 @@ const DrugDetails: React.FC<drugDetailsProps> = ({
       !dropdownRef.current.contains(event.target as Node)
     ) {
       setOptions(false);
-      setDeleteModal(false)
-      setEditModal(false)
-      setAllergyModal(false)
-      setScreen(false)
+      setDeleteModal(false);
+      setEditModal(false);
+      setAllergyModal(false);
+      setScreen(false);
     }
   };
   useEffect(() => {
@@ -77,7 +77,7 @@ const DrugDetails: React.FC<drugDetailsProps> = ({
       document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, []);
-  
+
   const dispatch = useDispatch();
   const [options, setOptions] = useState(false);
   const drugsArray = tab === "Ongoing" ? drugs : completedDrugs;
@@ -96,18 +96,18 @@ const DrugDetails: React.FC<drugDetailsProps> = ({
     { name: "Frequency", details: frequencyToPlaceholder[frequency] },
     { name: "Time", details: convertedTimes(time).join(", ") },
     { name: "Duration", details: Duration },
+    { name: "Reminder", details: reminder ? "Yes" : "No" },
     { name: "Start Date", details: formatDate(start) },
     { name: "End Date", details: formatDate(end) },
-    { name: "Reminder", details: reminder ? "Yes" : "No" },
   ];
 
   const RenderedDetails = Details.map((detail: detail, index: number) => {
     return (
       <div key={index} className="border rounded-md  p-5">
-        <h2 className="text-[12px] ss:text-[14px] font-semibold text-blackII">
+        <h2 className="text-[12px] ss:text-[14px] font-semibold text-blackII font-karla">
           {detail.name}
         </h2>
-        <h3 className="text-[14px] ss:text-[16px] capitalize">
+        <h3 className="text-[14px] ss:text-[16px] capitalize font-Inter">
           {detail.details}
         </h3>
       </div>
@@ -115,15 +115,21 @@ const DrugDetails: React.FC<drugDetailsProps> = ({
   });
 
   return (
-    <div className="h-[100dvh] ss:pb-28 overflow-y-scroll w-full md:py-16 md:px-12 px-4 pt-10 pb-24 ss:p-10 text-navyBlue font-karla relative">
+    <div className="h-[100dvh] ss:pb-28 overflow-y-scroll w-full md:py-16 md:px-12 px-4 pt-10 pb-24 ss:p-10 text-navyBlue relative">
       <button
         onClick={() => {
           setDisplayDrugs(true);
         }}
-        className="flex gap-3 items-center"
+        className="flex gap-1 items-center font-Inter"
       >
-        <Image src="/assets/back.png" alt="back" width={24} height={24} />
-        <p className="font-semibold text-[18px]">Back</p>
+        <Image
+          src="/assets/down.png"
+          alt="back"
+          width={20}
+          height={20}
+          className="rotate-90"
+        />
+        <p className="font-[500] text-[18px]">Back</p>
       </button>
 
       <section className="mt-8 ">
@@ -137,15 +143,15 @@ const DrugDetails: React.FC<drugDetailsProps> = ({
             }}
             className="flex gap-[5px] cursor-pointer justify-center items-center rounded-full rotate-90 w-[50px] h-[50px]"
           >
-            <div className="w-[5px] h-[5px] rounded-full bg-navyBlue" />
-            <div className="w-[5px] h-[5px] rounded-full bg-navyBlue" />
-            <div className="w-[5px] h-[5px] rounded-full bg-navyBlue" />
+            <div className="w-[4px] h-[4px] rounded-full bg-navyBlue" />
+            <div className="w-[4px] h-[4px] rounded-full bg-navyBlue" />
+            <div className="w-[4px] h-[4px] rounded-full bg-navyBlue" />
           </button>
           {options && (
             <div
               ref={dropdownRef}
               className="absolute border-[1px] border-gray-300 right-0 z-[200] top-10 text-navyBlue flex flex-col items-start justify-center mt-3 rounded-[10px] 
-        bg-white shadow-md w-[175px] ss:w-[250px] py-4 text-[13px] ss:text-[16px]"
+        bg-white shadow-md w-[175px] ss:w-[250px] py-4 text-[16px]"
             >
               {tab !== "Completed" && (
                 <button
@@ -155,7 +161,7 @@ const DrugDetails: React.FC<drugDetailsProps> = ({
                       setScreen(true);
                     setOptions(false);
                   }}
-                  className="h-8 hover:bg-gray-100 flex items-center gap-2 w-full px-3"
+                  className="h-8 hover:bg-gray-100 flex items-center gap-3 w-full px-3"
                 >
                   <Image
                     src="/assets/edit.png"
@@ -174,7 +180,7 @@ const DrugDetails: React.FC<drugDetailsProps> = ({
                     setDeleteModal(true);
                   setOptions(false);
                 }}
-                className="h-8 hover:bg-gray-100 flex items-center gap-2 w-full px-3"
+                className="h-8 hover:bg-gray-100 flex items-center gap-3 w-full px-3"
               >
                 <Image
                   src="/assets/delete.png"
@@ -193,7 +199,7 @@ const DrugDetails: React.FC<drugDetailsProps> = ({
                       setAllergyModal(true);
                     setOptions(false);
                   }}
-                  className="h-8 hover:bg-gray-100 flex items-center gap-2 w-full px-3 pl-[14px]"
+                  className="h-8 hover:bg-gray-100 flex items-center gap-3 w-full px-3 pl-[14px]"
                 >
                   <Image
                     src="/assets/disabled.png"
@@ -217,7 +223,7 @@ const DrugDetails: React.FC<drugDetailsProps> = ({
             className="bg-white rounded-[10px] text-white relative flex flex-col justify-center items-center"
           >
             <h1 className="text-navyBlue font-semibold py-4 px-4 border-b-[1px] text-left w-full text-[13px] ss:text-[16px] leading-tight">
-              Confirm to delete &apos;{activeDrug.toUpperCase()}&apos; ?
+              Confirm to delete {activeDrug.toUpperCase()}?
             </h1>
             <h2 className="text-navyBlue border-b-[1px] text-left px-4 py-4 text-[12px] ss:text-[14px]">
               Are you sure you want to delete the selected drug? <br /> This
@@ -293,12 +299,12 @@ const DrugDetails: React.FC<drugDetailsProps> = ({
             className="bg-white rounded-[10px] text-white relative flex flex-col justify-center items-center"
           >
             <h1 className="text-navyBlue font-semibold py-4 px-4 border-b-[1px] text-left w-full text-[13px] ss:text-[16px] leading-tight">
-              Continue to Edit &apos;{activeDrug}&apos; ?
+              Continue to Edit {activeDrug.toUpperCase()} ?
             </h1>
             <h2 className="text-navyBlue border-b-[1px] text-left px-4 py-4 text-[12px] ss:text-[14px]">
-              Your engagement in this process allows for the refinement and{" "}
+              Proceed to edit the selected drug. Changes apply only
               <br className="hidden ss:flex" />
-              adjustment of the chosen medication
+              to doses from Today forward.
             </h2>
             <div className="w-full flex gap-3 justify-start flex-row-reverse text-[12px] py-4 px-4">
               <button

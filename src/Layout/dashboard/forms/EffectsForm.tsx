@@ -111,7 +111,7 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
             : "-left-[450px] ss:w-[450px] h-full"
         } transition-all duration-300 absolute  bg-white h-full w-full z-[4] `}
       >
-        <div className={`h-[100dvh] w-full bg-white p-8 overflow-y-scroll`}>
+        <div className={`h-[100dvh] w-full bg-white p-8 overflow-y-scroll text-blackII`}>
           <form
             onSubmit={handleSubmit}
             className="h-auto md:h-full relative flex flex-col justify-between w-auto"
@@ -134,7 +134,7 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
                 <h1 className="text-[24px] text-darkBlue font-bold">
                   Add Side Effect
                 </h1>
-                <p className="text-[14px] text-[#718096]">
+                <p className="text-[14px] text-blackII">
                   To ensure adequate monitoring of adverse effects.
                 </p>
               </div>

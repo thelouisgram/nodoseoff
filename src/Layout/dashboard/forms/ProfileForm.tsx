@@ -11,7 +11,7 @@ import { RootState } from "../../../../store";
 import { useSelector, useDispatch } from "react-redux";
 import supabase from "../../../../utils/supabaseClient";
 import { toast } from "sonner";
-import { updateInfo, updateProfilePicture } from "../../../../store/stateSlice";
+import { updateInfo } from "../../../../store/stateSlice";
 
 type RefObject<T> = React.RefObject<T>;
 
@@ -135,7 +135,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
             : "-right-[450px] ss:w-[450px] h-full"
         } transition-all duration-300 absolute w-full bg-white h-full z-[4] `}
       >
-        <div className={`h-[100dvh] w-full bg-white p-8 overflow-y-scroll app`}>
+        <div className={`h-[100dvh] w-full bg-white p-8 overflow-y-scroll text-blackII`}>
           <div className="w-full flex justify-end mb-10">
             <Image
               src="/assets/x (1).png"
@@ -157,7 +157,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
           >
             <div className=" mb-8 text-navyBlue">
               <div className="text-[14px] mb-1 font-semibold ">
-                Change your Avatar
+                Change your Profile Picture
               </div>
               <div className="flex items-center h-full gap-4">
                 <label htmlFor="avatarInput" className="cursor-pointer">
@@ -183,7 +183,6 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                     />
                   </div>
                 </label>
-                <p>Tap to change</p>
               </div>
             </div>
             <div className="w-full">

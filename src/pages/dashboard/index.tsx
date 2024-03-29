@@ -28,7 +28,6 @@ import {
   updateActive,
   updateAllergies,
   updateCompletedDrugs,
-  updateConfetti,
   updateInfo,
   updateProfilePicture,
   updateSchedule,
@@ -38,7 +37,6 @@ import { DrugProps, ScheduleItem } from "../../../types/dashboard";
 import { uploadScheduleToServer } from "../../../utils/schedule";
 import supabase from "../../../utils/supabaseClient";
 import { tabs, tabsMobile } from "./../../../utils/dashboard";
-import Confetti from "react-confetti";
 
 interface tabsMobileProps {
   name: string;
@@ -338,16 +336,8 @@ const Page = () => {
        (dose: ScheduleItem) => !dose.completed
      ).length;
 
-     if (uncompletedDosesCount === 1) {
-       dispatch(updateConfetti(true));
-       toast.success(`You've completed today's dose, Well done!!!`);
-       const timeoutId = setTimeout(() => {
-         dispatch(updateConfetti(false));
-       }, 5000);
-     }
    } catch (error) {
      toast.error("An error occurred! Check Internet connection");
-     // Revert to the previous state if an error occurs
      const previousSchedule = schedule.map((dose) => {
        if (
          dose.date === item.date &&
@@ -356,7 +346,7 @@ const Page = () => {
        ) {
          return {
            ...dose,
-           completed: !dose.completed, // Toggle completion status
+           completed: !dose.completed, 
          };
        }
        return dose;
@@ -439,11 +429,6 @@ const Page = () => {
     <Suspense fallback={<Loader />}>
       {!isLoading && userId ? (
         <section className="flex max-h-[100dvh] relative w-full bg-white">
-          {confetti && (
-            <div className=" z-[2000]">
-              <Confetti numberOfPieces={200} className="w-full md:w-auto h-full" />
-            </div>
-          )}
           <div
             className={`${
               !nav ? "w-[86px]" : "w-[300px]"

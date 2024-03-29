@@ -65,32 +65,26 @@ const RenderedDrugs: React.FC<thisProps> = ({
     <div
       className={`relative ${
         id % 2 ? "" : "bg-lightGrey"
-      } flex font-Inter text-[14px] w-full justify-between px-4 text-navyBlue items-center border-b-[1px]`}
+      } flex font-Inter w-full justify-between px-4 text-navyBlue items-center border-b-[1px] text-[13px] sm:text-[14px] leading-none capitalize`}
     >
-      <h1 className="capitalize text-[12px] sm:text-[13px] font-montserrant font-semibold w-[25%] h-full sm:w-[14%] items-center py-4">
+      <h1 className="w-[31%] sm:w-[15%] md:w-[16%] h-full font-semibold  items-center py-4">
         {drug.drug}
       </h1>
       {tab !== "Allergies" ? (
         <>
-          <h2 className="capitalize text-[12px] sm:text-[13px] leading-none w-[30%] sm:w-[10%] flex justify-center items-center py-4">
+          <h2 className="w-[31%] sm:w-[13.5%] md:w-[12.2%] flex justify-center items-center py-4">
             {drug.route}
           </h2>
-          <h2 className="capitalize text-[12px] sm:text-[13px] md:w-[24%] hidden md:flex justify-center items-center py-4 text-center">
+          <h2 className="sm:w-[20.5%] md:w-[18.2%] hidden md:flex justify-center items-center py-4 text-center">
             {calculateTimePeriod(drug.start, drug.end)}
           </h2>
-          <h2 className=" text-[12px] sm:text-[13px] leading-none w-[35%] sm:w-[14%] flex justify-center items-center py-4">
+          <h2 className="w-[31%] sm:w-[20.5%] md:w-[17.2%] flex justify-center items-center py-4">
             {frequencyToPlaceholder[drug.frequency]}
           </h2>
-          <h2 className="capitalize md:hidden text-[12px] sm:text-[13px] leading-none md:w-[20%] hidden sm:flex justify-center items-center py-4">
-            {formatDateToSlash(drug.start)}
-          </h2>
-          <h2 className="capitalize md:hidden hidden sm:flex text-[12px] sm:text-[13px] leading-none md:w-[20%] justify-center items-center py-4">
-            {formatDateToSlash(drug.end)}
-          </h2>
-          <h2 className="capitalize hidden md:flex text-[12px] sm:text-[13px] leading-none md:w-[15%] justify-center items-center py-4">
+          <h2 className="sm:w-[23.5%] md:w-[15.2%] hidden sm:flex justify-center items-center py-4">
             {formatDate(drug.start)}
           </h2>
-          <h2 className="capitalize hidden md:flex text-[12px] sm:text-[13px] leading-none md:w-[15%] justify-center items-center py-4">
+          <h2 className="sm:w-[23.5%] md:w-[15.2%] hidden sm:flex justify-center items-center py-4">
             {formatDate(drug.end)}
           </h2>
         </>
@@ -101,7 +95,7 @@ const RenderedDrugs: React.FC<thisProps> = ({
         onClick={() => {
           setOptions((prev) => !prev), dispatch(updateActiveDrug(drug.drug));
         }}
-        className="flex flex-col gap-1 cursor-pointer justify-center items-center rounded-full w-[10%] md:w-[6%] rotate-90"
+        className="flex flex-col gap-1 cursor-pointer justify-center items-center rounded-full w-[7%] sm:w-[4%] md:w-[6%] rotate-90"
       >
         <div className="w-[3px] h-[3px] rounded-full bg-navyBlue" />
         <div className="w-[3px] h-[3px] rounded-full bg-navyBlue" />
@@ -110,8 +104,8 @@ const RenderedDrugs: React.FC<thisProps> = ({
       {options && (
         <div
           ref={dropdownRef}
-          className="absolute border-[1px] border-gray-300 right-8 z-[200] top-5 text-navyBlue flex flex-col items-start justify-center mt-3 rounded-[10px] 
-        bg-white shadow-md w-[175px] ss:w-[250px] py-4 text-[13px] ss:text-[16px]"
+          className="absolute border-[1px] border-gray-300 right-4 md:right-8 z-[200] top-5 text-navyBlue flex flex-col items-start justify-center mt-3 rounded-[10px] 
+        bg-white shadow-xl w-[190px] ss:w-[250px] py-4 text-[16px]"
         >
           {tab !== "Allergies" && (
             <button
@@ -120,7 +114,7 @@ const RenderedDrugs: React.FC<thisProps> = ({
                 setDisplayDrugs(false);
                 setOptions(false);
               }}
-              className="h-8 hover:bg-gray-100 flex items-center gap-2 w-full px-3"
+              className="h-8 hover:bg-gray-100 flex items-center gap-3 w-full px-3"
             >
               <Image
                 src="/assets/info.png"
@@ -140,7 +134,7 @@ const RenderedDrugs: React.FC<thisProps> = ({
                   setScreen(true);
                 setOptions(false);
               }}
-              className="h-8 hover:bg-gray-100 flex items-center gap-2 w-full px-3"
+              className="h-8 hover:bg-gray-100 flex items-center gap-3 w-full px-3"
             >
               <Image
                 src="/assets/edit.png"
@@ -159,7 +153,7 @@ const RenderedDrugs: React.FC<thisProps> = ({
                 setDeleteModal(true);
               setOptions(false);
             }}
-            className="h-8 hover:bg-gray-100 flex items-center gap-2 w-full px-3"
+            className="h-8 hover:bg-gray-100 flex items-center gap-3 w-full px-3"
           >
             <Image
               src="/assets/delete.png"
@@ -178,7 +172,7 @@ const RenderedDrugs: React.FC<thisProps> = ({
                   setAllergyModal(true);
                 setOptions(false);
               }}
-              className="h-8 hover:bg-gray-100 flex items-center gap-2 w-full px-3 pl-[14px]"
+              className="h-8 hover:bg-gray-100 flex items-center gap-3 w-full px-3 pl-[14px]"
             >
               <Image
                 src="/assets/disabled.png"

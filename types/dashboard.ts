@@ -1,6 +1,6 @@
 import { Dayjs } from "dayjs";
 
-export interface DailyReportsProps {
+export interface ReportsProps {
     selectDate: Dayjs
     today: Dayjs
 }

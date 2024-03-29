@@ -298,9 +298,9 @@ const Drugs: React.FC<DrugsProps> = ({
         }}
         className={`${
           item === tab
-            ? "border-b-[2px] border-darkBlue text-navyBlue font-semibold"
-            : "bg-white text-gray-600"
-        } px-3 py-2 ss:px-4 text-[14px] ss:text-[16px] w-full ss:w-auto`}
+            ? "text-darkBlue bg-white rounded-[6px] border shadow-sm"
+            : "text-blackII"
+        } px-3 py-2 ss:px-4 text-[14px] font-Inter w-full font-[500]`}
       >
         {item}
       </button>
@@ -315,11 +315,13 @@ const Drugs: React.FC<DrugsProps> = ({
             <h1 className="text-[24px] ss:text-[32px] font-semibold font-montserrant ">
               Drugs
             </h1>
-            <p className="text-[16px] text-[#718096]">
+            <p className="text-[16px] text-blackII">
               Manage medications wisely!
             </p>
           </div>
-          <div className="flex mb-8 border-b-[1px] w-auto">{renderedTabs}</div>
+          <div className="mb-8 bg-lightGrey border p-1 rounded-[6px] flex justify-between w-full ss:w-[450px]">
+            {renderedTabs}
+          </div>
           {tab === "Ongoing" ? (
             <Ongoing
               setScreen={setScreen}
@@ -355,7 +357,7 @@ const Drugs: React.FC<DrugsProps> = ({
                 className="bg-white rounded-[10px] text-white relative flex flex-col justify-center items-center"
               >
                 <h1 className="text-navyBlue font-semibold py-4 px-4 border-b-[1px] text-left w-full text-[13px] ss:text-[16px] leading-tight">
-                  Confirm to delete '{activeDrug.toUpperCase()}' ?
+                  Confirm to delete {activeDrug.toUpperCase()} ?
                 </h1>
                 <h2 className="text-navyBlue border-b-[1px] text-left px-4 py-4 text-[12px] ss:text-[14px]">
                   Are you sure you want to delete the selected drug? <br /> This
@@ -396,7 +398,7 @@ const Drugs: React.FC<DrugsProps> = ({
                 className="bg-white rounded-[10px] text-white relative flex flex-col justify-center items-center"
               >
                 <h1 className="text-navyBlue font-semibold py-4 px-4 border-b-[1px] text-left w-full text-[13px] ss:text-[16px] leading-tight">
-                  Confirm to add '{activeDrug}' to Allergies?
+                  Confirm to add {activeDrug.toUpperCase()} to Allergies?
                 </h1>
                 <h2 className="text-navyBlue border-b-[1px] text-left px-4 py-4 text-[12px] ss:text-[14px]">
                   Are you sure you want to mark the selected drug as Allergy?{" "}
@@ -432,12 +434,12 @@ const Drugs: React.FC<DrugsProps> = ({
                 className="bg-white rounded-[10px] text-white relative flex flex-col justify-center items-center"
               >
                 <h1 className="text-navyBlue font-semibold py-4 px-4 border-b-[1px] text-left w-full text-[13px] ss:text-[16px] leading-tight">
-                  Continue to Edit '{activeDrug}' ?
+                  Continue to Edit {activeDrug.toUpperCase()} ?
                 </h1>
                 <h2 className="text-navyBlue border-b-[1px] text-left px-4 py-4 text-[12px] ss:text-[14px]">
-                  Your engagement in this process allows for the refinement and{" "}
+                  Proceed to edit the selected drug. Changes apply only
                   <br className="hidden ss:flex" />
-                  adjustment of the chosen medication
+                  to doses from Today forward.
                 </h2>
                 <div className="w-full flex gap-3 justify-start flex-row-reverse text-[12px] py-4 px-4">
                   <button

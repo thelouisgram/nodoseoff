@@ -75,7 +75,9 @@ const Statistics: React.FC<Stats> = ({ setShowStats, showStats }) => {
             : "-right-[450px] ss:w-[450px] h-full"
         } transition-all duration-300 absolute  bg-white h-full w-full z-[4] `}
       >
-        <div className={` h-[100dvh] w-full bg-white p-8 overflow-y-scroll text-navyBlue text-[14px]`}>
+        <div
+          className={` h-[100dvh] w-full bg-white p-8 overflow-y-scroll text-navyBlue text-[14px]`}
+        >
           <div className="w-full flex justify-end mb-10">
             <Image
               src="/assets/x (1).png"
@@ -94,21 +96,23 @@ const Statistics: React.FC<Stats> = ({ setShowStats, showStats }) => {
             </h1>
           </div>
           <div className="w-full flex flex-col gap-4">
-            <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex gap-2">
-              <h2 className="">Number of Drugs:</h2>
-              <p>{drugs.length}</p>
+            <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex flex-col-reverse">
+              <h2 className="text-blackII">Number of Drugs</h2>
+              <p className="font-semibold text-[18px]">{drugs.length}</p>
             </div>
-            <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex gap-2">
-              <h2 className="">Number of side effects:</h2>
-              <p>{effects.length}</p>
+            <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex flex-col-reverse">
+              <h2 className="text-blackII">Number of side effects</h2>
+              <p className="font-semibold text-[18px]">{effects.length}</p>
             </div>
-            <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex gap-2">
-              <h2 className="">Drug compliance:</h2>
-              <p>{percentageCompleted.toFixed(1)}%</p>
+            <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex flex-col-reverse">
+              <h2 className="text-blackII">Drug compliance</h2>
+              <p className="font-semibold text-[18px]">
+                {percentageCompleted.toFixed(1)}%
+              </p>
             </div>
-            <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex gap-2">
-              <h2 className="">Missed Doses:</h2>
-              <p>{missedDoses}</p>
+            <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex flex-col-reverse">
+              <h2 className="text-blackII">Missed Doses</h2>
+              <p className="font-semibold text-[18px]">{missedDoses}</p>
             </div>
           </div>
         </div>

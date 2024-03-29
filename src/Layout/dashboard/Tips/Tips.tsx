@@ -25,7 +25,7 @@ const Tips = () => {
         <h1 className="text-[24px] ss:text-[32px] font-semibold font-montserrant capitalize">
           Drug Safety Tips
         </h1>
-        <p className="text-[16px] text-[#718096]">
+        <p className="text-[16px] text-blackII">
           Stay safe with your medications!
         </p>
       </div>

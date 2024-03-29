@@ -1,4 +1,4 @@
-import { Effect } from "@/Layout/dashboard/home/DailyReports";
+import { Effect } from "@/Layout/dashboard/home/Reports";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { DrugProps, ScheduleItem } from "../types/dashboard";
 import { AppType, Info } from "../utils/store";
@@ -18,7 +18,7 @@ const initialState: AppType = {
   active: "Home",
   completedDrugs: [],
   confetti: false,
-  profilePicture: []
+  profilePicture: [],
 };
 
 const stateSlice = createSlice({

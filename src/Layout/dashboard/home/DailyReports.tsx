@@ -1,132 +1,104 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-"use client";
-import Image from "next/image";
-import React from 'react';
-import { FaExclamationTriangle } from "react-icons/fa";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../../../store";
-import { DailyReportsProps, ScheduleItem } from "../../../../types/dashboard";
+import dayjs, { Dayjs } from "dayjs"; // Importing dayjs and Dayjs types
+import React, { useState } from "react"; // Importing React and useState hook
+import { generateDate, months } from "../../../../utils/calendar"; // Importing utility functions for generating dates and months
+import cn from "../../../../utils/cn"; // Importing a utility function for conditionally joining classNames
+import { GrFormNext, GrFormPrevious } from "react-icons/gr"; // Importing next and previous icons
+import Reports from "./Reports";
 
-export interface Effect {
-  date: string;
-  effect: string;
-  severity: string;
+// Calendar component definition
+export default function DailyReports() {
+  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]; // Array of weekdays abbreviated names
+
+  const currentDate = dayjs(); // Get the current date using dayjs
+
+  // State variables using the useState hook with specified types
+  const [today, setToday] = useState<Dayjs>(currentDate);
+  const [selectDate, setSelectDate] = useState<Dayjs>(currentDate);
+
+  // Return the JSX structure for the calendar component
+  return (
+    <section className="w-full flex flex-col ip:flex-row items-start gap-4 ip:gap-10 px-4 ss:px-6 md:px-0 ss:pb-20 md:pb-0 h-auto text-[16px] font-Karla text-navyBlue">
+      <div className="flex gap-10 w-full md:w-1/2 flex-col p-3 ss:p-5 bg-lightGrey border rounded-[8px] h-auto pb-4 ss:pb-5">
+        <div className="w-auto h-full">
+          <div className="flex justify-between items-center">
+            {/* Displaying the current month and year */}
+            <h1 className="select-none font-bold p-2 ss:p-3 text-[20px] ss:text-[24px]">
+              {months[today.month()]}, {today.year()}
+            </h1>
+            <div className="flex gap-6 ss:gap-10 items-center">
+              {/* Buttons for navigating to the previous month, returning to the current month, and navigating to the next month */}
+              <GrFormPrevious
+                className="w-5 h-5 cursor-pointer hover:scale-105 transition-all"
+                onClick={() => {
+                  setToday(today.month(today.month() - 1)); // Update 'today' state to show the previous month
+                }}
+              />
+              <h1
+                className="cursor-pointer hover:scale-105 transition-all"
+                onClick={() => {
+                  setToday(currentDate); // Reset 'today' state to the current date
+                }}
+              >
+                Today
+              </h1>
+              <GrFormNext
+                className="w-5 h-5 cursor-pointer hover:scale-105 transition-all"
+                onClick={() => {
+                  setToday(today.month(today.month() + 1)); // Update 'today' state to show the next month
+                }}
+              />
+            </div>
+          </div>
+          {/* Rendering weekdays */}
+          <div className="flex justify-between w-full">
+            {days.map((day, index) => {
+              return (
+                <h1
+                  key={index}
+                  className=" text-center w-full flex text-darkGrey justify-center h-12 items-center select-none"
+                >
+                  {day}
+                </h1>
+              );
+            })}
+          </div>
+
+          {/* Rendering dates for the current month */}
+          <div className="grid grid-cols-7">
+            {/* Mapping through the generated dates for the current month */}
+            {generateDate(today.month(), today.year()).map(
+              ({ date, currentMonth, today }, index, array) => {
+                return (
+                  <div
+                    key={index}
+                    className={`p-2 text-center h-12 grid place-content-center `}
+                  >
+                    {/* Rendering individual date cells */}
+                    <h1
+                      className={cn(
+                        // Conditionally applying classes based on date properties
+                        currentMonth ? "" : "text-gray-400",
+                        today ? "bg-darkPink text-white " : "",
+                        selectDate.toDate().toDateString() ===
+                          date.toDate().toDateString()
+                          ? "bg-darkBlue text-white"
+                          : "",
+                        "h-10 w-10 rounded-full grid place-content-center hover:bg-[#7E1CE6] hover:text-white transition-all cursor-pointer select-none"
+                      )}
+                      onClick={() => {
+                        setSelectDate(date); // Update 'selectDate' state when a date is clicked
+                      }}
+                    >
+                      {date.date()} {/* Displaying the date number */}
+                    </h1>
+                  </div>
+                );
+              }
+            )}
+          </div>
+        </div>
+      </div>
+      <Reports today={today} selectDate={selectDate} />
+    </section>
+  );
 }
-
-const DailyReports: React.FC<DailyReportsProps> = ({ today, selectDate }) => {
-  const { effects, schedule } = useSelector((state: RootState) => state.app);
-  const dispatch = useDispatch()
-
-  const formattedDateFull = (selectDate ?? today).format("DD MMMM, YYYY");
-  const formattedDate = (selectDate ?? today).format("YYYY-MM-DD");
-  const dateEffects: Effect[] = effects.filter(
-    (effect: Effect) => effect.date === formattedDate
-  );
-
-  const filteredDrugs = schedule?.filter(
-    (dose: ScheduleItem) => dose?.date === formattedDate
-  );
-
-  const uniqueDrugs: string[] = Array.from(
-    new Set(filteredDrugs.map((drug) => drug.drug))
-  );
-  const drugsString: string = uniqueDrugs.join(", ");
-
-  const totalDoses = filteredDrugs.length;
-  const completedDoses = filteredDrugs.filter((drug) => drug.completed).length;
-  const completedFraction = completedDoses / totalDoses;
-  const completedPercentage = completedFraction * 100;
-
-  if (uniqueDrugs.length > 0 || dateEffects.length > 0) {
-    const effectCount: Record<string, number> = dateEffects.reduce(
-      (countMap: Record<string, number>, { effect }: Effect) => {
-        countMap[effect] = (countMap[effect] || 0) + 1;
-        return countMap;
-      },
-      {}
-    );
-
-    const joinedEffects = Object.entries(effectCount)
-      .map(([effect, count]) => {
-        if (count > 1) {
-          return `${effect} (${count})`;
-        }
-        return effect;
-      })
-      .join(", ");
-
-    const displayValue = isNaN(completedPercentage)
-      ? "0%"
-      : `${completedDoses}/${totalDoses} (${completedPercentage.toFixed(0)}%)`;
-
-      
-
-    return (
-      <div className="w-full md:w-1/2 h-full rounded-[12px]  pt-5 text-[15px] text-gray-600 font-spartan">
-        <h2 className="font-semibold mb-4 ss:mb-6 text-[16px] leading-none">
-          {formattedDateFull}
-        </h2>
-        <div className="h-full flex gap-6 flex-col leading-tight">
-          <div className="flex gap-3 items-center border border-[#7E1CE6] rounded-[10px]  p-4">
-            <Image
-              src="/assets/daily-reports/drug.png"
-              width="512"
-              height="512"
-              alt="meds"
-              className="w-6 h-6"
-            />
-            <div>
-              <h2 className="font-semibold text-[16px] text-[#7E1CE6] ">
-                Medications:
-              </h2>
-              <p className="capitalize">{drugsString || "N/A"}</p>
-            </div>
-          </div>
-          <div className="flex gap-3 items-center border border-[#D4389B] rounded-[10px]  p-4">
-            <Image
-              src="/assets/daily-reports/check.png"
-              width="512"
-              height="512"
-              alt="check"
-              className="w-6 h-6"
-            />
-            <div className="flex flex-col">
-              <h2 className="font-semibold text-[16px] text-[#D4389B]">
-                Dose Status:
-              </h2>
-              <p>{displayValue}</p>
-            </div>
-          </div>
-          <div className="flex gap-3 items-center border border-darkBlue rounded-[10px]  p-4">
-            <Image
-              src="/assets/daily-reports/sick.png"
-              width="512"
-              height="512"
-              alt="check"
-              className="w-6 h-6"
-            />
-            <div className="flex flex-col">
-              <h2 className="font-semibold text-[16px] text-darkBlue">
-                Side Effects:
-              </h2>
-              <p className="capitalize">{joinedEffects || "N/A"}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  } else {
-    return (
-      <div className="w-full md:w-1/2 h-full rounded-[12px]  py-6 text-gray-600">
-        <h2 className="font-semibold text-[16px] leading-none mb-4 ss:mb-8">
-          {formattedDateFull}
-        </h2>
-        <div className="h-full flex gap-3 items-center border border-gray-300 p-5 rounded-[10px] ">
-          <FaExclamationTriangle /> No data for this day
-        </div>
-      </div>
-    );
-  }
-};
-
-export default DailyReports;

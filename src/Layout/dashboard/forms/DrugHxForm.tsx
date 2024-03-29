@@ -105,7 +105,7 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
             : "-right-[450px] ss:w-[450px] h-full"
         } transition-all duration-300 absolute w-full bg-white h-full z-[4] `}
       >
-        <div className={`h-[100dvh] w-full bg-white p-8 overflow-y-scroll app`}>
+        <div className={`h-[100dvh] w-full bg-white p-8 overflow-y-scroll text-blackII`}>
           <div className="w-full flex justify-end mb-10">
             <Image
               src="/assets/x (1).png"
@@ -141,7 +141,7 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
                     name="otcDrugs"
                     value={formData.otcDrugs}
                     onChange={handleSelectChange("otcDrugs")}
-                    className=" bg-[#EDF2F7] border-none w-full outline-none py-4 text-navyBlue cursor-pointer h-[56px]"
+                    className=" bg-[#EDF2F7] border-none w-full outline-none py-4 cursor-pointer h-[56px]"
                   >
                     <option value="">--</option>
                     <option value="yes">Yes</option>
@@ -164,7 +164,7 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
                     name="herbs"
                     value={formData.herbs}
                     onChange={handleSelectChange("herbs")}
-                    className=" bg-[#EDF2F7] border-none w-full outline-none py-4 text-navyBlue cursor-pointer h-[56px]"
+                    className=" bg-[#EDF2F7] border-none w-full outline-none py-4 cursor-pointer h-[56px]"
                   >
                     <option value="">--</option>
                     <option value="yes">Yes</option>

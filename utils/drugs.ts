@@ -1,3 +1,5 @@
+import { DrugProps } from "../types/dashboard";
+
 export const drugsTab: string[] =[
    "Ongoing", "Completed", "Allergies" 
 ]

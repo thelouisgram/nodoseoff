@@ -2,14 +2,13 @@
 "use client";
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
-import Calendar from "./Calendar";
+import DailyReports from "./DailyReports";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../../store";
 import { calculateClosestDoseCountdown } from "../../../../utils/dashboard";
-import { FaExclamationTriangle } from "react-icons/fa";
 import { updateActive } from "../../../../store/stateSlice";
-import { toast } from "sonner";
 import supabase from "../../../../utils/supabaseClient";
+import Tracker from "./Tracker";
 
 interface HomeProps {
   setEffectsForm: Function;
@@ -79,8 +78,6 @@ const Home: React.FC<HomeProps> = ({
     );
   }
 
-  const avatar = `/${profilePicture}`;
-
   const CDNURL =
     "https://opshqmqagtfidynwftzk.supabase.co/storage/v1/object/public/profile-picture/";
 
@@ -134,7 +131,7 @@ const Home: React.FC<HomeProps> = ({
           <h1 className="text-[24px] ss:text-[32px] font-semibold font-montserrant capitalize">
             {"Hi " + name?.split(" ")[0]},
           </h1>
-          <p className="text-[16px] text-[#718096]">Your health matters!</p>
+          <p className="text-[16px] text-blackII">Your health matters!</p>
         </div>
         <div
           onClick={() => {
@@ -143,7 +140,9 @@ const Home: React.FC<HomeProps> = ({
           className="w-[60px] h-[60px] rounded-full overflow-hidden cursor-pointer"
         >
           <Image
-            src={CDNURL + userId + '/avatar.png' || '/assets/icons8-user-100.png'}
+            src={
+              CDNURL + userId + "/avatar.png" || "/assets/icons8-user-100.png"
+            }
             width={100}
             height={100}
             alt="user"
@@ -219,65 +218,16 @@ const Home: React.FC<HomeProps> = ({
           </div>
         </div>
       </section>
-      <section className="mb-10 ss:mb-16 px-4 ss:px-8 md:px-0">
-        <h3 className="text-[18px] font-semibold text-navyBlue mb-3">
-          Medication Tracker
-        </h3>
-        <div className="w-[300px] h-auto flex border border-gray-300 rounded-[6px]  mb-8 overflow-hidden">
-          <div
-            onClick={() => {
-              setTracker("Yesterday");
-            }}
-            className={`${
-              tracker === "Yesterday" ? "bg-navyBlue text-white" : "bg-none"
-            } w-1/2 flex justify-center cursor-pointer py-1`}
-          >
-            Yesterday
-          </div>
-          <div
-            onClick={() => {
-              setTracker("Today");
-            }}
-            className={`${
-              tracker === "Today" ? "bg-navyBlue text-white" : "bg-none"
-            } w-1/2 flex justify-center cursor-pointer py-1`}
-          >
-            Today
-          </div>
-        </div>
-        {displayedDoses.length > 0 ? (
-          <>
-            <div className="grid md:grid-cols-2 gap-4 ss:gap-6 mb-6">
-              {displayedDoses}
-            </div>
-            <div className="w-full flex justify-center">
-              <button
-                onClick={() => {
-                  setAllDoses(true);
-                }}
-                className=" text-navyBlue gap-1 flex items-center "
-              >
-                VIEW ALL
-                <Image
-                  src="/assets/down.png"
-                  width="16"
-                  height="16"
-                  alt="turned down"
-                  className="-rotate-90"
-                />
-              </button>
-            </div>
-          </>
-        ) : (
-          <div className="w-full md:w-1/2 py-6 px-4  border border-gray-300 rounded-[10px] items-center  flex gap-3">
-            <FaExclamationTriangle /> No dose for this day
-          </div>
-        )}
-      </section>
+      <Tracker
+        tracker={tracker}
+        setAllDoses={setAllDoses}
+        displayedDoses={displayedDoses}
+        setTracker={setTracker}
+      />
       <h3 className="text-[18px] font-semibold text-navyBlue mb-3 px-4 ss:px-8 md:px-0">
         Daily Reports
       </h3>
-      <Calendar />
+      <DailyReports />
     </div>
   );
 };

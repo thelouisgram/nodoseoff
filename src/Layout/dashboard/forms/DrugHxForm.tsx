@@ -19,15 +19,13 @@ type RefObject<T> = React.RefObject<T>;
 interface DrugHxFormProps {
   setDrugHxForm: Function;
   drugHxForm: boolean;
-  info: Info[]
 }
 
 const DrugHxForm: React.FC<DrugHxFormProps> = ({
   drugHxForm,
   setDrugHxForm,
-  info
 }) => {
-  const { userId } = useSelector((state: RootState) => state.app);
+  const { info, userId } = useSelector((state: RootState) => state.app);
   const { name, phone, email, role, otcDrugs, herbs } = info[0];
   const dispatch = useDispatch();
 

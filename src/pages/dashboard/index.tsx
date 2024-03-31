@@ -38,6 +38,7 @@ import { uploadScheduleToServer } from "../../../utils/schedule";
 import supabase from "../../../utils/supabaseClient";
 import { tabs, tabsMobile } from "./../../../utils/dashboard";
 import Head from "next/head";
+import { Info } from "../../../utils/store";
 
 interface tabsMobileProps {
   name: string;
@@ -80,121 +81,84 @@ const Page = () => {
   }, []);
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
-    const getInfo = async () => {
+    const fetchData = async () => {
       try {
-        const { data, error } = await supabase
-          .from("users")
-          .select("name, phone, role, email, otcDrugs, herbs")
-          .eq("userId", userId);
-        if (error) {
-          console.error("error:", error);
-        } else if (data !== null) {
-          dispatch(updateInfo([...data]));
-        }
-      } catch (error) {}
-    };
-    const getProfilePicture = async () => {
-      try {
-        const { data, error } = await supabase.storage
-          .from("profile-picture")
-          .list(userId + "/", {
-            limit: 1,
-            offset: 0,
-          });
+        const [
+          userData,
+          profilePictureData,
+          drugsData,
+          completedDrugsData,
+          effectsData,
+          allergiesData,
+          scheduleData,
+        ] = await Promise.all([
+          supabase
+            .from("users")
+            .select("name, phone, role, email, otcDrugs, herbs")
+            .eq("userId", userId),
+          supabase.storage
+            .from("profile-picture")
+            .list(userId + "/", { limit: 1, offset: 0 }),
+          supabase.from("drugs").select("*").eq("userId", userId),
+          supabase.from("users").select("completedDrugs").eq("userId", userId),
+          supabase.from("effects").select("*").eq("userId", userId),
+          supabase.from("allergies").select("*").eq("userId", userId),
+          supabase.from("users").select("schedule").eq("userId", userId),
+        ]);
 
-        if (data) {
-          dispatch(updateProfilePicture([data[0]?.name]));
-        } else {
-          console.log(71, error);
+        if (
+          userData.error ||
+          profilePictureData.error ||
+          drugsData.error ||
+          completedDrugsData.error ||
+          effectsData.error ||
+          allergiesData.error ||
+          scheduleData.error
+        ) {
+          throw new Error("Error fetching data");
         }
-      } catch (error) {}
-    };
-    const getDrug = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("drugs")
-          .select("*")
-          .eq("userId", userId);
-        if (error) {
-          console.error("error:", error);
-        } else if (data !== null) {
-          dispatch(setDrugs(data));
-        }
-      } catch (error) {}
-    };
-    const getCompletedDrugs = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("users")
-          .select("completedDrugs")
-          .eq("userId", userId);
-        if (error) {
-          console.error("error:", error);
-        } else if (data !== null) {
-          const transformedData = data?.map((item) => [...item.completedDrugs]);
-          const flattenedData = transformedData?.flatMap(
+
+        const userInfo = userData.data && userData.data[0];
+        dispatch(updateInfo([userInfo]));
+
+        const profilePicture = profilePictureData.data
+          ? [profilePictureData.data[0]?.name]
+          : [];
+        dispatch(updateProfilePicture(profilePicture));
+
+        const drugs = drugsData.data ?? [];
+        dispatch(setDrugs(drugs));
+
+        const transformedCompletedDrugsData =
+          completedDrugsData.data?.map((item) => [...item.completedDrugs]) ??
+          [];
+        const flattenedCompletedDrugsData =
+          transformedCompletedDrugsData.flatMap(
             (innerArray: DrugProps[]) => innerArray
           );
-          dispatch(updateCompletedDrugs(flattenedData));
-        }
-      } catch (error) {}
-    };
-    const getEffects = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("effects")
-          .select("*")
-          .eq("userId", userId);
-        if (error) {
-          console.error("error:", error);
-        } else if (data !== null) {
-          dispatch(setEffects(data));
-        }
-      } catch (error) {}
-    };
-    const getAllergies = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("allergies")
-          .select("*")
-          .eq("userId", userId);
-        if (error) {
-          console.error("error:", error);
-        } else if (data !== null) {
-          dispatch(updateAllergies(data));
-        }
-      } catch (error) {}
-    };
-    const getSchedule = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("users")
-          .select("schedule")
-          .eq("userId", userId);
-        if (error) {
-          console.error("error:", error);
-        }
-        const transformedData = data?.map((item) => [...item.schedule]);
-        const flattenedData =
-          transformedData?.flatMap(
-            (innerArray: ScheduleItem[]) => innerArray
-          ) ?? []; // Provide an empty array as a default value if transformedData is undefined
+        dispatch(updateCompletedDrugs(flattenedCompletedDrugsData));
 
-        dispatch(updateSchedule(flattenedData));
-      } catch (error) {}
+        const effects = effectsData.data ?? [];
+        dispatch(setEffects(effects));
+
+        const allergies = allergiesData.data ?? [];
+        dispatch(updateAllergies(allergies));
+
+        const transformedScheduleData =
+          scheduleData.data?.map((item) => [...item.schedule]) ?? [];
+        const flattenedScheduleData = transformedScheduleData.flatMap(
+          (innerArray: ScheduleItem[]) => innerArray
+        );
+        dispatch(updateSchedule(flattenedScheduleData));
+
+        setIsLoading(false);
+      } catch (error) {
+        toast.error("Error fetching data");
+      }
     };
 
     if (userId) {
-      getInfo();
-      getProfilePicture();
-      getDrug();
-      getEffects();
-      getAllergies();
-      getSchedule();
-      getCompletedDrugs();
+      fetchData();
     }
   }, [userId]);
 
@@ -240,6 +204,7 @@ const Page = () => {
       router.push("/login");
       dispatch(updateUserId(""));
       dispatch(updateSchedule([]));
+      dispatch(setDrugs([]));
     } catch (error) {
       toast.error("Error signing out: " + error);
     }
@@ -429,138 +394,147 @@ const Page = () => {
       <Head>
         <title>NoDoseOff | DashBoard</title>
       </Head>
-      <section
-        className={`flex  relative w-full bg-white ${
-          isLoading ? "opacity-0 h-0" : "opacity-100 max-h-[100dvh]"
-        } transition-all`}
-      >
-        <div
-          className={`${
-            !nav ? "w-[86px]" : "w-[300px]"
-          } max-h-[100dvh] bg-navyBlue py-10 pl-6 hidden font-montserrant md:flex flex-col justify-between relative transition-all duration-300`}
+      {userId && (
+        <section
+          className={`flex  relative w-full bg-white ${
+            isLoading ? "opacity-0 h-0" : "opacity-100 max-h-[100dvh]"
+          } transition-all`}
         >
-          <div>
-            <div className="flex gap-5 items-center mb-12 cursor-pointer h-[60.81px]">
+          <div
+            className={`${
+              !nav ? "w-[86px]" : "w-[300px]"
+            } max-h-[100dvh] bg-navyBlue py-10 pl-6 hidden font-montserrant md:flex flex-col justify-between relative transition-all duration-300`}
+          >
+            <div>
+              <div className="flex gap-5 items-center mb-12 cursor-pointer h-[60.81px]">
+                <Image
+                  onClick={() => {
+                    setNav(!nav);
+                  }}
+                  src="/assets/desktop-dashboard/menu.png"
+                  width={512}
+                  height={512}
+                  className="w-[24px] h-[24px]"
+                  alt="menu"
+                  priority
+                />
+                <Link href={"/"}>
+                  <Image
+                    src="/assets/logo/logo with name png - white color.png"
+                    alt="logo"
+                    width={1084}
+                    height={257}
+                    className={`w-[140px] h-auto ${nav ? "flex" : "hidden"}`}
+                    quality={100}
+                  />
+                </Link>
+              </div>
+              <div className="flex flex-col gap-6">{renderedTabs}</div>
+            </div>
+
+            <button onClick={logOut} className="flex items-center gap-6">
               <Image
-                onClick={() => {
-                  setNav(!nav);
-                }}
-                src="/assets/desktop-dashboard/menu.png"
+                src="/assets/desktop-dashboard/power-off.png"
                 width={512}
                 height={512}
                 className="w-[24px] h-[24px]"
                 alt="menu"
-                priority
+                quality={100}
               />
-              <Link href={"/"}>
-                <Image
-                  src="/assets/logo/logo with name png - white color.png"
-                  alt="logo"
-                  width={1084}
-                  height={257}
-                  className={`w-[140px] h-auto ${nav ? "flex" : "hidden"}`}
-                  quality={100}
-                />
-              </Link>
-            </div>
-            <div className="flex flex-col gap-6">{renderedTabs}</div>
+              <p
+                className={`text-[16px] text-white ${nav ? "flex" : "hidden"}`}
+              >
+                Logout
+              </p>
+            </button>
           </div>
-
-          <button onClick={logOut} className="flex items-center gap-6">
-            <Image
-              src="/assets/desktop-dashboard/power-off.png"
-              width={512}
-              height={512}
-              className="w-[24px] h-[24px]"
-              alt="menu"
-              quality={100}
-            />
-            <p className={`text-[16px] text-white ${nav ? "flex" : "hidden"}`}>
-              Logout
-            </p>
-          </button>
-        </div>
-        <div className="w-full">
-          {active === "Home" ? (
-            <Home
-              setEffectsForm={setEffectsForm}
-              setDrugsForm={setDrugsForm}
-              isLoading={isLoading}
-              setAllDoses={setAllDoses}
-              tracker={tracker}
-              setTracker={setTracker}
-              dosesToRender={dosesToRender}
-            />
-          ) : active === "Drugs" ? (
-            <Drugs
-              screen={screen}
-              setScreen={setScreen}
-              setDrugsForm={setDrugsForm}
-              setEditForm={setEditForm}
-              setEditModal={setEditModal}
+          <div className="w-full">
+            {active === "Home" ? (
+              <Home
+                setEffectsForm={setEffectsForm}
+                setDrugsForm={setDrugsForm}
+                isLoading={isLoading}
+                setAllDoses={setAllDoses}
+                tracker={tracker}
+                setTracker={setTracker}
+                dosesToRender={dosesToRender}
+              />
+            ) : active === "Drugs" ? (
+              <Drugs
+                screen={screen}
+                setScreen={setScreen}
+                setDrugsForm={setDrugsForm}
+                setEditForm={setEditForm}
+                setEditModal={setEditModal}
+                setDeleteModal={setDeleteModal}
+                deleteModal={deleteModal}
+                editModal={editModal}
+                allergyModal={allergyModal}
+                setAllergyModal={setAllergyModal}
+                add={add}
+                setAdd={setAdd}
+                setEffectsForm={setEffectsForm}
+                editForm={editForm}
+                drugsForm={drugsForm}
+                effectsForm={effectsForm}
+                allergiesForm={allergiesForm}
+                setAllergiesForm={setAllergiesForm}
+              />
+            ) : active === "Tips" ? (
+              <Tips />
+            ) : (
+              <Account
+                setDrugHxForm={setDrugHxForm}
+                setProfileForm={setProfileForm}
+                setShowStats={setShowStats}
+              />
+            )}
+          </div>
+          {!isLoading && (
+            <>
+              <DrugsForm drugsForm={drugsForm} setDrugsForm={setDrugsForm} />
+              <EffectsForm
+                effectsForm={effectsForm}
+                setEffectsForm={setEffectsForm}
+              />
+              <EditForm editForm={editForm} setEditForm={setEditForm} />
+              <AllergiesForm
+                allergiesForm={allergiesForm}
+                setAllergiesForm={setAllergiesForm}
+              />
+              <ProfileForm
+                setProfileForm={setProfileForm}
+                profileForm={profileForm}
+              />
+              <Statistics setShowStats={setShowStats} showStats={showStats} />
+              <DrugHxForm
+                drugHxForm={drugHxForm}
+                setDrugHxForm={setDrugHxForm}
+              />
+            </>
+          )}
+          <AllDoses
+            allDoses={allDoses}
+            setAllDoses={setAllDoses}
+            dosesToRender={dosesToRender}
+          />
+          {screen && (
+            <Screen
               setDeleteModal={setDeleteModal}
-              deleteModal={deleteModal}
-              editModal={editModal}
-              allergyModal={allergyModal}
               setAllergyModal={setAllergyModal}
-              add={add}
-              setAdd={setAdd}
-              setEffectsForm={setEffectsForm}
-              editForm={editForm}
-              drugsForm={drugsForm}
-              effectsForm={effectsForm}
-              allergiesForm={allergiesForm}
-              setAllergiesForm={setAllergiesForm}
-            />
-          ) : active === "Tips" ? (
-            <Tips />
-          ) : (
-            <Account
-              setDrugHxForm={setDrugHxForm}
+              setEditModal={setEditModal}
               setProfileForm={setProfileForm}
+              setScreen={setScreen}
+              setAdd={setAdd}
+              screen={screen}
               setShowStats={setShowStats}
             />
           )}
-        </div>
-
-        <DrugsForm drugsForm={drugsForm} setDrugsForm={setDrugsForm} />
-        <EffectsForm
-          effectsForm={effectsForm}
-          setEffectsForm={setEffectsForm}
-        />
-        <EditForm editForm={editForm} setEditForm={setEditForm} />
-        <AllergiesForm
-          allergiesForm={allergiesForm}
-          setAllergiesForm={setAllergiesForm}
-        />
-        <ProfileForm
-          setProfileForm={setProfileForm}
-          profileForm={profileForm}
-          info={info}
-        />
-        <Statistics setShowStats={setShowStats} showStats={showStats} />
-        <DrugHxForm drugHxForm={drugHxForm} setDrugHxForm={setDrugHxForm} info={info} />
-        <AllDoses
-          allDoses={allDoses}
-          setAllDoses={setAllDoses}
-          dosesToRender={dosesToRender}
-        />
-        {screen && (
-          <Screen
-            setDeleteModal={setDeleteModal}
-            setAllergyModal={setAllergyModal}
-            setEditModal={setEditModal}
-            setProfileForm={setProfileForm}
-            setScreen={setScreen}
-            setAdd={setAdd}
-            screen={screen}
-            setShowStats={setShowStats}
-          />
-        )}
-        <div className="fixed w-full h-[64px] bg-white shadow bottom-0 flex justify-between items-center md:hidden px-4 ss:px-8 ss:pr-12">
-          {renderedTabsMobile}
-        </div>
-      </section>
+          <div className="fixed w-full h-[64px] bg-white shadow bottom-0 flex justify-between items-center md:hidden px-4 ss:px-8 ss:pr-12">
+            {renderedTabsMobile}
+          </div>
+        </section>
+      )}
       {isLoading && (
         <div className="w-full">
           {" "}

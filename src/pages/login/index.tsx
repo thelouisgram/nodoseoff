@@ -82,7 +82,7 @@ const SignIn = () => {
           width={3912}
           height={1000}
           alt="logo"
-          className="w-[200px] h-auto mb-10"
+          className="w-[180px] h-auto mb-10"
           priority
         />
         <form

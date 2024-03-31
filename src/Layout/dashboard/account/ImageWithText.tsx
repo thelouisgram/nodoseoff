@@ -75,7 +75,7 @@ const ImageWithText: React.FC = () => {
             height={1417}
             alt="image"
           />
-          <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-start items-start text-[10px] ss:text-[14px] md:text-[16px] px-8">
+          <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-start items-start text-[10px] ss:text-[14px] md:text-[16px] px-2 md:px-6">
             <div className="w-full flex justify-center pt-6">
               <Image
                 src="/assets/logo/logo with name png - blue color.png"

@@ -11,7 +11,7 @@ import { updateIsAuthenticated, updateUserId } from "../../../store/stateSlice";
 import { useDispatch } from "react-redux";
 import Head from "next/head";
 
-const Signin = () => {
+const SignIn = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
@@ -164,4 +164,4 @@ const Signin = () => {
   );
 };
 
-export default Signin;
+export default SignIn;

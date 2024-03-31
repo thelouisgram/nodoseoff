@@ -11,7 +11,7 @@ const Report: React.FC<ReportProps> = ({ setTab }) => {
     <div className="h-[100dvh] overflow-y-scroll w-full md:py-16 md:px-12 px-4 pt-10 pb-24 ss:p-10 ss:pb-24  mb-10 text-navyBlue font-karla relative">
       <button
         onClick={() => setTab("Account")}
-        className="flex gap-1 items-center font-Inter"
+        className="flex gap-1 items-center font-Inter mb-6"
       >
         <Image
           src="/assets/down.png"

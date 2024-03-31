@@ -51,7 +51,7 @@ interface tabsProps {
 }
 
 const Page = () => {
-  const { userId, active, schedule } = useSelector(
+  const { userId, active, schedule, info } = useSelector(
     (state: RootState) => state.app
   );
   const dispatch = useDispatch();
@@ -536,9 +536,10 @@ const Page = () => {
         <ProfileForm
           setProfileForm={setProfileForm}
           profileForm={profileForm}
+          info={info}
         />
         <Statistics setShowStats={setShowStats} showStats={showStats} />
-        <DrugHxForm drugHxForm={drugHxForm} setDrugHxForm={setDrugHxForm} />
+        <DrugHxForm drugHxForm={drugHxForm} setDrugHxForm={setDrugHxForm} info={info} />
         <AllDoses
           allDoses={allDoses}
           setAllDoses={setAllDoses}

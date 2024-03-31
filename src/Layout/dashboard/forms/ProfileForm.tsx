@@ -12,19 +12,22 @@ import { useSelector, useDispatch } from "react-redux";
 import supabase from "../../../../utils/supabaseClient";
 import { toast } from "sonner";
 import { updateInfo } from "../../../../store/stateSlice";
+import { Info } from "../../../../utils/store";
 
 type RefObject<T> = React.RefObject<T>;
 
 interface ProfileFormProps {
   setProfileForm: Function;
   profileForm: boolean;
+  info: Info[]
 }
 
 const ProfileForm: React.FC<ProfileFormProps> = ({
   setProfileForm,
   profileForm,
+  info
 }) => {
-  const { info, userId, profilePicture } = useSelector(
+  const { userId, profilePicture } = useSelector(
     (state: RootState) => state.app
   );
   const { name, phone, email, role, otcDrugs, herbs } = info[0];

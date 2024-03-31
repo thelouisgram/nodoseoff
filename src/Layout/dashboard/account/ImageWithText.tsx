@@ -75,25 +75,27 @@ const ImageWithText: React.FC = () => {
             height={1417}
             alt="image"
           />
-          <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-start items-start text-[10px] ss:text-[14px] md:text-[16px] px-2 md:px-6">
-            <div className="w-full flex justify-center pt-6">
+          <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-start items-start text-[8px] ss:text-[14px] md:text-[16px] px-2 md:px-6">
+            <div className="w-full flex justify-center pt-2 ss:pt-6">
+            <div className="w-[100px] ss:w-[200px]">
               <Image
                 src="/assets/logo/logo with name png - blue color.png"
                 alt="logo"
                 width={1084}
                 height={257}
-                className={`w-[200px] h-auto `}
+                className={`w-full h-auto aspect-[1084/257]`}
                 quality={100}
               />
             </div>
-            <div className="w-full flex justify-center text-center font-[500] text-[12px] ss:text-[18px] uppercase ">
+            </div>
+            <div className="w-full flex justify-center text-center font-[500] text-[8px] ss:text-[18px] uppercase ">
               Drug History Report
             </div>
-            <div className="py-2 ss:py-3 md:py-6 px-3 ss:px-6 border-navyBlue w-full">
-              <h2 className="font-semibold text-blackII mb-1 ss:mb-2 md:mb-4 text-[12px] ss:text-[16px]">
+            <div className="py-1 ss:py-3 md:py-6 px-3 ss:px-6 border-navyBlue w-full">
+              <h2 className="font-semibold text-blackII mb-1 ss:mb-2 md:mb-4 text-[8px] ss:text-[16px]">
                 Patient&apos;s Information
               </h2>
-              <div className="border border-navyBlue mb-2 ss:mb-4 md:mb-10 w-full text-[10px] ss:text-[14px] md:text-[16px]">
+              <div className="border border-navyBlue mb-2 ss:mb-4 md:mb-10 w-full text-[8px] ss:text-[14px] md:text-[16px]">
                 <div className="flex items-center gap-2 border-b border-navyBlue w-full capitalize">
                   <div className="w-[105px] ss:w-[150px] py-1 md:py-3 px-2 bg-lightBlue border-r border-navyBlue font-semibold">
                     Name:

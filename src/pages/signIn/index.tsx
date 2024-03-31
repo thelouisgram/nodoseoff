@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/no-unescaped-entities */
-"use client";
 import Image from "next/image";
 import Link from "next/link";
 import React, { ChangeEvent, FormEvent, useState, useEffect } from "react";

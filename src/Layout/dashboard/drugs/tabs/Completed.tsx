@@ -173,7 +173,7 @@ const Completed: React.FC<CompletedProps> = ({
       ) : (
         <div className="w-full h-[400px] flex justify-center items-center">
           <h1 className="text-[20px] text-navyBlue font-semibold font-montserrant text-center opacity-30">
-            Complete a drug to get started!
+            Complete a medication to begin exploring!
           </h1>
         </div>
       )}

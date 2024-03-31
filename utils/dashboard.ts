@@ -30,6 +30,10 @@ export const tabsMobile = [
   },
 ];
 
+export const days = [
+  "Yesterday", 'Today'
+]
+
 export const dose = [
   { frequency: "QD", times: 1, time: ["08:00"] },
   { frequency: "EOD", times: 1, time: ["08:00"] },

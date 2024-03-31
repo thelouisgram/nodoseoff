@@ -150,7 +150,7 @@ const DrugDetails: React.FC<drugDetailsProps> = ({
           {options && (
             <div
               ref={dropdownRef}
-              className="absolute border-[1px] border-gray-300 right-0 z-[200] top-10 text-navyBlue flex flex-col items-start justify-center mt-3 rounded-[10px] 
+              className="absolute font-Inter border-[1px] border-gray-300 right-0 z-[200] top-10 text-navyBlue flex flex-col items-start justify-center mt-3 rounded-[10px] 
         bg-white shadow-md w-[175px] ss:w-[250px] py-4 text-[16px]"
             >
               {tab !== "Completed" && (

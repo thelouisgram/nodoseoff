@@ -74,6 +74,7 @@ const Drugs: React.FC<DrugsProps> = ({
   const [tab, setTab] = useState<string>("Ongoing");
   const [displayDrugs, setDisplayDrugs] = useState(true);
   const dispatch = useDispatch();
+  
   const dropdownRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
   const handleClickOutside = (event: MouseEvent): void => {
     if (

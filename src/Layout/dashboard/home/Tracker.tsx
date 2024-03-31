@@ -1,6 +1,7 @@
 import React from "react";
 import { FaExclamationTriangle } from "react-icons/fa";
 import Image from "next/image";
+import { days } from "../../../../utils/dashboard";
 
 interface TrackerProps {
   tracker: string;
@@ -15,32 +16,32 @@ const Tracker: React.FC<TrackerProps> = ({
   displayedDoses,
   setTracker,
 }) => {
+
+  const renderedDaysTab = days.map((item, index) => {
+    return (
+      <button
+        key={index}
+        onClick={() => {
+          setTracker(item);
+        }}
+        className={`${
+          item === tracker
+            ? "text-darkBlue bg-white rounded-[6px] border shadow-sm"
+            : "text-blackII"
+        } px-3 py-2 ss:px-4 text-[14px] font-Inter w-full font-[500]`}
+      >
+        {item}
+      </button>
+    );
+  })
+
   return (
     <section className="mb-10 ss:mb-16 px-4 ss:px-8 md:px-0">
       <h3 className="text-[18px] font-semibold text-navyBlue mb-3">
         Medication Tracker
       </h3>
-      <div className="w-[300px] h-auto flex border border-gray-300 rounded-[6px]  mb-8 overflow-hidden">
-        <div
-          onClick={() => {
-            setTracker("Yesterday");
-          }}
-          className={`${
-            tracker === "Yesterday" ? "bg-navyBlue text-white" : "bg-none"
-          } w-1/2 flex justify-center cursor-pointer py-1`}
-        >
-          Yesterday
-        </div>
-        <div
-          onClick={() => {
-            setTracker("Today");
-          }}
-          className={`${
-            tracker === "Today" ? "bg-navyBlue text-white" : "bg-none"
-          } w-1/2 flex justify-center cursor-pointer py-1`}
-        >
-          Today
-        </div>
+      <div className="mb-8 bg-lightGrey border p-1 rounded-[6px] flex justify-between w-full ss:w-[400px]">
+        {renderedDaysTab}
       </div>
       {displayedDoses.length > 0 ? (
         <>
@@ -66,7 +67,7 @@ const Tracker: React.FC<TrackerProps> = ({
           </div>
         </>
       ) : (
-        <div className="w-full md:w-1/2 py-6 px-4  border border-gray-300 rounded-[10px] items-center  flex gap-3">
+        <div className="w-full md:w-1/2 py-6 px-4  border border-gray-300 rounded-[10px] items-center text-blackII flex gap-3">
           <FaExclamationTriangle /> No dose for this day
         </div>
       )}

@@ -40,7 +40,7 @@ const Account: React.FC<AccountProps> = ({
       }
       dispatch(updateUserId(""));
       dispatch(updateIsAuthenticated(false));
-      router.push("/signin");
+      router.push("/login");
       dispatch(updateSchedule([]));
     } catch (error) {
       toast.error("Error signing out: " + error);

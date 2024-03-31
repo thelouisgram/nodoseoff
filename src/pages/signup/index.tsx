@@ -135,123 +135,123 @@ const CreateAccount = () => {
 
   return (
     <>
-    <Head>
+      <Head>
         <title>NoDoseOff | DashBoard</title>
       </Head>
-    <div className="min-h-[100dvh] w-[100%] py-8 px-6 flex flex-col justify-center items-center ss:py-10 bg-navyBlue font-karla text-blackII">
-      <Image
-        src="/assets/logo/logo with name png - white color.png"
-        width={3916}
-        height={1092}
-        quality={100}
-        alt="logo"
-        className="w-[200px] h-auto mb-10"
-        priority
-      />
-      <form
-        className="bg-white rounded-[15px]  w-full ss:w-[450px] h-auto p-7 ss:p-10 mb-10"
-        onSubmit={handleSubmit}
-      >
-        <div className="mb-10">
-          <legend className="text-[24px] font-bold text-darkBlue text-center font-Inter">
-            Create an Account
-          </legend>
-          <p className="text-center text-[14px]">
-            Welcome to the future of Drug Monitoring
-          </p>
-        </div>
-        <div className="flex flex-col mb-4">
-          <label htmlFor="fullName" className="text-[14px] mb-1">
-            Full Name
-          </label>
-          <input
-            type="text"
-            id="fullName"
-            name="fullName"
-            value={formData.fullName}
-            onChange={handleInputChange}
-            className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4"
-            placeholder="Full Name"
-          />
-        </div>
-        <div className="flex flex-col mb-4">
-          <label htmlFor="email" className="text-[14px] mb-1">
-            Email
-          </label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4"
-            placeholder="Email Address"
-          />
-        </div>
-        <div className="flex flex-col mb-4">
-          <label htmlFor="phoneNumber" className="text-[14px] mb-1">
-            Phone Number
-          </label>
-          <input
-            type="text"
-            id="phoneNumber"
-            name="phoneNumber"
-            value={formData.phoneNumber}
-            onChange={handleInputChange}
-            className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4"
-            placeholder="Phone Number"
-          />
-        </div>
-        <div className="flex flex-col mb-4">
-          <label htmlFor="role" className="text-[14px] mb-1 ">
-            Select your Role:
-          </label>
-          <div className="bg-[#EDF2F7] outline-none rounded-[10px] w-full px-4 mb-4 h-[56px]">
-            <select
-              id="role"
-              name="role"
-              value={formData.role}
-              onChange={handleEffectChange}
-              className=" bg-[#EDF2F7] border-none w-full outline-none py-4 cursor-pointer h-[56px]"
-            >
-              <option value="">Select Role</option>
-              <option value="patient">Patient</option>
-              <option value="doctor">Doctor</option>
-            </select>
-          </div>
-        </div>
-        <div className="flex flex-col mb-4">
-          <label htmlFor="password" className="text-[14px] mb-1">
-            Password
-          </label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleInputChange}
-            className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4"
-            placeholder="Password"
-          />
-        </div>
-        <button
-          type="submit"
-          disabled={loading}
-          className={`bg-darkBlue text-white rounded-[10px] h-[56px] w-full items-center justify-center flex transition duration-300 font-semibold ${
-            loading ? "bg-navyBlue" : "after:"
-          }`}
+      <div className="min-h-[100dvh] w-[100%] py-8 px-6 flex flex-col justify-center items-center ss:py-10 bg-navyBlue font-karla text-blackII">
+        <Image
+          src="/assets/logo/logo with name png - white color.png"
+          width={3916}
+          height={1092}
+          quality={100}
+          alt="logo"
+          className="w-[200px] h-auto mb-10"
+          priority
+        />
+        <form
+          className="bg-white rounded-[15px]  w-full ss:w-[450px] h-auto p-7 ss:p-10 mb-10"
+          onSubmit={handleSubmit}
         >
-          {loading ? (
-            <div className="loaderInfinity"></div>
-          ) : (
-            "CREATE AN ACCOUNT"
-          )}
-        </button>
-      </form>
-      <Link href="/signin" className="text-white">
-        Already have an account? Login
-      </Link>
-    </div>
+          <div className="mb-10">
+            <legend className="text-[24px] font-bold text-darkBlue text-center font-Inter">
+              Create an Account
+            </legend>
+            <p className="text-center text-[14px]">
+              Welcome to the future of Drug Monitoring
+            </p>
+          </div>
+          <div className="flex flex-col mb-4">
+            <label htmlFor="fullName" className="text-[14px] mb-1">
+              Full Name
+            </label>
+            <input
+              type="text"
+              id="fullName"
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleInputChange}
+              className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4"
+              placeholder="Full Name"
+            />
+          </div>
+          <div className="flex flex-col mb-4">
+            <label htmlFor="email" className="text-[14px] mb-1">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4"
+              placeholder="Email Address"
+            />
+          </div>
+          <div className="flex flex-col mb-4">
+            <label htmlFor="phoneNumber" className="text-[14px] mb-1">
+              Phone Number
+            </label>
+            <input
+              type="text"
+              id="phoneNumber"
+              name="phoneNumber"
+              value={formData.phoneNumber}
+              onChange={handleInputChange}
+              className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4"
+              placeholder="Phone Number"
+            />
+          </div>
+          <div className="flex flex-col mb-4">
+            <label htmlFor="role" className="text-[14px] mb-1 ">
+              Select your Role:
+            </label>
+            <div className="bg-[#EDF2F7] outline-none rounded-[10px] w-full px-4 mb-4 h-[56px]">
+              <select
+                id="role"
+                name="role"
+                value={formData.role}
+                onChange={handleEffectChange}
+                className=" bg-[#EDF2F7] border-none w-full outline-none py-4 cursor-pointer h-[56px]"
+              >
+                <option value="">Select Role</option>
+                <option value="patient">Patient</option>
+                <option value="doctor">Doctor</option>
+              </select>
+            </div>
+          </div>
+          <div className="flex flex-col mb-4">
+            <label htmlFor="password" className="text-[14px] mb-1">
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleInputChange}
+              className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4"
+              placeholder="Password"
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className={`bg-darkBlue text-white rounded-[10px] h-[56px] w-full items-center justify-center flex transition duration-300 font-semibold ${
+              loading ? "bg-navyBlue" : "after:"
+            }`}
+          >
+            {loading ? (
+              <div className="loaderInfinity"></div>
+            ) : (
+              "CREATE AN ACCOUNT"
+            )}
+          </button>
+        </form>
+        <Link href="/login" className="text-white">
+          Already have an account? Login
+        </Link>
+      </div>
     </>
   );
 };

@@ -51,7 +51,7 @@ interface tabsProps {
 }
 
 const Page = () => {
-  const { userId, active, schedule} = useSelector(
+  const { userId, active, schedule } = useSelector(
     (state: RootState) => state.app
   );
   const dispatch = useDispatch();
@@ -75,7 +75,7 @@ const Page = () => {
 
   useEffect(() => {
     if (!userId) {
-      router.push("/signin");
+      router.push("/login");
     }
   }, []);
 
@@ -237,7 +237,7 @@ const Page = () => {
       if (error) {
         toast.error("Error signing out");
       }
-      router.push("/signin");
+      router.push("/login");
       dispatch(updateUserId(""));
       dispatch(updateSchedule([]));
     } catch (error) {

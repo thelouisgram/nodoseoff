@@ -21,7 +21,7 @@ const Testimony = () => {
           </h2>
           <div className="flex gap-3 ss:gap-6 w-full justify-center md:justify-start">
             <Link
-              href="signin"
+              href="login"
               className="px-5 py-3 border-navyBlue border rounded-[8px] bg-transparent font-semibold text-navyBlue"
             >
               Sign in

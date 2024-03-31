@@ -27,7 +27,7 @@ const Navbar = () => {
           }}
         />
         <Link
-          href="/signin"
+          href="/login"
           className="hidden ss:flex px-5 py-3 border-navyBlue border rounded-[8px] bg-transparent font-semibold text-navyBlue"
         >
           Sign in
@@ -46,7 +46,7 @@ const Navbar = () => {
       duration-300 p-6 absolute  flex-col flex gap-3 `}
       >
         <Link
-          href="/signin"
+          href="/login"
           className="px-5 py-3 border-navyBlue border rounded-[8px] text-center bg-transparent font-semibold text-navyBlue"
         >
           Sign in

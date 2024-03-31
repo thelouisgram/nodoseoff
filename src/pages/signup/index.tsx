@@ -6,6 +6,7 @@ import supabase from "../../../utils/supabaseClient";
 import { toast } from "sonner";
 import { updateIsAuthenticated, updateUserId } from "../../../store/stateSlice";
 import { useDispatch } from "react-redux";
+import Head from "next/head";
 
 const CreateAccount = () => {
   const router = useRouter();
@@ -51,8 +52,7 @@ const CreateAccount = () => {
     }
   }
 
-
-const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Password strength validation (can be customized)
     const strongPasswordRegex = /^(?=.*\d)[A-Za-z\d]{8,}$/;
@@ -69,7 +69,7 @@ const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         return;
       }
     }
-      setLoading(true);
+    setLoading(true);
     try {
       // Sign up the user
       const { error: signUpError, data } = await supabase.auth.signUp({
@@ -120,7 +120,7 @@ const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     } catch (error) {
       // Handle all unexpected errors
       toast.error("Error: " + error);
-        setLoading(false);
+      setLoading(false);
     }
 
     // Reset form data
@@ -131,24 +131,29 @@ const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
       role: "",
       password: "",
     });
-  };  
+  };
 
   return (
-    <div className="min-h-[100dvh] w-[100%] py-8 px-6 flex flex-col justify-center items-center ss:py-10 bg-navyBlue">
+    <>
+    <Head>
+        <title>NoDoseOff | DashBoard</title>
+      </Head>
+    <div className="min-h-[100dvh] w-[100%] py-8 px-6 flex flex-col justify-center items-center ss:py-10 bg-navyBlue font-karla text-blackII">
       <Image
-        src="/assets/pill perfect png2.png"
+        src="/assets/logo/logo with name png - white color.png"
         width={3916}
         height={1092}
         quality={100}
         alt="logo"
         className="w-[200px] h-auto mb-10"
+        priority
       />
       <form
         className="bg-white rounded-[15px]  w-full ss:w-[450px] h-auto p-7 ss:p-10 mb-10"
         onSubmit={handleSubmit}
       >
         <div className="mb-10">
-          <legend className="text-[24px] font-bold text-darkBlue text-center">
+          <legend className="text-[24px] font-bold text-darkBlue text-center font-Inter">
             Create an Account
           </legend>
           <p className="text-center text-[14px]">
@@ -232,17 +237,22 @@ const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         <button
           type="submit"
           disabled={loading}
-          className={`bg-darkBlue text-white rounded-[10px] h-[56px] w-full items-center justify-center flex transition duration-300 ${
+          className={`bg-darkBlue text-white rounded-[10px] h-[56px] w-full items-center justify-center flex transition duration-300 font-semibold ${
             loading ? "bg-navyBlue" : "after:"
           }`}
         >
-          {loading ? <div className="loaderInfinity"></div> : "CREATE AN ACCOUNT"}
+          {loading ? (
+            <div className="loaderInfinity"></div>
+          ) : (
+            "CREATE AN ACCOUNT"
+          )}
         </button>
       </form>
-      <Link href="/signIn" className="text-white">
+      <Link href="/signin" className="text-white">
         Already have an account? Login
       </Link>
     </div>
+    </>
   );
 };
 

@@ -15,7 +15,7 @@ const HeroSection = () => {
         </p>
         <div className="w-full justify-center">
           <Link
-            href="/createAccount"
+            href="/signup"
             className="px-5 py-3 w-[100px] bg-navyBlue rounded-[8px] font-semibold text-white"
           >
             Get Started

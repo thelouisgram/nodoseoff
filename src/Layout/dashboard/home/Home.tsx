@@ -81,49 +81,6 @@ const Home: React.FC<HomeProps> = ({
   const CDNURL =
     "https://opshqmqagtfidynwftzk.supabase.co/storage/v1/object/public/profile-picture/";
 
-  async function fetchLocalImage() {
-    try {
-      // Fetch the image from your local assets directory
-      const response = await fetch("/assets/icons8-user-100.png");
-      if (!response.ok) {
-        throw new Error("Failed to fetch image");
-      }
-
-      // Convert the image response to a blob
-      const blob = await response.blob();
-
-      return blob; // Return the image blob
-    } catch (error) {
-      console.error("Error fetching local image:", error);
-      throw new Error("Error fetching local image");
-    }
-  }
-
-  useEffect(() => {
-    const uploadImage = async () => {
-      if (profilePicture[0] === undefined) {
-        try {
-          // Fetch local image
-          const file = await fetchLocalImage();
-
-          // Upload fetched image
-          const { error: uploadError } = await supabase.storage
-            .from("profile-picture")
-            .upload(`${userId}/avatar.png`, file);
-
-          if (uploadError) {
-            console.error("Error uploading image:", uploadError);
-            return;
-          }
-        } catch (error) {
-          console.error("Error uploading image:", error);
-        }
-      }
-    };
-
-    uploadImage();
-  }, [profilePicture]);
-
   return (
     <div className="w-full h-[100dvh] overflow-y-scroll md:py-16 md:px-12 pt-10 pb-24 ss:py-10 text-navyBlue font-karla relative">
       <div className="mb-[28px] px-4 ss:px-8 md:px-0 w-full flex justify-between items-center">

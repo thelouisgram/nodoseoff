@@ -21,13 +21,13 @@ const Testimony = () => {
           </h2>
           <div className="flex gap-3 ss:gap-6 w-full justify-center md:justify-start">
             <Link
-              href="signIn"
+              href="signin"
               className="px-5 py-3 border-navyBlue border rounded-[8px] bg-transparent font-semibold text-navyBlue"
             >
               Sign in
             </Link>
             <Link
-              href="/createAccount"
+              href="/signup"
               className="px-5 py-3 bg-navyBlue rounded-[8px] font-semibold text-white"
             >
               Create new account

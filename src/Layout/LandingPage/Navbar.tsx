@@ -27,13 +27,13 @@ const Navbar = () => {
           }}
         />
         <Link
-          href="/signIn"
+          href="/signin"
           className="hidden ss:flex px-5 py-3 border-navyBlue border rounded-[8px] bg-transparent font-semibold text-navyBlue"
         >
           Sign in
         </Link>
         <Link
-          href="/createAccount"
+          href="/signup"
           className="hidden ss:flex px-5 py-3 bg-navyBlue rounded-[8px] font-semibold text-white"
         >
           Create new account
@@ -46,13 +46,13 @@ const Navbar = () => {
       duration-300 p-6 absolute  flex-col flex gap-3 `}
       >
         <Link
-          href="/signIn"
+          href="/signin"
           className="px-5 py-3 border-navyBlue border rounded-[8px] text-center bg-transparent font-semibold text-navyBlue"
         >
           Sign in
         </Link>
         <Link
-          href="/createAccount"
+          href="/signup"
           className="px-5 py-3 bg-navyBlue rounded-[8px] text-center font-semibold text-white"
         >
           Create new account

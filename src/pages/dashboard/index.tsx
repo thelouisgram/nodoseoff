@@ -37,6 +37,7 @@ import { DrugProps, ScheduleItem } from "../../../types/dashboard";
 import { uploadScheduleToServer } from "../../../utils/schedule";
 import supabase from "../../../utils/supabaseClient";
 import { tabs, tabsMobile } from "./../../../utils/dashboard";
+import Head from "next/head";
 
 interface tabsMobileProps {
   name: string;
@@ -50,7 +51,7 @@ interface tabsProps {
 }
 
 const Page = () => {
-  const { userId, active, schedule, confetti } = useSelector(
+  const { userId, active, schedule} = useSelector(
     (state: RootState) => state.app
   );
   const dispatch = useDispatch();
@@ -74,7 +75,7 @@ const Page = () => {
 
   useEffect(() => {
     if (!userId) {
-      router.push("/signIn");
+      router.push("/signin");
     }
   }, []);
 
@@ -105,7 +106,7 @@ const Page = () => {
           });
 
         if (data) {
-          dispatch(updateProfilePicture([data[0]?.name]))
+          dispatch(updateProfilePicture([data[0]?.name]));
         } else {
           console.log(71, error);
         }
@@ -188,7 +189,7 @@ const Page = () => {
 
     if (userId) {
       getInfo();
-      getProfilePicture()
+      getProfilePicture();
       getDrug();
       getEffects();
       getAllergies();
@@ -236,7 +237,7 @@ const Page = () => {
       if (error) {
         toast.error("Error signing out");
       }
-      router.push("/signIn");
+      router.push("/signin");
       dispatch(updateUserId(""));
       dispatch(updateSchedule([]));
     } catch (error) {
@@ -312,49 +313,47 @@ const Page = () => {
       }
     });
 
- async function updateCompleted(item: ScheduleItem) {
-   try {
-     const updatedSchedule = schedule.map((dose) => {
-       if (
-         dose.date === item.date &&
-         dose.time === item.time &&
-         dose.drug === item.drug
-       ) {
-         return {
-           ...dose,
-           completed: !dose.completed,
-         };
-       }
-       return dose;
-     });
+  async function updateCompleted(item: ScheduleItem) {
+    try {
+      const updatedSchedule = schedule.map((dose) => {
+        if (
+          dose.date === item.date &&
+          dose.time === item.time &&
+          dose.drug === item.drug
+        ) {
+          return {
+            ...dose,
+            completed: !dose.completed,
+          };
+        }
+        return dose;
+      });
 
-     dispatch(updateSchedule(updatedSchedule));
+      dispatch(updateSchedule(updatedSchedule));
 
-     await uploadScheduleToServer({ userId, schedule: updatedSchedule });
+      await uploadScheduleToServer({ userId, schedule: updatedSchedule });
 
-     const uncompletedDosesCount = todaysDose.filter(
-       (dose: ScheduleItem) => !dose.completed
-     ).length;
-
-   } catch (error) {
-     toast.error("An error occurred! Check Internet connection");
-     const previousSchedule = schedule.map((dose) => {
-       if (
-         dose.date === item.date &&
-         dose.time === item.time &&
-         dose.drug === item.drug
-       ) {
-         return {
-           ...dose,
-           completed: !dose.completed, 
-         };
-       }
-       return dose;
-     });
-     dispatch(updateSchedule(previousSchedule));
-   }
- }
-
+      const uncompletedDosesCount = todaysDose.filter(
+        (dose: ScheduleItem) => !dose.completed
+      ).length;
+    } catch (error) {
+      toast.error("An error occurred! Check Internet connection");
+      const previousSchedule = schedule.map((dose) => {
+        if (
+          dose.date === item.date &&
+          dose.time === item.time &&
+          dose.drug === item.drug
+        ) {
+          return {
+            ...dose,
+            completed: !dose.completed,
+          };
+        }
+        return dose;
+      });
+      dispatch(updateSchedule(previousSchedule));
+    }
+  }
 
   const dosesToRender = (tracker === "Today" ? todaysDose : yesterdaysDose)
     ?.slice()
@@ -427,138 +426,145 @@ const Page = () => {
 
   return (
     <Suspense fallback={<Loader />}>
-      {!isLoading && userId ? (
-        <section className="flex max-h-[100dvh] relative w-full bg-white">
-          <div
-            className={`${
-              !nav ? "w-[86px]" : "w-[300px]"
-            } max-h-[100dvh] bg-navyBlue py-10 pl-6 hidden font-montserrant md:flex flex-col justify-between relative transition-all duration-300`}
-          >
-            <div>
-              <div className="flex gap-5 items-center mb-12 cursor-pointer h-[60.81px]">
-                <Image
-                  onClick={() => {
-                    setNav(!nav);
-                  }}
-                  src="/assets/desktop-dashboard/menu.png"
-                  width={512}
-                  height={512}
-                  className="w-[24px] h-[24px]"
-                  alt="menu"
-                  quality={100}
-                />
-                <Link href={"/"}>
-                  <Image
-                    src="/assets/pill perfect png2.png"
-                    alt="logo"
-                    width={4672}
-                    height={1920}
-                    className={`w-[148px] h-auto ${nav ? "flex" : "hidden"}`}
-                    quality={100}
-                  />
-                </Link>
-              </div>
-              <div className="flex flex-col gap-6">{renderedTabs}</div>
-            </div>
-
-            <button onClick={logOut} className="flex items-center gap-6">
+      <Head>
+        <title>NoDoseOff | DashBoard</title>
+      </Head>
+      <section
+        className={`flex  relative w-full bg-white ${
+          isLoading ? "opacity-0 h-0" : "opacity-100 max-h-[100dvh]"
+        } transition-all`}
+      >
+        <div
+          className={`${
+            !nav ? "w-[86px]" : "w-[300px]"
+          } max-h-[100dvh] bg-navyBlue py-10 pl-6 hidden font-montserrant md:flex flex-col justify-between relative transition-all duration-300`}
+        >
+          <div>
+            <div className="flex gap-5 items-center mb-12 cursor-pointer h-[60.81px]">
               <Image
-                src="/assets/desktop-dashboard/power-off.png"
+                onClick={() => {
+                  setNav(!nav);
+                }}
+                src="/assets/desktop-dashboard/menu.png"
                 width={512}
                 height={512}
                 className="w-[24px] h-[24px]"
                 alt="menu"
-                quality={100}
+                priority
               />
-              <p
-                className={`text-[16px] text-white ${nav ? "flex" : "hidden"}`}
-              >
-                Logout
-              </p>
-            </button>
-          </div>
-          <div className="w-full">
-            {active === "Home" ? (
-              <Home
-                setEffectsForm={setEffectsForm}
-                setDrugsForm={setDrugsForm}
-                isLoading={isLoading}
-                setAllDoses={setAllDoses}
-                tracker={tracker}
-                setTracker={setTracker}
-                dosesToRender={dosesToRender}
-              />
-            ) : active === "Drugs" ? (
-              <Drugs
-                screen={screen}
-                setScreen={setScreen}
-                setDrugsForm={setDrugsForm}
-                setEditForm={setEditForm}
-                setEditModal={setEditModal}
-                setDeleteModal={setDeleteModal}
-                deleteModal={deleteModal}
-                editModal={editModal}
-                allergyModal={allergyModal}
-                setAllergyModal={setAllergyModal}
-                add={add}
-                setAdd={setAdd}
-                setEffectsForm={setEffectsForm}
-                editForm={editForm}
-                drugsForm={drugsForm}
-                effectsForm={effectsForm}
-                allergiesForm={allergiesForm}
-                setAllergiesForm={setAllergiesForm}
-              />
-            ) : active === "Tips" ? (
-              <Tips />
-            ) : (
-              <Account
-                setDrugHxForm={setDrugHxForm}
-                setProfileForm={setProfileForm}
-                setShowStats={setShowStats}
-              />
-            )}
+              <Link href={"/"}>
+                <Image
+                  src="/assets/logo/logo with name png - white color.png"
+                  alt="logo"
+                  width={1084}
+                  height={257}
+                  className={`w-[140px] h-auto ${nav ? "flex" : "hidden"}`}
+                  quality={100}
+                />
+              </Link>
+            </div>
+            <div className="flex flex-col gap-6">{renderedTabs}</div>
           </div>
 
-          <DrugsForm drugsForm={drugsForm} setDrugsForm={setDrugsForm} />
-          <EffectsForm
-            effectsForm={effectsForm}
-            setEffectsForm={setEffectsForm}
-          />
-          <EditForm editForm={editForm} setEditForm={setEditForm} />
-          <AllergiesForm
-            allergiesForm={allergiesForm}
-            setAllergiesForm={setAllergiesForm}
-          />
-          <ProfileForm
-            setProfileForm={setProfileForm}
-            profileForm={profileForm}
-          />
-          <Statistics setShowStats={setShowStats} showStats={showStats} />
-          <DrugHxForm drugHxForm={drugHxForm} setDrugHxForm={setDrugHxForm} />
-          <AllDoses
-            allDoses={allDoses}
-            setAllDoses={setAllDoses}
-            dosesToRender={dosesToRender}
-          />
-          {screen && (
-            <Screen
-              setDeleteModal={setDeleteModal}
-              setAllergyModal={setAllergyModal}
-              setEditModal={setEditModal}
-              setProfileForm={setProfileForm}
-              setScreen={setScreen}
-              setAdd={setAdd}
+          <button onClick={logOut} className="flex items-center gap-6">
+            <Image
+              src="/assets/desktop-dashboard/power-off.png"
+              width={512}
+              height={512}
+              className="w-[24px] h-[24px]"
+              alt="menu"
+              quality={100}
+            />
+            <p className={`text-[16px] text-white ${nav ? "flex" : "hidden"}`}>
+              Logout
+            </p>
+          </button>
+        </div>
+        <div className="w-full">
+          {active === "Home" ? (
+            <Home
+              setEffectsForm={setEffectsForm}
+              setDrugsForm={setDrugsForm}
+              isLoading={isLoading}
+              setAllDoses={setAllDoses}
+              tracker={tracker}
+              setTracker={setTracker}
+              dosesToRender={dosesToRender}
+            />
+          ) : active === "Drugs" ? (
+            <Drugs
               screen={screen}
+              setScreen={setScreen}
+              setDrugsForm={setDrugsForm}
+              setEditForm={setEditForm}
+              setEditModal={setEditModal}
+              setDeleteModal={setDeleteModal}
+              deleteModal={deleteModal}
+              editModal={editModal}
+              allergyModal={allergyModal}
+              setAllergyModal={setAllergyModal}
+              add={add}
+              setAdd={setAdd}
+              setEffectsForm={setEffectsForm}
+              editForm={editForm}
+              drugsForm={drugsForm}
+              effectsForm={effectsForm}
+              allergiesForm={allergiesForm}
+              setAllergiesForm={setAllergiesForm}
+            />
+          ) : active === "Tips" ? (
+            <Tips />
+          ) : (
+            <Account
+              setDrugHxForm={setDrugHxForm}
+              setProfileForm={setProfileForm}
               setShowStats={setShowStats}
             />
           )}
-          <div className="fixed w-full h-[64px] bg-white shadow bottom-0 flex justify-between items-center md:hidden px-4 ss:px-8 ss:pr-12">
-            {renderedTabsMobile}
-          </div>
-        </section>
-      ) : (
-        <Loader />
+        </div>
+
+        <DrugsForm drugsForm={drugsForm} setDrugsForm={setDrugsForm} />
+        <EffectsForm
+          effectsForm={effectsForm}
+          setEffectsForm={setEffectsForm}
+        />
+        <EditForm editForm={editForm} setEditForm={setEditForm} />
+        <AllergiesForm
+          allergiesForm={allergiesForm}
+          setAllergiesForm={setAllergiesForm}
+        />
+        <ProfileForm
+          setProfileForm={setProfileForm}
+          profileForm={profileForm}
+        />
+        <Statistics setShowStats={setShowStats} showStats={showStats} />
+        <DrugHxForm drugHxForm={drugHxForm} setDrugHxForm={setDrugHxForm} />
+        <AllDoses
+          allDoses={allDoses}
+          setAllDoses={setAllDoses}
+          dosesToRender={dosesToRender}
+        />
+        {screen && (
+          <Screen
+            setDeleteModal={setDeleteModal}
+            setAllergyModal={setAllergyModal}
+            setEditModal={setEditModal}
+            setProfileForm={setProfileForm}
+            setScreen={setScreen}
+            setAdd={setAdd}
+            screen={screen}
+            setShowStats={setShowStats}
+          />
+        )}
+        <div className="fixed w-full h-[64px] bg-white shadow bottom-0 flex justify-between items-center md:hidden px-4 ss:px-8 ss:pr-12">
+          {renderedTabsMobile}
+        </div>
+      </section>
+      {isLoading && (
+        <div className="w-full">
+          {" "}
+          <Loader />
+        </div>
       )}
     </Suspense>
   );

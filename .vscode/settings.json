@@ -4,6 +4,7 @@
         "montserrant",
         "openfda",
         "reduxjs",
+        "Signin",
         "supabase",
         "upsert"
     ]

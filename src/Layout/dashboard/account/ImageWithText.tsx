@@ -75,16 +75,19 @@ const ImageWithText: React.FC = () => {
             height={1417}
             alt="image"
           />
-          <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-start items-start text-[10px] ss:text-[14px] md:text-[16px]">
-            <div className="bg-navyBlue py-2 ss:py-4 md:py-8 px-4 w-full">
-              <div className="w-full flex justify-center font-montserrant text-white">
-                <h1 className="text-[16px] ss:text-[32px] font-semibold">
-                  NoDoseOff
-                </h1>
-              </div>
+          <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-start items-start text-[10px] ss:text-[14px] md:text-[16px] px-8">
+            <div className="w-full flex justify-center pt-6">
+              <Image
+                src="/assets/logo/logo with name png - blue color.png"
+                alt="logo"
+                width={1084}
+                height={257}
+                className={`w-[200px] h-auto `}
+                quality={100}
+              />
             </div>
-            <div className="w-full flex justify-center pt-2 ss:pt-3 text-center font-bold text-[12px] ss:text-[24px] uppercase ">
-              Drug History Summary
+            <div className="w-full flex justify-center text-center font-[500] text-[12px] ss:text-[18px] uppercase ">
+              Drug History Report
             </div>
             <div className="py-2 ss:py-3 md:py-6 px-3 ss:px-6 border-navyBlue w-full">
               <h2 className="font-semibold text-blackII mb-1 ss:mb-2 md:mb-4 text-[12px] ss:text-[16px]">

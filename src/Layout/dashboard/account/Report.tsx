@@ -9,7 +9,7 @@ interface ReportProps {
 const Report: React.FC<ReportProps> = ({ setTab }) => {
   return (
     <div className="h-[100dvh] overflow-y-scroll w-full md:py-16 md:px-12 px-4 pt-10 pb-24 ss:p-10 ss:pb-24  mb-10 text-navyBlue font-karla relative">
-      <div
+      <button
         onClick={() => setTab("Account")}
         className="flex gap-1 items-center font-Inter"
       >
@@ -21,7 +21,7 @@ const Report: React.FC<ReportProps> = ({ setTab }) => {
           className="rotate-90"
         />
         <p className="font-[500] text-[18px]">Back</p>
-      </div>
+      </button>
       <div className="mb-[28px] ">
         <h1 className="text-[24px] ss:text-[32px] font-semibold font-montserrant ">
           Reports

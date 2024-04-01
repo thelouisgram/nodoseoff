@@ -82,7 +82,7 @@ const ImageWithText: React.FC = () => {
                   alt="logo"
                   width={1084}
                   height={257}
-                  className={`w-[100px] h-[19.95px] ss:w-[150px] ss:h-[29.94px] md:w-[200px] md:h-auto`}
+                  className={`w-[100px] h-[19.95px] ss:w-[150px] ss:h-[29.94px] md:w-[200px] md:h-auto object-contain`}
                   quality={100}
                 />
             </div>

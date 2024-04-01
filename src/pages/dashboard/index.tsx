@@ -39,6 +39,7 @@ import supabase from "../../../utils/supabaseClient";
 import { tabs, tabsMobile } from "./../../../utils/dashboard";
 import Head from "next/head";
 import { Info } from "../../../utils/store";
+import Contact from "@/Layout/dashboard/account/Contact";
 
 interface tabsMobileProps {
   name: string;
@@ -64,6 +65,7 @@ const Page = () => {
   const [profileForm, setProfileForm] = useState(false);
   const [drugHxForm, setDrugHxForm] = useState(false);
   const [showStats, setShowStats] = useState(false);
+  const [showContact, setShowContact] = useState(false);
   const [allDoses, setAllDoses] = useState(false);
   const [screen, setScreen] = useState(false);
   const [tracker, setTracker] = useState("Today");
@@ -487,6 +489,7 @@ const Page = () => {
                 setDrugHxForm={setDrugHxForm}
                 setProfileForm={setProfileForm}
                 setShowStats={setShowStats}
+                setShowContact={setShowContact}
               />
             )}
           </div>
@@ -507,6 +510,10 @@ const Page = () => {
                 profileForm={profileForm}
               />
               <Statistics setShowStats={setShowStats} showStats={showStats} />
+              <Contact
+                showContact={showContact}
+                setShowContact={setShowContact}
+              />
               <DrugHxForm
                 drugHxForm={drugHxForm}
                 setDrugHxForm={setDrugHxForm}

@@ -16,16 +16,16 @@ interface AccountProps {
   setDrugHxForm: Function;
   setProfileForm: Function;
   setShowStats: Function;
+  setShowContact: Function;
 }
 
 const Account: React.FC<AccountProps> = ({
   setProfileForm,
   setDrugHxForm,
   setShowStats,
+  setShowContact,
 }) => {
-  const { info, profilePicture, userId } = useSelector(
-    (state: RootState) => state.app
-  );
+  const { info, userId } = useSelector((state: RootState) => state.app);
   const router = useRouter();
   const dispatch = useDispatch();
   const { name, phone, email, otcDrugs, herbs } = info[0];
@@ -93,7 +93,7 @@ const Account: React.FC<AccountProps> = ({
               </div>
             </div>
             <div className="w-full md:w-[600px] flex flex-col gap-4">
-              <div
+              <button
                 onClick={() => {
                   setProfileForm(true);
                 }}
@@ -109,8 +109,8 @@ const Account: React.FC<AccountProps> = ({
                   />
                   <h2 className="">Profile Settings</h2>
                 </div>
-              </div>
-              <div
+              </button>
+              <button
                 onClick={() => {
                   setDrugHxForm(true);
                 }}
@@ -126,8 +126,8 @@ const Account: React.FC<AccountProps> = ({
                   />
                   <h2 className="">Drug History</h2>
                 </div>
-              </div>
-              <div
+              </button>
+              <button
                 onClick={() => {
                   setShowStats(true);
                 }}
@@ -143,8 +143,8 @@ const Account: React.FC<AccountProps> = ({
                   />
                   <h2 className="">Statistics</h2>
                 </div>
-              </div>
-              <div
+              </button>
+              <button
                 onClick={() => {
                   setTab("Report");
                 }}
@@ -160,8 +160,13 @@ const Account: React.FC<AccountProps> = ({
                   />
                   <h2 className="">Drug Report</h2>
                 </div>
-              </div>
-              <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex justify-between gap-3 cursor-pointer">
+              </button>
+              <button
+                onClick={() => {
+                  setShowContact("Report");
+                }}
+                className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex justify-between gap-3 cursor-pointer"
+              >
                 <div className="flex gap-3">
                   <Image
                     src="/assets/account/support.png"
@@ -172,7 +177,7 @@ const Account: React.FC<AccountProps> = ({
                   />
                   <h2 className="">Contact Us</h2>
                 </div>
-              </div>
+              </button>
 
               <button
                 onClick={logOut}

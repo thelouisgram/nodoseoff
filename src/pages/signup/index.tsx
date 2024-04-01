@@ -152,11 +152,11 @@ const CreateAccount = () => {
           className="bg-white rounded-[15px]  w-full ss:w-[450px] h-auto p-7 ss:p-10 mb-10"
           onSubmit={handleSubmit}
         >
-          <div className="mb-10">
-            <legend className="text-[24px] font-bold text-darkBlue text-center font-Inter">
+          <div className="mb-10 w-full items-center flex flex-col">
+            <legend className="text-[24px] font-bold text-darkBlue font-Inter">
               Create an Account
             </legend>
-            <p className="text-center text-[14px]">
+            <p className="text-[14px]">
               Welcome to the future of Drug Monitoring
             </p>
           </div>

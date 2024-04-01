@@ -89,7 +89,7 @@ const SignIn = () => {
           className="bg-white rounded-[15px]  w-full ss:w-[450px] h-auto p-7 ss:p-10 mb-10"
           onSubmit={handleSubmit}
         >
-          <div className="mb-10">
+          <div className="mb-10 w-full items-center flex flex-col">
             <legend className="text-[24px] font-bold text-darkBlue text-center font-Inter">
               Login to your account
             </legend>

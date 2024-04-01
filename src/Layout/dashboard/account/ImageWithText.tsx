@@ -77,16 +77,14 @@ const ImageWithText: React.FC = () => {
           />
           <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-start items-start text-[8px] ss:text-[14px] md:text-[16px] px-2 md:px-6">
             <div className="w-full flex justify-center pt-2 ss:pt-6">
-            <div className="w-[100px] ss:w-[150px] md:w-[200px]">
-              <Image
-                src="/assets/logo/logo with name png - blue color.png"
-                alt="logo"
-                width={1084}
-                height={257}
-                className={`w-full h-auto aspect-[1084/257]`}
-                quality={100}
-              />
-            </div>
+                <Image
+                  src="/assets/logo/logo with name - blue color.png"
+                  alt="logo"
+                  width={1084}
+                  height={257}
+                  className={`w-[100px] h-[19.95px] ss:w-[150px] ss:h-[29.94px] md:w-[200px] md:h-auto`}
+                  quality={100}
+                />
             </div>
             <div className="w-full flex justify-center text-center font-[500] text-[8px] ss:text-[18px] uppercase ">
               Drug History Report
@@ -97,19 +95,19 @@ const ImageWithText: React.FC = () => {
               </h2>
               <div className="border border-navyBlue mb-2 ss:mb-4 md:mb-10 w-full text-[8px] ss:text-[14px] md:text-[16px]">
                 <div className="flex items-center gap-2 border-b border-navyBlue w-full capitalize">
-                  <div className="w-[105px] ss:w-[150px] py-1 md:py-3 px-2 bg-lightBlue border-r border-navyBlue font-semibold">
+                  <div className="w-[100px] ss:w-[150px] py-1 md:py-3 px-2 bg-lightBlue border-r border-navyBlue font-semibold">
                     Name:
                   </div>
                   <h4>{name}</h4>
                 </div>
                 <div className="flex items-center gap-2 border-b border-navyBlue">
-                  <div className="w-[105px] ss:w-[150px] py-1 md:py-3 px-2 bg-lightBlue border-r border-navyBlue font-semibold">
+                  <div className="w-[100px] ss:w-[150px] py-1 md:py-3 px-2 bg-lightBlue border-r border-navyBlue font-semibold">
                     Phone Number:
                   </div>
                   <h4>{phone}</h4>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-[105px] ss:w-[150px] py-1 md:py-3 px-2 bg-lightBlue border-r border-navyBlue font-semibold">
+                  <div className="w-[100px] ss:w-[150px] py-1 md:py-3 px-2 bg-lightBlue border-r border-navyBlue font-semibold">
                     Email:
                   </div>
                   <h4>{email}</h4>

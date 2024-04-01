@@ -32,8 +32,7 @@ module.exports = {
         blackBlue: "hsl(210, 20%, 18%)",
         blackII: "hsla(0, 0%, 0%, 0.7)",
         lightBlue: "hsl(196, 100%, 95%)",
-        lightGrey: "hsl(210,67%,99%)",
-        // You can add more custom colors if needed
+       lightGrey: "hsl(210, 30%, 98%)",
       },
       height: {},
     },

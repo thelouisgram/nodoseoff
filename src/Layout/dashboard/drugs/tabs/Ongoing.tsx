@@ -86,7 +86,7 @@ const Ongoing: React.FC<OngoingProps> = ({
             <h2 className="font-[500] text-[14px] ss:text-[20px] font-Inter text-navyBlue">
               Ongoing Drugs
             </h2>
-            <div className="flex w-[150px] ss:w-[300px] items-center py-1 px-2 ss:px-3 ss:py-2 border-[1px] rounded-md text-navyBlue gap-1 ss:gap-3">
+            <div className="flex w-[150px] ss:w-[300px] items-center py-1 px-2 ss:px-3 ss:py-2 border-[1px] rounded-md text-navyBlue gap-1 ss:gap-3 bg-white">
               <Image
                 src="/assets/loupe.png"
                 width="24"

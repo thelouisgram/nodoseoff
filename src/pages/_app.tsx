@@ -5,7 +5,6 @@ import store from "./../../store/index";
 import { Toaster } from "sonner";
 import Head from "next/head";
 import { useState, useEffect } from "react";
-import ScheduleReminders from "./api/sendMail";
 
 export default function App({ Component, pageProps }: AppProps) {
   const [mode, setMode] = useState("light");
@@ -49,7 +48,6 @@ export default function App({ Component, pageProps }: AppProps) {
         <title>NoDoseOff</title>
       </Head>
       <Toaster position="top-center" richColors={true} closeButton={true} />
-      <ScheduleReminders />
       <Component {...pageProps} />
     </Provider>
   );

@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import Image from "next/image";
 import { toast } from "sonner";
 
-const ImageWithText: React.FC = () => {
+const DownloadableReport: React.FC = () => {
   const { drugs, schedule, info, allergies, completedDrugs } = useSelector(
     (state: RootState) => state.app
   );
@@ -156,4 +156,4 @@ const ImageWithText: React.FC = () => {
   );
 };
 
-export default ImageWithText;
+export default DownloadableReport;

@@ -28,7 +28,7 @@ const Account: React.FC<AccountProps> = ({
   const { info, userId } = useSelector((state: RootState) => state.app);
   const router = useRouter();
   const dispatch = useDispatch();
-  const { name, phone, email, otcDrugs, herbs } = info[0];
+  const { name, phone, email } = info[0];
 
   const [tab, setTab] = useState("Account");
 

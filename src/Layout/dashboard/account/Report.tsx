@@ -1,5 +1,5 @@
 import React from "react";
-import ImageWithText from "./ImageWithText";
+import DownloadableReport from "./DownloadableReport";
 import Image from "next/image";
 
 interface ReportProps {
@@ -30,7 +30,7 @@ const Report: React.FC<ReportProps> = ({ setTab }) => {
           Share your Drug History with your Physician!
         </p>
       </div>
-      <ImageWithText />
+      <DownloadableReport />
     </div>
   );
 };

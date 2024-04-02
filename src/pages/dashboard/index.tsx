@@ -38,7 +38,6 @@ import { uploadScheduleToServer } from "../../../utils/schedule";
 import supabase from "../../../utils/supabaseClient";
 import { tabs, tabsMobile } from "./../../../utils/dashboard";
 import Head from "next/head";
-import { Info } from "../../../utils/store";
 import Contact from "@/Layout/dashboard/account/Contact";
 
 interface tabsMobileProps {
@@ -53,7 +52,7 @@ interface tabsProps {
 }
 
 const Page = () => {
-  const { userId, active, schedule, info } = useSelector(
+  const { userId, active, schedule, drugs } = useSelector(
     (state: RootState) => state.app
   );
   const dispatch = useDispatch();

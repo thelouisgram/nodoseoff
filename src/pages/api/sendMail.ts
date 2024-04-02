@@ -43,6 +43,7 @@ const sendEmailReminder = async (userId: string, info: Info[], dose: DrugProps) 
         const report = await transporter.sendMail(mailOptions);
         toast.success('Reminder email sent successfully');
     } catch (error) {
+        console.error('Error occurred while sending reminder email:', error);
         toast.error('Error occurred while sending reminder email');
     }
 };

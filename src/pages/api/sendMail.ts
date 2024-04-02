@@ -5,6 +5,7 @@ import nodemailer from 'nodemailer';
 import { RootState } from '../../../store';
 import { DrugProps } from '../../../types/dashboard';
 import { Info } from '../../../utils/store';
+import { toast } from 'sonner';
 
 /**
  * Function to send email reminders for pending doses.
@@ -13,36 +14,36 @@ import { Info } from '../../../utils/store';
  * @param {DrugProps} dose - Dose item to send reminder for.
  */
 const sendEmailReminder = async (userId: string, info: Info[], dose: DrugProps) => {
-    const { email } = info[0];
-    const { drug, time } = dose;
-    const date = new Date(); // Current date
-
-    // Compose email content
-    const mailContent = `Reminder for dose:\n- ${drug} on ${date.toDateString()} at ${time}\n`;
-
-    // Create transporter object using SMTP transport
-    const transporter = nodemailer.createTransport({
-        service: 'Gmail',
-        auth: {
-            user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASS
-        }
-    });
-
-    // Setup email data
-    const mailOptions = {
-        from: process.env.SMTP_USER,
-        to: email,
-        subject: `Dose Reminder for ${time}`,
-        text: mailContent
-    };
-
     try {
+        const { email } = info[0];
+        const { drug, time } = dose;
+        const date = new Date(); // Current date
+
+        // Compose email content
+        const mailContent = `Reminder for dose:\n- ${drug} on ${date.toDateString()} at ${time}\n`;
+
+        // Create transporter object using SMTP transport
+        const transporter = nodemailer.createTransport({
+            service: 'Gmail',
+            auth: {
+                user: process.env.SMTP_USER,
+                pass: process.env.SMTP_PASS
+            }
+        });
+
+        // Setup email data
+        const mailOptions = {
+            from: process.env.SMTP_USER,
+            to: email,
+            subject: `Dose Reminder for ${time}`,
+            text: mailContent
+        };
+
         // Send email
-        const info = await transporter.sendMail(mailOptions);
-        console.log('Reminder email sent successfully:', info);
+        const report = await transporter.sendMail(mailOptions);
+        toast.success('Reminder email sent successfully');
     } catch (error) {
-        console.error('Error occurred while sending reminder email:', error);
+        toast.error('Error occurred while sending reminder email');
     }
 };
 

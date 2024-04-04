@@ -1,18 +1,12 @@
-import React from 'react'
-import Hero from '@/Layout/LandingPage/Hero'
-import FiveWays from '@/Layout/LandingPage/FiveWays'
-import Testimony from '@/Layout/LandingPage/Testimony'
-import Footer from '@/Layout/LandingPage/Footer'
+import React from "react";
+import Hero from "@/Layout/home/Hero";
 
 const Home = () => {
   return (
-    <section className='text-blackBlue'>
+    <section className="text-blackBlue font-Inter">
       <Hero />
-      <FiveWays />
-      <Testimony />
-      <Footer />
     </section>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

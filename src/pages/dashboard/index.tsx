@@ -82,6 +82,7 @@ const Page = () => {
   }, []);
 
   useEffect(() => {
+    dispatch(updateActive("Home"))
     const fetchData = async () => {
       try {
         const [

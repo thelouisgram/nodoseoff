@@ -139,15 +139,17 @@ const CreateAccount = () => {
         <title>NoDoseOff | DashBoard</title>
       </Head>
       <div className="min-h-[100dvh] w-[100%] py-8 px-6 flex flex-col justify-center items-center ss:py-10 bg-navyBlue font-karla text-blackII">
-        <Image
-          src="/assets/logo/logo with name png - white color.png"
-          width={3916}
-          height={1092}
-          quality={100}
-          alt="logo"
-          className="w-[180px] h-auto mb-10"
-          priority
-        />
+        <Link href="/">
+          <Image
+            src="/assets/logo/logo with name png - white color.png"
+            width={3916}
+            height={1092}
+            quality={100}
+            alt="logo"
+            className="w-[180px] h-auto mb-10"
+            priority
+          />
+        </Link>
         <form
           className="bg-white rounded-[15px]  w-full ss:w-[450px] h-auto p-7 ss:p-10 mb-10"
           onSubmit={handleSubmit}

@@ -62,11 +62,11 @@ const Reports: React.FC<ReportsProps> = ({ today, selectDate }) => {
       
 
     return (
-      <div className="w-full md:w-1/2 h-full rounded-[12px]  pt-5 text-[15px] text-gray-600 font-spartan">
+      <div className="w-full md:w-full h-full rounded-[12px]  pt-5 text-[15px] text-gray-600 font-spartan">
         <h2 className="font-semibold mb-4 ss:mb-6 text-[16px] leading-none">
           {formattedDateFull}
         </h2>
-        <div className="h-full flex gap-6 flex-col leading-tight">
+        <div className="h-full flex gap-6 ip:gap-8 flex-col leading-tight">
           <div className="flex gap-3 items-center border border-[#7E1CE6] rounded-[10px]  p-4">
             <Image
               src="/assets/daily-reports/drug.png"
@@ -82,7 +82,7 @@ const Reports: React.FC<ReportsProps> = ({ today, selectDate }) => {
               <p className="capitalize">{drugsString || "N/A"}</p>
             </div>
           </div>
-          <div className="flex gap-3 items-center border border-[#D4389B] rounded-[10px]  p-4">
+          <div className="flex gap-3 items-center border border-[#D4389B] rounded-[10px] p-4">
             <Image
               src="/assets/daily-reports/check.png"
               width="512"

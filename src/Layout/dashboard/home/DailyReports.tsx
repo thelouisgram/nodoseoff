@@ -32,7 +32,7 @@ export default function DailyReports() {
   // Return the JSX structure for the calendar component
   return (
     <section className="w-full flex flex-col ip:flex-row items-start gap-4 ip:gap-10 px-4 ss:px-6 md:px-0 ss:pb-20 md:pb-0 h-auto text-[16px] font-Karla text-navyBlue">
-      <div className="flex gap-10 w-full ip:max-w-[500px] bg-white border rounded-[16px] flex-col p-3 ss:p-5 h-auto pb-4 ss:pb-5 font-karla text">
+      <div className="flex gap-10 w-full ip:max-w-[500px] bg-white border border-gray-300 rounded-[16px] flex-col p-3 ss:p-5 h-auto pb-4 ss:pb-5 font-karla text">
         <div className="w-auto h-full">
           <div className="flex justify-between items-center">
             <div className="flex justify-between w-full items-center mb-4">
@@ -88,14 +88,7 @@ export default function DailyReports() {
                   <div
                     key={index}
                     className={cn(
-                      "p-2 text-center relative h-12 md:h-14 grid place-content-center",
-                      {
-                        "bg-darkPink text-white":
-                          today && !isPastDate && !isSelected,
-                        "bg-darkBlue text-white": isSelected && !isPastDate,
-                        "hover:bg-[#7E1CE6] hover:text-white transition-all cursor-pointer select-none":
-                          true,
-                      }
+                      "p-2 text-center relative h-12 md:h-14 grid place-content-center"
                     )}
                     onClick={() => {
                       setSelectDate(date);
@@ -105,12 +98,16 @@ export default function DailyReports() {
                       className={cn(
                         // Conditionally applying classes based on date properties
                         currentMonth ? "" : "text-gray-400",
-                        today ? "bg-darkPink text-white " : "",
+                        today
+                          ? "border-[4px] border-dotted border-[#0054DB]"
+                          : "",
                         selectDate.toDate().toDateString() ===
                           date.toDate().toDateString()
-                          ? "bg-darkBlue text-white"
+                          ? "border border-[#0054DB]"
                           : "",
-                        "h-10 w-10 rounded-full grid place-content-center hover:bg-[#7E1CE6] hover:text-white transition-all cursor-pointer select-none"
+                        `h-10 w-10 rounded-full grid place-content-center ${
+                          today ? "hover-border-[4px]" : "hover:border"
+                        } border-gray-300 transition-all cursor-pointer select-none`
                       )}
                       onClick={() => {
                         setSelectDate(date); // Update 'selectDate' state when a date is clicked
@@ -118,12 +115,13 @@ export default function DailyReports() {
                     >
                       {date.date()} {/* Displaying the date number */}
                       {/* Display the dot element based on completion percentage */}
-                      {isPastDate &&
+                      {!today &&
+                        isPastDate &&
                         completionTally[dayjs(date).format("YYYY-MM-DD")]
                           ?.total > 0 && (
-                          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2">
+                          <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2">
                             <div
-                              className="w-1 h-1 rounded-full"
+                              className="w-[5px] h-[5px] rounded-full"
                               style={{
                                 backgroundColor:
                                   completionPercentage === 100

@@ -208,19 +208,17 @@ const CreateAccount = () => {
             <label htmlFor="role" className="text-[14px] mb-1 ">
               Select your Role:
             </label>
-            <div className="bg-[#EDF2F7] outline-none rounded-[10px] w-full px-4 mb-4 h-[56px]">
               <select
                 id="role"
                 name="role"
                 value={formData.role}
                 onChange={handleEffectChange}
-                className=" bg-[#EDF2F7] border-none w-full outline-none py-4 cursor-pointer h-[56px]"
+                className=" bg-[#EDF2F7] border-none w-full rounded-[10px] outline-none p-4 cursor-pointer h-[56px]"
               >
                 <option value="">Select Role</option>
                 <option value="patient">Patient</option>
                 <option value="doctor">Doctor</option>
               </select>
-            </div>
           </div>
           <div className="flex flex-col mb-4">
             <label htmlFor="password" className="text-[14px] mb-1">

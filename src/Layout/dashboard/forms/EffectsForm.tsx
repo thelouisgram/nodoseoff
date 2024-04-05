@@ -1,6 +1,6 @@
 "use-client";
 import Image from "next/image";
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../../store";
@@ -98,6 +98,20 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
     }
   };
 
+  const handleClick = () => {
+    const syntheticEvent = new Event(
+      "submit"
+    ) as unknown as FormEvent<HTMLFormElement>;
+    handleSubmit(syntheticEvent);
+  };
+
+  useEffect(() => {
+    const formElement = document.getElementById("top-effects");
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [effectsForm]);
+
   return (
     <div
       className={`${
@@ -111,99 +125,94 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
             : "-left-[450px] ss:w-[450px] h-full"
         } transition-all duration-300 absolute  bg-white h-full w-full z-[4] `}
       >
-        <div className={`h-[100dvh] w-full bg-white p-8 overflow-y-scroll text-blackII`}>
-          <form
-            onSubmit={handleSubmit}
-            className="h-auto md:h-full relative flex flex-col justify-between w-auto"
-          >
-            <div>
-              <div className="w-full flex justify-end mb-10">
-                <Image
-                  src="/assets/x (1).png"
-                  width={18}
-                  height={18}
-                  quality={100}
-                  alt="cancel"
-                  onClick={() => {
-                    setEffectsForm(false);
-                  }}
-                  className="cursor-pointer"
+        <div
+          className={`h-full flex flex-col w-full justify-between gap-8 p-8 pt-0 overflow-y-scroll bg-white`}
+        >
+          <div className="w-full bg-white">
+            <div className="w-full flex justify-end mb-10">
+              <Image
+                src="/assets/x (1).png"
+                width={18}
+                height={18}
+                quality={100}
+                alt="cancel"
+                onClick={() => {
+                  setEffectsForm(false);
+                }}
+                id="top-effects"
+                className="cursor-pointer pt-8"
+              />
+            </div>
+            <h1 className="text-[24px] text-darkBlue font-bold">
+              Add Side Effect
+            </h1>
+            <p className="text-[14px] mb-10 text-blackII">
+              To ensure adequate monitoring of adverse effects.
+            </p>
+            <form
+              onSubmit={handleSubmit}
+              className="h-auto min-h-[300px] relative flex flex-col w-auto"
+            >
+              <div className="flex flex-col mb-8">
+                <label
+                  htmlFor="effect"
+                  className="text-[14px] mb-1 font-semibold text-navyBlue"
+                >
+                  Side Effect
+                </label>
+                <input
+                  type="text"
+                  id="effect"
+                  name="effect"
+                  value={formData.effect}
+                  onChange={handleInputChange}
+                  className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 capitalize h-[56px]"
+                  placeholder="Side Effect"
                 />
               </div>
-              <div className="mb-10">
-                <h1 className="text-[24px] text-darkBlue font-bold">
-                  Add Side Effect
-                </h1>
-                <p className="text-[14px] text-blackII">
-                  To ensure adequate monitoring of adverse effects.
-                </p>
+              <div className="flex flex-col mb-8">
+                <label
+                  htmlFor="severity"
+                  className="text-[14px] mb-1 font-semibold text-navyBlue"
+                >
+                  Select Side Effect severity
+                </label>
+                <select
+                  id="severity"
+                  name="severity"
+                  value={formData.severity}
+                  onChange={handleEffectChange}
+                  className=" bg-[#EDF2F7] border-none w-full outline-none p-4 cursor-pointer h-[56px]"
+                >
+                  <option value="mild">Mild</option>
+                  <option value="intermediate">Intermediate</option>
+                  <option value="severe">Severe</option>
+                </select>
               </div>
-              <div>
-                <div className="flex flex-col mb-4">
-                  <label
-                    htmlFor="effect"
-                    className="text-[14px] mb-1 font-semibold text-navyBlue"
-                  >
-                    Side Effect
-                  </label>
-                  <input
-                    type="text"
-                    id="effect"
-                    name="effect"
-                    value={formData.effect}
-                    onChange={handleInputChange}
-                    className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4 capitalize h-[56px]"
-                    placeholder="Side Effect"
-                  />
-                </div>
-                <div className="flex flex-col mb-4">
-                  <label
-                    htmlFor="severity"
-                    className="text-[14px] mb-1 font-semibold text-navyBlue"
-                  >
-                    Select Side Effect severity
-                  </label>
-                  <div className="bg-[#EDF2F7] outline-none rounded-[10px] w-full px-4 mb-4 h-[56px]">
-                    <select
-                      id="severity"
-                      name="severity"
-                      value={formData.severity}
-                      onChange={handleEffectChange}
-                      className=" bg-[#EDF2F7] border-none w-full outline-none py-4 cursor-pointer h-[56px]"
-                    >
-                      <option value="mild">Mild</option>
-                      <option value="intermediate">Intermediate</option>
-                      <option value="severe">Severe</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="flex flex-col w-full">
-                  <label
-                    htmlFor="end"
-                    className="text-[14px] mb-1 font-semibold text-navyBlue"
-                  >
-                    Select Date
-                  </label>
-                  <div className="w-full bg-[#EDF2F7] pr-4 h-[56px] rounded-[10px]">
-                    <input
-                      type="date"
-                      id="date"
-                      name="date"
-                      value={formData.date}
-                      onChange={handleInputChange}
-                      className="border border-none bg-[#EDF2F7] outline-none rounded-[10px] p-4 pr-0 w-full h-[56px]"
-                    />
-                  </div>
-                </div>
+              <div className="flex flex-col w-full">
+                <label
+                  htmlFor="end"
+                  className="text-[14px] mb-1 font-semibold text-navyBlue"
+                >
+                  Select Date
+                </label>
+                <input
+                  type="date"
+                  id="date"
+                  name="date"
+                  value={formData.date}
+                  onChange={handleInputChange}
+                  className="border border-none bg-[#EDF2F7] outline-none rounded-[10px] p-4 w-full h-[56px]"
+                />
               </div>
-            </div>
-            <button
-              type="submit"
-              className="mt-8 md:mt-0 font-semibold md:absolute md:top-[90%] bg-darkBlue text-white rounded-[10px] w-full text-center py-4  px-4 hover:bg-navyBlue transition duration-300"
-            >
-              PROCEED
-            </button>
-          </form>
+            </form>
+          </div>
+          <button
+            onClick={handleClick}
+            className="font-semibold bg-darkBlue text-white rounded-[10px] w-full text-center py-4  px-4 hover:bg-navyBlue transition duration-300"
+          >
+            PROCEED
+          </button>
         </div>
       </div>
       <div

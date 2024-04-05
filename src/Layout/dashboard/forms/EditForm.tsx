@@ -87,6 +87,13 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
     }
   }, [currentDrug]);
 
+   useEffect(() => {
+     const formElement = document.getElementById("top-edit");
+     if (formElement) {
+       formElement.scrollIntoView({ behavior: "smooth", block: "start" });
+     }
+   }, [editForm]);
+
   useEffect(() => {
     let defaultTimeValues: string[] = [];
 
@@ -269,32 +276,31 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
   return (
     <div
       className={` ${
-        editForm ? "w-full min-h-[100dvh] h-full" : "w-0 h-0"
+        editForm ? "w-full h-[100dvh]" : "w-0 h-0"
       } left-0 bg-none fixed z-[2]`}
     >
       <div
         className={` ${
-          editForm
-            ? "left-0 ss:w-[450px] h-full"
-            : "-left-[450px] ss:w-[450px] h-full"
-        } transition-all duration-300 absolute w-full bg-white h-full z-[4] `}
+          editForm ? "left-0 ss:w-[450px]" : "-left-[450px] ss:w-[450px] "
+        } transition duration-300 absolute w-full bg-white h-full z-[4] `}
       >
         <div
-          className={` h-[100dvh] w-full bg-white p-8 overflow-y-scroll app`}
+          className={`h-full flex flex-col w-full justify-between gap-8 p-8 pt-0 overflow-y-scroll bg-white`}
         >
-          <div className="w-full flex justify-end mb-10">
-            <Image
-              src="/assets/x (1).png"
-              width={18}
-              height={18}
-              alt="cancel"
-              onClick={() => {
-                setEditForm(false);
-              }}
-              className="cursor-pointer"
-            />
-          </div>
-          <div className="mb-10">
+          <div className="w-full bg-white">
+            <div className="w-full flex justify-end mb-10">
+              <Image
+                src="/assets/x (1).png"
+                width={18}
+                height={18}
+                alt="cancel"
+                onClick={() => {
+                  setEditForm(false);
+                }}
+                id="top-edit"
+                className="cursor-pointer pt-8"
+              />
+            </div>
             <h1 className="text-[24px] text-darkBlue font-bold">Edit Drug</h1>
             <p className="text-[14px] text-blackII">
               To ensure adequate tracking of drug compliance.
@@ -304,7 +310,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
             onSubmit={handleSubmit}
             className="h-auto flex flex-col justify-between"
           >
-            <div className="flex flex-col mb-4">
+            <div className="flex flex-col mb-8">
               <label
                 htmlFor="drug"
                 className="text-[14px] mb-1 font-semibold text-navyBlue"
@@ -318,7 +324,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
                 name="drug"
                 value={formData.drug}
                 onChange={handleInputChange}
-                className="border bg-[#EDF2F7] border-none outline-none text-blackII rounded-[10px] p-4 mb-4 capitalize h-[56px]"
+                className="border bg-[#EDF2F7] border-none outline-none text-blackII rounded-[10px] p-4 capitalize h-[56px]"
                 placeholder="Name of Drug"
               />
             </div>
@@ -329,13 +335,12 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
               >
                 Routes of Administration
               </label>
-              <div className="bg-[#EDF2F7] outline-none rounded-[10px] w-full px-4 mb-4 h-[56px]">
                 <select
                   id="route"
                   name="route"
                   value={formData.route}
                   onChange={handleSelectChange("route")}
-                  className=" bg-[#EDF2F7] border-none w-full outline-none py-4 text-blackII cursor-pointer h-[56px]"
+                  className=" bg-[#EDF2F7] border-none rounded-[10px] w-full outline-none p-4 text-blackII cursor-pointer h-[56px]"
                 >
                   <option value="">Select Route</option>
                   <option value="oral">Oral</option>
@@ -346,22 +351,20 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
                   <option value="rectal">Rectal</option>
                   <option value="sublingual">Sublingual</option>
                 </select>
-              </div>
             </div>
-            <div className="flex flex-col mb-4">
+            <div className="flex flex-col mb-8">
               <label
                 htmlFor="frequency"
                 className="text-[14px] mb-1 font-semibold text-navyBlue"
               >
                 Frequency
               </label>
-              <div className="bg-[#EDF2F7] outline-none rounded-[10px] w-full px-4 mb-4 h-[56px]">
                 <select
                   id="frequency"
                   name="frequency"
                   value={formData.frequency}
                   onChange={handleSelectChange("frequency")}
-                  className=" bg-[#EDF2F7] border-none w-full outline-none py-4 text-blackII cursor-pointer h-[56px]"
+                  className=" bg-[#EDF2F7] border-none w-full rounded-[10px] outline-none p-4 text-blackII cursor-pointer h-[56px]"
                 >
                   <option value="">Select Frequency</option>
                   <option value="QD">Once Daily</option>
@@ -373,7 +376,6 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
                   <option value="BW">Biweekly</option>
                   <option value="M">Monthly</option>
                 </select>
-              </div>
             </div>
             {formData.frequency && (
               <div className="flex flex-col mb-4">
@@ -395,7 +397,6 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
               >
                 Select Start Date
               </label>
-              <div className="w-full bg-[#EDF2F7] pr-4 mb-8 pb-0 rounded-[10px] h-[56px]">
                 <input
                   type="date"
                   id="start"
@@ -403,9 +404,8 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
                   disabled={true}
                   value={getCurrentDate()}
                   onChange={handleInputChange}
-                  className="border bg-[#EDF2F7] border-none outline-none w-full text-blackII rounded-[10px] py-4 pl-4 h-[56px]"
+                  className="border bg-[#EDF2F7] border-none outline-none w-full text-blackII rounded-[10px] p-4 mb-8 h-[56px]"
                 />
-              </div>
               <div className="flex flex-col mb-8 w-full">
                 <label
                   htmlFor="end"
@@ -413,16 +413,14 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
                 >
                   Select End Date
                 </label>
-                <div className="w-full bg-[#EDF2F7] pr-4 pb-0 rounded-[10px] h-[56px]">
                   <input
                     type="date"
                     id="end"
                     name="end"
                     value={formData.end}
                     onChange={handleInputChange}
-                    className="border bg-[#EDF2F7] border-none outline-none w-full text-blackII rounded-[10px] py-4 pl-4 h-[56px]"
+                    className="border bg-[#EDF2F7] border-none outline-none w-full text-blackII rounded-[10px] p-4  h-[56px]"
                   />
-                </div>
               </div>
             </div>
             <div className="flex gap-2 items-center">

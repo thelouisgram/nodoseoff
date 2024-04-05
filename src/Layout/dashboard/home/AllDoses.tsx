@@ -38,21 +38,28 @@ const AllDoses: React.FC<AllDosesProps> = ({
     };
   }, []);
 
+  useEffect(() => {
+    const formElement = document.getElementById("top-allDoses");
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [allDoses]);
+
   return (
     <div
       className={`${
-        allDoses ? "w-full min-h-[100dvh] h-full" : "w-0 h-0"
-      } right-0 bg-none fixed z-[32]`}
+        allDoses ? "w-full h-[100dvh]" : "w-0 h-0"
+      } right-0 bg-none fixed z-[2]`}
     >
       <div
         ref={dropdownRef}
         className={`${
-          allDoses
-            ? "right-0 ss:w-[450px] h-full"
-            : "-right-[450px] ss:w-[450px] h-full"
-        } transition-all duration-300 absolute  bg-white h-full w-full z-[4] `}
+          allDoses ? "right-0 ss:w-[450px]" : "-right-[450px] ss:w-[450px] "
+        } transition duration-300 absolute w-full bg-white h-full z-[4] `}
       >
-        <div className={` h-[100dvh] w-full bg-white p-8 overflow-y-scroll`}>
+        <div
+          className={`h-full flex flex-col w-full p-8 pt-0 overflow-y-scroll bg-white`}
+        >
           <div className="w-full flex justify-end mb-10">
             <Image
               src="/assets/x (1).png"
@@ -62,7 +69,8 @@ const AllDoses: React.FC<AllDosesProps> = ({
               onClick={() => {
                 setAllDoses(false);
               }}
-              className="cursor-pointer"
+              id="top-allDoses"
+              className="cursor-pointer pt-8"
             />
           </div>
           <div className="mb-10">

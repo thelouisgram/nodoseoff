@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import { RootState } from "../../../../store";
@@ -30,6 +30,13 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
     time: [""],
     reminder: true,
   });
+
+  useEffect(() => {
+    const formElement = document.getElementById("top-allergies");
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [allergiesForm]);
 
   const [formErrors, setFormErrors] = useState({
     drug: "",
@@ -119,47 +126,55 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
     }
   };
 
+  const handleClick = () => {
+    const syntheticEvent = new Event(
+      "submit"
+    ) as unknown as FormEvent<HTMLFormElement>;
+    handleSubmit(syntheticEvent);
+  };
+
   return (
     <div
       className={`${
-        allergiesForm ? "w-full min-h-[100dvh] h-full" : "w-0 h-0"
+        allergiesForm ? "w-full h-[100dvh]" : "w-0 h-0"
       } left-0 bg-none fixed z-[2]`}
     >
       <div
         className={`${
-          allergiesForm
-            ? "left-0 ss:w-[450px] h-full"
-            : "-left-[450px] ss:w-[450px] h-full"
-        } transition-all duration-300 absolute  bg-white h-full w-full z-[4] `}
+          allergiesForm ? "left-0 ss:w-[450px]" : "-left-[450px] ss:w-[450px] "
+        } transition duration-300 absolute w-full bg-white h-full z-[4] `}
       >
-        <div className={`h-[100dvh] w-full bg-white p-8 overflow-y-scroll text-blackII`}>
-          <form
-            onSubmit={handleSubmit}
-            className="h-auto md:h-full relative flex flex-col justify-between w-auto "
-          >
+        <div
+          className={`h-full flex flex-col w-full justify-between gap-8 p-8 pt-0 overflow-y-scroll bg-white`}
+        >
+          <div className="w-full">
+            <div className="w-full flex justify-end mb-10">
+              <Image
+                src="/assets/x (1).png"
+                width={18}
+                height={18}
+                quality={100}
+                alt="cancel"
+                onClick={() => {
+                  setAllergiesForm(false);
+                }}
+                id="top-allergies"
+                className="cursor-pointer pt-8"
+              />
+            </div>
+            <div className="mb-10">
+              <h1 className="text-[24px] text-darkBlue font-bold">
+                Add Drug Allergies
+              </h1>
+              <p className="text-[14px] text-blackII">
+                To ensure adequate monitoring of Allergies.
+              </p>
+            </div>
             <div>
-              <div className="w-full flex justify-end mb-10">
-                <Image
-                  src="/assets/x (1).png"
-                  width={18}
-                  height={18}
-                  quality={100}
-                  alt="cancel"
-                  onClick={() => {
-                    setAllergiesForm(false);
-                  }}
-                  className="cursor-pointer"
-                />
-              </div>
-              <div className="mb-10">
-                <h1 className="text-[24px] text-darkBlue font-bold">
-                  Add Drug Allergies
-                </h1>
-                <p className="text-[14px] text-blackII">
-                  To ensure adequate monitoring of Allergies.
-                </p>
-              </div>
-              <div>
+              <form
+                onSubmit={handleSubmit}
+                className="h-auto md:h-full relative flex flex-col justify-between w-auto "
+              >
                 <div className="flex flex-col mb-4">
                   <label
                     htmlFor="drug"
@@ -177,15 +192,15 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
                     placeholder="Drug Allergy"
                   />
                 </div>
-              </div>
+              </form>
             </div>
-            <button
-              type="submit"
-              className="mt-4 font-semibold relative md:absolute md:top-[90%] bg-darkBlue text-white rounded-[10px] w-full text-center py-4  px-4 hover:bg-navyBlue transition duration-300"
-            >
-              PROCEED
-            </button>
-          </form>
+          </div>
+          <button
+            onClick={handleClick}
+            className="font-semibold bg-darkBlue text-white rounded-[10px] w-full text-center py-4  px-4 hover:bg-navyBlue transition duration-300"
+          >
+            PROCEED
+          </button>
         </div>
       </div>
       <div

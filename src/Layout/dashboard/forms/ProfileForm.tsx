@@ -27,32 +27,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
   const { info, userId, profilePicture } = useSelector(
     (state: RootState) => state.app
   );
-  
+
   const { name, phone, email, role, otcDrugs, herbs } = info[0];
   const dispatch = useDispatch();
-
-  const dropdownRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
-  const handleClickOutside = (event: MouseEvent): void => {
-    if (
-      dropdownRef.current &&
-      !dropdownRef.current.contains(event.target as Node)
-    ) {
-      setProfileForm(false);
-    }
-  };
-  useEffect(() => {
-    const handleOutsideClick = (event: MouseEvent): void => {
-      handleClickOutside(event);
-    };
-
-    // add event listener for clicks outside of dropdown
-    document.addEventListener("mousedown", handleOutsideClick);
-
-    return () => {
-      // remove event listener when component unmounts
-      document.removeEventListener("mousedown", handleOutsideClick);
-    };
-  }, []);
 
   const [formData, setFormData] = useState({
     name: name,
@@ -122,117 +99,135 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
   const CDNURL =
     "https://opshqmqagtfidynwftzk.supabase.co/storage/v1/object/public/profile-picture/";
 
+    const handleClick = () => {
+      const syntheticEvent = new Event(
+        "submit"
+      ) as unknown as FormEvent<HTMLFormElement>;
+      handleSubmit(syntheticEvent);
+    };
+
+    useEffect(() => {
+    const formElement = document.getElementById("top-profile");
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [profileForm]);
+
   return (
     <div
       className={` ${
-        profileForm ? "w-full h-[100dvh] over" : "w-0 h-0"
-      } right-0 bg-none fixed z-[32]`}
+        profileForm ? "w-full h-[100dvh]" : "w-0 h-0"
+      } right-0 bg-none fixed z-[2]`}
     >
       <div
-        ref={dropdownRef}
         className={` ${
-          profileForm
-            ? "right-0 ss:w-[450px] h-full"
-            : "-right-[450px] ss:w-[450px] h-full"
-        } transition-all duration-300 absolute w-full bg-white h-full z-[4] `}
+          profileForm ? "right-0 ss:w-[450px]" : "-right-[450px] ss:w-[450px] "
+        } transition duration-300 absolute w-full bg-white h-full z-[4] `}
       >
-        <div className={`h-[100dvh] w-full bg-white p-8 overflow-y-scroll text-blackII`}>
-          <div className="w-full flex justify-end mb-10">
-            <Image
-              src="/assets/x (1).png"
-              width={18}
-              height={18}
-              alt="cancel"
-              onClick={() => {
-                setProfileForm(false);
-              }}
-              className="cursor-pointer"
-            />
-          </div>
-          <div className="mb-10">
-            <h1 className="text-[24px] text-darkBlue font-bold">Basic Data</h1>
-          </div>
-          <form
-            onSubmit={handleSubmit}
-            className="h-auto flex flex-col justify-between w-full"
-          >
-            <div className=" mb-8 text-navyBlue">
-              <div className="text-[14px] mb-1 font-semibold ">
-                Change your Profile Picture
-              </div>
-              <div className="flex items-center h-full gap-4">
-                <label htmlFor="avatarInput" className="cursor-pointer">
-                  <input
-                    type="file"
-                    id="avatarInput"
-                    accept="image/*"
-                    style={{ display: "none" }}
-                    onChange={updateImage}
-                  />
-                  <div className="w-[100px] h-[100px] rounded-full overflow-hidden">
-                    <Image
-                      src={
-                        CDNURL + userId + '/avatar.png' ||
-                        "/assets/icons8-user-100.png"
-                      }
-                      width={3000}
-                      height={3000}
-                      alt="user"
-                      quality={100}
-                      className="w-[150px] h-[100px] object-cover"
-                      priority
-                    />
-                  </div>
-                </label>
-              </div>
+        <div
+          className={`h-full flex flex-col w-full justify-between gap-8 p-8 pt-0 overflow-y-scroll bg-white`}
+        >
+          <div>
+            <div className="w-full flex justify-end mb-10">
+              <Image
+                src="/assets/x (1).png"
+                width={18}
+                height={18}
+                alt="cancel"
+                onClick={() => {
+                  setProfileForm(false);
+                }}
+                id="top-profile"
+                className="cursor-pointer pt-8"
+              />
             </div>
-            <div className="w-full">
-              <div className="flex flex-col mb-4">
-                <label
-                  htmlFor="name"
-                  className="text-[14px] mb-1 font-semibold text-navyBlue"
-                >
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  required
-                  onChange={handleInputChange}
-                  className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4 capitalize h-[56px] "
-                  placeholder="Enter your Full Name"
-                />
-              </div>
+            <div className="mb-10">
+              <h1 className="text-[24px] text-darkBlue font-bold">
+                Basic Data
+              </h1>
             </div>
-            <div className="w-full">
-              <div className="flex flex-col mb-4">
-                <label
-                  htmlFor="phone"
-                  className="text-[14px] mb-1 font-semibold text-navyBlue"
-                >
-                  Phone Number
-                </label>
-                <input
-                  type="phone"
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
-                  required
-                  onChange={handleInputChange}
-                  className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4 capitalize h-[56px] "
-                  placeholder="Enter your Full Name"
-                />
-              </div>
-            </div>
-            <button
-              type="submit"
-              className="mt-8 font-semibold bg-darkBlue text-white rounded-[10px] w-full text-center py-4  px-4 hover:bg-navyBlue transition duration-300"
+            <form
+              onSubmit={handleSubmit}
+              className="h-auto flex flex-col justify-between w-full"
             >
-              UPDATE PROFILE
-            </button>
-          </form>
+              <div className=" mb-8 text-navyBlue">
+                <div className="text-[14px] mb-1 font-semibold ">
+                  Change your Profile Picture
+                </div>
+                <div className="flex items-center h-full gap-4">
+                  <label htmlFor="avatarInput" className="cursor-pointer">
+                    <input
+                      type="file"
+                      id="avatarInput"
+                      accept="image/*"
+                      style={{ display: "none" }}
+                      onChange={updateImage}
+                    />
+                    <div className="w-[100px] h-[100px] rounded-full overflow-hidden">
+                      <Image
+                        src={
+                          CDNURL + userId + "/avatar.png" ||
+                          "/assets/icons8-user-100.png"
+                        }
+                        width={3000}
+                        height={3000}
+                        alt="user"
+                        quality={100}
+                        className="w-[150px] h-[100px] object-cover"
+                        priority
+                      />
+                    </div>
+                  </label>
+                </div>
+              </div>
+              <div className="w-full">
+                <div className="flex flex-col mb-4">
+                  <label
+                    htmlFor="name"
+                    className="text-[14px] mb-1 font-semibold text-navyBlue"
+                  >
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    required
+                    onChange={handleInputChange}
+                    className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4 capitalize h-[56px] "
+                    placeholder="Enter your Full Name"
+                  />
+                </div>
+              </div>
+              <div className="w-full">
+                <div className="flex flex-col mb-4">
+                  <label
+                    htmlFor="phone"
+                    className="text-[14px] mb-1 font-semibold text-navyBlue"
+                  >
+                    Phone Number
+                  </label>
+                  <input
+                    type="phone"
+                    id="phone"
+                    name="phone"
+                    value={formData.phone}
+                    required
+                    onChange={handleInputChange}
+                    className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4 capitalize h-[56px] "
+                    placeholder="Enter your Full Name"
+                  />
+                </div>
+              </div>
+            </form>
+          </div>
+          <button
+            onClick={handleClick}
+            className="font-semibold bg-darkBlue text-white rounded-[10px] w-full text-center py-4  px-4 hover:bg-navyBlue transition duration-300"
+          >
+            PROCEED
+          </button>
         </div>
       </div>
       <div

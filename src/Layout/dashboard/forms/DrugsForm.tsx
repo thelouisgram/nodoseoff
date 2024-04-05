@@ -25,6 +25,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
   const { drugs, schedule, userId, allergies } = useSelector(
     (state: RootState) => state.app
   );
+
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     drug: "",
@@ -59,6 +60,13 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
       });
     }
   }, [formData.frequency]);
+
+  useEffect(() => {
+    const formElement = document.getElementById("top-drug");
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [drugsForm]);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
@@ -105,16 +113,15 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
 
   const timeInput = formData.time.map((item: string, index: number) => {
     return (
-      <div key={index} className="bg-[#EDF2F7] pr-4 rounded-[10px] h-[56px]">
-        <input
-          type="time"
-          id={`time-${index}`}
-          name={`time-${index}`}
-          value={formData.time[index]}
-          onChange={handleInputChange}
-          className="border border-none bg-[#EDF2F7] outline-none text-blackII p-4 pr-0 w-full rounded-[10px] h-[56px]"
-        />
-      </div>
+      <input
+        key={index}
+        type="time"
+        id={`time-${index}`}
+        name={`time-${index}`}
+        value={formData.time[index]}
+        onChange={handleInputChange}
+        className="border border-none bg-[#EDF2F7] outline-none text-blackII p-4 w-full rounded-[10px] h-[56px]"
+      />
     );
   });
 
@@ -230,33 +237,41 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
     });
   };
 
+  const handleClick = () => {
+    const syntheticEvent = new Event(
+      "submit"
+    ) as unknown as FormEvent<HTMLFormElement>;
+    handleSubmit(syntheticEvent);
+  };
+
   return (
     <div
       className={` ${
-        drugsForm ? "w-full h-[100dvh] over" : "w-0 h-0"
+        drugsForm ? "w-full h-[100dvh]" : "w-0 h-0"
       } left-0 bg-none fixed z-[2]`}
     >
       <div
         className={` ${
-          drugsForm
-            ? "left-0 ss:w-[450px] h-full"
-            : "-left-[450px] ss:w-[450px] h-full"
-        } transition-all duration-300 absolute w-full bg-white h-full z-[4] `}
+          drugsForm ? "left-0 ss:w-[450px]" : "-left-[450px] ss:w-[450px] "
+        } transition duration-300 absolute w-full bg-white h-full z-[4] `}
       >
-        <div className={`h-[100dvh] w-full bg-white p-8 overflow-y-scroll app`}>
-          <div className="w-full flex justify-end mb-10">
-            <Image
-              src="/assets/x (1).png"
-              width={18}
-              height={18}
-              alt="cancel"
-              onClick={() => {
-                setDrugsForm(false);
-              }}
-              className="cursor-pointer"
-            />
-          </div>
-          <div className="mb-10">
+        <div
+          className={`h-full flex flex-col w-full justify-between gap-8 p-8 pt-0 overflow-y-scroll bg-white`}
+        >
+          <div className="w-full bg-white">
+            <div className="w-full flex justify-end mb-10">
+              <Image
+                src="/assets/x (1).png"
+                width={18}
+                height={18}
+                alt="cancel"
+                onClick={() => {
+                  setDrugsForm(false);
+                }}
+                id='top-drug'
+                className="cursor-pointer pt-8"
+              />
+            </div>
             <h1 className="text-[24px] text-darkBlue font-bold">Add Drug</h1>
             <p className="text-[14px] text-blackII">
               To ensure adequate tracking of drug compliance.
@@ -264,7 +279,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
           </div>
           <form
             onSubmit={handleSubmit}
-            className="h-auto flex flex-col justify-between w-full"
+            className="flex flex-col h-auto pr-2 bg-white"
           >
             <div className="w-full">
               <div className="flex flex-col mb-4">
@@ -291,24 +306,22 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
                 >
                   Routes of Administration
                 </label>
-                <div className="bg-[#EDF2F7] outline-none rounded-[10px] w-full px-4 mb-4 h-[56px]">
-                  <select
-                    id="route"
-                    name="route"
-                    value={formData.route}
-                    onChange={handleSelectChange("route")}
-                    className=" bg-[#EDF2F7] border-none w-full outline-none py-4 text-blackII cursor-pointer h-[56px]"
-                  >
-                    <option value="">Select Route</option>
-                    <option value="oral">Oral</option>
-                    <option value="topical">Topical</option>
-                    <option value="intravenous">intravenous (IV)</option>
-                    <option value="intramuscular">intramuscular (IM)</option>
-                    <option value="inhalation">Inhalation</option>
-                    <option value="rectal">Rectal</option>
-                    <option value="sublingual">Sublingual</option>
-                  </select>
-                </div>
+                <select
+                  id="route"
+                  name="route"
+                  value={formData.route}
+                  onChange={handleSelectChange("route")}
+                  className=" bg-[#EDF2F7] border-none py-4 outline-none rounded-[10px] w-full px-4 mb-4 text-blackII cursor-pointer h-[56px]"
+                >
+                  <option value="">Select Route</option>
+                  <option value="oral">Oral</option>
+                  <option value="topical">Topical</option>
+                  <option value="intravenous">intravenous (IV)</option>
+                  <option value="intramuscular">intramuscular (IM)</option>
+                  <option value="inhalation">Inhalation</option>
+                  <option value="rectal">Rectal</option>
+                  <option value="sublingual">Sublingual</option>
+                </select>
               </div>
               <div className="flex flex-col mb-4">
                 <label
@@ -317,25 +330,23 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
                 >
                   Frequency
                 </label>
-                <div className="bg-[#EDF2F7] outline-none rounded-[10px] w-full px-4 mb-4 h-[56px]">
-                  <select
-                    id="frequency"
-                    name="frequency"
-                    value={formData.frequency}
-                    onChange={handleSelectChange("frequency")}
-                    className=" bg-[#EDF2F7] border-none w-full outline-none py-4 text-blackII cursor-pointer h-[56px]"
-                  >
-                    <option value="">Select Frequency</option>
-                    <option value="QD">Once Daily</option>
-                    <option value="BID">Twice Daily</option>
-                    <option value="TID">Thrice Daily</option>
-                    <option value="QID">Four Times Daily</option>
-                    <option value="EOD">Every Other Day</option>
-                    <option value="W">Weekly</option>
-                    <option value="BW">Biweekly</option>
-                    <option value="M">Monthly</option>
-                  </select>
-                </div>
+                <select
+                  id="frequency"
+                  name="frequency"
+                  value={formData.frequency}
+                  onChange={handleSelectChange("frequency")}
+                  className=" bg-[#EDF2F7] border-none rounded-[10px] w-full outline-none p-4 mb-4 text-blackII cursor-pointer h-[56px]"
+                >
+                  <option value="">Select Frequency</option>
+                  <option value="QD">Once Daily</option>
+                  <option value="BID">Twice Daily</option>
+                  <option value="TID">Thrice Daily</option>
+                  <option value="QID">Four Times Daily</option>
+                  <option value="EOD">Every Other Day</option>
+                  <option value="W">Weekly</option>
+                  <option value="BW">Biweekly</option>
+                  <option value="M">Monthly</option>
+                </select>
               </div>
               {formData.frequency && (
                 <div className="flex flex-col mb-4">
@@ -357,16 +368,14 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
                 >
                   Select Start Date
                 </label>
-                <div className="w-full bg-[#EDF2F7] pr-4 pb-0 mb-8 rounded-[10px] h-[56px]">
-                  <input
-                    type="date"
-                    id="start"
-                    name="start"
-                    value={formData.start}
-                    onChange={handleInputChange}
-                    className="border bg-[#EDF2F7] border-none outline-none w-full text-blackII rounded-[10px] py-4 pl-4 h-[56px]"
-                  />
-                </div>
+                <input
+                  type="date"
+                  id="start"
+                  name="start"
+                  value={formData.start}
+                  onChange={handleInputChange}
+                  className="border bg-[#EDF2F7] border-none outline-none w-full mb-8 text-blackII rounded-[10px] p-4 h-[56px]"
+                />
                 <div className="flex flex-col mb-8 w-full">
                   <label
                     htmlFor="end"
@@ -374,16 +383,14 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
                   >
                     Select End Date
                   </label>
-                  <div className="w-full bg-[#EDF2F7] pr-4  rounded-[10px] h-[56px]">
-                    <input
-                      type="date"
-                      id="end"
-                      name="end"
-                      value={formData.end}
-                      onChange={handleInputChange}
-                      className="border bg-[#EDF2F7] border-none outline-none w-full text-blackII rounded-[10px] py-4 pl-4 h-[56px]"
-                    />
-                  </div>
+                  <input
+                    type="date"
+                    id="end"
+                    name="end"
+                    value={formData.end}
+                    onChange={handleInputChange}
+                    className="border bg-[#EDF2F7] border-none outline-none w-full text-blackII rounded-[10px] p-4 h-[56px]"
+                  />
                 </div>
               </div>
               <div className="flex gap-2 items-center">
@@ -404,13 +411,13 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
                 </label>
               </div>
             </div>
-            <button
-              type="submit"
-              className="mt-12 font-semibold bg-darkBlue text-white rounded-[10px] w-full text-center py-4  px-4 hover:bg-navyBlue transition duration-300"
-            >
-              PROCEED
-            </button>
           </form>
+          <button
+            onClick={handleClick}
+            className="font-semibold bg-darkBlue text-white rounded-[10px] w-full text-center py-4  px-4 hover:bg-navyBlue transition duration-300"
+          >
+            PROCEED
+          </button>
         </div>
       </div>
       <div

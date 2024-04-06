@@ -15,7 +15,6 @@ const CreateAccount = () => {
     fullName: "",
     email: "",
     phoneNumber: "",
-    role: "",
     password: "",
   });
 
@@ -29,10 +28,6 @@ const CreateAccount = () => {
     });
   };
 
-  const handleEffectChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    const { value } = e.target;
-    setFormData({ ...formData, role: value });
-  };
 
   async function fetchLocalImage() {
     try {
@@ -91,7 +86,6 @@ const CreateAccount = () => {
       // Add user info to the database
       const { error: addInfoError } = await supabase.from("users").insert({
         name: formData.fullName,
-        role: formData.role,
         phone: formData.phoneNumber,
         email: formData.email,
         userId: userId,
@@ -128,7 +122,6 @@ const CreateAccount = () => {
       fullName: "",
       email: "",
       phoneNumber: "",
-      role: "",
       password: "",
     });
   };
@@ -203,22 +196,6 @@ const CreateAccount = () => {
               className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4"
               placeholder="Phone Number"
             />
-          </div>
-          <div className="flex flex-col mb-4">
-            <label htmlFor="role" className="text-[14px] mb-1 ">
-              Select your Role:
-            </label>
-              <select
-                id="role"
-                name="role"
-                value={formData.role}
-                onChange={handleEffectChange}
-                className=" bg-[#EDF2F7] border-none w-full rounded-[10px] outline-none p-4 cursor-pointer h-[56px]"
-              >
-                <option value="">Select Role</option>
-                <option value="patient">Patient</option>
-                <option value="doctor">Doctor</option>
-              </select>
           </div>
           <div className="flex flex-col mb-4">
             <label htmlFor="password" className="text-[14px] mb-1">

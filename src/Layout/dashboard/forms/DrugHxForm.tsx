@@ -23,14 +23,13 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
   setDrugHxForm,
 }) => {
   const { info, userId } = useSelector((state: RootState) => state.app);
-  const { name, phone, email, role, otcDrugs, herbs } = info[0];
+  const { name, phone, email, otcDrugs, herbs } = info[0];
   const dispatch = useDispatch();
 
   const [formData, setFormData] = useState({
     name: name,
     phone: phone,
     email: email,
-    role: role,
     otcDrugs: otcDrugs,
     herbs: herbs,
   });

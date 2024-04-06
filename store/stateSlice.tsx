@@ -4,7 +4,7 @@ import { DrugProps, ScheduleItem } from "../types/dashboard";
 import { AppType, Info } from "../utils/store";
 
 const initialState: AppType = {
-  info: [{ name: "", phone: "", email: "", role: "", otcDrugs: "", herbs: "" }],
+  info: [{ name: "", phone: "", email: "", otcDrugs: "", herbs: "" }],
   isAuthenticated: true,
   userId: "",
   drugs: [],

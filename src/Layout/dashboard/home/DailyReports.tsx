@@ -88,7 +88,14 @@ export default function DailyReports() {
                   <div
                     key={index}
                     className={cn(
-                      "p-2 text-center relative h-12 md:h-14 grid place-content-center"
+                      "p-2 text-center relative h-12 md:h-14 grid place-content-center",
+                      {
+                        "border-[4px] border-dotted border-darkBlue":
+                          today && !isPastDate && !isSelected,
+                        "border border-[#0054DB]": isSelected && !isPastDate,
+                        "hover:border hover:border-gray-300 border-darkBlue hover:text-white transition-all cursor-pointer select-none":
+                          true,
+                      }
                     )}
                     onClick={() => {
                       setSelectDate(date);
@@ -99,15 +106,17 @@ export default function DailyReports() {
                         // Conditionally applying classes based on date properties
                         currentMonth ? "" : "text-gray-400",
                         today
-                          ? "border-[4px] border-dotted border-[#0054DB]"
+                          ? "border-[4px] border-dotted border-darkBlue"
                           : "",
                         selectDate.toDate().toDateString() ===
                           date.toDate().toDateString()
                           ? "border border-[#0054DB]"
                           : "",
                         `h-10 w-10 rounded-full grid place-content-center ${
-                          today ? "hover-border-[4px]" : "hover:border"
-                        } border-gray-300 transition-all cursor-pointer select-none`
+                          today
+                            ? "hover-border-[4px] border-darkBlue"
+                            : "hover:border hover:border-gray-400"
+                        } 0 transition-all cursor-pointer select-none`
                       )}
                       onClick={() => {
                         setSelectDate(date); // Update 'selectDate' state when a date is clicked

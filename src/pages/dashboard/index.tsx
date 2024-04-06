@@ -96,7 +96,7 @@ const Page = () => {
         ] = await Promise.all([
           supabase
             .from("users")
-            .select("name, phone, role, email, otcDrugs, herbs")
+            .select("name, phone, email, otcDrugs, herbs")
             .eq("userId", userId),
           supabase.storage
             .from("profile-picture")

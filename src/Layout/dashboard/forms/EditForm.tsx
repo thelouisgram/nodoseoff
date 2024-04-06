@@ -87,12 +87,12 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
     }
   }, [currentDrug]);
 
-   useEffect(() => {
-     const formElement = document.getElementById("top-edit");
-     if (formElement) {
-       formElement.scrollIntoView({ behavior: "smooth", block: "start" });
-     }
-   }, [editForm]);
+  useEffect(() => {
+    const formElement = document.getElementById("top-edit");
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [editForm]);
 
   useEffect(() => {
     let defaultTimeValues: string[] = [];
@@ -335,22 +335,22 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
               >
                 Routes of Administration
               </label>
-                <select
-                  id="route"
-                  name="route"
-                  value={formData.route}
-                  onChange={handleSelectChange("route")}
-                  className=" bg-[#EDF2F7] border-none rounded-[10px] w-full outline-none p-4 text-blackII cursor-pointer h-[56px]"
-                >
-                  <option value="">Select Route</option>
-                  <option value="oral">Oral</option>
-                  <option value="topical">Topical</option>
-                  <option value="intravenous">intravenous</option>
-                  <option value="intramuscular">intramuscular</option>
-                  <option value="inhalation">Inhalation</option>
-                  <option value="rectal">Rectal</option>
-                  <option value="sublingual">Sublingual</option>
-                </select>
+              <select
+                id="route"
+                name="route"
+                value={formData.route}
+                onChange={handleSelectChange("route")}
+                className=" bg-[#EDF2F7] border-none rounded-[10px] w-full outline-none p-4 text-blackII cursor-pointer h-[56px]"
+              >
+                <option value="">Select Route</option>
+                <option value="oral">Oral</option>
+                <option value="topical">Topical</option>
+                <option value="intravenous">intravenous</option>
+                <option value="intramuscular">intramuscular</option>
+                <option value="inhalation">Inhalation</option>
+                <option value="rectal">Rectal</option>
+                <option value="sublingual">Sublingual</option>
+              </select>
             </div>
             <div className="flex flex-col mb-8">
               <label
@@ -359,23 +359,23 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
               >
                 Frequency
               </label>
-                <select
-                  id="frequency"
-                  name="frequency"
-                  value={formData.frequency}
-                  onChange={handleSelectChange("frequency")}
-                  className=" bg-[#EDF2F7] border-none w-full rounded-[10px] outline-none p-4 text-blackII cursor-pointer h-[56px]"
-                >
-                  <option value="">Select Frequency</option>
-                  <option value="QD">Once Daily</option>
-                  <option value="BID">Twice Daily</option>
-                  <option value="TID">Thrice Daily</option>
-                  <option value="QID">Four Times Daily</option>
-                  <option value="EOD">Every Other Day</option>
-                  <option value="W">Weekly</option>
-                  <option value="BW">Biweekly</option>
-                  <option value="M">Monthly</option>
-                </select>
+              <select
+                id="frequency"
+                name="frequency"
+                value={formData.frequency}
+                onChange={handleSelectChange("frequency")}
+                className=" bg-[#EDF2F7] border-none w-full rounded-[10px] outline-none p-4 text-blackII cursor-pointer h-[56px]"
+              >
+                <option value="">Select Frequency</option>
+                <option value="QD">Once Daily</option>
+                <option value="BID">Twice Daily</option>
+                <option value="TID">Thrice Daily</option>
+                <option value="QID">Four Times Daily</option>
+                <option value="EOD">Every Other Day</option>
+                <option value="W">Weekly</option>
+                <option value="BW">Biweekly</option>
+                <option value="M">Monthly</option>
+              </select>
             </div>
             {formData.frequency && (
               <div className="flex flex-col mb-4">
@@ -397,6 +397,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
               >
                 Select Start Date
               </label>
+              <div className="bg-[#EDF2F7] w-full rounded-[10px]  mb-8">
                 <input
                   type="date"
                   id="start"
@@ -404,8 +405,9 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
                   disabled={true}
                   value={getCurrentDate()}
                   onChange={handleInputChange}
-                  className="border bg-[#EDF2F7] border-none outline-none w-full text-blackII rounded-[10px] p-4 mb-8 h-[56px]"
+                  className="border bg-[#EDF2F7] border-none outline-none w-full text-blackII rounded-[10px] p-4 h-[56px]"
                 />
+              </div>
               <div className="flex flex-col mb-8 w-full">
                 <label
                   htmlFor="end"
@@ -413,6 +415,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
                 >
                   Select End Date
                 </label>
+                <div className="bg-[#EDF2F7] w-full rounded-[10px]  mb-8">
                   <input
                     type="date"
                     id="end"
@@ -421,6 +424,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
                     onChange={handleInputChange}
                     className="border bg-[#EDF2F7] border-none outline-none w-full text-blackII rounded-[10px] p-4  h-[56px]"
                   />
+                </div>
               </div>
             </div>
             <div className="flex gap-2 items-center">

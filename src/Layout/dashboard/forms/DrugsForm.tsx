@@ -113,15 +113,16 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
 
   const timeInput = formData.time.map((item: string, index: number) => {
     return (
-      <input
-        key={index}
-        type="time"
-        id={`time-${index}`}
-        name={`time-${index}`}
-        value={formData.time[index]}
-        onChange={handleInputChange}
-        className="border border-none bg-[#EDF2F7] outline-none text-blackII p-4 w-full rounded-[10px] h-[56px]"
-      />
+      <div key={index} className="bg-[#EDF2F7] w-full rounded-[10px]">
+        <input
+          type="time"
+          id={`time-${index}`}
+          name={`time-${index}`}
+          value={formData.time[index]}
+          onChange={handleInputChange}
+          className=" border-none bg-[#EDF2F7] outline-none text-blackII p-4 w-full rounded-[10px] h-[56px]"
+        />
+      </div>
     );
   });
 
@@ -268,7 +269,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
                 onClick={() => {
                   setDrugsForm(false);
                 }}
-                id='top-drug'
+                id="top-drug"
                 className="cursor-pointer pt-8"
               />
             </div>
@@ -295,7 +296,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
                   name="drug"
                   value={formData.drug}
                   onChange={handleInputChange}
-                  className="border bg-[#EDF2F7] border-none text-blackII outline-none rounded-[10px] p-4 mb-4 capitalize h-[56px] "
+                  className=" bg-[#EDF2F7] w-full border-none text-blackII outline-none rounded-[10px] p-4 mb-4 capitalize h-[56px] "
                   placeholder="Name of Drug"
                 />
               </div>
@@ -368,14 +369,16 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
                 >
                   Select Start Date
                 </label>
-                <input
-                  type="date"
-                  id="start"
-                  name="start"
-                  value={formData.start}
-                  onChange={handleInputChange}
-                  className="border bg-[#EDF2F7] border-none outline-none w-full mb-8 text-blackII rounded-[10px] p-4 h-[56px]"
-                />
+                <div className="bg-[#EDF2F7] w-full rounded-[10px]  mb-8">
+                  <input
+                    type="date"
+                    id="start"
+                    name="start"
+                    value={formData.start}
+                    onChange={handleInputChange}
+                    className="bg-[#EDF2F7] border-none outline-none w-full text-blackII rounded-[10px] p-4 h-[56px]"
+                  />
+                </div>
                 <div className="flex flex-col mb-8 w-full">
                   <label
                     htmlFor="end"
@@ -383,14 +386,16 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
                   >
                     Select End Date
                   </label>
-                  <input
-                    type="date"
-                    id="end"
-                    name="end"
-                    value={formData.end}
-                    onChange={handleInputChange}
-                    className="border bg-[#EDF2F7] border-none outline-none w-full text-blackII rounded-[10px] p-4 h-[56px]"
-                  />
+                  <div className="bg-[#EDF2F7] w-full rounded-[10px]">
+                    <input
+                      type="date"
+                      id="end"
+                      name="end"
+                      value={formData.end}
+                      onChange={handleInputChange}
+                      className=" bg-[#EDF2F7] border-none outline-none w-full text-blackII rounded-[10px] p-4 h-[56px]"
+                    />
+                  </div>
                 </div>
               </div>
               <div className="flex gap-2 items-center">

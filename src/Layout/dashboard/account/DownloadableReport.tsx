@@ -77,20 +77,20 @@ const DownloadableReport: React.FC = () => {
           />
           <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-start items-start text-[8px] ss:text-[14px] md:text-[16px] px-2 md:px-6">
             <div className="w-full flex justify-center pt-2 ss:pt-6">
-                <Image
-                  src="/assets/logo/logo with name - blue color.png"
-                  alt="logo"
-                  width={1084}
-                  height={257}
-                  className={`w-[100px] h-[19.95px] ss:w-[150px] ss:h-[29.94px] md:w-[200px] md:h-auto object-contain`}
-                  quality={100}
-                />
+              <Image
+                src="/assets/logo/logo with name - blue color.png"
+                alt="logo"
+                width={1084}
+                height={257}
+                className={`w-[100px] h-[19.95px] ss:w-[150px] ss:h-[29.94px] md:w-[200px] md:h-auto object-contain`}
+                quality={100}
+              />
             </div>
             <div className="w-full flex justify-center text-center font-[500] text-[8px] ss:text-[18px] uppercase ">
               Drug History Report
             </div>
             <div className="py-1 ss:py-3 md:py-6 px-3 ss:px-6 border-navyBlue w-full">
-              <h2 className="font-semibold text-blackII mb-1 ss:mb-2 md:mb-4 text-[8px] ss:text-[16px]">
+              <h2 className="font-semibold text-grey mb-1 ss:mb-2 md:mb-4 text-[8px] ss:text-[16px]">
                 Patient&apos;s Information
               </h2>
               <div className="border border-navyBlue mb-2 ss:mb-4 md:mb-10 w-full text-[8px] ss:text-[14px] md:text-[16px]">

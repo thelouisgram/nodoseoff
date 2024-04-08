@@ -166,7 +166,7 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
               <h1 className="text-[24px] text-darkBlue font-bold">
                 Add Drug Allergies
               </h1>
-              <p className="text-[14px] text-blackII">
+              <p className="text-[14px] text-grey">
                 To ensure adequate monitoring of Allergies.
               </p>
             </div>
@@ -207,7 +207,7 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
         onClick={() => {
           setAllergiesForm(false);
         }}
-        className="absolute w-full h-full bg-blackII z-[3]"
+        className="absolute w-full h-full bg-grey z-[3]"
       />
     </div>
   );

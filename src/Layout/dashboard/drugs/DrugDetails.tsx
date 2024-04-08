@@ -104,7 +104,7 @@ const DrugDetails: React.FC<drugDetailsProps> = ({
   const RenderedDetails = Details.map((detail: detail, index: number) => {
     return (
       <div key={index} className="border rounded-md  p-5">
-        <h2 className="text-[12px] ss:text-[14px] font-semibold text-blackII font-karla">
+        <h2 className="text-[12px] ss:text-[14px] font-semibold text-grey font-karla">
           {detail.name}
         </h2>
         <h3 className="text-[14px] ss:text-[16px] capitalize font-Inter">
@@ -134,7 +134,7 @@ const DrugDetails: React.FC<drugDetailsProps> = ({
 
       <section className="mt-8 ">
         <div className="w-full flex justify-between relative items-center mb-[28px]">
-          <h1 className="text-[28px] ss:text-[36px] font-semibold font-montserrant capitalize">
+          <h1 className="text-[28px] ss:text-[36px] font-semibold font-karla capitalize">
             {drug}
           </h1>
           <button

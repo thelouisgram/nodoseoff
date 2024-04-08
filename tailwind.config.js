@@ -14,25 +14,26 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        spartan: ["League Spartan", "sans-serif"],
+         spartan: ["League Spartan", "sans-serif"],
         karla: ["Karla", "sans-serif"],
-        montserrant: ["Montserrat", "sans-serif"],
-        Inter: ['Inter', 'sans-serif'],
+        Inter: ["Inter", "sans-serif"],
+        Poppins: ["Open Sans", "sans-serif"],
       },
       colors: {
-        white: "hsl(0, 0%, 100%)", // White color
-        dark: "hsl(240, 8%, 12%)", // Dark color
-        grey: "hsl(220, 8%, 95%)", // Grey color
-        darkGrey: "hsl(240, 3%, 32%)", // Dark Grey color
-        red: "hsl(355, 73%, 56%)", // Red color
+        white: "hsl(0, 0%, 100%)",
+        dark: "hsl(240, 8%, 12%)",
+        red: "hsl(355, 73%, 56%)",
         navyBlue: "hsl(218,89%,21%)",
-        darkBlue: "hsl(217, 100%, 43%)",
+        darkBlue: "hsl(216,89%,63%)",
         darkGreen: "hsl(145, 49%, 51%)",
         darkPink: "hsl(330, 70%, 58%)",
+        darkPurple: "hsl(270,89%,68%)",
         blackBlue: "hsl(210, 20%, 18%)",
-        blackII: "hsla(0, 0%, 0%, 0.7)",
-        lightBlue: "hsl(196, 100%, 95%)",
-       lightGrey: "hsl(210, 30%, 98%)",
+        grey: "hsla(0, 0%, 0%, 0.7)",
+        lightBlue: "hsl(214,78%,98%)",
+        lightPink: "hsl(327,73%,97%)",
+        lightPurple: "hsl(276,56%,96%)",
+        lightGreen: "hsl(140,55%,91%)",
       },
       height: {},
     },

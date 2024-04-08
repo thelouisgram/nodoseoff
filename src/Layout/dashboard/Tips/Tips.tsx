@@ -14,7 +14,7 @@ const Tips = () => {
         <h1 className="font-bold text-[18px] my-3 leading-tight">
           {tip.title}
         </h1>
-        <p className="text-blackII text-[12px] ss:text-[13px]">{tip.desc}</p>
+        <p className="text-grey text-[12px] ss:text-[13px]">{tip.desc}</p>
       </div>
     );
   });
@@ -22,10 +22,10 @@ const Tips = () => {
   return (
     <div className="w-full h-[100dvh] overflow-y-scroll md:py-16 md:px-12 px-4 ss:px-10 pt-10 pb-24 text-navyBlue font-karla relative">
       <div className="mb-[28px]">
-        <h1 className="text-[24px] ss:text-[32px] font-semibold font-montserrant capitalize">
+        <h1 className="text-[24px] ss:text-[32px] font-semibold font-karla capitalize">
           Drug Safety Tips
         </h1>
-        <p className="text-[16px] text-blackII">
+        <p className="text-[16px] text-grey">
           Stay safe with your medications!
         </p>
       </div>

@@ -77,7 +77,7 @@ const AllDoses: React.FC<AllDosesProps> = ({
             <h1 className="text-[24px] text-darkBlue font-bold leading-tight">
               Medications
             </h1>
-            <p className="text-[16px] text-blackII leading-snug font-karla">
+            <p className="text-[16px] text-grey leading-snug font-karla">
               Stay on track with the day&apos;s doses!
             </p>
           </div>
@@ -88,7 +88,7 @@ const AllDoses: React.FC<AllDosesProps> = ({
         onClick={() => {
           setAllDoses(false);
         }}
-        className="absolute w-full h-full bg-blackII opacity-[40] z-[3]"
+        className="absolute w-full h-full bg-grey opacity-[40] z-[3]"
       />
     </div>
   );

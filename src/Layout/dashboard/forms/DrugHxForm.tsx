@@ -34,12 +34,12 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
     herbs: herbs,
   });
 
-   useEffect(() => {
-     const formElement = document.getElementById("top-drugHx");
-     if (formElement) {
-       formElement.scrollIntoView({ behavior: "smooth", block: "start" });
-     }
-   }, [drugHxForm]);
+  useEffect(() => {
+    const formElement = document.getElementById("top-drugHx");
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [drugHxForm]);
 
   const handleClick = () => {
     const syntheticEvent = new Event(
@@ -172,7 +172,7 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
         onClick={() => {
           setDrugHxForm(false);
         }}
-        className="absolute w-full h-full bg-blackII opacity-[40] z-[3]"
+        className="absolute w-full h-full bg-grey opacity-[40] z-[3]"
       />
     </div>
   );

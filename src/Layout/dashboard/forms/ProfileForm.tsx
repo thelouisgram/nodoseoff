@@ -98,14 +98,14 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
   const CDNURL =
     "https://opshqmqagtfidynwftzk.supabase.co/storage/v1/object/public/profile-picture/";
 
-    const handleClick = () => {
-      const syntheticEvent = new Event(
-        "submit"
-      ) as unknown as FormEvent<HTMLFormElement>;
-      handleSubmit(syntheticEvent);
-    };
+  const handleClick = () => {
+    const syntheticEvent = new Event(
+      "submit"
+    ) as unknown as FormEvent<HTMLFormElement>;
+    handleSubmit(syntheticEvent);
+  };
 
-    useEffect(() => {
+  useEffect(() => {
     const formElement = document.getElementById("top-profile");
     if (formElement) {
       formElement.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -233,7 +233,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
         onClick={() => {
           setProfileForm(false);
         }}
-        className="absolute w-full h-full bg-blackII opacity-[40] z-[3]"
+        className="absolute w-full h-full bg-grey opacity-[40] z-[3]"
       />
     </div>
   );

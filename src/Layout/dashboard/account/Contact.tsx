@@ -76,9 +76,7 @@ const Contact: React.FC<ContactProps> = ({ showContact, setShowContact }) => {
           <div className="flex flex-col gap-4">
             {contactInfo.map((item, index) => (
               <div key={index}>
-                <h2 className="font-semibold mb-1 text-blackII">
-                  {item.label}
-                </h2>
+                <h2 className="font-semibold mb-1 text-grey">{item.label}</h2>
                 <CopyableContent content={item.content} />
               </div>
             ))}
@@ -89,7 +87,7 @@ const Contact: React.FC<ContactProps> = ({ showContact, setShowContact }) => {
         onClick={() => {
           setShowContact(false);
         }}
-        className="absolute w-full h-full bg-blackII opacity-[40] z-[3]"
+        className="absolute w-full h-full bg-grey opacity-[40] z-[3]"
       />
     </div>
   );

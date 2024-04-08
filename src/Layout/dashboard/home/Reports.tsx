@@ -62,7 +62,7 @@ const Reports: React.FC<ReportsProps> = ({ today, selectDate }) => {
       
 
     return (
-      <div className="w-full h-full rounded-[12px]  pt-5 text-[15px] text-gray-600 font-spartan">
+      <div className="w-full h-full rounded-[12px]  pt-5 text-[15px] text-gray-600 font-karla">
         <h2 className="font-semibold mb-4 ss:mb-6 text-[16px] leading-none">
           {formattedDateFull}
         </h2>

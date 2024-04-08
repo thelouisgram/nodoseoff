@@ -120,7 +120,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
           name={`time-${index}`}
           value={formData.time[index]}
           onChange={handleInputChange}
-          className=" border-none bg-[#EDF2F7] outline-none text-blackII p-4 w-full rounded-[10px] h-[56px]"
+          className=" border-none bg-[#EDF2F7] outline-none text-grey p-4 w-full rounded-[10px] h-[56px]"
         />
       </div>
     );
@@ -274,7 +274,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
               />
             </div>
             <h1 className="text-[24px] text-darkBlue font-bold">Add Drug</h1>
-            <p className="text-[14px] text-blackII">
+            <p className="text-[14px] text-grey">
               To ensure adequate tracking of drug compliance.
             </p>
           </div>
@@ -296,7 +296,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
                   name="drug"
                   value={formData.drug}
                   onChange={handleInputChange}
-                  className=" bg-[#EDF2F7] w-full border-none text-blackII outline-none rounded-[10px] p-4 mb-4 capitalize h-[56px] "
+                  className=" bg-[#EDF2F7] w-full border-none text-grey outline-none rounded-[10px] p-4 mb-4 capitalize h-[56px] "
                   placeholder="Name of Drug"
                 />
               </div>
@@ -312,7 +312,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
                   name="route"
                   value={formData.route}
                   onChange={handleSelectChange("route")}
-                  className=" bg-[#EDF2F7] border-none py-4 outline-none rounded-[10px] w-full px-4 mb-4 text-blackII cursor-pointer h-[56px]"
+                  className=" bg-[#EDF2F7] border-none py-4 outline-none rounded-[10px] w-full px-4 mb-4 text-grey cursor-pointer h-[56px]"
                 >
                   <option value="">Select Route</option>
                   <option value="oral">Oral</option>
@@ -336,7 +336,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
                   name="frequency"
                   value={formData.frequency}
                   onChange={handleSelectChange("frequency")}
-                  className=" bg-[#EDF2F7] border-none rounded-[10px] w-full outline-none p-4 mb-4 text-blackII cursor-pointer h-[56px]"
+                  className=" bg-[#EDF2F7] border-none rounded-[10px] w-full outline-none p-4 mb-4 text-grey cursor-pointer h-[56px]"
                 >
                   <option value="">Select Frequency</option>
                   <option value="QD">Once Daily</option>
@@ -376,7 +376,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
                     name="start"
                     value={formData.start}
                     onChange={handleInputChange}
-                    className="bg-[#EDF2F7] border-none outline-none w-full text-blackII rounded-[10px] p-4 h-[56px]"
+                    className="bg-[#EDF2F7] border-none outline-none w-full text-grey rounded-[10px] p-4 h-[56px]"
                   />
                 </div>
                 <div className="flex flex-col mb-8 w-full">
@@ -393,7 +393,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
                       name="end"
                       value={formData.end}
                       onChange={handleInputChange}
-                      className=" bg-[#EDF2F7] border-none outline-none w-full text-blackII rounded-[10px] p-4 h-[56px]"
+                      className=" bg-[#EDF2F7] border-none outline-none w-full text-grey rounded-[10px] p-4 h-[56px]"
                     />
                   </div>
                 </div>
@@ -429,7 +429,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
         onClick={() => {
           setDrugsForm(false);
         }}
-        className="absolute w-full h-full bg-blackII opacity-[40] z-[3]"
+        className="absolute w-full h-full bg-grey opacity-[40] z-[3]"
       />
     </div>
   );

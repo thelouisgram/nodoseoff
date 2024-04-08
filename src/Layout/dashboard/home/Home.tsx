@@ -85,10 +85,10 @@ const Home: React.FC<HomeProps> = ({
     <div className="w-full h-[100dvh] overflow-y-scroll md:py-16 md:px-12 pt-10 pb-24 ss:py-10 text-navyBlue font-karla relative">
       <div className="mb-[28px] px-4 ss:px-8 md:px-0 w-full flex justify-between items-center">
         <div>
-          <h1 className="text-[24px] ss:text-[32px] font-semibold font-montserrant capitalize">
+          <h1 className="text-[24px] ss:text-[32px] font-semibold font-karla capitalize">
             {"Hi " + name?.split(" ")[0]},
           </h1>
-          <p className="text-[16px] text-blackII">Your health matters!</p>
+          <p className="text-[16px] text-grey">Your health matters!</p>
         </div>
         <div
           onClick={() => {
@@ -139,7 +139,7 @@ const Home: React.FC<HomeProps> = ({
             </h4>
           </div>
         </div>
-        <div className="min-w-[300px] ss:w-full h-[120px] ss:h-[150px] bg-blackII rounded-[10px]  flex justify-start items-center p-4 gap-2">
+        <div className="min-w-[300px] ss:w-full h-[120px] ss:h-[150px] bg-grey rounded-[10px]  flex justify-start items-center p-4 gap-2">
           <Image
             src="/assets/pills.png"
             alt="drugs"

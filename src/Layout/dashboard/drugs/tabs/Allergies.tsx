@@ -88,31 +88,29 @@ const Allergies: React.FC<AllergiesProps> = ({
     }
   };
 
-  const renderedAllergies = currentItems.map(
-    (item, index: number) => {
-      return (
-        <RenderedDrugs
-          key={index}
-          id={index}
-          drug={item}
-          frequencyToPlaceholder={frequencyToPlaceholder}
-          setScreen={setScreen}
-          setDeleteModal={setDeleteModal}
-          setEditModal={setEditModal}
-          setAllergyModal={setAllergyModal}
-          displayDrugs={displayDrugs}
-          setDisplayDrugs={setDisplayDrugs}
-          showEditButton={false}
-          tab={"Allergies"}
-        />
-      );
-    }
-  );
+  const renderedAllergies = currentItems.map((item, index: number) => {
+    return (
+      <RenderedDrugs
+        key={index}
+        id={index}
+        drug={item}
+        frequencyToPlaceholder={frequencyToPlaceholder}
+        setScreen={setScreen}
+        setDeleteModal={setDeleteModal}
+        setEditModal={setEditModal}
+        setAllergyModal={setAllergyModal}
+        displayDrugs={displayDrugs}
+        setDisplayDrugs={setDisplayDrugs}
+        showEditButton={false}
+        tab={"Allergies"}
+      />
+    );
+  });
 
   return (
     <div>
       {allergies.length > 0 ? (
-        <div className="border-[1px] rounded-lg text-darkGrey">
+        <div className="border-[1px] rounded-lg text-grey">
           <div className="w-full justify-between flex py-6 px-4 bg-lightGrey rounded-t-lg items-center">
             <h2 className="font-[500] text-[14px] ss:text-[20px] font-Inter text-navyBlue">
               Allergic Drugs
@@ -127,7 +125,7 @@ const Allergies: React.FC<AllergiesProps> = ({
               />
               <input
                 placeholder="Search"
-                className="bg-transparent outline-none w-full text-blackII"
+                className="bg-transparent outline-none w-full text-grey"
                 value={searched}
                 onChange={handleSearchChange}
               />
@@ -144,7 +142,7 @@ const Allergies: React.FC<AllergiesProps> = ({
             {renderedAllergies.length > 0 ? (
               renderedAllergies
             ) : (
-              <div className="w-full flex justify-center py-6 text-[16px] text-blackII font-[500]">
+              <div className="w-full flex justify-center py-6 text-[16px] text-grey font-[500]">
                 No Results Found
               </div>
             )}
@@ -186,7 +184,7 @@ const Allergies: React.FC<AllergiesProps> = ({
         </div>
       ) : (
         <div className="w-full h-[400px] flex justify-center items-center">
-          <h1 className="text-[20px] text-navyBlue font-semibold font-montserrant text-center opacity-30">
+          <h1 className="text-[20px] text-navyBlue font-semibold font-karla text-center opacity-30">
             Add an allergic drug to get started!
           </h1>
         </div>

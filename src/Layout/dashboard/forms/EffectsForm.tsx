@@ -146,7 +146,7 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
             <h1 className="text-[24px] text-darkBlue font-bold">
               Add Side Effect
             </h1>
-            <p className="text-[14px] mb-10 text-blackII">
+            <p className="text-[14px] mb-10 text-grey">
               To ensure adequate monitoring of adverse effects.
             </p>
             <form
@@ -219,7 +219,7 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
         onClick={() => {
           setEffectsForm(false);
         }}
-        className="absolute w-full h-full bg-blackII z-[3]"
+        className="absolute w-full h-full bg-grey z-[3]"
       />
     </div>
   );

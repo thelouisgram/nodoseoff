@@ -28,7 +28,6 @@ const CreateAccount = () => {
     });
   };
 
-
   async function fetchLocalImage() {
     try {
       // Fetch the image from your local assets directory
@@ -131,7 +130,7 @@ const CreateAccount = () => {
       <Head>
         <title>NoDoseOff | DashBoard</title>
       </Head>
-      <div className="min-h-[100dvh] w-[100%] py-8 px-6 flex flex-col justify-center items-center ss:py-10 bg-navyBlue font-karla text-blackII">
+      <div className="min-h-[100dvh] w-[100%] py-8 px-6 flex flex-col justify-center items-center ss:py-10 bg-navyBlue font-karla text-grey">
         <Link href="/">
           <Image
             src="/assets/logo/logo with name png - white color.png"

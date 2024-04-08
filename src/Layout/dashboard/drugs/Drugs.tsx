@@ -300,7 +300,7 @@ const Drugs: React.FC<DrugsProps> = ({
         className={`${
           item === tab
             ? "text-darkBlue bg-white rounded-[6px] border shadow-sm"
-            : "text-blackII"
+            : "text-grey"
         } px-3 py-2 ss:px-4 text-[14px] font-Inter w-full font-[500]`}
       >
         {item}
@@ -313,12 +313,10 @@ const Drugs: React.FC<DrugsProps> = ({
       {displayDrugs ? (
         <div className="h-[100dvh] ss:pb-28 overflow-y-scroll w-full md:py-16 md:px-12 px-4 pt-10 pb-24 ss:p-10 text-navyBlue font-karla relative">
           <div className="mb-[28px]">
-            <h1 className="text-[24px] ss:text-[32px] font-semibold font-montserrant ">
+            <h1 className="text-[24px] ss:text-[32px] font-semibold font-karla ">
               Drugs
             </h1>
-            <p className="text-[16px] text-blackII">
-              Manage medications wisely!
-            </p>
+            <p className="text-[16px] text-grey">Manage medications wisely!</p>
           </div>
           <div className="mb-8 bg-lightGrey border p-1 rounded-[6px] flex justify-between w-full ss:w-[450px]">
             {renderedTabs}
@@ -465,7 +463,7 @@ const Drugs: React.FC<DrugsProps> = ({
             </div>
           )}
           <div
-            className={`fixed right-4 ss:right-10 md:right-16 bottom-20 md:bottom-6 z-[144] font-montserrant`}
+            className={`fixed right-4 ss:right-10 md:right-16 bottom-20 md:bottom-6 z-[144] font-karla`}
           >
             {add ? (
               <div className="flex flex-col fixed right-6 ss:right-12 md:right-[72px] bottom-36 md:bottom-24 gap-4">

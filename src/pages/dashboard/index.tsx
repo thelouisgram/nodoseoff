@@ -82,7 +82,7 @@ const Page = () => {
   }, []);
 
   useEffect(() => {
-    dispatch(updateActive("Home"))
+    dispatch(updateActive("Home"));
     const fetchData = async () => {
       try {
         const [
@@ -171,7 +171,7 @@ const Page = () => {
         key={index}
         className={` ${
           item.name === active && nav ? "pl-3" : ""
-        } flex items-center gap-6 cursor-pointer h-[40px] transition-all`}
+        } flex items-center gap-6 cursor-pointer h-[40px] transition-all font-Inter`}
       >
         <Image
           src={item.logo}
@@ -218,7 +218,7 @@ const Page = () => {
         <div
           onClick={() => dispatch(updateActive(item.name))}
           key={index}
-          className="flex items-center flex-col cursor-pointer h-full justify-center relative font-Karla"
+          className="flex items-center flex-col cursor-pointer h-full justify-center relative font-Inter "
         >
           <Image
             src={active === item.name ? item.logo : item.inactiveLogo}
@@ -375,7 +375,7 @@ const Page = () => {
             </div>
           </div>
           <div className="flex gap-2 items-center">
-            <h2 className="font-montserrant">Taken:</h2>
+            <h2 className="font-karla">Taken:</h2>
             <button
               className={`${
                 !item.completed
@@ -398,14 +398,14 @@ const Page = () => {
       </Head>
       {userId && (
         <section
-          className={`flex  relative w-full bg-white ${
-            isLoading ? "opacity-0 h-0" : "opacity-100 max-h-[100dvh]"
+          className={`flex relative w-full bg-white ${
+            isLoading ? "opacity-0 h-0" : "opacity-100 h-[100dvh]"
           } transition-all`}
         >
           <div
             className={`${
               !nav ? "w-[86px]" : "w-[300px]"
-            } max-h-[100dvh] bg-navyBlue py-10 pl-6 hidden font-montserrant md:flex flex-col justify-between relative transition-all duration-300`}
+            } h-full bg-navyBlue py-10 pl-6 hidden font-karla md:flex flex-col justify-between relative transition-all duration-300`}
           >
             <div>
               <div className="flex gap-5 items-center mb-12 cursor-pointer h-[60.81px]">
@@ -434,7 +434,7 @@ const Page = () => {
               <div className="flex flex-col gap-6">{renderedTabs}</div>
             </div>
 
-            <button onClick={logOut} className="flex items-center gap-6">
+            <button onClick={logOut} className="flex items-center gap-6 font-Inter">
               <Image
                 src="/assets/desktop-dashboard/power-off.png"
                 width={512}

@@ -55,10 +55,10 @@ const Account: React.FC<AccountProps> = ({
       {tab === "Account" ? (
         <div className="h-[100dvh] overflow-y-scroll w-full md:py-16 md:px-12 px-4 pt-10 pb-24 ss:p-10 ss:pb-24  mb-10 text-navyBlue font-karla relative">
           <div className="mb-[28px]">
-            <h1 className="text-[24px] ss:text-[32px] font-semibold font-montserrant ">
+            <h1 className="text-[24px] ss:text-[32px] font-semibold font-karla ">
               My Account
             </h1>
-            <p className="text-[16px] text-blackII capitalize">{name}</p>
+            <p className="text-[16px] text-grey capitalize">{name}</p>
           </div>
           <div className="w-full flex-col flex md:flex-row-reverse gap-8 ss:gap-30 ">
             <div className="w-full">
@@ -77,7 +77,7 @@ const Account: React.FC<AccountProps> = ({
                     priority
                   />
                 </div>
-                <h1 className=" text-[20px] ss:text-[32px] mt-4 font-semibold font-montserrant text-center capitalize">
+                <h1 className=" text-[20px] ss:text-[32px] mt-4 font-semibold font-karla text-center capitalize">
                   {name}
                 </h1>
               </div>

@@ -57,7 +57,7 @@ export default function DailyReports() {
             {days.map((day, index) => (
               <h1
                 key={index}
-                className="text-center w-full flex text-darkGrey justify-center items-center select-none"
+                className="text-center w-full flex text-grey justify-center items-center select-none"
               >
                 {day}
               </h1>

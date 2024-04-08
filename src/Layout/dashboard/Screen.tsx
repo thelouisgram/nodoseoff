@@ -34,7 +34,7 @@ const Screen: React.FC<ScreenProps> = ({
     <div className="fixed w-full h-full z-[3]">
       <div
         onClick={handleClose}
-        className="absolute w-full h-full bg-blackII opacity-[40]"
+        className="absolute w-full h-full bg-grey opacity-[40]"
       />
     </div>
   );

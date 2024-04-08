@@ -16,7 +16,6 @@ const Tracker: React.FC<TrackerProps> = ({
   displayedDoses,
   setTracker,
 }) => {
-
   const renderedDaysTab = days.map((item, index) => {
     return (
       <button
@@ -27,13 +26,13 @@ const Tracker: React.FC<TrackerProps> = ({
         className={`${
           item === tracker
             ? "text-darkBlue bg-white rounded-[6px] border shadow-sm"
-            : "text-blackII"
+            : "text-grey"
         } px-3 py-2 ss:px-4 text-[14px] font-Inter w-full font-[500]`}
       >
         {item}
       </button>
     );
-  })
+  });
 
   return (
     <section className="mb-10 ss:mb-16 px-4 ss:px-8 md:px-0">
@@ -67,7 +66,7 @@ const Tracker: React.FC<TrackerProps> = ({
           </div>
         </>
       ) : (
-        <div className="w-full md:w-1/2 py-6 px-4  border border-gray-300 rounded-[10px] items-center text-blackII flex gap-3">
+        <div className="w-full md:w-1/2 py-6 px-4  border border-gray-300 rounded-[10px] items-center text-grey flex gap-3">
           <FaExclamationTriangle /> No dose for this day
         </div>
       )}

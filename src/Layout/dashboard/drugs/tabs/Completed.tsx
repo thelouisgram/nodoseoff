@@ -83,7 +83,7 @@ const Completed: React.FC<CompletedProps> = ({
   return (
     <div>
       {completedDrugs.length > 0 ? (
-        <div className="border-[1px] rounded-lg text-darkGrey">
+        <div className="border-[1px] rounded-lg text-grey">
           <div className="w-full justify-between flex py-6 px-4 bg-lightGrey rounded-t-lg items-center">
             <h2 className="font-[500] text-[14px] ss:text-[20px] font-Inter text-navyBlue">
               Completed Drugs
@@ -98,7 +98,7 @@ const Completed: React.FC<CompletedProps> = ({
               />
               <input
                 placeholder="Search"
-                className="bg-transparent outline-none w-full text-blackII"
+                className="bg-transparent outline-none w-full text-grey"
                 value={searched}
                 onChange={handleSearchChange}
               />
@@ -130,7 +130,7 @@ const Completed: React.FC<CompletedProps> = ({
             {renderedDrugs.length > 0 ? (
               renderedDrugs
             ) : (
-              <div className="w-full flex justify-center py-6 text-[16px] text-blackII font-[500]">
+              <div className="w-full flex justify-center py-6 text-[16px] text-grey font-[500]">
                 No Results Found
               </div>
             )}
@@ -172,7 +172,7 @@ const Completed: React.FC<CompletedProps> = ({
         </div>
       ) : (
         <div className="w-full h-[400px] flex justify-center items-center">
-          <h1 className="text-[20px] text-navyBlue font-semibold font-montserrant text-center opacity-30">
+          <h1 className="text-[20px] text-navyBlue font-semibold font-karla text-center opacity-30">
             Complete a medication to begin exploring!
           </h1>
         </div>

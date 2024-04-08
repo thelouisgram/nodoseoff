@@ -97,21 +97,21 @@ const Statistics: React.FC<Stats> = ({ setShowStats, showStats }) => {
           </div>
           <div className="w-full flex flex-col gap-4">
             <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex flex-col-reverse">
-              <h2 className="text-blackII">Number of Drugs</h2>
+              <h2 className="text-grey">Number of Drugs</h2>
               <p className="font-semibold text-[18px]">{drugs.length}</p>
             </div>
             <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex flex-col-reverse">
-              <h2 className="text-blackII">Number of side effects</h2>
+              <h2 className="text-grey">Number of side effects</h2>
               <p className="font-semibold text-[18px]">{effects.length}</p>
             </div>
             <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex flex-col-reverse">
-              <h2 className="text-blackII">Drug compliance</h2>
+              <h2 className="text-grey">Drug compliance</h2>
               <p className="font-semibold text-[18px]">
                 {percentageCompleted.toFixed(1)}%
               </p>
             </div>
             <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex flex-col-reverse">
-              <h2 className="text-blackII">Missed Doses</h2>
+              <h2 className="text-grey">Missed Doses</h2>
               <p className="font-semibold text-[18px]">{missedDoses}</p>
             </div>
           </div>
@@ -121,7 +121,7 @@ const Statistics: React.FC<Stats> = ({ setShowStats, showStats }) => {
         onClick={() => {
           setShowStats(false);
         }}
-        className="absolute w-full h-full bg-blackII opacity-[40] z-[3]"
+        className="absolute w-full h-full bg-grey opacity-[40] z-[3]"
       />
     </div>
   );

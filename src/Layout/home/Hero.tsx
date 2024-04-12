@@ -8,12 +8,12 @@ const Hero = () => {
   return (
     <div className="w-full h-auto bg-lightBlue">
       <Navbar />
-      <div className="container md:w-[1165px] lg:w-[1165px] mx-auto px-4 md:px-0 w-full h-[560px] flex">
-        <div className="w-auto h-full flex flex-col justify-center gap-10 items-start py-12">
+      <div className="container md:w-[1165px] lg:w-[1165px] mx-auto px-4 md:px-0 w-full h-[625px] flex">
+        <div className="w-auto h-full flex flex-col justify-center gap-7 items-start py-12">
           <HeroText />
-          <p className="w-[375px] font-Inter text-[18px]">
-            Elevate Health with NoDoseOff: Monitor Dosage, Track Effectiveness,
-            Enhance Health.
+          <p className="w-[425px] font-Inter text-[17px]">
+            Boost Your Health with NoDoseOff: Our Accurate Medication Tracker.
+            Monitor Dosage, Track Effectiveness, Enhance Health.
           </p>
           <Link
             href="/signup"
@@ -42,7 +42,7 @@ const Hero = () => {
                   className="w-6 h-6"
                 />
               </div>
-              <div className="flex flex-col justify-start h-full leading-none text-darkPurple">
+              <div className="flex flex-col justify-start h-full leading-tight text-darkPurple">
                 <h3 className="font-bold text-[14px]">Next dose in</h3>
                 <p className="text-black font-bold text-[18px]">08:27:44</p>
               </div>
@@ -57,7 +57,7 @@ const Hero = () => {
                   className="w-6 h-6"
                 />
               </div>
-              <div className="flex flex-col justify-start h-full leading-none text-darkBlue">
+              <div className="flex flex-col justify-start h-full leading-tight text-darkBlue">
                 <h3 className="font-bold text-[14px]">Drug Compliance</h3>
                 <p className="text-black font-bold text-[18px]">84%</p>
               </div>
@@ -72,12 +72,12 @@ const Hero = () => {
                   className="w-6 h-6"
                 />
               </div>
-              <div className="flex flex-col justify-start h-full leading-none text-darkGreen">
+              <div className="flex flex-col justify-start h-full leading-tight text-darkGreen">
                 <h3 className="font-bold text-[14px]">Number of Drugs</h3>
                 <p className="text-black font-bold text-[18px]">06</p>
               </div>
             </div>
-            <div className="absolute bottom-5 left-36 bg-white rounded-[16px] py-3 pl-3 flex gap-3 items-center pr-6 shadow-sm">
+            <div className="absolute bottom-5 left-32 bg-white rounded-[16px] py-3 pl-3 flex gap-3 items-center pr-6 shadow-sm">
               <div className="bg-lightPink p-2 rounded-[10px]">
                 <Image
                   src="/assets/hero/warning.png"
@@ -87,7 +87,7 @@ const Hero = () => {
                   className="w-6 h-6"
                 />
               </div>
-              <div className="flex flex-col justify-start h-full leading-none text-darkPink">
+              <div className="flex flex-col justify-start h-full leading-tight text-darkPink">
                 <h3 className="font-bold text-[14px]">
                   Number of Missed Doses
                 </h3>

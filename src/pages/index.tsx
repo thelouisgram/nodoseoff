@@ -3,6 +3,7 @@ import Hero from "@/Layout/home/Hero";
 import Features from "@/Layout/home/Features";
 import Tips from "@/Layout/home/Tips";
 import Steps from "@/Layout/home/Steps";
+import Banner from "@/Layout/home/Banner";
 
 const Home = () => {
   return (
@@ -11,6 +12,7 @@ const Home = () => {
       <Features />
       <Steps />
       <Tips />
+      <Banner />
     </section>
   );
 };

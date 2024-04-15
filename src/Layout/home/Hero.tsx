@@ -10,10 +10,10 @@ const Hero = () => {
   return (
     <div className="w-full h-auto bg-lightBlue relative">
       <Navbar nav={nav} setNav={setNav} />
-      <div className="container md:w-[1165px] lg:w-[1165px] mx-auto px-2 xs:px-3 md:px-0 w-full h-auto md:h-[625px] flex flex-col md:flex-row">
+      <div className="container md:w-[1165px] lg:w-[1165px] mx-auto px-4 xs:px-1 ss:px-5 md:px-0 w-full h-auto md:h-[625px] flex flex-col md:flex-row">
         <div className="w-auto h-full flex flex-col justify-center gap-7 items-center md:items-start py-12">
           <HeroText />
-          <p className="w-full ss:w-[425px] text-center md:text-left font-Inter text-[17px]">
+          <p className="w-full ss:w-[425px] text-center md:text-left font-Inter text-[16px]">
             Boost Your Health with NoDoseOff: Our Accurate Medication Tracker.
             Monitor Dosage, Track Effectiveness, Enhance Health.
           </p>
@@ -24,8 +24,8 @@ const Hero = () => {
             Get Started
           </Link>
         </div>
-        <div className="w-full h-full flex justify-end robot pb-8 ss:pb-0 px-8 xs:px-6 ss:px-0">
-          <div className="flex h-full items-center relative ">
+        <div className="w-full h-full flex justify-end pb-10 md:pb-0 px-8 xs:px-6 ss:px-20 md:px-0">
+          <div className="flex h-full items-center relative robot">
             <Image
               width={4416}
               height={4392}
@@ -100,7 +100,7 @@ const Hero = () => {
                 </p>
               </div>
             </div>
-            <div className="absolute -bottom-4 md:bottom-14 left-24 ss:left-32 bg-white rounded-[8px] ss:rounded-[16px] p-2 ss:py-3 ss:pl-3 flex gap-2 ss:gap-3 items-center pr-6 shadow-sm">
+            <div className="absolute -bottom-4 md:bottom-14 left-24 ss:left-40 bg-white rounded-[8px] ss:rounded-[16px] p-2 ss:py-3 ss:pl-3 flex gap-2 ss:gap-3 items-center pr-6 shadow-sm">
               <div className="bg-lightPink p-1 ss:p-2 rounded-[5px] ss:rounded-[10px]">
                 <Image
                   src="/assets/hero/warning.png"

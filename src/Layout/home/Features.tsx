@@ -1,11 +1,12 @@
 import Image from "next/image";
 import React from "react";
 import Tracker from "./features/tracker";
+import Calendar from "./features/Calendar";
 
 const Features = () => {
   return (
     <div className="bg-white py-24 font-Inter">
-      <div className="container md:w-[1165px] lg:w-[1165px] mx-auto px-2 xs:px-0 w-full grid md:grid-cols-2 gap-5">
+      <div className="container md:w-[1165px] lg:w-[1165px] mx-auto px-4 xs:px-1 ss:px-5 md:px-0 w-full grid ss:grid-cols-2 gap-5">
         <div className="px-6 py-10 md:py-12 bg-lightBlue flex flex-col md:flex-row justify-between rounded-[16px] w-full gap-6">
           <div className="flex flex-col text-grey md:w-[325px] gap-2 md:pt-14">
             <h2 className="font-bold leading-none text-[18px]">
@@ -17,13 +18,7 @@ const Features = () => {
             </p>
           </div>
           <div className="relative w-full">
-            <Image
-              src="/assets/calendar.png"
-              width={459}
-              height={439}
-              alt="calendar"
-              className="rounded-[16px] shadow-xl w-full h-auto"
-            />
+            <Calendar />
           </div>
         </div>
         <div className="px-6 py-10 md:py-12 bg-lightGreen flex flex-col md:flex-row justify-between rounded-[16px] w-full gap-6">
@@ -35,7 +30,7 @@ const Features = () => {
               Easily mark off today&apos;s taken meds and never miss a dose.
             </p>
           </div>
-          <div className="relative w-full flex items-center justify-center">
+          <div className="relative w-full h-full flex items-start justify-center">
             <Tracker />
           </div>
         </div>
@@ -48,27 +43,27 @@ const Features = () => {
               Share your drug history with your physician easily today
             </p>
           </div>
-          <div className="relative w-full bg-[#FEFEFE] rounded-[16px] shadow-xl flex flex-col gap-4 items-center px-6 pt-4 pb-8">
+          <div className="relative w-full bg-[#FEFEFE] rounded-[16px] shadow-xl flex flex-col gap-5 items-center px-6 pt-4 pb-8">
             <h2 className="font-semibold text-[14px] mb-1">Drug History</h2>
             <div className="w-full flex gap-1">
-              <h2 className="text-[14px] text-black w-16">Name</h2>
-              <div className="w-1 h-6 bg-darkBlue"></div>
-              <div className="w-full bg-gray-100 h-6"></div>
+              <h2 className="text-[14px] text-black w-20">Name</h2>
+              <div className="w-1 h-5 bg-darkBlue"></div>
+              <div className="w-full bg-gray-100 h-5"></div>
             </div>
             <div className="w-full flex gap-1">
-              <h2 className="text-[14px] text-black w-16">Email</h2>
-              <div className="w-1 h-6 bg-darkBlue"></div>
-              <div className="w-full bg-gray-100 h-6"></div>
+              <h2 className="text-[14px] text-black w-20">Email</h2>
+              <div className="w-1 h-5 bg-darkBlue"></div>
+              <div className="w-full bg-gray-100 h-5"></div>
             </div>
             <div className="w-full flex gap-1">
-              <h2 className="text-[14px] text-black w-16">Drugs</h2>
-              <div className="w-1 h-6 bg-darkBlue"></div>
-              <div className="w-full bg-gray-100 h-6"></div>
+              <h2 className="text-[14px] text-black w-20">Drugs</h2>
+              <div className="w-1 h-5 bg-darkBlue"></div>
+              <div className="w-full bg-gray-100 h-5"></div>
             </div>
             <div className="w-full flex gap-1">
-              <h2 className="text-[14px] text-black w-16">Allergy</h2>
-              <div className="w-1 h-6 bg-darkBlue"></div>
-              <div className="w-full bg-gray-100 h-6"></div>
+              <h2 className="text-[14px] text-black w-20">Allergies</h2>
+              <div className="w-1 h-5 bg-darkBlue"></div>
+              <div className="w-full bg-gray-100 h-5"></div>
             </div>
           </div>
         </div>

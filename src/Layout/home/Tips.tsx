@@ -19,8 +19,8 @@ const Tips = () => {
     );
   });
   return (
-    <div className="container md:w-[1165px] lg:w-[1165px] py-24 mx-auto px-4 md:px-0 w-full flex flex-col">
-      <h2 className="text-[36px] w-[500px] mb-16 font-Poppins leading-tight">
+    <div className="container md:w-[1165px] lg:w-[1165px] py-24 mx-auto px-2 xs:px-0 w-full flex flex-col">
+      <h2 className="text-[24px] md:text-[36px] md:w-[500px] mb-16 font-Poppins leading-tight">
         Tips for better health and sticking to your medications.
       </h2>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">

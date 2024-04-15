@@ -3,7 +3,6 @@ import { DrugProps, ScheduleItem } from "../types/dashboard";
 export const tabs = [
   { name: "Home", logo: "/assets/desktop-dashboard/home.png" },
   { name: "Drugs", logo: "/assets/desktop-dashboard/drugs.png" },
-  { name: "Tips", logo: "/assets/desktop-dashboard/tips.png" },
   { name: "Account", logo: "/assets/desktop-dashboard/user.png" },
 ];
 
@@ -17,11 +16,6 @@ export const tabsMobile = [
     name: "Drugs",
     logo: "/assets/mobile-dashboard/drugs.png",
     inactiveLogo: "/assets/mobile-dashboard/drugs (1).png",
-  },
-  {
-    name: "Tips",
-    logo: "/assets/mobile-dashboard/tips.png",
-    inactiveLogo: "/assets/mobile-dashboard/tips (1).png",
   },
   {
     name: "Account",

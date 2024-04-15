@@ -114,7 +114,7 @@ const SignIn = () => {
               required
             />
           </div>
-          <div className="flex flex-col mb-4">
+          <div className="flex flex-col mb-8">
             <label htmlFor="password" className="text-[14px] mb-1">
               Password
             </label>

@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import Screen from "@/Layout/dashboard/Screen";
-import Tips from "@/Layout/dashboard/Tips/Tips";
 import Account from "@/Layout/dashboard/account/Account";
+import Contact from "@/Layout/dashboard/account/Contact";
 import Statistics from "@/Layout/dashboard/account/Statistics";
 import Drugs from "@/Layout/dashboard/drugs/Drugs";
 import AllergiesForm from "@/Layout/dashboard/forms/AllergiesForm";
@@ -14,10 +14,11 @@ import AllDoses from "@/Layout/dashboard/home/AllDoses";
 import Home from "@/Layout/dashboard/home/Home";
 import Loader from "@/Layout/dashboard/shared/Loader";
 import { format } from "date-fns";
+import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { FaCheck } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
@@ -37,8 +38,6 @@ import { DrugProps, ScheduleItem } from "../../../types/dashboard";
 import { uploadScheduleToServer } from "../../../utils/schedule";
 import supabase from "../../../utils/supabaseClient";
 import { tabs, tabsMobile } from "./../../../utils/dashboard";
-import Head from "next/head";
-import Contact from "@/Layout/dashboard/account/Contact";
 
 interface tabsMobileProps {
   name: string;
@@ -482,8 +481,6 @@ const Page = () => {
                 allergiesForm={allergiesForm}
                 setAllergiesForm={setAllergiesForm}
               />
-            ) : active === "Tips" ? (
-              <Tips />
             ) : (
               <Account
                 setDrugHxForm={setDrugHxForm}

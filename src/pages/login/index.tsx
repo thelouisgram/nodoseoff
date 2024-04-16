@@ -126,7 +126,7 @@ const SignIn = () => {
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
-                className="border bg-[#EDF2F7] border-none outline-none rounded-[10px]"
+                className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] w-full"
                 placeholder="Password"
               />
               <button
@@ -145,7 +145,7 @@ const SignIn = () => {
             </div>
           </div>
           {errorMessage && (
-            <p className="mb-4 -mt-4 text-red font-[500] tracking-tight leading-tight">
+            <p className="mb-4 -mt-4 text-red font-[500] tracking-none leading-none text-[14px]">
               {errorMessage}
             </p>
           )}

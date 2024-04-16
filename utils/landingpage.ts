@@ -1,9 +1,8 @@
 export const links = [
-  { title: "Home", link: "/" },
-  { title: "Features", link: "/" },
-  { title: "How it works", link: "/" },
-  { title: "Tips", link: "/" },
-  { title: "About", link: "/" },
+  { title: "Home", id: "home" },
+  { title: "Features", id: "features" },
+  { title: "How it works", id: "steps" },
+  { title: "Tips", id: "tips" },
 ];
 
 export const steps = [
@@ -23,3 +22,11 @@ export const steps = [
 ];
 
 export const days = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+
+export const scrollToSection = (sectionId: string) => {
+    const section = document.getElementById(sectionId);
+
+    if (section) {
+        section.scrollIntoView({ behavior: 'smooth' });
+    }
+};

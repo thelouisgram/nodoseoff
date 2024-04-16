@@ -1,6 +1,6 @@
 import React from "react";
 
-const HeroText = () => {
+const Header = () => {
   return (
     <div className="tracking-tighter relative text-[40px]  font-semibold h-[220px]">
       <div className="bg-lightPink px-8 py-3 rounded-[16px] text-darkPink  ">
@@ -16,4 +16,4 @@ const HeroText = () => {
   );
 };
 
-export default HeroText;
+export default Header;

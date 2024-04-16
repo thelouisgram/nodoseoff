@@ -1,25 +1,30 @@
 "use client";
 import Image from "next/image";
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
-import { links } from "../../../utils/landingpage";
+import { links, scrollToSection } from "../../../utils/landingpage";
 
-interface navProps{
-  nav:boolean;
+interface navProps {
+  nav: boolean;
   setNav: Function;
+  isScrolled: boolean;
 }
 
-const Navbar:React.FC<navProps> = ({nav, setNav}) => {
+const Navbar: React.FC<navProps> = ({ isScrolled, setNav }) => {
   const renderedLinks = links?.map((link, index) => (
-    <Link href={link.link} key={index}>
+    <button key={index} onClick={() => scrollToSection(link.id)}>
       {link.title}
-    </Link>
+    </button>
   ));
 
   return (
-    <section className="w-full bg-lightBlue relative">
+    <section
+      className={`${
+        isScrolled ? "shadow-md fixed" : ""
+      } w-full bg-lightBlue top-0 z-[14] fixed`}
+    >
       <nav
-        className="container md:w-[1165px] lg:w-[1165px] mx-auto px-4 ss:px-5 md:px-0 w-full h-[96px] flex justify-between items-center relative 
+        className="container md:w-[1165px] lg:w-[1165px] mx-auto px-4 ss:px-5 md:px-0 w-full h-[80px] flex justify-between items-center relative 
       text-[14px] "
       >
         <div className="flex items-center gap-20">
@@ -35,7 +40,7 @@ const Navbar:React.FC<navProps> = ({nav, setNav}) => {
             {renderedLinks}
           </div>
         </div>
-        <button className="flex gap-6">
+        <div className="flex gap-6 font-Inter">
           <Image
             src="/assets/menu.png"
             width="24"
@@ -58,7 +63,7 @@ const Navbar:React.FC<navProps> = ({nav, setNav}) => {
           >
             Create an Account
           </Link>
-        </button>
+        </div>
       </nav>
     </section>
   );

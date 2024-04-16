@@ -19,7 +19,7 @@ const Tips = () => {
     );
   });
   return (
-    <div className="container md:w-[1165px] lg:w-[1165px] py-24 mx-auto px-4 xs:px-1 ss:px-5 md:px-0 w-full flex flex-col">
+    <div id='tips' className="container md:w-[1165px] lg:w-[1165px] py-24 mx-auto px-4 xs:px-1 ss:px-5 md:px-0 w-full flex flex-col">
       <h2 className="text-[24px] md:text-[36px] md:w-[500px] mb-16 font-Poppins leading-tight">
         Tips for better health and sticking to your medications.
       </h2>

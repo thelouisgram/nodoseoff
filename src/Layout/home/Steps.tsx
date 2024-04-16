@@ -24,7 +24,7 @@ const Steps = () => {
   });
 
   return (
-    <div className="bg-lightBlue py-24 font-Inter h-full">
+    <div id='steps' className="bg-lightBlue py-24 font-Inter h-full">
       <div className="container md:w-[1165px] lg:w-[1165px] mx-auto px-4 xs:px-1 ss:px-5 md:px-0 w-full grid ss:grid-cols-2
         gap-16 h-full items-center">
         <div>

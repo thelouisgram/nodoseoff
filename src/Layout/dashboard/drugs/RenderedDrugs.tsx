@@ -119,9 +119,9 @@ const RenderedDrugs: React.FC<thisProps> = ({
               <Image
                 src="/assets/info.png"
                 alt="edit"
-                width={20}
-                height={20}
-                className="ss:w-[20px] w-[16px]"
+                width={24}
+                height={24}
+                className="w-[20px]"
               />
               View Details
             </button>
@@ -139,9 +139,9 @@ const RenderedDrugs: React.FC<thisProps> = ({
               <Image
                 src="/assets/edit.png"
                 alt="edit"
-                width={20}
-                height={20}
-                className="ss:w-[20px] w-[16px]"
+                width={24}
+                height={24}
+                className="w-[20px]"
               />
               Edit Drug
             </button>
@@ -158,9 +158,9 @@ const RenderedDrugs: React.FC<thisProps> = ({
             <Image
               src="/assets/delete.png"
               alt="edit"
-              width={20}
-              height={20}
-              className="ss:w-[20px] w-[16px]"
+              width={24}
+              height={24}
+              className="w-[20px]"
             />
             Delete Drug
           </button>
@@ -177,9 +177,9 @@ const RenderedDrugs: React.FC<thisProps> = ({
               <Image
                 src="/assets/disabled.png"
                 alt="disabled"
-                width={20}
-                height={20}
-                className="ss:w-[16px] w-[12px]"
+                width={24}
+                height={24}
+                className="w-[16px] "
               />
               Add to Allergies
             </button>

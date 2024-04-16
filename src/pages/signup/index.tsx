@@ -18,6 +18,9 @@ const CreateAccount = () => {
     password: "",
   });
 
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const [loading, setLoading] = useState(false);
@@ -214,32 +217,62 @@ const CreateAccount = () => {
             <label htmlFor="password" className="text-[14px] mb-1">
               Password
             </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleInputChange}
-              className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4"
-              placeholder="Password"
-            />
+            <div className="w-full bg-[#EDF2F7] rounded-[10px] mb-4 flex p-4">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                className="border bg-[#EDF2F7] border-none outline-none rounded-[10px]  w-full"
+                placeholder="Password"
+              />
+              <button
+                type="button"
+                className="text-gray-500 focus:outline-none"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                <Image
+                  src={showPassword ? "/assets/hide.png" : "/assets/show.png"}
+                  width={512}
+                  height={512}
+                  className="h-5 w-5"
+                  alt="show password"
+                />
+              </button>
+            </div>
           </div>
           <div className="flex flex-col mb-4">
             <label htmlFor="password" className="text-[14px] mb-1">
               Confirm Password
             </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={confirmPassword}
-              onChange={handleConfirmPassword}
-              className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4"
-              placeholder="Password"
-            />
+            <div className="w-full bg-[#EDF2F7] rounded-[10px] mb-4 flex p-4">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                id="password"
+                name="password"
+                value={confirmPassword}
+                onChange={handleConfirmPassword}
+                className="border bg-[#EDF2F7] border-none outline-none rounded-[10px]  w-full"
+                placeholder="Password"
+              />
+              <button
+                type="button"
+                className="text-gray-500 focus:outline-none"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                <Image
+                  src={showConfirmPassword ? "/assets/hide.png" : "/assets/show.png"}
+                  width={512}
+                  height={512}
+                  className="h-5 w-5"
+                  alt="show password"
+                />
+              </button>
+            </div>
           </div>
           {errorMessage && (
-            <p className="mb-4 -mt-4 text-red font-[500] tracking-tight leading-tight">
+            <p className="mb-4 -mt-4 text-red font-[500] tracking-none leading-none text-[14px]">
               {errorMessage}
             </p>
           )}

@@ -475,7 +475,7 @@ const Drugs: React.FC<DrugsProps> = ({
                   }}
                   className="rounded-[10px]  text-white font-semibold justify-end flex gap-2 ss:gap-3 items-center"
                 >
-                  + Add drug
+                  + Add a Drug
                 </button>
                 <button
                   onClick={() => {
@@ -485,7 +485,7 @@ const Drugs: React.FC<DrugsProps> = ({
                   }}
                   className="rounded-[10px]  text-white font-semibold justify-end flex gap-2 ss:gap-3 items-center"
                 >
-                  + Add Allergies
+                  + Add an Allergy
                 </button>
                 <button
                   onClick={() => {

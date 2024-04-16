@@ -16,11 +16,12 @@ const Navbar:React.FC<navProps> = ({nav, setNav}) => {
     </Link>
   ));
 
-  console.log(nav)
   return (
     <section className="w-full bg-lightBlue relative">
-      <nav className="container md:w-[1165px] lg:w-[1165px] mx-auto px-4 ss:px-5 md:px-0 w-full h-[96px] flex justify-between items-center relative 
-      text-[14px] ">
+      <nav
+        className="container md:w-[1165px] lg:w-[1165px] mx-auto px-4 ss:px-5 md:px-0 w-full h-[96px] flex justify-between items-center relative 
+      text-[14px] "
+      >
         <div className="flex items-center gap-20">
           <Image
             src="/assets/logo/logo with name - blue color.png"
@@ -30,8 +31,11 @@ const Navbar:React.FC<navProps> = ({nav, setNav}) => {
             priority
             className="w-[120px] ss:w-[160px] h-auto"
           />
+          <div className="gap-8 font-semibold text-[16px] hidden md:flex">
+            {renderedLinks}
+          </div>
         </div>
-        <div className="flex gap-6">
+        <button className="flex gap-6">
           <Image
             src="/assets/menu.png"
             width="24"
@@ -40,8 +44,7 @@ const Navbar:React.FC<navProps> = ({nav, setNav}) => {
             className="flex ss:hidden"
             onClick={() => {
               setNav(true);
-          }}
-          
+            }}
           />
           <Link
             href="/login"
@@ -55,7 +58,7 @@ const Navbar:React.FC<navProps> = ({nav, setNav}) => {
           >
             Create an Account
           </Link>
-        </div>
+        </button>
       </nav>
     </section>
   );

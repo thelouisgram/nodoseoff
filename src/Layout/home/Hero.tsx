@@ -3,9 +3,15 @@ import Navbar from "./Navbar";
 import HeroText from "./HeroText";
 import Link from "next/link";
 import Image from "next/image";
+import { links } from "../../../utils/landingpage";
 
 const Hero = () => {
   const [nav, setNav] = useState(false);
+  const renderedLinks = links?.map((link, index) => (
+    <Link href={link.link} key={index}>
+      {link.title}
+    </Link>
+  ));
 
   return (
     <div className="w-full h-auto bg-lightBlue relative">
@@ -123,7 +129,9 @@ const Hero = () => {
         </div>
       </div>
       <div
-        className={`w-full ${nav ? "opacity-100 z-10" : "opacity-0 -z-10"} transitions-all 
+        className={`w-full ${
+          nav ? "opacity-100 z-10" : "opacity-0 -z-10"
+        } transitions-all 
             duration-300 p-6 fixed flex-col flex gap-3 h-[100dvh] bg-white top-0 left-0`}
       >
         <div className="w-full flex justify-end mb-10 p-2">
@@ -136,18 +144,23 @@ const Hero = () => {
             />
           </button>
         </div>
-        <Link
-          href="/login"
-          className="px-5 py-3 border-navyBlue border rounded-[10px] text-center bg-transparent font-semibold text-navyBlue"
-        >
-          Sign in
-        </Link>
-        <Link
-          href="/signup"
-          className="px-5 py-3 bg-navyBlue rounded-[8px] text-center font-semibold text-white"
-        >
-          Create new account
-        </Link>
+        <div className="flex flex-col gap-4 items-center mb-10">
+          {renderedLinks}
+        </div>
+        <div className='w-full items-center flex flex-col gap-3'>
+          <Link
+            href="/login"
+            className="px-5 py-3 w-60 border-navyBlue border rounded-[10px] text-center bg-transparent font-semibold text-navyBlue"
+          >
+            Sign in
+          </Link>
+          <Link
+            href="/signup"
+            className="px-5 py-3 w-60 bg-navyBlue rounded-[8px] text-center font-semibold text-white"
+          >
+            Create new account
+          </Link>
+        </div>
       </div>
     </div>
   );

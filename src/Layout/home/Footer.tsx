@@ -21,16 +21,14 @@ const Footer = () => {
                 />
               </div>
             </div>
-            <div className=" grid grid-cols-2 md:grid-cols-3 gap-16 md:gap-36 mb-16 md:mb-0 ">
+            <div className=" grid grid-cols-2 md:grid-cols-3 gap-16 md:gap-48 mb-16 md:mb-0 ">
               <div className="flex flex-col gap-3">
-                <h2 className="font-[500] text-[18px]">Products</h2>
+                <h2 className="font-[500] text-[18px]">Pages</h2>
                 <Link href='/login'>Dashboard</Link>
-                <p>Drugs</p>
-                <p>Reminder</p>
+                <p>About</p>
               </div>
               <div className="flex flex-col gap-3">
                 <h2 className="font-[500] text-[18px]">Company</h2>
-                <p>About</p>
                 <p>FAQs</p>
                 <p>Blog</p>
               </div>

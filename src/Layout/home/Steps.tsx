@@ -43,7 +43,7 @@ const Steps = () => {
               className="w-full h-full object-cover"
             />
             <Link href='/signup' className="px-12 py-3 font-semibold absolute bottom-10 bg-white z-10 text-navyBlue rounded-[10px] text-[18px]">
-              Create Account
+              Create an Account
               </Link>
             <div className="absolute bottom-0 left-0 right-0 z-4 h-[75%] bg-gradient-to-b from-transparent to-black" />
           </div>

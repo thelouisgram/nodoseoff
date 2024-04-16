@@ -82,9 +82,12 @@ const DownloadableReport: React.FC = () => {
                 alt="logo"
                 width={1084}
                 height={257}
-                className={`w-[100px] h-[19.95px] ss:w-[150px] ss:h-[29.94px] md:w-[200px] md:h-auto object-contain`}
+                className={`w-[100px] h-[19.95px] ss:w-[150px] ss:h-[29.94px] md:w-[200px] md:h-auto hidden md:flex`}
                 quality={100}
               />
+              <div className="w-full justify-center text-center font-bold text-[14px] ss:text-[24px] flex md:hidden ">
+                NoDoseOff
+              </div>
             </div>
             <div className="w-full flex justify-center text-center font-[500] text-[8px] ss:text-[18px] uppercase ">
               Drug History Report

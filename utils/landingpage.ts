@@ -1,8 +1,9 @@
 export const links = [
   { title: "Home", link: "/" },
-  { title: "Services", link: "/" },
+  { title: "Features", link: "/" },
   { title: "How it works", link: "/" },
-  { title: "Learn More", link: "/" },
+  { title: "Tips", link: "/" },
+  { title: "About", link: "/" },
 ];
 
 export const steps = [

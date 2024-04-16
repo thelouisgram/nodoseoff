@@ -35,6 +35,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
   const dispatch = useDispatch();
 
   const currentDrug = drugs.find((drug) => drug.drug === activeDrug);
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     drug: "",
@@ -172,6 +173,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
 
     const errors: FormErrors = {
       name: formData.drug ? "" : "Please fill in the Name of drug field.",
@@ -226,9 +228,6 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
       // Update Redux state with the new schedule
       dispatch(updateSchedule([...updatedSchedule]));
 
-      // Show loading toast while uploading the schedule
-      toast.loading("Saving changes", { duration: 2000 });
-
       // Upload the updated schedule to the server
       await uploadScheduleToServer({
         userId: userId,
@@ -257,7 +256,8 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
       }
 
       // Hide loading toast and show success toast
-      toast.success(`'${formData.drug}' has been updated successfully`);
+      toast.success(`${formData.drug.toUpperCase()}  updated successfully`);
+      setLoading(false);
       setEditForm(false);
       setFormErrors({
         drug: "",
@@ -301,7 +301,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
                 className="cursor-pointer pt-8"
               />
             </div>
-            <h1 className="text-[24px] text-darkBlue font-bold">Edit Drug</h1>
+            <h1 className="text-[24px] text-blue-700 font-bold">Edit Drug</h1>
             <p className="text-[14px] text-grey">
               To ensure adequate tracking of drug compliance.
             </p>
@@ -415,7 +415,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
                 >
                   Select End Date
                 </label>
-                <div className="bg-[#EDF2F7] w-full rounded-[10px]  mb-8">
+                <div className="bg-[#EDF2F7] w-full rounded-[10px]">
                   <input
                     type="date"
                     id="end"
@@ -427,7 +427,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
                 </div>
               </div>
             </div>
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-2 items-center mb-8">
               <input
                 type="checkbox"
                 id="reminder"
@@ -445,10 +445,19 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
             </div>
             <button
               type="submit"
-              className="mt-8 font-semibold bg-darkBlue text-white rounded-[10px] w-full text-center py-4  px-4 
-              hover:bg-navyBlue transition duration-300"
+              disabled={loading}
+              className={`font-semibold text-white rounded-[10px] w-full items-center 
+              justify-center flex transition duration-300 ${
+                loading ? "bg-navyBlue opacity-85" : "bg-blue-700 h-14"
+              }`}
             >
-              PROCEED
+              {loading ? (
+                <div className=" h-14 flex items-center">
+                  <div className="loaderInfinity" />
+                </div>
+              ) : (
+                <div className="h-14 flex items-center">PROCEED</div>
+              )}
             </button>
           </form>
         </div>

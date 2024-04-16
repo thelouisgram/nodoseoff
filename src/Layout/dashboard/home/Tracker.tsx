@@ -25,7 +25,7 @@ const Tracker: React.FC<TrackerProps> = ({
         }}
         className={`${
           item === tracker
-            ? "text-darkBlue bg-white rounded-[6px] border shadow-sm"
+            ? "text-blue-700 bg-white rounded-[6px] border shadow-sm"
             : "text-grey"
         } px-3 py-2 ss:px-4 text-[14px] font-Inter w-full font-[500]`}
       >

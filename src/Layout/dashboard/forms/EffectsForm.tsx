@@ -34,6 +34,8 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
     date: "",
   });
 
+  const [loading, setLoading] = useState(false);
+
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({
@@ -49,6 +51,7 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
     const errors: FormErrors = {
       effect: formData.effect ? "" : "Please fill in the Side Effect field.",
       severity: formData.severity
@@ -69,7 +72,6 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
     }
 
     // Show loading toast while uploading the schedule
-    toast.loading("Adding Effects", { duration: 2000 });
 
     try {
       const { error } = await supabase.from("effects").insert({
@@ -85,7 +87,8 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
       }
 
       dispatch(setEffects([...effects, formData]));
-      toast.success(`'${formData.effect}' has been added successfully`);
+      toast.success(`${formData.effect.toUpperCase()}  added successfully`);
+      setLoading(false);
       setFormData({
         effect: "",
         severity: "mild",
@@ -123,7 +126,7 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
           effectsForm
             ? "left-0 ss:w-[450px] h-full"
             : "-left-[450px] ss:w-[450px] h-full"
-        } transition-all duration-300 absolute  bg-white h-full w-full z-[4] `}
+        } transition duration-300 absolute  bg-white h-full w-full z-[4] `}
       >
         <div
           className={`h-full flex flex-col w-full justify-between gap-8 p-8 pt-0 overflow-y-scroll bg-white`}
@@ -143,7 +146,7 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
                 className="cursor-pointer pt-8"
               />
             </div>
-            <h1 className="text-[24px] text-darkBlue font-bold">
+            <h1 className="text-[24px] text-blue-700 font-bold">
               Add Side Effect
             </h1>
             <p className="text-[14px] mb-10 text-grey">
@@ -209,9 +212,19 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
           </div>
           <button
             onClick={handleClick}
-            className="font-semibold bg-darkBlue text-white rounded-[10px] w-full text-center py-4  px-4 hover:bg-navyBlue transition duration-300"
+            disabled={loading}
+            className={`font-semibold text-white rounded-[10px] w-full items-center 
+              justify-center flex transition duration-300 ${
+                loading ? "bg-navyBlue opacity-85" : "bg-blue-700 h-14"
+              }`}
           >
-            PROCEED
+            {loading ? (
+              <div className=" h-14 flex items-center">
+                <div className="loaderInfinity" />
+              </div>
+            ) : (
+              <div className="h-14 flex items-center">PROCEED</div>
+            )}
           </button>
         </div>
       </div>

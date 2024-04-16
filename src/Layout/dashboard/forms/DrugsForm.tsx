@@ -26,6 +26,8 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
     (state: RootState) => state.app
   );
 
+  const [loading, setLoading] = useState(false);
+
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     drug: "",
@@ -178,7 +180,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
   };
 
   const addDrug = async () => {
-    toast.loading("Adding Drug");
+    setLoading(true);
     try {
       const { error } = await supabase.from("drugs").insert({
         userId: userId,
@@ -197,8 +199,9 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
       }
 
       dispatch(setDrugs([...drugs, formData]));
-      toast.success(`'${formData.drug}' has been added successfully!`);
+      toast.success(`${formData.drug.toUpperCase()}  added successfully!`);
       setDrugsForm(false);
+      setLoading(false);
       const data = generateSchedule(formData); // Generate updated schedule data based on formData
       const updatedSchedule = [...schedule, ...data]; // Combine current schedule with new data
 
@@ -273,7 +276,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
                 className="cursor-pointer pt-8"
               />
             </div>
-            <h1 className="text-[24px] text-darkBlue font-bold">Add Drug</h1>
+            <h1 className="text-[24px] text-blue-700 font-bold">Add Drug</h1>
             <p className="text-[14px] text-grey">
               To ensure adequate tracking of drug compliance.
             </p>
@@ -419,9 +422,19 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
           </form>
           <button
             onClick={handleClick}
-            className="font-semibold bg-darkBlue text-white rounded-[10px] w-full text-center py-4  px-4 hover:bg-navyBlue transition duration-300"
+            disabled={loading}
+            className={`font-semibold text-white rounded-[10px] w-full items-center 
+              justify-center flex transition duration-300 ${
+                loading ? "bg-navyBlue opacity-85" : "bg-blue-700 h-14"
+              }`}
           >
-            PROCEED
+            {loading ? (
+              <div className=" h-14 flex items-center">
+                <div className="loaderInfinity" />
+              </div>
+            ) : (
+              <div className="h-14 flex items-center">PROCEED</div>
+            )}
           </button>
         </div>
       </div>

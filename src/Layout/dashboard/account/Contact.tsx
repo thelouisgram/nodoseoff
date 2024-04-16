@@ -71,7 +71,7 @@ const Contact: React.FC<ContactProps> = ({ showContact, setShowContact }) => {
             />
           </div>
           <div className="mb-10">
-            <h1 className="text-[24px] text-darkBlue font-bold">Contact Us</h1>
+            <h1 className="text-[24px] text-blue-700 font-bold">Contact Us</h1>
           </div>
           <div className="flex flex-col gap-4">
             {contactInfo.map((item, index) => (

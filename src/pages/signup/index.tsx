@@ -18,6 +18,8 @@ const CreateAccount = () => {
     password: "",
   });
 
+  const [confirmPassword, setConfirmPassword] = useState("");
+
   const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -27,6 +29,13 @@ const CreateAccount = () => {
       [name]: value,
     });
   };
+
+  const handleConfirmPassword = (e: ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setConfirmPassword(value);
+  };
+
+  const [errorMessage, setErrorMessage] = useState("");
 
   async function fetchLocalImage() {
     try {
@@ -51,15 +60,22 @@ const CreateAccount = () => {
     // Password strength validation (can be customized)
     const strongPasswordRegex = /^(?=.*\d)[A-Za-z\d]{8,}$/;
     if (!strongPasswordRegex.test(formData.password)) {
-      toast.error(
-        "Please enter a strong password (minimum eight characters, one small letter, and one number)"
+      setErrorMessage(
+        "Please enter a strong password (minimum eight characters, one capital letter, and one number)"
+      );
+      return;
+    }
+
+    if (formData.password !== confirmPassword) {
+      setErrorMessage(
+        "Password do not match!"
       );
       return;
     }
 
     for (const key in formData) {
       if (formData[key as keyof typeof formData] === "") {
-        toast.error("Please fill in all fields");
+        setErrorMessage("Please fill in all fields");
         return;
       }
     }
@@ -72,7 +88,7 @@ const CreateAccount = () => {
       });
 
       if (signUpError) {
-        toast.error("Error signing up: " + signUpError.message);
+        setErrorMessage("Error signing up: " + signUpError.message);
         return;
       }
 
@@ -91,7 +107,7 @@ const CreateAccount = () => {
         schedule: [],
       });
       if (addInfoError) {
-        toast.error("Failed to insert data into the database");
+        setErrorMessage("Error occurred, Try again!");
         return;
       }
 
@@ -103,16 +119,14 @@ const CreateAccount = () => {
 
       if (uploadError) {
         console.error("Error uploading image:", uploadError);
-        toast.error("Error uploading image");
         return;
       }
 
       // Both operations succeeded
       router.push("/dashboard");
-      toast.success("Signed up and information added");
     } catch (error) {
       // Handle all unexpected errors
-      toast.error("Error: " + error);
+      setErrorMessage("Error: " + error);
       setLoading(false);
     }
 
@@ -147,7 +161,7 @@ const CreateAccount = () => {
           onSubmit={handleSubmit}
         >
           <div className="mb-10 w-full items-center flex flex-col">
-            <legend className="text-[24px] font-bold text-darkBlue font-Inter">
+            <legend className="text-[24px] font-bold text-blue-700 font-Inter">
               Create an Account
             </legend>
             <p className="text-[14px]">
@@ -210,11 +224,30 @@ const CreateAccount = () => {
               placeholder="Password"
             />
           </div>
+          <div className="flex flex-col mb-4">
+            <label htmlFor="password" className="text-[14px] mb-1">
+              Confirm Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={confirmPassword}
+              onChange={handleConfirmPassword}
+              className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4"
+              placeholder="Password"
+            />
+          </div>
+          {errorMessage && (
+            <p className="mb-4 -mt-4 text-red font-[500] tracking-tight leading-tight">
+              {errorMessage}
+            </p>
+          )}
           <button
             type="submit"
             disabled={loading}
-            className={`bg-darkBlue text-white rounded-[10px] h-[56px] w-full items-center justify-center flex transition duration-300 font-semibold ${
-              loading ? "bg-navyBlue" : "after:"
+            className={` text-white rounded-[10px] h-[56px] w-full items-center justify-center flex transition duration-300 font-semibold ${
+              loading ? "bg-navyBlue" : "bg-blue-700"
             }`}
           >
             {loading ? (

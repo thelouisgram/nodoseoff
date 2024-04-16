@@ -34,6 +34,8 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
     herbs: herbs,
   });
 
+  const [loading, setLoading] = useState(false)
+
   useEffect(() => {
     const formElement = document.getElementById("top-drugHx");
     if (formElement) {
@@ -56,7 +58,7 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    setLoading(true)
     try {
       const { error } = await supabase
         .from("users")
@@ -73,6 +75,7 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
 
       dispatch(updateInfo([formData]));
       setDrugHxForm(false);
+      setLoading(false)
       toast.success("Profile updated successfully");
     } catch (error) {
       console.error("Error updating Profile:", error);
@@ -108,7 +111,7 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
               />
             </div>
             <div className="mb-10">
-              <h1 className="text-[24px] text-darkBlue font-bold">
+              <h1 className="text-[24px] text-blue-700 font-bold">
                 Drug History
               </h1>
             </div>
@@ -162,9 +165,19 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
           </div>
           <button
             onClick={handleClick}
-            className="font-semibold bg-darkBlue text-white rounded-[10px] w-full text-center py-4  px-4 hover:bg-navyBlue transition duration-300"
+            disabled={loading}
+            className={`font-semibold text-white rounded-[10px] w-full items-center 
+              justify-center flex transition duration-300 ${
+                loading ? "bg-navyBlue opacity-85" : "bg-blue-700 h-14"
+              }`}
           >
-            UPDATE PROFILE
+            {loading ? (
+              <div className=" h-14 flex items-center">
+                <div className="loaderInfinity" />
+              </div>
+            ) : (
+              <div className="h-14 flex items-center">UPDATE PROFILE</div>
+            )}
           </button>
         </div>
       </div>

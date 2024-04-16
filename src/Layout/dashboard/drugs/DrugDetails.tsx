@@ -134,7 +134,7 @@ const DrugDetails: React.FC<drugDetailsProps> = ({
 
       <section className="mt-8 ">
         <div className="w-full flex justify-between relative items-center mb-[28px]">
-          <h1 className="text-[28px] ss:text-[36px] font-semibold font-karla capitalize">
+          <h1 className="text-[28px] ss:text-[36px] font-semibold font-karla capitalize text-blue-700">
             {drug}
           </h1>
           <button

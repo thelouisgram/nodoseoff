@@ -118,7 +118,7 @@ const Account: React.FC<AccountProps> = ({
               >
                 <div className="flex gap-3">
                   <Image
-                    src="/assets/account/medical-report.png"
+                    src="/assets/account/document.png"
                     width={24}
                     height={24}
                     alt="Drug History"

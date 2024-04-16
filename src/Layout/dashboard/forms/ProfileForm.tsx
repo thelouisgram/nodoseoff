@@ -13,8 +13,6 @@ import supabase from "../../../../utils/supabaseClient";
 import { toast } from "sonner";
 import { updateInfo } from "../../../../store/stateSlice";
 
-type RefObject<T> = React.RefObject<T>;
-
 interface ProfileFormProps {
   setProfileForm: Function;
   profileForm: boolean;
@@ -39,8 +37,11 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
     herbs: herbs,
   });
 
+  const [loading, setLoading] = useState(false)
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true)
 
     try {
       const { error } = await supabase
@@ -58,6 +59,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 
       dispatch(updateInfo([formData]));
       setProfileForm(false);
+      setLoading(false)
       toast.success("Profile updated successfully");
     } catch (error) {
       console.error("Error updating Profile:", error);
@@ -141,7 +143,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
               />
             </div>
             <div className="mb-10">
-              <h1 className="text-[24px] text-darkBlue font-bold">
+              <h1 className="text-[24px] text-blue-700 font-bold">
                 Basic Data
               </h1>
             </div>
@@ -165,8 +167,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                     <div className="w-[100px] h-[100px] rounded-full overflow-hidden">
                       <Image
                         src={
-                          CDNURL + userId + "/avatar.png" ||
-                          "/assets/user.png"
+                          CDNURL + userId + "/avatar.png" || "/assets/user.png"
                         }
                         width={3000}
                         height={3000}
@@ -223,9 +224,19 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
           </div>
           <button
             onClick={handleClick}
-            className="font-semibold bg-darkBlue text-white rounded-[10px] w-full text-center py-4  px-4 hover:bg-navyBlue transition duration-300"
+            disabled={loading}
+            className={`font-semibold text-white rounded-[10px] w-full items-center 
+              justify-center flex transition duration-300 ${
+                loading ? "bg-navyBlue opacity-85" : "bg-blue-700 h-14"
+              }`}
           >
-            PROCEED
+            {loading ? (
+              <div className=" h-14 flex items-center">
+                <div className="loaderInfinity" />
+              </div>
+            ) : (
+              <div className="h-14 flex items-center">PROCEED</div>
+            )}
           </button>
         </div>
       </div>

@@ -91,7 +91,7 @@ const Statistics: React.FC<Stats> = ({ setShowStats, showStats }) => {
             />
           </div>
           <div className="mb-10">
-            <h1 className="text-[24px] text-darkBlue font-bold">
+            <h1 className="text-[24px] text-blue-700 font-bold">
               Basic Statistics
             </h1>
           </div>

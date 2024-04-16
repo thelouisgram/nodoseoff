@@ -62,6 +62,8 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
     });
   };
 
+  const [loading, setLoading] = useState(false);
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const errors: FormErrors = {
@@ -89,8 +91,7 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
       return;
     }
     // Show loading toast while uploading the schedule
-    toast.loading("Adding Drug Allergy", { duration: 2000 });
-
+    setLoading(true);
     try {
       const { error } = await supabase.from("allergies").insert({
         userId: userId,
@@ -109,7 +110,7 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
       }
 
       dispatch(updateAllergies([...allergies, formData]));
-      toast.success(`'${formData.drug}' has been added successfully`);
+      toast.success(`${formData.drug.toUpperCase()}  added successfully`);
       setFormData({
         drug: "",
         frequency: "",
@@ -121,6 +122,7 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
       });
       setFormErrors({ drug: "" });
       setAllergiesForm(false);
+      setLoading(false);
     } catch (error) {
       console.error("Error adding Allergy:", error);
     }
@@ -163,7 +165,7 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
               />
             </div>
             <div className="mb-10">
-              <h1 className="text-[24px] text-darkBlue font-bold">
+              <h1 className="text-[24px] text-blue-700 font-bold">
                 Add Drug Allergies
               </h1>
               <p className="text-[14px] text-grey">
@@ -197,9 +199,19 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
           </div>
           <button
             onClick={handleClick}
-            className="font-semibold bg-darkBlue text-white rounded-[10px] w-full text-center py-4  px-4 hover:bg-navyBlue transition duration-300"
+            disabled={loading}
+            className={`font-semibold text-white rounded-[10px] w-full items-center 
+              justify-center flex transition duration-300 ${
+                loading ? "bg-navyBlue opacity-85" : "bg-blue-700 h-14"
+              }`}
           >
-            PROCEED
+            {loading ? (
+              <div className=" h-14 flex items-center">
+                <div className="loaderInfinity" />
+              </div>
+            ) : (
+              <div className="h-14 flex items-center">PROCEED</div>
+            )}
           </button>
         </div>
       </div>

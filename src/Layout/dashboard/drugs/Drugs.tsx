@@ -180,7 +180,7 @@ const Drugs: React.FC<DrugsProps> = ({
           return;
         }
 
-        toast.success(`'${activeDrug}' deleted Successfully!`);
+        toast.success(`${activeDrug.toUpperCase()} deleted Successfully!`);
 
         const updatedSchedule: ScheduleItem[] = removePastDoses({
           activeDrug,
@@ -223,7 +223,7 @@ const Drugs: React.FC<DrugsProps> = ({
         return;
       }
 
-      toast.success(`'${drug}' deleted Successfully!`);
+      toast.success(`${drug.toUpperCase()} deleted Successfully!`);
 
       const newAllergies = allergies.filter(
         (allergyItem: DrugProps) => allergyItem.drug !== drug
@@ -269,7 +269,7 @@ const Drugs: React.FC<DrugsProps> = ({
           schedule,
         });
 
-        toast.success(`'${activeDrug}' has been marked as an allergy!`);
+        toast.success(`${activeDrug.toUpperCase()}  marked as an allergy!`);
         // Make the uploadScheduleToServer asynchronous
         await uploadScheduleToServer({
           userId: userId,
@@ -299,7 +299,7 @@ const Drugs: React.FC<DrugsProps> = ({
         }}
         className={`${
           item === tab
-            ? "text-darkBlue bg-white rounded-[6px] border shadow-sm"
+            ? "text-blue-700 bg-white rounded-[6px] border shadow-sm"
             : "text-grey"
         } px-3 py-2 ss:px-4 text-[14px] font-Inter w-full font-[500]`}
       >
@@ -311,7 +311,7 @@ const Drugs: React.FC<DrugsProps> = ({
   return (
     <>
       {displayDrugs ? (
-        <div className="h-[100dvh] ss:pb-28 overflow-y-scroll w-full md:py-16 md:px-12 px-4 pt-10 pb-24 ss:p-10 text-navyBlue font-karla relative">
+        <div className="h-[100dvh] ss:pb-28 overflow-y-scroll w-full md:py-16 md:px-12 md:pb-28 px-4 pt-10 pb-28 ss:p-10 text-navyBlue font-karla relative">
           <div className="mb-[28px]">
             <h1 className="text-[24px] ss:text-[32px] font-semibold font-karla ">
               Drugs
@@ -475,15 +475,7 @@ const Drugs: React.FC<DrugsProps> = ({
                   }}
                   className="rounded-[10px]  text-white font-semibold justify-end flex gap-2 ss:gap-3 items-center"
                 >
-                  Add drug
-                  <div className="bg-white rounded-full p-2">
-                    <Image
-                      src="/assets/add/medicine.png"
-                      width={24}
-                      height={24}
-                      alt="add drug"
-                    />
-                  </div>
+                  + Add drug
                 </button>
                 <button
                   onClick={() => {
@@ -493,15 +485,7 @@ const Drugs: React.FC<DrugsProps> = ({
                   }}
                   className="rounded-[10px]  text-white font-semibold justify-end flex gap-2 ss:gap-3 items-center"
                 >
-                  Add Allergies
-                  <div className="bg-white rounded-full p-2">
-                    <Image
-                      src="/assets/add/drug-allergy.png"
-                      width={24}
-                      height={24}
-                      alt="add drug"
-                    />
-                  </div>
+                  + Add Allergies
                 </button>
                 <button
                   onClick={() => {
@@ -511,15 +495,7 @@ const Drugs: React.FC<DrugsProps> = ({
                   }}
                   className="rounded-[10px]  text-white font-semibold justify-end flex gap-2 ss:gap-3 items-center"
                 >
-                  Add Side Effect
-                  <div className="bg-white rounded-full p-2">
-                    <Image
-                      src="/assets/add/cough.png"
-                      width={24}
-                      height={24}
-                      alt="add drug"
-                    />
-                  </div>
+                  + Add Side Effect
                 </button>
               </div>
             ) : (

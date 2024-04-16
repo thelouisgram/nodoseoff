@@ -166,7 +166,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                       <Image
                         src={
                           CDNURL + userId + "/avatar.png" ||
-                          "/assets/icons8-user-100.png"
+                          "/assets/user.png"
                         }
                         width={3000}
                         height={3000}

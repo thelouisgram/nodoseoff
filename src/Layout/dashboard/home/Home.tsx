@@ -98,7 +98,7 @@ const Home: React.FC<HomeProps> = ({
         >
           <Image
             src={
-              CDNURL + userId + "/avatar.png" || "/assets/icons8-user-100.png"
+              CDNURL + userId + "/avatar.png" || "/assets/user.png"
             }
             width={100}
             height={100}

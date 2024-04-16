@@ -4,6 +4,7 @@ import Features from "@/Layout/home/Features";
 import Tips from "@/Layout/home/Tips";
 import Steps from "@/Layout/home/Steps";
 import Banner from "@/Layout/home/Banner";
+import Footer from "@/Layout/home/Footer";
 
 const Home = () => {
   return (
@@ -13,6 +14,7 @@ const Home = () => {
       <Steps />
       <Tips />
       <Banner />
+      <Footer />
     </section>
   );
 };

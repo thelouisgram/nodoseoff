@@ -40,7 +40,7 @@ const Calendar = () => {
 
   // Return the Calendar component
   return (
-    <div className="w-full h-auto px-5 py-6 bg-white rounded-[16px]">
+    <div className="w-full h-auto px-5 py-6 bg-white rounded-[16px] shadow-md">
       <div w-full>
         {/* Month navigation */}
         <div className="flex items-center justify-between">

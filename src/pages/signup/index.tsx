@@ -31,7 +31,7 @@ const CreateAccount = () => {
   async function fetchLocalImage() {
     try {
       // Fetch the image from your local assets directory
-      const response = await fetch("/assets/icons8-user-100.png");
+      const response = await fetch("/assets/user.png");
       if (!response.ok) {
         throw new Error("Failed to fetch image");
       }

@@ -7,7 +7,7 @@ const Steps = () => {
   const renderedSteps = steps.map((step, index) => {
     return (
       <div key={index} className="flex flex-col w-full">
-        <div className="flex gap-3 text-[20px] w-full">
+        <div className="flex gap-4 text-[20px] w-full">
           <h2>0{index + 1}</h2>
           <div className="flex flex-col w-full gap-2">
             <h2>{step.title}</h2>
@@ -31,7 +31,7 @@ const Steps = () => {
           <h2 className="text-[24px] md:text-[36px] mb-16 font-Poppins leading-tight">
             Achieving Complete Adherence to Medication
           </h2>
-          <div className="flex flex-col gap-5">{renderedSteps}</div>
+          <div className="flex flex-col gap-6">{renderedSteps}</div>
         </div>
         <div className="w-full h-full flex items-center justify-end">
           <div className="h-[550px] md:w-[400px] rounded-[16px] overflow-hidden relative flex justify-center">
@@ -43,7 +43,7 @@ const Steps = () => {
               className="w-full h-full object-cover"
             />
             <Link href='/signup' className="px-12 py-3 font-semibold absolute bottom-10 bg-white z-10 text-navyBlue rounded-[10px] text-[18px]">
-              Get Started
+              Create Account
               </Link>
             <div className="absolute bottom-0 left-0 right-0 z-4 h-[75%] bg-gradient-to-b from-transparent to-black" />
           </div>

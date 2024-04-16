@@ -30,9 +30,6 @@ const Navbar:React.FC<navProps> = ({nav, setNav}) => {
             priority
             className="w-[120px] ss:w-[160px] h-auto"
           />
-          <div className="gap-8 font-semibold text-[16px] hidden md:flex">
-            {renderedLinks}
-          </div>
         </div>
         <div className="flex gap-6">
           <Image

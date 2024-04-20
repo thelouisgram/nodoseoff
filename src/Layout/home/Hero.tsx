@@ -7,7 +7,7 @@ import NextDose from "./Hero/NextDose";
 import Compliance from "./Hero/Compliance";
 import NumberOfDrugs from "./Hero/NumberOfDrugs";
 import MissedDoses from "./Hero/MissedDoses";
-import MobileNavBar from "./MobileNavBar";
+import MobileNavBar from "../shared/MobileNavBar";
 
 interface navProps {
   nav: boolean;

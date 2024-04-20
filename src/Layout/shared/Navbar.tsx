@@ -28,25 +28,27 @@ const Navbar: React.FC<navProps> = ({ isScrolled, setNav }) => {
       text-[14px] "
       >
         <div className="flex items-center gap-20">
-          <Image
-            src="/assets/logo/logo with name - blue color.png"
-            width={3912}
-            height={1000}
-            alt="logo"
-            priority
-            className="w-[120px] ss:w-[160px] h-auto"
-          />
+          <Link href='/'>
+            <Image
+              src="/assets/logo/logo with name - blue color.png"
+              width={3912}
+              height={1000}
+              alt="logo"
+              priority
+              className="w-[120px] ss:w-[160px] h-auto"
+            />
+          </Link>
           <div className="gap-8 font-semibold text-[16px] hidden md:flex">
             {renderedLinks}
           </div>
         </div>
         <div className="flex gap-6 font-Inter">
           <Image
-            src="/assets/menu.png"
-            width="24"
-            height={24}
+            src="/assets/burger-menu.png"
+            width='512'
+            height='512'
             alt="menu"
-            className="flex ss:hidden"
+            className="flex ss:hidden w-10 h-auto"
             onClick={() => {
               setNav(true);
             }}

@@ -6,6 +6,7 @@ import Steps from "@/Layout/home/Steps";
 import Banner from "@/Layout/home/Banner";
 import Footer from "@/Layout/shared/Footer";
 import Navbar from "@/Layout/shared/Navbar";
+import MobileNavBar from "@/Layout/shared/MobileNavBar";
 
 const Home = () => {
   const [nav, setNav] = useState(false);
@@ -29,7 +30,13 @@ const Home = () => {
 
   return (
     <section className="text-blackBlue font-karla">
-      <Navbar nav={nav} setNav={setNav} isScrolled ={isScrolled}/>
+      <MobileNavBar nav={nav} setNav={setNav} showLinks={true} />
+      <Navbar
+        showLinks={true}
+        nav={nav}
+        setNav={setNav}
+        isScrolled={isScrolled}
+      />
       <Hero nav={nav} setNav={setNav} />
       <Features />
       <Steps />

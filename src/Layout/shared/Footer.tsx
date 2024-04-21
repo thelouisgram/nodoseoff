@@ -10,7 +10,7 @@ const Footer = () => {
         <div className="w-full flex flex-col md:flex-row justify-between">
           <div className="px-4 ss:px-20 md:px-0 flex flex-col md:flex-row gap-12 md:gap-48 w-full">
             <div className="w-full flex justify-start ">
-              <div className="w-[120px] ss:w-[160px] ">
+              <Link href='/' className="w-[160px] ">
                 <Image
                   src="/assets/logo/logo with name - blue color.png"
                   width={3912}
@@ -19,7 +19,7 @@ const Footer = () => {
                   priority
                   className="w-full h-auto"
                 />
-              </div>
+              </Link>
             </div>
             <div className=" grid grid-cols-2 md:grid-cols-3 gap-16 md:gap-48 mb-16 md:mb-0 ">
               <div className="flex flex-col gap-3">

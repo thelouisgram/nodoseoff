@@ -4,7 +4,7 @@ import Image from "next/image";
 const NextDose = () => {
   return (
     <div
-      className="absolute top-16 ss:top-36 -left-4 ss:-left-20 bg-white rounded-[8px] ss:rounded-[16px] p-2 ss:py-3 ss:pl-3 flex gap-2 ss:gap-3 
+      className="absolute top-16 ss:top-36 -left-6 ss:-left-20 bg-white rounded-[8px] ss:rounded-[16px] p-2 ss:py-3 ss:pl-3 flex gap-2 ss:gap-3 
               items-center ss:pr-10 shadow-sm"
     >
       <div className="bg-lightPurple p-1 ss:p-2 rounded-[5px] ss:rounded-[10px]">

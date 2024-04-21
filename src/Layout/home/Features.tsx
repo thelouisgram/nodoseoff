@@ -36,10 +36,10 @@ const Features = () => {
         <div className="px-6 py-10 md:py-12 bg-lightPurple flex flex-col md:flex-row justify-between rounded-[16px] w-full gap-8">
           <div className="flex flex-col text-grey md:w-[325px] gap-2 h-auto md:pt-14">
             <h2 className="font-bold leading-none text-[18px]">
-              Access your Drug History
+              Access your Drug History Report
             </h2>
             <p className="text-[16px] leading-tight font-[500]">
-              Share your drug history with your physician easily.
+              Share your drug history report with your physician easily.
             </p>
           </div>
           <Summary />

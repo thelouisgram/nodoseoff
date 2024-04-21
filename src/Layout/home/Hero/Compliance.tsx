@@ -4,7 +4,7 @@ import Image from 'next/image'
 const Compliance = () => {
   return (
     <div
-      className="absolute top-36 ss:top-60 -right-6 ss:-right-10 bg-white rounded-[8px] ss:rounded-[16px] p-2 ss:p-3 ss:pr-5 flex gap-2 
+      className="absolute top-36 ss:top-60 -right-6 ss:-right-16 bg-white rounded-[8px] ss:rounded-[16px] p-2 ss:p-3 ss:pr-5 flex gap-2 
             ss:gap-3 items-center shadow-sm"
     >
       <div className="bg-lightBlue p-1 ss:p-2 rounded-[5px] ss:rounded-[10px]">

@@ -8,9 +8,10 @@ interface navProps {
   nav: boolean;
   setNav: Function;
   isScrolled: boolean;
+  showLinks: boolean;
 }
 
-const Navbar: React.FC<navProps> = ({ isScrolled, setNav }) => {
+const Navbar: React.FC<navProps> = ({ isScrolled, setNav, showLinks }) => {
   const renderedLinks = links?.map((link, index) => (
     <button key={index} onClick={() => scrollToSection(link.id)}>
       {link.title}
@@ -28,27 +29,29 @@ const Navbar: React.FC<navProps> = ({ isScrolled, setNav }) => {
       text-[14px] "
       >
         <div className="flex items-center gap-20">
-          <Link href='/'>
+          <Link href="/">
             <Image
               src="/assets/logo/logo with name - blue color.png"
               width={3912}
               height={1000}
               alt="logo"
               priority
-              className="w-[120px] ss:w-[160px] h-auto"
+              className="w-[160px] h-auto"
             />
           </Link>
-          <div className="gap-8 font-semibold text-[16px] hidden md:flex">
-            {renderedLinks}
-          </div>
+          {showLinks && (
+            <div className="gap-8 font-semibold text-[16px] hidden md:flex">
+              {renderedLinks}
+            </div>
+          )}
         </div>
         <div className="flex gap-6 font-Inter">
           <Image
             src="/assets/burger-menu.png"
-            width='512'
-            height='512'
+            width="512"
+            height="512"
             alt="menu"
-            className="flex ss:hidden w-10 h-auto"
+            className="flex ss:hidden w-8 h-auto"
             onClick={() => {
               setNav(true);
             }}

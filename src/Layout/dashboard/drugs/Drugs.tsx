@@ -71,6 +71,8 @@ const Drugs: React.FC<DrugsProps> = ({
   const { drugs, schedule, userId, allergies, activeDrug, completedDrugs } =
     useSelector((state: RootState) => state.app);
 
+    console.log(schedule)
+
   const [tab, setTab] = useState<string>("Ongoing");
   const [displayDrugs, setDisplayDrugs] = useState(true);
   const dispatch = useDispatch();

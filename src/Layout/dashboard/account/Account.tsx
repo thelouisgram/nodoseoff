@@ -60,15 +60,12 @@ const Account: React.FC<AccountProps> = ({
             </h1>
             <p className="text-[16px] text-grey capitalize">{name}</p>
           </div>
-          <div className="w-full flex-col flex md:flex-row-reverse gap-8 ss:gap-30 ">
+          <div className="w-full flex-col flex md:flex-row-reverse gap-4 ss:gap-30 ">
             <div className="w-full">
               <div className="w-full items-center flex flex-col mb-8">
                 <div className="w-[150px] h-[150px] rounded-full overflow-hidden">
                   <Image
-                    src={
-                      CDNURL + userId + "/avatar.png" ||
-                      "/assets/user.png"
-                    }
+                    src={CDNURL + userId + "/avatar.png" || "/assets/user.png"}
                     width={100}
                     height={100}
                     alt="user"
@@ -81,7 +78,7 @@ const Account: React.FC<AccountProps> = ({
                   {name}
                 </h1>
               </div>
-              <div className="w-full grid ss:grid-cols-2 gap-4 mb-10">
+              <div className="w-full grid ss:grid-cols-2 gap-4 mb-4">
                 <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex gap-3">
                   <h2 className="font-semibold">Email:</h2>
                   <p>{email}</p>

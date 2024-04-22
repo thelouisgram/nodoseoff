@@ -53,3 +53,20 @@ export const convertedTimes = (times: string[]) => {
     return `${hours12}:${minutes} ${suffix}`;
   });
 };
+
+
+export function generateDrugID(drugName: string) {
+    // Get the current date and time
+    const now = new Date();
+
+    // Format the date as YYYYMMDD
+    const date = now.toISOString().split('T')[0].replace(/-/g, '');
+
+    // Format the time as HHMMSS (24-hour format)
+    const time = now.toTimeString().split(' ')[0].replace(/:/g, '');
+
+    // Construct the ID by combining date, time, and drug name
+    const id = `${date}_${time}_${drugName}`;
+
+    return id;
+}

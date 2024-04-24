@@ -217,7 +217,7 @@ const Page = () => {
         <div
           onClick={() => dispatch(updateActive(item.name))}
           key={index}
-          className="flex items-center flex-col cursor-pointer h-full justify-center relative font-Inter "
+          className="flex items-center flex-col cursor-pointer w-full h-full justify-center relative font-Inter "
         >
           <Image
             src={active === item.name ? item.logo : item.inactiveLogo}

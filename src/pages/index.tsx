@@ -29,7 +29,7 @@ const Home = () => {
   }, []);
 
   return (
-    <section className="text-blackBlue font-karla">
+    <section className="text-blackBlue font-karla overflow-hidden">
       <MobileNavBar nav={nav} setNav={setNav} showLinks={true} />
       <Navbar
         showLinks={true}

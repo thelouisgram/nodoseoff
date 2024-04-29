@@ -1,12 +1,13 @@
+"use-client";
 import Image from "next/image";
 import Link from "next/link";
 import React, { ChangeEvent, FormEvent, useState } from "react";
 import { useRouter } from "next/router";
 import supabase from "../../../utils/supabaseClient";
-import { toast } from "sonner";
 import { updateIsAuthenticated, updateUserId } from "../../../store/stateSlice";
 import { useDispatch } from "react-redux";
 import Head from "next/head";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const CreateAccount = () => {
   const router = useRouter();
@@ -18,12 +19,15 @@ const CreateAccount = () => {
     password: "",
   });
 
-  const [showPassword, setShowPassword] = useState(false)
+  const recaptchaSiteKey:string = process.env.NEXT_PUBLIC_CAPTCHA_SITE_KEY ?? ''
+
+  const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const [loading, setLoading] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>("");
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -70,9 +74,12 @@ const CreateAccount = () => {
     }
 
     if (formData.password !== confirmPassword) {
-      setErrorMessage(
-        "Password do not match!"
-      );
+      setErrorMessage("Password do not match!");
+      return;
+    }
+
+    if (!captchaToken) {
+      setErrorMessage("Please complete the CAPTCHA verification.");
       return;
     }
 
@@ -262,7 +269,11 @@ const CreateAccount = () => {
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               >
                 <Image
-                  src={showConfirmPassword ? "/assets/hide.png" : "/assets/show.png"}
+                  src={
+                    showConfirmPassword
+                      ? "/assets/hide.png"
+                      : "/assets/show.png"
+                  }
                   width={512}
                   height={512}
                   className="h-5 w-5"
@@ -276,6 +287,12 @@ const CreateAccount = () => {
               {errorMessage}
             </p>
           )}
+          {/* CAPTCHA Verification */}
+          <ReCAPTCHA
+            onChange={setCaptchaToken}
+            sitekey={recaptchaSiteKey}
+            className="mx-auto mb-8"
+          />
           <button
             type="submit"
             disabled={loading}

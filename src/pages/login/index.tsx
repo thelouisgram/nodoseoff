@@ -159,11 +159,11 @@ const SignIn = () => {
             {loading ? <div className="loaderInfinity"></div> : "LOG IN"}
           </button>
         </form>
-        <div>
+        <div className="w-full flex flex-col items-center">
           <Link href="/signup" className="text-white">
             Don't have an account? Create Account
           </Link>
-          <p className="text-white text-center mt-8">Forgot Password?</p>
+          <Link href='/forgotpassword' className="text-white text-center mt-8">Forgot Password?</Link>
         </div>
       </div>
     </>

@@ -107,7 +107,7 @@ const ForgotPassword = () => {
             {loading ? (
               <div className="loaderInfinity"></div>
             ) : (
-              "Send Password Recovery Email"
+              "Send Recovery Email"
             )}
           </button>
         </form>

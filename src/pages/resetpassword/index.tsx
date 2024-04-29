@@ -9,6 +9,7 @@ const SetNewPassword = () => {
   const router = useRouter();
   const { query } = router;
   const [formData, setFormData] = useState({
+    email: "",
     newPassword: "",
     confirmPassword: "",
   });
@@ -26,7 +27,7 @@ const SetNewPassword = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const { newPassword, confirmPassword } = formData;
+    const { email, newPassword, confirmPassword } = formData;
 
     if (newPassword !== confirmPassword) {
       setErrorMessage("New password and confirmation do not match.");
@@ -38,13 +39,9 @@ const SetNewPassword = () => {
     setSuccessMessage("");
 
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
       // Update the user's password
       const { error } = await supabase.auth.updateUser({
-        email: user?.email,
+        email: email,
         password: newPassword,
       });
 
@@ -88,6 +85,21 @@ const SetNewPassword = () => {
             <legend className="text-[24px] font-bold text-blue-700 text-center">
               Set New Password
             </legend>
+          </div>
+          <div className="flex flex-col mb-4">
+            <label htmlFor="email" className="text-[14px] mb-1">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4"
+              placeholder="Email Address"
+              required
+            />
           </div>
           <div className="flex flex-col mb-4">
             <label htmlFor="newPassword" className="text-[14px] mb-1">

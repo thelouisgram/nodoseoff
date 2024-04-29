@@ -37,7 +37,7 @@ const SignIn = () => {
       setErrorMessage("Input Email & Password");
     } else {
       setLoading(true);
-      setErrorMessage('')
+      setErrorMessage("");
       try {
         const { error } = await supabase.auth.signInWithPassword({
           email: formData.email,
@@ -82,8 +82,8 @@ const SignIn = () => {
         <Link href="/">
           <Image
             src="/assets/logo/logo with name png - white color.png"
-            width={3912}
-            height={1000}
+            width={1062}
+            height={212}
             alt="logo"
             className="w-[180px] h-auto mb-10"
             priority
@@ -163,7 +163,9 @@ const SignIn = () => {
           <Link href="/signup" className="text-white">
             Don't have an account? Create Account
           </Link>
-          <Link href='/forgotpassword' className="text-white text-center mt-8">Forgot Password?</Link>
+          <p className="text-white text-center mt-8">
+            Forgot Password?
+          </p>
         </div>
       </div>
     </>

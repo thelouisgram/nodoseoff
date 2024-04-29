@@ -32,8 +32,8 @@ const Navbar: React.FC<navProps> = ({ isScrolled, setNav, showLinks }) => {
           <Link href="/">
             <Image
               src="/assets/logo/logo with name - blue color.png"
-              width={3912}
-              height={1000}
+              width={1062}
+              height={212}
               alt="logo"
               priority
               className="w-[160px] h-auto"

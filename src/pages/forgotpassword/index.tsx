@@ -49,7 +49,7 @@ const ForgotPassword = () => {
       <Head>
         <title>Forgot Password | NoDoseOff</title>
       </Head>
-      <div className="min-h-screen flex flex-col justify-center items-center bg-navyBlue text-grey font-karla">
+      <div className="min-h-[100dvh] w-[100%] py-8 px-6 flex flex-col justify-center items-center ss:py-10 bg-navyBlue font-karla text-grey">
         <Link href="/">
           <Image
             src="/assets/logo/logo with name png - white color.png"

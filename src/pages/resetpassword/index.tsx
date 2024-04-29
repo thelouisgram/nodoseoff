@@ -38,16 +38,14 @@ const SetNewPassword = () => {
     setSuccessMessage("");
 
     try {
-      // Get the user's email from the query parameter
-      const userEmail = query.email as string;
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
       // Update the user's password
       const { error } = await supabase.auth.updateUser({
-        email: userEmail,
+        email: user?.email,
         password: newPassword,
-        data: {
-          hello: "world",
-        },
       });
 
       if (error) {
@@ -71,7 +69,7 @@ const SetNewPassword = () => {
       <Head>
         <title>Set New Password | NoDoseOff</title>
       </Head>
-      <div className="min-h-screen flex flex-col justify-center items-center bg-navyBlue text-grey font-karla">
+      <div className="min-h-[100dvh] w-[100%] py-8 px-6 flex flex-col justify-center items-center ss:py-10 bg-navyBlue font-karla text-grey">
         <Link href="/">
           <Image
             src="/assets/logo/logo with name png - white color.png"
@@ -81,7 +79,7 @@ const SetNewPassword = () => {
             className="w-[180px] h-auto mb-10"
             priority
           />
-          </Link>
+        </Link>
         <form
           className="bg-white rounded-[15px] w-full ss:w-[450px] h-auto p-7 ss:p-10 mb-10"
           onSubmit={handleSubmit}

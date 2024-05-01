@@ -12,19 +12,19 @@ import { calculateTimePeriod, convertedTimes } from "../../../../utils/drugs";
 import { ScheduleItem } from "../../../../types/dashboard";
 
 interface DrugDetailsProps {
-  setDisplayDrugs: (value: boolean) => void;
+  setDisplayDrugs: Function;
   tab: string;
-  setAllergyModal: (value: boolean) => void;
-  setDeleteModal: (value: boolean) => void;
-  setEditModal: (value: boolean) => void;
-  setScreen: (value: boolean) => void;
-  handleAllergies: () => void;
-  handleDelete: () => void;
+  setAllergyModal: Function;
+  setDeleteModal: Function;
+  setEditModal: Function;
+  setScreen: Function;
+  handleAllergies: Function;
+  handleDelete: Function;
   deleteModal: boolean;
   editModal: boolean;
   allergyModal: boolean;
-  handleDeleteAllergy: (drug: string) => void;
-  setEditForm: (value: boolean) => void;
+  handleDeleteAllergy: Function;
+  setEditForm: Function;
 }
 
 // Define the DrugData type

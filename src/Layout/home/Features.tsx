@@ -36,7 +36,7 @@ const Features = () => {
               Medication Tracker
             </h2>
             <p className="text-[16px] leading-tight font-[500]">
-              Easily mark off today&apos;s taken meds and never miss a dose.
+              Easily mark off today&apos;s taken meds and never miss a dose
             </p>
           </div>
           <div className="relative w-full h-full flex items-start justify-center">

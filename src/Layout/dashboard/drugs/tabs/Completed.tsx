@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../store";
 import { frequencyToPlaceholder } from "../../../../../utils/dashboard";
@@ -61,6 +61,13 @@ const Completed: React.FC<CompletedProps> = ({
     }
   };
 
+  // Hook to revert back to the previous page if necessary
+  useEffect(() => {
+    if (currentItems.length < 7 && currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  }, [currentItems, currentPage]);
+
   const renderedDrugs = currentItems.map((drug: DrugProps, index: number) => {
     return (
       <RenderedDrugs
@@ -76,6 +83,7 @@ const Completed: React.FC<CompletedProps> = ({
         setDisplayDrugs={setDisplayDrugs}
         showEditButton={false}
         tab={"Completed"}
+        currentPage={currentPage}
       />
     );
   });
@@ -136,11 +144,13 @@ const Completed: React.FC<CompletedProps> = ({
             )}
           </div>
           {filteredDrugs.length > 0 && (
-            <div className="w-full flex justify-end p-4 gap-3 items-center text-[13px] ss:text-[16px]">
+            <div className="w-full flex justify-end p-4 gap-3 items-center font-semibold font-Inter text-[14px]">
               <button
                 onClick={handlePreviousPage}
                 disabled={currentPage === 1}
-                className="px-3 py-1 border flex gap-2 items-center rounded-md"
+                className={`px-3 py-1 border flex gap-2 items-center rounded-md ${
+                  currentPage === 1 ? "cursor-not-allowed" : ""
+                }`}
               >
                 <Image
                   src="/assets/back.png"
@@ -156,7 +166,9 @@ const Completed: React.FC<CompletedProps> = ({
               <button
                 onClick={handleNextPage}
                 disabled={currentPage === totalPages}
-                className="px-3 py-1 border flex gap-2 items-center rounded-md"
+                className={`px-3 py-1 border flex gap-2 items-center rounded-md ${
+                  currentPage === totalPages ? "cursor-not-allowed" : ""
+                }`}
               >
                 Next
                 <Image

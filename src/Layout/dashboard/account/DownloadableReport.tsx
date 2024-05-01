@@ -4,6 +4,7 @@ import { RootState } from "../../../../store";
 import { useSelector } from "react-redux";
 import Image from "next/image";
 import { toast } from "sonner";
+import { DrugProps } from "../../../../types/dashboard";
 
 const DownloadableReport: React.FC = () => {
   const { drugs, schedule, info, allergies, completedDrugs } = useSelector(
@@ -12,8 +13,25 @@ const DownloadableReport: React.FC = () => {
 
   const { name, phone, email, otcDrugs, herbs } = info[0];
   const currentDrugs = drugs.map((drug) => drug.drug);
-  const pastDrugs = completedDrugs.map((drug) => drug.drug);
   const allergicDrugs = allergies.map((drug) => drug?.drug);
+
+  function filterRecentDrugs(completedDrugs: DrugProps[]) {
+    // Calculate the date 6 months ago
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+    // Filter the list for drugs that ended within the last 6 months
+    const recentDrugs = completedDrugs.filter((drug) => {
+      const endDate = new Date(drug.end);
+      return endDate >= sixMonthsAgo;
+    });
+
+    return recentDrugs;
+  }
+
+  const recentDrugs = filterRecentDrugs(completedDrugs).map(
+    (drug) => drug.drug
+  );
 
   const currentTime = new Date(); // Get the current date and time
 
@@ -129,10 +147,10 @@ const DownloadableReport: React.FC = () => {
               </div>
               <div className="flex flex-col border border-navyBlue mb-2 ss:mb-4 md:mb-10">
                 <div className="py-1 ss:py-2 md:py-3 bg-navyBlue text-white text-center font-[500]">
-                  Past Drugs
+                  Past Drugs (6months)
                 </div>
                 <div className="capitalize py-1 px-2 ss:p-2 ">
-                  {pastDrugs.join(", ") || "N/A"}
+                  {recentDrugs.join(", ") || "N/A"}
                 </div>
               </div>
               <div className="flex flex-col border border-navyBlue mb-2 ss:mb-4 md:mb-10">

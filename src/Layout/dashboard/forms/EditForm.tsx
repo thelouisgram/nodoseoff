@@ -11,7 +11,7 @@ import {
   removePastDoses,
   uploadScheduleToServer,
 } from "../../../../utils/schedule";
-import supabase from "../../../../utils/supabaseClient";
+import { supabase } from "@/pages/supabase";
 
 interface DrugFormProps {
   editForm: boolean;

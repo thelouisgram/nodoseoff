@@ -33,6 +33,8 @@ export function calculateTimePeriod(startDate: string, endDate: string): string 
 
     if (remainingDaysAfterWeeks > 0) {
       durationText.push(`${remainingDaysAfterWeeks} day${remainingDaysAfterWeeks > 1 ? "s" : ""}`);
+    } else {
+      durationText.push(`1 day`);
     }
 
     return durationText.join(", ");

@@ -7,7 +7,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../../store";
 import { calculateClosestDoseCountdown } from "../../../../utils/dashboard";
 import { updateActive } from "../../../../store/stateSlice";
-import supabase from "../../../../utils/supabaseClient";
+import { supabase } from "@/pages/supabase";
+
 import Tracker from "./Tracker";
 
 interface HomeProps {
@@ -97,9 +98,7 @@ const Home: React.FC<HomeProps> = ({
           className="w-[60px] h-[60px] rounded-full overflow-hidden cursor-pointer"
         >
           <Image
-            src={
-              CDNURL + userId + "/avatar.png" || "/assets/user.png"
-            }
+            src={CDNURL + userId + "/avatar.png" || "/assets/user.png"}
             width={100}
             height={100}
             alt="user"

@@ -36,7 +36,8 @@ import {
 } from "../../../store/stateSlice";
 import { DrugProps, ScheduleItem } from "../../../types/dashboard";
 import { uploadScheduleToServer } from "../../../utils/schedule";
-import supabase from "../../../utils/supabaseClient";
+import { supabase } from "@/pages/supabase";
+
 import { tabs, tabsMobile } from "./../../../utils/dashboard";
 
 interface tabsMobileProps {
@@ -433,7 +434,10 @@ const Page = () => {
               <div className="flex flex-col gap-6">{renderedTabs}</div>
             </div>
 
-            <button onClick={logOut} className="flex items-center gap-6 font-Inter">
+            <button
+              onClick={logOut}
+              className="flex items-center gap-6 font-Inter"
+            >
               <Image
                 src="/assets/desktop-dashboard/power-off.png"
                 width={512}

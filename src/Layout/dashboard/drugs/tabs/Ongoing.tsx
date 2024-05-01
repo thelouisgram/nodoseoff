@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import RenderedDrugs from "../RenderedDrugs";
 import { RootState } from "../../../../../store";
@@ -15,6 +15,7 @@ interface OngoingProps {
   setDisplayDrugs: Function;
 }
 
+// Define the Ongoing component with the required props
 const Ongoing: React.FC<OngoingProps> = ({
   setScreen,
   setEditModal,
@@ -23,42 +24,61 @@ const Ongoing: React.FC<OngoingProps> = ({
   displayDrugs,
   setDisplayDrugs,
 }) => {
+  // Define state variables for searched query and current page
   const [searched, setSearched] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
+  // Use the Redux hook to select the drugs from the store
   const { drugs } = useSelector((state: RootState) => state.app);
 
+  // Function to handle changes in the search input
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     setSearched(value);
     setCurrentPage(1);
   };
 
+  // Function to find drugs matching the search query
   const findDrug = (searched: string) => {
-    return drugs.filter((drug) => drug.drug.startsWith(searched.toLowerCase()));
+    return drugs.filter((drug) =>
+      drug.drug.toLowerCase().startsWith(searched.toLowerCase())
+    );
   };
 
+  // Filter drugs based on the search query
   const filteredDrugs = searched ? findDrug(searched) : drugs;
 
+  // Calculate pagination indices
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredDrugs.slice(indexOfFirstItem, indexOfLastItem);
 
+  // Calculate total pages
   const totalPages = Math.ceil(filteredDrugs.length / itemsPerPage);
 
+  // Function to handle navigation to the next page
   const handleNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
     }
   };
 
+  // Function to handle navigation to the previous page
   const handlePreviousPage = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
     }
   };
 
+  // Hook to revert back to the previous page if necessary
+  useEffect(() => {
+    if (currentItems.length === 0 && currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  }, [currentItems, currentPage]);
+
+  // Render the drugs list
   const renderedDrugs = currentItems.map((drug: DrugProps, index: number) => {
     return (
       <RenderedDrugs
@@ -74,10 +94,12 @@ const Ongoing: React.FC<OngoingProps> = ({
         setDisplayDrugs={setDisplayDrugs}
         showEditButton={true}
         tab={"Ongoing"}
+        currentPage={currentPage}
       />
     );
   });
 
+  // Render the Ongoing component
   return (
     <div>
       {drugs.length > 0 ? (
@@ -134,11 +156,13 @@ const Ongoing: React.FC<OngoingProps> = ({
             )}
           </div>
           {filteredDrugs.length > 0 && (
-            <div className="w-full flex justify-end p-4 gap-3 items-center">
+            <div className="w-full flex justify-end p-4 gap-3 items-center font-semibold font-Inter text-[14px]">
               <button
                 onClick={handlePreviousPage}
                 disabled={currentPage === 1}
-                className="px-3 py-1 border flex gap-2 items-center rounded-md"
+                className={`px-3 py-1 border flex gap-2 items-center rounded-md ${
+                  currentPage === 1 ? "cursor-not-allowed" : ""
+                }`}
               >
                 <Image
                   src="/assets/back.png"
@@ -154,7 +178,9 @@ const Ongoing: React.FC<OngoingProps> = ({
               <button
                 onClick={handleNextPage}
                 disabled={currentPage === totalPages}
-                className="px-3 py-1 border flex gap-2 items-center rounded-md"
+                className={`px-3 py-1 border flex gap-2 items-center rounded-md ${
+                  currentPage === totalPages ? "cursor-not-allowed" : ""
+                }`}
               >
                 Next
                 <Image

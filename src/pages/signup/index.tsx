@@ -3,7 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { ChangeEvent, FormEvent, useState } from "react";
 import { useRouter } from "next/router";
-import supabase from "../../../utils/supabaseClient";
+import { supabase } from "@/pages/supabase";
+
 import { updateIsAuthenticated, updateUserId } from "../../../store/stateSlice";
 import { useDispatch } from "react-redux";
 import Head from "next/head";
@@ -19,7 +20,8 @@ const CreateAccount = () => {
     password: "",
   });
 
-  const recaptchaSiteKey:string = process.env.NEXT_PUBLIC_CAPTCHA_SITE_KEY ?? ''
+  const recaptchaSiteKey: string =
+    process.env.NEXT_PUBLIC_CAPTCHA_SITE_KEY ?? "";
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);

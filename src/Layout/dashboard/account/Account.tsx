@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../../store";
 import Image from "next/image";
 import { toast } from "sonner";
-import supabase from "../../../../utils/supabaseClient";
+import { supabase } from "@/pages/supabase";
 import {
   updateIsAuthenticated,
   updateUserId,

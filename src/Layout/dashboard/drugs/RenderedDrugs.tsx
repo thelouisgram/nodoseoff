@@ -19,6 +19,7 @@ interface thisProps {
   setDisplayDrugs: Function;
   showEditButton: boolean;
   tab: string;
+  currentPage:number;
 }
 
 type RefObject<T> = React.RefObject<T>;
@@ -34,8 +35,8 @@ const RenderedDrugs: React.FC<thisProps> = ({
   tab,
   showEditButton,
   setDisplayDrugs,
+  currentPage,
 }) => {
-  const { activeDrug } = useSelector((state: RootState) => state.app);
   const dispatch = useDispatch();
   const [options, setOptions] = useState(false);
   const dropdownRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
@@ -67,9 +68,10 @@ const RenderedDrugs: React.FC<thisProps> = ({
         id % 2 ? "" : "bg-lightGrey"
       } flex font-Inter w-full justify-between px-4 text-navyBlue items-center border-b-[1px] text-[13px] sm:text-[14px] leading-none capitalize`}
     >
-      <h1 className="w-[31%] sm:w-[15%] md:w-[16%] h-full font-semibold  items-center py-4">
-        {drug.drug}
-      </h1>
+      <div className="w-[31%] sm:w-[15%] md:w-[16%] h-full font-semibold  items-center py-4 flex gap-1">
+        {currentPage === 1 ? id + 1 : (id + 1) + (6 * (currentPage - 1))}.
+        <h1>{drug.drug}</h1>
+      </div>
       {tab !== "Allergies" ? (
         <>
           <h2 className="w-[31%] sm:w-[13.5%] md:w-[12.2%] flex justify-center items-center py-4">

@@ -9,7 +9,8 @@ import React, {
 import Image from "next/image";
 import { RootState } from "../../../../store";
 import { useSelector, useDispatch } from "react-redux";
-import supabase from "../../../../utils/supabaseClient";
+import { supabase } from "@/pages/supabase";
+
 import { toast } from "sonner";
 import { updateInfo } from "../../../../store/stateSlice";
 
@@ -37,11 +38,11 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
     herbs: herbs,
   });
 
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true)
+    setLoading(true);
 
     try {
       const { error } = await supabase
@@ -59,7 +60,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 
       dispatch(updateInfo([formData]));
       setProfileForm(false);
-      setLoading(false)
+      setLoading(false);
       toast.success("Profile updated successfully");
     } catch (error) {
       console.error("Error updating Profile:", error);

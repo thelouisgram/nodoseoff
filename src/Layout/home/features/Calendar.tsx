@@ -13,23 +13,41 @@ const Calendar = () => {
     return numbersArray;
   };
 
-  // Function to generate a random color from a predefined array of colors
-  const generateRandomColor = () => {
-    const colors = ['#4FCB83', '#FFD166', '#EF476F'];
-    const randomIndex = Math.floor(Math.random() * colors.length);
-    return colors[randomIndex];
+  // Function to check if a number is prime
+  const isPrime = (num:number) => {
+    if (num <= 1) return false;
+    if (num <= 3) return true;
+    if (num % 2 === 0 || num % 3 === 0) return false;
+    for (let i = 5; i * i <= num; i += 6) {
+      if (num % i === 0 || num % (i + 2) === 0) return false;
+    }
+    return true;
   };
 
-  // Generating rendered dates with random color circles
+  // Function to get the color based on date number
+  const getColorForDate = (num:number) => {
+    if (isPrime(num)) {
+      // Prime numbers will have yellow color
+      return "#FFD166";
+    } else if (num % 2 === 0) {
+      // Even numbers will have red color
+      return "#EF476F";
+    } else {
+      // Odd numbers will have green color
+      return "#4FCB83";
+    }
+  };
+
+  // Generating rendered dates with specified color circles
   const renderedDates = generateNumbersArray().map((num, index) => {
-    const color = generateRandomColor();
+    const color = getColorForDate(num);
     const circleStyle = {
-      width: '0.25rem',
-      height: '0.25rem',
-      borderRadius: '50%',
+      width: "0.25rem",
+      height: "0.25rem",
+      borderRadius: "50%",
       backgroundColor: color,
-      marginTop: '0rem'
     };
+
     return (
       <div key={index} className="flex flex-col items-center">
         <h1>{num}</h1>
@@ -41,7 +59,7 @@ const Calendar = () => {
   // Return the Calendar component
   return (
     <div className="w-full h-auto px-5 py-6 bg-white rounded-[16px] shadow-md">
-      <div w-full>
+      <div>
         {/* Month navigation */}
         <div className="flex items-center justify-between">
           <Image
@@ -60,7 +78,7 @@ const Calendar = () => {
             className="-rotate-90"
           />
         </div>
-        
+
         {/* Days of the week */}
         <div className="grid grid-cols-7 gap-3 my-4">
           {days.map((day, index) => (
@@ -72,9 +90,11 @@ const Calendar = () => {
             </h1>
           ))}
         </div>
-        
+
         {/* Rendered dates */}
-        <div className="w-full grid grid-cols-7 gap-3 text-[14px]">{renderedDates}</div>
+        <div className="w-full grid grid-cols-7 gap-3 text-[14px]">
+          {renderedDates}
+        </div>
       </div>
     </div>
   );

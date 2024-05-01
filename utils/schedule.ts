@@ -1,6 +1,7 @@
 import { toast } from "sonner";
 import { ScheduleItem } from "../types/dashboard";
-import supabase from "./supabaseClient";
+import { supabase } from "@/pages/supabase";
+
 
 export const uploadScheduleToServer = async ({
   userId,

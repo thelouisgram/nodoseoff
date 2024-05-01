@@ -9,7 +9,8 @@ import React, {
 import Image from "next/image";
 import { RootState } from "../../../../store";
 import { useSelector, useDispatch } from "react-redux";
-import supabase from "../../../../utils/supabaseClient";
+import { supabase } from "@/pages/supabase";
+
 import { toast } from "sonner";
 import { updateInfo } from "../../../../store/stateSlice";
 
@@ -34,7 +35,7 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
     herbs: herbs,
   });
 
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const formElement = document.getElementById("top-drugHx");
@@ -58,7 +59,7 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true)
+    setLoading(true);
     try {
       const { error } = await supabase
         .from("users")
@@ -75,7 +76,7 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
 
       dispatch(updateInfo([formData]));
       setDrugHxForm(false);
-      setLoading(false)
+      setLoading(false);
       toast.success("Profile updated successfully");
     } catch (error) {
       console.error("Error updating Profile:", error);

@@ -19,7 +19,8 @@ import {
   removePastDoses,
   uploadScheduleToServer,
 } from "../../../../utils/schedule";
-import supabase from "../../../../utils/supabaseClient";
+import { supabase } from "@/pages/supabase";
+
 import DrugDetails from "./DrugDetails";
 import Allergies from "./tabs/Allergies";
 import Completed from "./tabs/Completed";
@@ -70,8 +71,6 @@ const Drugs: React.FC<DrugsProps> = ({
 }) => {
   const { drugs, schedule, userId, allergies, activeDrug, completedDrugs } =
     useSelector((state: RootState) => state.app);
-
-    console.log(schedule)
 
   const [tab, setTab] = useState<string>("Ongoing");
   const [displayDrugs, setDisplayDrugs] = useState(true);

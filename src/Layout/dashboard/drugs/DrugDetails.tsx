@@ -9,31 +9,52 @@ import {
   frequencyToPlaceholder,
 } from "../../../../utils/dashboard";
 import { calculateTimePeriod, convertedTimes } from "../../../../utils/drugs";
+import { ScheduleItem } from "../../../../types/dashboard";
 
-interface drugDetailsProps {
-  setDisplayDrugs: Function;
+interface DrugDetailsProps {
+  setDisplayDrugs: (value: boolean) => void;
   tab: string;
-  setAllergyModal: Function;
-  setDeleteModal: Function;
-  setEditModal: Function;
-  setScreen: Function;
-  handleAllergies: Function;
-  handleDelete: Function;
+  setAllergyModal: (value: boolean) => void;
+  setDeleteModal: (value: boolean) => void;
+  setEditModal: (value: boolean) => void;
+  setScreen: (value: boolean) => void;
+  handleAllergies: () => void;
+  handleDelete: () => void;
   deleteModal: boolean;
   editModal: boolean;
   allergyModal: boolean;
-  handleDeleteAllergy: Function;
-  setEditForm: Function;
+  handleDeleteAllergy: (drug: string) => void;
+  setEditForm: (value: boolean) => void;
+}
+
+// Define the DrugData type
+interface DrugData {
+  totalDoses: number;
+  remainingDoses: number;
+  missedDoses: number;
+  compliance: number;
+  completedDoses: number;
+  pastDoses: number;
+  completedPastDoses: number;
+  missedPastDoses: number;
+}
+
+// Define the type ExtendedDrugData
+interface ExtendedDrugData extends DrugData {
+  scheduledTimestamps: Date[];
+  completedTimestamps: Date[];
+  missedTimestamps: Date[];
+  remainingTimestamps: Date[];
 }
 
 type RefObject<T> = React.RefObject<T>;
 
-interface detail {
+interface Detail {
   name: string;
   details: string;
 }
 
-const DrugDetails: React.FC<drugDetailsProps> = ({
+const DrugDetails: React.FC<DrugDetailsProps> = ({
   setDisplayDrugs,
   tab,
   setAllergyModal,
@@ -48,10 +69,96 @@ const DrugDetails: React.FC<drugDetailsProps> = ({
   handleDeleteAllergy,
   setEditForm,
 }) => {
-  const { drugs, completedDrugs, activeDrug } = useSelector(
+  const { schedule, drugs, completedDrugs, activeDrug } = useSelector(
     (state: RootState) => state.app
   );
+
+  function calculateCompliance(
+    schedule: ScheduleItem[]
+  ): Record<string, ExtendedDrugData> {
+    // Initialize an object to hold the results for each drug
+    const drugData: Record<string, ExtendedDrugData> = {};
+
+    // Get the current date and time
+    const currentTime = new Date();
+
+    // Iterate through the schedule and aggregate data for each drug
+    for (const record of schedule) {
+      const { drug, date, time, completed } = record;
+
+      // Initialize drug data if not present
+      if (!drugData[drug]) {
+        drugData[drug] = {
+          totalDoses: 0,
+          pastDoses: 0,
+          remainingDoses: 0,
+          completedPastDoses: 0,
+          missedPastDoses: 0,
+          compliance: 0,
+          scheduledTimestamps: [],
+          completedTimestamps: [],
+          missedTimestamps: [],
+          remainingTimestamps: [],
+          missedDoses: 0,
+          completedDoses: 0,
+        };
+      }
+
+      // Parse the date and time strings into a Date object
+      const doseDateTime = new Date(`${date} ${time}`);
+
+      // Determine the dose status and update the respective data
+      if (doseDateTime < currentTime) {
+        // This is a past dose
+        drugData[drug].pastDoses += 1;
+
+        if (completed) {
+          // Dose was completed
+          drugData[drug].completedPastDoses += 1;
+          drugData[drug].completedTimestamps.push(doseDateTime);
+          drugData[drug].completedDoses += 1;
+        } else {
+          // Dose was missed
+          drugData[drug].missedPastDoses += 1;
+          drugData[drug].missedTimestamps.push(doseDateTime);
+          drugData[drug].missedDoses += 1;
+        }
+      } else {
+        // This is a remaining dose
+        drugData[drug].remainingDoses += 1;
+        drugData[drug].remainingTimestamps.push(doseDateTime);
+      }
+
+      // Increment total doses
+      drugData[drug].totalDoses += 1;
+      drugData[drug].scheduledTimestamps.push(doseDateTime);
+    }
+
+    // Calculate compliance for each drug
+    for (const drug in drugData) {
+      const data = drugData[drug];
+      const totalPastDoses = data.pastDoses;
+      const completedPastDoses = data.completedPastDoses;
+
+      // Calculate compliance as the percentage of completed past doses to total past doses
+      data.compliance =
+        totalPastDoses > 0 ? (completedPastDoses / totalPastDoses) * 100 : 0;
+    }
+
+    return drugData;
+  }
+
+  const drugData = calculateCompliance(schedule)[activeDrug];
+  const {
+    missedDoses,
+    compliance,
+    completedDoses,
+    totalDoses,
+    remainingDoses,
+  } = drugData;
+
   const dropdownRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
+
   const handleClickOutside = (event: MouseEvent): void => {
     if (
       dropdownRef.current &&
@@ -64,16 +171,17 @@ const DrugDetails: React.FC<drugDetailsProps> = ({
       setScreen(false);
     }
   };
+
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent): void => {
       handleClickOutside(event);
     };
 
-    // add event listener for clicks outside of dropdown
+    // Add event listener for clicks outside of dropdown
     document.addEventListener("mousedown", handleOutsideClick);
 
     return () => {
-      // remove event listener when component unmounts
+      // Remove event listener when component unmounts
       document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, []);
@@ -83,25 +191,31 @@ const DrugDetails: React.FC<drugDetailsProps> = ({
   const drugsArray = tab === "Ongoing" ? drugs : completedDrugs;
   const drugDetails = drugsArray.find((drug) => drug.drug === activeDrug);
   if (!drugDetails) {
-    return setDisplayDrugs(true);
+    setDisplayDrugs(true);
+    return null;
   }
   const { drug, route, frequency, start, end, time, reminder } = drugDetails;
-  const Duration = calculateTimePeriod(start, end);
-  const Details = [
+  const duration = calculateTimePeriod(start, end);
+  const details: Detail[] = [
     {
       name: "Current Status",
       details: tab === "Ongoing" ? "Ongoing" : "Completed",
     },
     { name: "Route of Administration", details: route },
+    { name: "Compliance level", details: `${compliance.toFixed()}%` },
     { name: "Frequency", details: frequencyToPlaceholder[frequency] },
     { name: "Time", details: convertedTimes(time).join(", ") },
-    { name: "Duration", details: Duration },
+    { name: "Duration", details: duration },
     { name: "Reminder", details: reminder ? "Yes" : "No" },
     { name: "Start Date", details: formatDate(start) },
     { name: "End Date", details: formatDate(end) },
+    { name: "Total Doses", details: `${totalDoses}` },
+    { name: "Completed Doses", details: `${completedDoses}` },
+    { name: "Missed Doses", details: `${missedDoses}` },
+    { name: "Remaining Doses", details: `${remainingDoses}` },
   ];
 
-  const RenderedDetails = Details.map((detail: detail, index: number) => {
+  const RenderedDetails = details.map((detail: Detail, index: number) => {
     return (
       <div key={index} className="border rounded-md  p-5">
         <h2 className="text-[12px] ss:text-[14px] font-semibold text-grey font-karla">
@@ -214,7 +328,9 @@ const DrugDetails: React.FC<drugDetailsProps> = ({
             </div>
           )}
         </div>
-        <div className="grid ss:grid-cols-2 gap-4">{RenderedDetails}</div>
+        <div className="grid ss:grid-cols-2 ip:grid-cols-3 gap-4">
+          {RenderedDetails}
+        </div>
       </section>
       {deleteModal && (
         <div className="w-full h-full fixed flex top-0 left-0 justify-center items-center z-[143] p-4 font-Inter">

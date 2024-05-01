@@ -88,6 +88,13 @@ const Allergies: React.FC<AllergiesProps> = ({
     }
   };
 
+  // Hook to revert back to the previous page if necessary
+  useEffect(() => {
+    if (currentItems.length < 7 && currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  }, [currentItems, currentPage]);
+
   const renderedAllergies = currentItems.map((item, index: number) => {
     return (
       <RenderedDrugs
@@ -103,6 +110,7 @@ const Allergies: React.FC<AllergiesProps> = ({
         setDisplayDrugs={setDisplayDrugs}
         showEditButton={false}
         tab={"Allergies"}
+        currentPage={currentPage}
       />
     );
   });
@@ -148,11 +156,13 @@ const Allergies: React.FC<AllergiesProps> = ({
             )}
           </div>
           {filteredDrugs.length > 0 && (
-            <div className="w-full flex justify-end p-4 gap-3 items-center text-[13px] ss:text-[16px]">
+            <div className="w-full flex justify-end p-4 gap-3 items-center font-semibold font-Inter text-[14px]">
               <button
                 onClick={handlePreviousPage}
                 disabled={currentPage === 1}
-                className="px-3 py-1 border flex gap-2 items-center rounded-md"
+                className={`px-3 py-1 border flex gap-2 items-center rounded-md ${
+                  currentPage === 1 ? "cursor-not-allowed" : ""
+                }`}
               >
                 <Image
                   src="/assets/back.png"
@@ -168,7 +178,9 @@ const Allergies: React.FC<AllergiesProps> = ({
               <button
                 onClick={handleNextPage}
                 disabled={currentPage === totalPages}
-                className="px-3 py-1 border flex gap-2 items-center rounded-md"
+                className={`px-3 py-1 border flex gap-2 items-center rounded-md ${
+                  currentPage === totalPages ? "cursor-not-allowed" : ""
+                }`}
               >
                 Next
                 <Image

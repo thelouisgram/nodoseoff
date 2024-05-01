@@ -1,14 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/no-unescaped-entities */
+import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import React, { ChangeEvent, FormEvent, useState, useEffect } from "react";
-import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import supabase from "../../../utils/supabaseClient";
-import { updateIsAuthenticated, updateUserId } from "../../../store/stateSlice";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import Head from "next/head";
+import { updateIsAuthenticated, updateUserId } from "../../../store/stateSlice";
+import { supabase } from "@/pages/supabase";
 
 const SignIn = () => {
   const router = useRouter();
@@ -39,7 +38,7 @@ const SignIn = () => {
       setLoading(true);
       setErrorMessage("");
       try {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email: formData.email,
           password: formData.password,
         });
@@ -54,6 +53,7 @@ const SignIn = () => {
             dispatch(updateUserId(userId));
             router.push("/dashboard");
           }
+          console.log(data)
         }
       } catch (error) {
         setErrorMessage("Error signing up: " + error);
@@ -163,9 +163,7 @@ const SignIn = () => {
           <Link href="/signup" className="text-white">
             Don't have an account? Create Account
           </Link>
-          <p className="text-white text-center mt-8">
-            Forgot Password?
-          </p>
+          <p className="text-white text-center mt-8">Forgot Password?</p>
         </div>
       </div>
     </>

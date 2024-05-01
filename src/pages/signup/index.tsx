@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { ChangeEvent, FormEvent, useState } from "react";
 import { useRouter } from "next/router";
-import supabase from "@/pages/supabase";
+import supabase from "../../../utils/supabase";
 
 import { updateIsAuthenticated, updateUserId } from "../../../store/stateSlice";
 import { useDispatch } from "react-redux";

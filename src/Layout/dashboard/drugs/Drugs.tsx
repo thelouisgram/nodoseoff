@@ -19,7 +19,7 @@ import {
   removePastDoses,
   uploadScheduleToServer,
 } from "../../../../utils/schedule";
-import supabase from "@/pages/supabase";
+import supabase from "../../../../utils/supabase";
 import DrugDetails from "./DrugDetails";
 import Allergies from "./tabs/Allergies";
 import Completed from "./tabs/Completed";

@@ -36,7 +36,7 @@ import {
 } from "../../../store/stateSlice";
 import { DrugProps, ScheduleItem } from "../../../types/dashboard";
 import { uploadScheduleToServer } from "../../../utils/schedule";
-import supabase from "@/pages/supabase";
+import supabase from "../../../utils/supabase";
 
 import { tabs, tabsMobile } from "./../../../utils/dashboard";
 

@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { updateIsAuthenticated, updateUserId } from "../../../store/stateSlice";
-import supabase from "@/pages/supabase";
+import supabase from "../../../utils/supabase";
 
 const SignIn = () => {
   const router = useRouter();

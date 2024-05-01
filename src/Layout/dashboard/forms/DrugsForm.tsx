@@ -8,7 +8,7 @@ import { RootState } from "../../../../store";
 import { setDrugs, updateSchedule } from "../../../../store/stateSlice";
 import { dose, generateSchedule } from "../../../../utils/dashboard";
 import { uploadScheduleToServer } from "../../../../utils/schedule";
-import { supabase } from "@/pages/supabase";
+import supabase from "@/pages/supabase";
 
 interface DrugFormProps {
   drugsForm: boolean;

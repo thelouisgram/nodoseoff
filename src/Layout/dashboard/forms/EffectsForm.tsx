@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../../store";
 import { setEffects } from "../../../../store/stateSlice";
-import { supabase } from "@/pages/supabase";
+import supabase from "@/pages/supabase";
 
 interface EffectsFormProps {
   effectsForm: boolean;

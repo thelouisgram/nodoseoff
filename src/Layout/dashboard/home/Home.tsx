@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../../store";
 import { calculateClosestDoseCountdown } from "../../../../utils/dashboard";
 import { updateActive } from "../../../../store/stateSlice";
-import { supabase } from "@/pages/supabase";
+import supabase from "@/pages/supabase";
 
 import Tracker from "./Tracker";
 

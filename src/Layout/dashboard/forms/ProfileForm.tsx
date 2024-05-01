@@ -9,7 +9,7 @@ import React, {
 import Image from "next/image";
 import { RootState } from "../../../../store";
 import { useSelector, useDispatch } from "react-redux";
-import { supabase } from "@/pages/supabase";
+import supabase from "@/pages/supabase";
 
 import { toast } from "sonner";
 import { updateInfo } from "../../../../store/stateSlice";

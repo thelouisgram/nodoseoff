@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import { RootState } from "../../../../store";
 import { updateAllergies } from "../../../../store/stateSlice";
-import { supabase } from "@/pages/supabase";
+import supabase from "@/pages/supabase";
 
 interface AllergiesFormProps {
   allergiesForm: boolean;

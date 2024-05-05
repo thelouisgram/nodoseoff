@@ -3,7 +3,7 @@ import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../../store";
-import { updateActiveDrug } from "../../../../store/stateSlice";
+import { updateActiveDrug, updateActiveDrugId } from "../../../../store/stateSlice";
 import {
   formatDate,
   frequencyToPlaceholder,
@@ -69,7 +69,7 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
   handleDeleteAllergy,
   setEditForm,
 }) => {
-  const { schedule, drugs, completedDrugs, activeDrug } = useSelector(
+  const { schedule, drugs, completedDrugs, activeDrug, activeDrugId } = useSelector(
     (state: RootState) => state.app
   );
 
@@ -84,11 +84,11 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
 
     // Iterate through the schedule and aggregate data for each drug
     for (const record of schedule) {
-      const { drug, date, time, completed } = record;
+      const { drug, date, time, completed, drugId } = record;
 
       // Initialize drug data if not present
-      if (!drugData[drug]) {
-        drugData[drug] = {
+      if (!drugData[drugId]) {
+        drugData[drugId] = {
           totalDoses: 0,
           pastDoses: 0,
           remainingDoses: 0,
@@ -110,33 +110,33 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
       // Determine the dose status and update the respective data
       if (doseDateTime < currentTime) {
         // This is a past dose
-        drugData[drug].pastDoses += 1;
+        drugData[drugId].pastDoses += 1;
 
         if (completed) {
           // Dose was completed
-          drugData[drug].completedPastDoses += 1;
-          drugData[drug].completedTimestamps.push(doseDateTime);
-          drugData[drug].completedDoses += 1;
+          drugData[drugId].completedPastDoses += 1;
+          drugData[drugId].completedTimestamps.push(doseDateTime);
+          drugData[drugId].completedDoses += 1;
         } else {
           // Dose was missed
-          drugData[drug].missedPastDoses += 1;
-          drugData[drug].missedTimestamps.push(doseDateTime);
-          drugData[drug].missedDoses += 1;
+          drugData[drugId].missedPastDoses += 1;
+          drugData[drugId].missedTimestamps.push(doseDateTime);
+          drugData[drugId].missedDoses += 1;
         }
       } else {
         // This is a remaining dose
-        drugData[drug].remainingDoses += 1;
-        drugData[drug].remainingTimestamps.push(doseDateTime);
+        drugData[drugId].remainingDoses += 1;
+        drugData[drugId].remainingTimestamps.push(doseDateTime);
       }
 
       // Increment total doses
-      drugData[drug].totalDoses += 1;
-      drugData[drug].scheduledTimestamps.push(doseDateTime);
+      drugData[drugId].totalDoses += 1;
+      drugData[drugId].scheduledTimestamps.push(doseDateTime);
     }
 
     // Calculate compliance for each drug
-    for (const drug in drugData) {
-      const data = drugData[drug];
+    for (const drugId in drugData) {
+      const data = drugData[drugId];
       const totalPastDoses = data.pastDoses;
       const completedPastDoses = data.completedPastDoses;
 
@@ -148,7 +148,7 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
     return drugData;
   }
 
-  const drugData = calculateCompliance(schedule)[activeDrug];
+  const drugData = calculateCompliance(schedule)[activeDrugId];
   const {
     missedDoses,
     compliance,
@@ -390,7 +390,9 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
                 onClick={() => {
                   setScreen(false), setAllergyModal(false), handleAllergies();
                   tab !== "Allergies" &&
-                    (dispatch(updateActiveDrug("")), setDisplayDrugs(true));
+                    (dispatch(updateActiveDrug("")),
+                    dispatch(updateActiveDrugId("")),
+                    setDisplayDrugs(true));
                 }}
                 className="px-4 py-1 flex items-center gap-2 bg-navyBlue rounded-[10px]  "
               >

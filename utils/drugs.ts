@@ -72,3 +72,10 @@ export function generateDrugID(drugName: string) {
 
     return id;
 }
+
+export const generateDrugId = (drugName: string, date: string, times: string[]) => {
+  const formattedDate = new Date(date).toISOString().split('T')[0]; // Format date as YYYY-MM-DD
+  const formattedTimes = times.join('-'); // Join times with a hyphen
+  const drugId = `${drugName}_${formattedDate}_${formattedTimes}`; // Combine drugName, date, and times
+  return drugId;
+};

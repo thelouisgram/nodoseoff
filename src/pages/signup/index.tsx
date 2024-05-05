@@ -309,7 +309,7 @@ const CreateAccount = () => {
             )}
           </button>
         </form>
-        <Link href="/login" className="text-white">
+        <Link href="/login" className="text-white hover:underline">
           Already have an account? Login
         </Link>
       </div>

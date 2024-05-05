@@ -79,7 +79,7 @@ const ForgotPassword = () => {
             setSuccessMessage("");
           } else {
             setShowOtp(true);
-            setSuccessMessage(
+            toast.success(
               "Password reset email sent. Please check your email."
             );
             setErrorMessage("");
@@ -124,21 +124,22 @@ const ForgotPassword = () => {
               Enter your email to reset your password
             </p>
           </div>
-          <div className="flex flex-col mb-4">
-            <label htmlFor="email" className="text-[14px] mb-1">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={email}
-              onChange={handleEmailChange}
-              className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4"
-              placeholder="Email Address"
-            />
-          </div>
-          {showOtp && (
+          {!showOtp ? (
+            <div className="flex flex-col mb-4">
+              <label htmlFor="email" className="text-[14px] mb-1">
+                Email
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={email}
+                onChange={handleEmailChange}
+                className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4"
+                placeholder="Email Address"
+              />
+            </div>
+          ) : (
             <div className="flex flex-col mb-4">
               <label htmlFor="otp" className="text-[14px] mb-1">
                 OTP:
@@ -173,14 +174,16 @@ const ForgotPassword = () => {
           >
             {loading ? (
               <div className="loaderInfinity"></div>
+            ) : showOtp ? (
+              "Confirm Otp"
             ) : (
-              showOtp ? "Confirm Otp" : "Send Recovery Email"
+              "Send Recovery Email"
             )}
           </button>
         </form>
         <div className="w-full flex flex-col items-center">
-          <Link href="/login" className="text-white">
-            Back to Sign In
+          <Link href="/login" className="text-white hover:underline">
+            Back to Login
           </Link>
         </div>
       </div>

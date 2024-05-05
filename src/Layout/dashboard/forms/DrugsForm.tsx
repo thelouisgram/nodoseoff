@@ -9,6 +9,7 @@ import { setDrugs, updateSchedule } from "../../../../store/stateSlice";
 import { dose, generateSchedule } from "../../../../utils/dashboard";
 import { uploadScheduleToServer } from "../../../../utils/schedule";
 import supabase from "../../../../utils/supabase";
+import { generateDrugId } from "../../../../utils/drugs";
 
 interface DrugFormProps {
   drugsForm: boolean;
@@ -37,6 +38,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
     end: "",
     time: [""],
     reminder: true,
+    drugId: ''
   });
 
   const [formErrors, setFormErrors] = useState({
@@ -181,6 +183,10 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
 
   const addDrug = async () => {
     setLoading(true);
+
+    // Generate drugId
+    const drugId = generateDrugId(formData.drug, formData.start, formData.time);
+
     try {
       const { error } = await supabase.from("drugs").insert({
         userId: userId,
@@ -191,30 +197,38 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
         end: formData.end,
         time: formData.time,
         reminder: formData.reminder,
+        drugId: drugId, // Add drugId to the database
       });
 
       if (error) {
         toast.error("Failed to add drug");
+      setLoading(false);
         return;
       }
 
+      // Update formData state with drugId
+      formData.drugId = drugId;
+
       dispatch(setDrugs([...drugs, formData]));
-      toast.success(`${formData.drug.toUpperCase()}  added successfully!`);
+      toast.success(`${formData.drug.toUpperCase()} added successfully!`);
       setDrugsForm(false);
       setLoading(false);
-      const data = generateSchedule(formData); // Generate updated schedule data based on formData
-      const updatedSchedule = [...schedule, ...data]; // Combine current schedule with new data
+
+      const data = generateSchedule(formData);
+      const updatedSchedule = [...schedule, ...data];
 
       dispatch(updateSchedule(updatedSchedule));
       uploadScheduleToServer({
         userId: userId,
-        schedule: updatedSchedule, // Pass the updated schedule to the function
+        schedule: updatedSchedule,
       });
     } catch (error) {
       console.error("Error adding drug:", error);
+      setLoading(false);
     } finally {
       resetFormData();
       resetFormErrors();
+      setLoading(false);
     }
   };
 
@@ -227,6 +241,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
       end: "",
       time: [],
       reminder: true,
+      drugId: ''
     });
   };
 

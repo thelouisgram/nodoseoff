@@ -197,7 +197,7 @@ const Ongoing: React.FC<OngoingProps> = ({
       ) : (
         <div className="w-full h-[400px] flex justify-center items-center">
           <h1 className="text-[20px] text-navyBlue font-semibold font-karla text-center opacity-30">
-            Add a drug to get started!
+            Add a medication to get started!
           </h1>
         </div>
       )}

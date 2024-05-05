@@ -29,7 +29,7 @@ interface FormErrors {
 }
 
 const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
-  const { drugs, activeDrug, schedule, userId } = useSelector(
+  const { drugs, activeDrug, schedule, userId, activeDrugId } = useSelector(
     (state: RootState) => state.app
   );
   const dispatch = useDispatch();
@@ -45,6 +45,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
     end: "",
     time: [""],
     reminder: false,
+    drugId:''
   });
 
   const [formErrors, setFormErrors] = useState({
@@ -84,6 +85,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
         end: currentDrug.end || "",
         time: currentDrug.time || [],
         reminder: currentDrug.reminder || false,
+        drugId: currentDrug.drugId || ""
       });
     }
   }, [currentDrug]);
@@ -206,6 +208,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
             end: formData.end,
             time: formData.time,
             reminder: formData.reminder,
+            drugId: formData.drugId,
           };
         }
         return drug;
@@ -215,7 +218,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
 
       // Remove active drug from schedule
       const strippedSchedule = removePastDoses({
-        activeDrug,
+        activeDrugId,
         schedule,
       });
       // Generate schedule with current date as startDate
@@ -252,6 +255,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
 
       if (drugUpdateError) {
         toast.error("Failed to update drug on the server");
+        setLoading(false);
         return;
       }
 
@@ -269,7 +273,9 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
       });
     } catch (error) {
       console.error("Error updating data on the server:", error);
-      toast.error("An error occurred while updating data on the server");
+      toast.error("An error occurred");
+      setLoading(false);
+
     }
   };
 

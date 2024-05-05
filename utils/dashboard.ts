@@ -51,7 +51,7 @@ export const frequencyToPlaceholder: { [key: string]: string } = {
 };
 
 export const generateSchedule = (drugDetails: DrugProps) => {
-  const { drug, start, end, frequency, time } = drugDetails;
+  const { drug, start, end, frequency, time, drugId } = drugDetails;
 
   const startDate = new Date(start);
   const endDate = new Date(end);
@@ -92,6 +92,7 @@ export const generateSchedule = (drugDetails: DrugProps) => {
           date: currentDate.toISOString().substr(0, 10),
           time: doseTime,
           completed: false, // Set completed as false for each dose
+          drugId
         };
 
         schedule.push(scheduleEntry);
@@ -108,6 +109,7 @@ export const generateSchedule = (drugDetails: DrugProps) => {
         date: currentDate.toISOString().substr(0, 10),
         time: doseTime,
         completed: false, // Set completed as false for each dose
+        drugId
       };
 
       schedule.push(scheduleEntry);
@@ -123,6 +125,7 @@ export const generateSchedule = (drugDetails: DrugProps) => {
         date: currentDate.toISOString().substr(0, 10),
         time: doseTime,
         completed: false, // Set completed as false for each dose
+        drugId
       };
 
       schedule.push(scheduleEntry);
@@ -138,6 +141,7 @@ export const generateSchedule = (drugDetails: DrugProps) => {
         date: currentDate.toISOString().substr(0, 10),
         time: doseTime,
         completed: false, // Set completed as false for each dose
+        drugId
       };
 
       schedule.push(scheduleEntry);
@@ -155,6 +159,7 @@ export const generateSchedule = (drugDetails: DrugProps) => {
           date: currentDate.toISOString().substr(0, 10),
           time: doseTime,
           completed: false, // Set completed as false for each dose
+          drugId
         };
 
         schedule.push(scheduleEntry);

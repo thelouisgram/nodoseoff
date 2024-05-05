@@ -71,6 +71,7 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
 
       if (error) {
         console.error("Failed to update profile", error);
+        setLoading(false);
         return;
       }
 
@@ -80,6 +81,7 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
       toast.success("Profile updated successfully");
     } catch (error) {
       console.error("Error updating Profile:", error);
+      setLoading(false);
     }
   };
 

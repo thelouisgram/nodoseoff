@@ -24,6 +24,7 @@ import DrugDetails from "./DrugDetails";
 import Allergies from "./tabs/Allergies";
 import Completed from "./tabs/Completed";
 import Ongoing from "./tabs/Ongoing";
+import { FaPlus } from "react-icons/fa";
 
 interface DrugsProps {
   screen: boolean;
@@ -68,8 +69,15 @@ const Drugs: React.FC<DrugsProps> = ({
   setAllergyModal,
   allergyModal,
 }) => {
-  const { drugs, schedule, userId, allergies, activeDrug, completedDrugs } =
-    useSelector((state: RootState) => state.app);
+  const {
+    drugs,
+    schedule,
+    userId,
+    allergies,
+    activeDrug,
+    completedDrugs,
+    activeDrugId,
+  } = useSelector((state: RootState) => state.app);
 
   const [tab, setTab] = useState<string>("Ongoing");
   const [displayDrugs, setDisplayDrugs] = useState(true);
@@ -87,6 +95,7 @@ const Drugs: React.FC<DrugsProps> = ({
       setAllergyModal(false);
     }
   };
+
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent): void => {
       handleClickOutside(event);
@@ -173,7 +182,7 @@ const Drugs: React.FC<DrugsProps> = ({
         const { error } = await supabase
           .from("drugs")
           .delete()
-          .eq("drug", activeDrug);
+          .eq("drugId", activeDrugId);
 
         if (error) {
           toast.error("Failed to delete Drug");
@@ -181,9 +190,8 @@ const Drugs: React.FC<DrugsProps> = ({
         }
 
         toast.success(`${activeDrug.toUpperCase()} deleted Successfully!`);
-
         const updatedSchedule: ScheduleItem[] = removePastDoses({
-          activeDrug,
+          activeDrugId,
           schedule,
         });
 
@@ -194,14 +202,14 @@ const Drugs: React.FC<DrugsProps> = ({
         });
 
         // Update the Redux state after deleting and uploading the schedule
-        dispatch(setDrugs(drugs.filter((drug) => drug.drug !== activeDrug)));
+        dispatch(setDrugs(drugs.filter((drug) => drug.drugId !== activeDrugId)));
         dispatch(updateSchedule(updatedSchedule));
       } catch (error) {
         console.error("Error deleting drug:", error);
       }
     } else if (tab === "Completed") {
       const newCompletedDrugs = completedDrugs.filter(
-        (drug) => drug.drug !== activeDrug
+        (drug) => drug.drugId !== activeDrugId
       );
       dispatch(updateCompletedDrugs(newCompletedDrugs));
       uploadCompletedDrugs(newCompletedDrugs);
@@ -235,7 +243,7 @@ const Drugs: React.FC<DrugsProps> = ({
   };
 
   const handleAllergies = async () => {
-    if (allergies.some((drug: DrugProps) => drug.drug === activeDrug)) {
+    if (allergies.some((drug: DrugProps) => drug.drugId === activeDrugId)) {
       toast.error("Drug is already marked as an allergy");
       return null;
     } else {
@@ -265,7 +273,7 @@ const Drugs: React.FC<DrugsProps> = ({
         }
 
         const updatedSchedule: ScheduleItem[] = removePastDoses({
-          activeDrug,
+          activeDrugId,
           schedule,
         });
 
@@ -473,7 +481,7 @@ const Drugs: React.FC<DrugsProps> = ({
                     setDrugsForm(true);
                     setScreen(false);
                   }}
-                  className="rounded-[10px]  text-white font-semibold justify-end flex gap-2 ss:gap-3 items-center"
+                  className="bg-white py-2 px-4 rounded-full font-semibold text-center justify-center flex gap-2 ss:gap-3 items-center"
                 >
                   + Add a Drug
                 </button>
@@ -483,7 +491,7 @@ const Drugs: React.FC<DrugsProps> = ({
                     setAllergiesForm(true);
                     setScreen(false);
                   }}
-                  className="rounded-[10px]  text-white font-semibold justify-end flex gap-2 ss:gap-3 items-center"
+                  className="bg-white py-2 px-4 rounded-full font-semibold justify-center flex gap-2 ss:gap-3 items-center"
                 >
                   + Add an Allergy
                 </button>
@@ -493,7 +501,7 @@ const Drugs: React.FC<DrugsProps> = ({
                     setEffectsForm(true);
                     setScreen(false);
                   }}
-                  className="rounded-[10px]  text-white font-semibold justify-end flex gap-2 ss:gap-3 items-center"
+                  className="bg-white py-2 px-4 rounded-full font-semibold justify-center flex gap-2 ss:gap-3 items-center"
                 >
                   + Add Side Effect
                 </button>
@@ -518,13 +526,9 @@ const Drugs: React.FC<DrugsProps> = ({
                   : "flex"
               }`}
             >
-              <Image
-                src={`/assets/x.png`}
-                alt="plus"
-                width={512}
-                height={512}
-                className={`w-4 ss:w-5 ${
-                  screen ? "rotate-180" : "rotate-45"
+              <FaPlus
+                className={`text-[20px] ss:text-[24px] text-white font-normal ${
+                  screen ? "rotate-45" : "rotate-180"
                 }  transition-all`}
               />
             </button>

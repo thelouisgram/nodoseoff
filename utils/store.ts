@@ -17,6 +17,7 @@ export interface AppType {
   active: string;
   confetti: boolean;
   profilePicture: any;
+  activeDrugId: string
 }
 
 export interface Info{

@@ -29,6 +29,7 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
     end: "",
     time: [""],
     reminder: true,
+    drugId: ''
   });
 
   useEffect(() => {
@@ -59,6 +60,7 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
       end: "",
       time: [""],
       reminder: true,
+      drugId: ''
     });
   };
 
@@ -106,6 +108,7 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
 
       if (error) {
         console.error("Failed to add allergy", error);
+        setLoading(false);
         return;
       }
 
@@ -119,12 +122,14 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
         end: "",
         time: [""],
         reminder: true,
+        drugId:''
       });
       setFormErrors({ drug: "" });
       setAllergiesForm(false);
       setLoading(false);
     } catch (error) {
       console.error("Error adding Allergy:", error);
+      setLoading(false);
     }
   };
 

@@ -2,7 +2,10 @@ import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../../store";
-import { updateActiveDrug } from "../../../../store/stateSlice";
+import {
+  updateActiveDrug,
+  updateActiveDrugId,
+} from "../../../../store/stateSlice";
 import { DrugProps } from "../../../../types/dashboard";
 import { formatDate, formatDateToSlash } from "../../../../utils/dashboard";
 import { calculateTimePeriod } from "../../../../utils/drugs";
@@ -19,7 +22,7 @@ interface thisProps {
   setDisplayDrugs: Function;
   showEditButton: boolean;
   tab: string;
-  currentPage:number;
+  currentPage: number;
 }
 
 type RefObject<T> = React.RefObject<T>;
@@ -69,7 +72,7 @@ const RenderedDrugs: React.FC<thisProps> = ({
       } flex font-Inter w-full justify-between px-4 text-navyBlue items-center border-b-[1px] text-[13px] sm:text-[14px] leading-none capitalize`}
     >
       <div className="w-[31%] sm:w-[15%] md:w-[16%] h-full font-semibold  items-center py-4 flex gap-1">
-        {currentPage === 1 ? id + 1 : (id + 1) + (6 * (currentPage - 1))}.
+        {currentPage === 1 ? id + 1 : id + 1 + 6 * (currentPage - 1)}.
         <h1>{drug.drug}</h1>
       </div>
       {tab !== "Allergies" ? (
@@ -95,7 +98,9 @@ const RenderedDrugs: React.FC<thisProps> = ({
       )}
       <button
         onClick={() => {
-          setOptions((prev) => !prev), dispatch(updateActiveDrug(drug.drug));
+          setOptions((prev) => !prev),
+            dispatch(updateActiveDrug(drug.drug)),
+            dispatch(updateActiveDrugId(drug.drugId));
         }}
         className="flex flex-col gap-1 cursor-pointer justify-center items-center rounded-full w-[7%] sm:w-[4%] md:w-[6%] rotate-90"
       >
@@ -113,6 +118,7 @@ const RenderedDrugs: React.FC<thisProps> = ({
             <button
               onClick={() => {
                 dispatch(updateActiveDrug(drug.drug));
+                dispatch(updateActiveDrugId(drug.drugId));
                 setDisplayDrugs(false);
                 setOptions(false);
               }}
@@ -132,6 +138,7 @@ const RenderedDrugs: React.FC<thisProps> = ({
             <button
               onClick={() => {
                 dispatch(updateActiveDrug(drug.drug)),
+                  dispatch(updateActiveDrugId(drug.drugId)),
                   setEditModal(true),
                   setScreen(true);
                 setOptions(false);
@@ -151,8 +158,8 @@ const RenderedDrugs: React.FC<thisProps> = ({
           <button
             onClick={() => {
               dispatch(updateActiveDrug(drug.drug)),
-                setScreen(true),
-                setDeleteModal(true);
+                dispatch(updateActiveDrugId(drug.drugId));
+              setScreen(true), setDeleteModal(true);
               setOptions(false);
             }}
             className="h-8 hover:bg-gray-100 flex items-center gap-3 w-full px-3"
@@ -169,6 +176,7 @@ const RenderedDrugs: React.FC<thisProps> = ({
           {tab !== "Allergies" && (
             <button
               onClick={() => {
+                dispatch(updateActiveDrugId(drug.drugId));
                 dispatch(updateActiveDrug(drug.drug)),
                   setScreen(true),
                   setAllergyModal(true);

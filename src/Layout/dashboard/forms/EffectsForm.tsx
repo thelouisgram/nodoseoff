@@ -83,6 +83,7 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
 
       if (error) {
         console.error("Failed to add effect", error);
+        setLoading(false);
         return;
       }
 
@@ -98,6 +99,7 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
       setEffectsForm(false);
     } catch (error) {
       console.error("Error adding effect:", error);
+      setLoading(false);
     }
   };
 

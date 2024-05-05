@@ -75,16 +75,16 @@ const Account: React.FC<AccountProps> = ({
                     priority
                   />
                 </div>
-                <h1 className=" text-[20px] ss:text-[32px] mt-4 font-semibold font-karla text-center capitalize">
+                <h1 className=" text-[20px] ss:text-[32px] mt-4 font-bold font-Inter text-center capitalize">
                   {name}
                 </h1>
               </div>
               <div className="w-full grid ss:grid-cols-2 gap-4 mb-4">
-                <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex gap-3">
+                <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex gap-3 flex-wrap">
                   <h2 className="font-semibold">Email:</h2>
                   <p>{email}</p>
                 </div>
-                <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex gap-3">
+                <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex gap-3 flex-wrap">
                   <h2 className="font-semibold">Phone Number:</h2>
                   <p>{phone}</p>
                 </div>

@@ -19,6 +19,7 @@ const initialState: AppType = {
   completedDrugs: [],
   confetti: false,
   profilePicture: [],
+  activeDrugId: ''
 };
 
 const stateSlice = createSlice({
@@ -33,6 +34,9 @@ const stateSlice = createSlice({
     },
     updateActiveDrug: (state, action: PayloadAction<string>) => {
       state.activeDrug = action.payload;
+    },
+    updateActiveDrugId: (state, action: PayloadAction<string>) => {
+      state.activeDrugId = action.payload;
     },
     updateSchedule: (state, action: PayloadAction<ScheduleItem[]>) => {
       state.schedule = action.payload;
@@ -90,4 +94,5 @@ export const {
   updateCompletedDrugs,
   updateConfetti,
   updateProfilePicture,
+  updateActiveDrugId,
 } = stateSlice.actions;

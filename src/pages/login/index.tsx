@@ -159,10 +159,15 @@ const SignIn = () => {
           </button>
         </form>
         <div className="w-full flex flex-col items-center">
-          <Link href="/signup" className="text-white">
+          <Link href="/signup" className="text-white hover:underline">
             Don't have an account? Create Account
           </Link>
-          <Link href='/forgetpassword' className="text-white text-center mt-8">Forgot Password?</Link>
+          <Link
+            href="/forgetpassword"
+            className="text-white text-center mt-8 hover:underline"
+          >
+            Forgot Password?
+          </Link>
         </div>
       </div>
     </>

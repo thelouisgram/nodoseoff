@@ -11,6 +11,7 @@ export interface ScheduleItem {
    date: string;
    time: string;
    completed: boolean;
+   drugId:string;
  }
 
  export interface DrugProps {
@@ -21,4 +22,5 @@ export interface ScheduleItem {
   route: string;
   start: string;
   time: string[];
+  drugId: string;
 }

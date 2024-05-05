@@ -55,6 +55,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 
       if (error) {
         console.error("Failed to update profile", error);
+        setLoading(false);
         return;
       }
 
@@ -64,6 +65,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
       toast.success("Profile updated successfully");
     } catch (error) {
       console.error("Error updating Profile:", error);
+      setLoading(false);
     }
   };
 
@@ -157,7 +159,10 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                   Change your Profile Picture
                 </div>
                 <div className="flex items-center h-full gap-4">
-                  <label htmlFor="avatarInput" className="cursor-pointer">
+                  <label
+                    htmlFor="avatarInput"
+                    className="cursor-pointer flex gap-2 items-center"
+                  >
                     <input
                       type="file"
                       id="avatarInput"
@@ -178,6 +183,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                         priority
                       />
                     </div>
+                    <p>Tap to change</p>
                   </label>
                 </div>
               </div>

@@ -26,10 +26,10 @@ export const uploadScheduleToServer = async ({
 };
 
 export function removePastDoses({
-  activeDrug,
+  activeDrugId,
   schedule,
 }: {
-  activeDrug: string;
+  activeDrugId: string;
   schedule: ScheduleItem[];
 }) {
   const yesterday = new Date();
@@ -40,7 +40,7 @@ export function removePastDoses({
     const drugDate = new Date(item.date);
 
     // Compare drug date with yesterday's date
-    if (item.drug === activeDrug) {
+    if (item.drugId === activeDrugId) {
       return drugDate <= yesterday; // Return true if drug date is before or equal to yesterday
     }
     return true; // Keep doses for other drugs

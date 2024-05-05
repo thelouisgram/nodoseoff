@@ -53,7 +53,6 @@ const SignIn = () => {
             dispatch(updateUserId(userId));
             router.push("/dashboard");
           }
-          console.log(data);
         }
       } catch (error) {
         setErrorMessage("Error signing up: " + error);
@@ -163,7 +162,7 @@ const SignIn = () => {
           <Link href="/signup" className="text-white">
             Don't have an account? Create Account
           </Link>
-          <p className="text-white text-center mt-8">Forgot Password?</p>
+          <Link href='/forgetpassword' className="text-white text-center mt-8">Forgot Password?</Link>
         </div>
       </div>
     </>

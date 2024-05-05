@@ -38,7 +38,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
     end: "",
     time: [""],
     reminder: true,
-    drugId: ''
+    drugId: "",
   });
 
   const [formErrors, setFormErrors] = useState({
@@ -201,8 +201,10 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
       });
 
       if (error) {
-        toast.error("Failed to add drug");
-      setLoading(false);
+        toast.error(
+          "Error adding drug, Check Internet Connection and Try again!"
+        );
+        setLoading(false);
         return;
       }
 
@@ -223,7 +225,9 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
         schedule: updatedSchedule,
       });
     } catch (error) {
-      console.error("Error adding drug:", error);
+      toast.error(
+        "Error adding drug, Check Internet Connection and Try again!"
+      );
       setLoading(false);
     } finally {
       resetFormData();
@@ -241,7 +245,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
       end: "",
       time: [],
       reminder: true,
-      drugId: ''
+      drugId: "",
     });
   };
 
@@ -382,7 +386,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
               )}
               <div className="flex flex-col w-full">
                 <label
-                  htmlFor="end"
+                  htmlFor="start"
                   className="text-[14px] mb-1 font-semibold text-navyBlue"
                 >
                   Select Start Date
@@ -419,7 +423,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
               <div className="flex gap-2 items-center">
                 <input
                   type="checkbox"
-                  id="reminder"
+                  id="reminderEdit"
                   name="reminder"
                   checked={formData.reminder}
                   onChange={handleInputChange}

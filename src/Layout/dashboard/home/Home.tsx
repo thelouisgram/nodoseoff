@@ -103,7 +103,7 @@ const Home: React.FC<HomeProps> = ({
             height={100}
             alt="user"
             quality={100}
-            className="w-auto h-[60px] object-cover"
+            className="w-[60px] h-[60px] object-cover"
             priority
           />
         </div>

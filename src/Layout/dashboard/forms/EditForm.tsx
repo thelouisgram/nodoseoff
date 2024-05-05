@@ -45,7 +45,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
     end: "",
     time: [""],
     reminder: false,
-    drugId:''
+    drugId: "",
   });
 
   const [formErrors, setFormErrors] = useState({
@@ -85,7 +85,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
         end: currentDrug.end || "",
         time: currentDrug.time || [],
         reminder: currentDrug.reminder || false,
-        drugId: currentDrug.drugId || ""
+        drugId: currentDrug.drugId || "",
       });
     }
   }, [currentDrug]);
@@ -254,7 +254,9 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
         .eq("drug", activeDrug);
 
       if (drugUpdateError) {
-        toast.error("Failed to update drug on the server");
+        toast.error(
+          "An error occurred, Check Internet Connection and Try again"
+        );
         setLoading(false);
         return;
       }
@@ -272,10 +274,8 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
         time: "",
       });
     } catch (error) {
-      console.error("Error updating data on the server:", error);
-      toast.error("An error occurred");
+      toast.error("An error occurred, Check Internet Connection and Try again");
       setLoading(false);
-
     }
   };
 
@@ -318,7 +318,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
           >
             <div className="flex flex-col mb-8">
               <label
-                htmlFor="drug"
+                htmlFor="drugEdit"
                 className="text-[14px] mb-1 font-semibold text-navyBlue"
               >
                 Name of drug (e.g Rifampicin)
@@ -326,7 +326,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
               <input
                 disabled={true}
                 type="text"
-                id="drug"
+                id="drugEdit"
                 name="drug"
                 value={formData.drug}
                 onChange={handleInputChange}
@@ -342,7 +342,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
                 Routes of Administration
               </label>
               <select
-                id="route"
+                id="routeEdit"
                 name="route"
                 value={formData.route}
                 onChange={handleSelectChange("route")}
@@ -360,13 +360,13 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
             </div>
             <div className="flex flex-col mb-8">
               <label
-                htmlFor="frequency"
+                htmlFor="frequencyEdit"
                 className="text-[14px] mb-1 font-semibold text-navyBlue"
               >
                 Frequency
               </label>
               <select
-                id="frequency"
+                id="frequencyEdit"
                 name="frequency"
                 value={formData.frequency}
                 onChange={handleSelectChange("frequency")}
@@ -398,7 +398,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
             )}
             <div className="flex flex-col w-full">
               <label
-                htmlFor="end"
+                htmlFor="startEdit"
                 className="text-[14px] mb-1 font-semibold text-navyBlue"
               >
                 Select Start Date
@@ -406,7 +406,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
               <div className="bg-[#EDF2F7] w-full rounded-[10px]  mb-8">
                 <input
                   type="date"
-                  id="start"
+                  id="startEdit"
                   name="start"
                   disabled={true}
                   value={getCurrentDate()}
@@ -424,7 +424,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
                 <div className="bg-[#EDF2F7] w-full rounded-[10px]">
                   <input
                     type="date"
-                    id="end"
+                    id="endEdit"
                     name="end"
                     value={formData.end}
                     onChange={handleInputChange}

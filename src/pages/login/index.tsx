@@ -115,13 +115,13 @@ const SignIn = () => {
             />
           </div>
           <div className="flex flex-col mb-8">
-            <label htmlFor="password" className="text-[14px] mb-1">
+            <label htmlFor="passwordLogIn" className="text-[14px] mb-1">
               Password
             </label>
             <div className="justify-between w-full bg-[#EDF2F7] rounded-[10px] flex items-center p-4">
               <input
                 type={showPassword ? "text" : "password"}
-                id="password"
+                id="passwordLogIn"
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}

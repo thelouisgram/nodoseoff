@@ -29,7 +29,7 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
     end: "",
     time: [""],
     reminder: true,
-    drugId: ''
+    drugId: "",
   });
 
   useEffect(() => {
@@ -60,7 +60,7 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
       end: "",
       time: [""],
       reminder: true,
-      drugId: ''
+      drugId: "",
     });
   };
 
@@ -107,13 +107,15 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
       });
 
       if (error) {
-        console.error("Failed to add allergy", error);
+        toast.error(
+          "Failed to add allergy, Check Internet Connection and Try again!"
+        );
         setLoading(false);
         return;
       }
 
       dispatch(updateAllergies([...allergies, formData]));
-      toast.success(`${formData.drug.toUpperCase()}  added successfully`);
+      toast.success(`${formData.drug.toUpperCase()}  added successfully!`);
       setFormData({
         drug: "",
         frequency: "",
@@ -122,13 +124,15 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
         end: "",
         time: [""],
         reminder: true,
-        drugId:''
+        drugId: "",
       });
       setFormErrors({ drug: "" });
       setAllergiesForm(false);
       setLoading(false);
     } catch (error) {
-      console.error("Error adding Allergy:", error);
+      toast.error(
+        "Failed to add allergy, Check Internet Connection and Try again!"
+      );
       setLoading(false);
     }
   };
@@ -184,14 +188,14 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
               >
                 <div className="flex flex-col mb-4">
                   <label
-                    htmlFor="drug"
+                    htmlFor="drugAllergy"
                     className="text-[14px] mb-1 font-semibold text-navyBlue"
                   >
                     Drug
                   </label>
                   <input
                     type="text"
-                    id="drug"
+                    id="drugAllergy"
                     name="drug"
                     value={formData.drug}
                     onChange={handleInputChange}

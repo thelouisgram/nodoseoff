@@ -54,7 +54,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
         .eq("userId", userId);
 
       if (error) {
-        console.error("Failed to update profile", error);
+        toast.error("Failed to update profile, Check Internet Connection and Try again!");
         setLoading(false);
         return;
       }
@@ -64,7 +64,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
       setLoading(false);
       toast.success("Profile updated successfully");
     } catch (error) {
-      console.error("Error updating Profile:", error);
+      toast.error(
+        "Failed to update profile, Check Internet Connection and Try again!"
+      );
       setLoading(false);
     }
   };
@@ -179,7 +181,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                         height={3000}
                         alt="user"
                         quality={100}
-                        className="w-[150px] h-[100px] object-cover"
+                        className="w-[100px] h-[100px] object-cover"
                         priority
                       />
                     </div>

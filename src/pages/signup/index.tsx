@@ -9,6 +9,7 @@ import { updateIsAuthenticated, updateUserId } from "../../../store/stateSlice";
 import { useDispatch } from "react-redux";
 import Head from "next/head";
 import ReCAPTCHA from "react-google-recaptcha";
+import sendMail  from '@/pages/api/sendMail'
 
 const CreateAccount = () => {
   const router = useRouter();
@@ -64,19 +65,43 @@ const CreateAccount = () => {
     }
   }
 
+ 
+  const sendWelcomeEmail = async (email:string, name:string) => {
+    try {
+      const response = await fetch("/api/send-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          to: email,
+          subject: "Welcome to NoDoseOff!",
+          text: `Hello ${name},\n\nWelcome to NoDoseOff! We're excited to have you on board. If you have any questions, feel free to reach out to us.\n\nBest,\nThe NoDoseOff Team`,
+        }),
+      });
+
+      if (!response.ok) {
+        // Handle different error cases, e.g., non-JSON response
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+          const data = await response.json();
+          throw new Error(data.error || "Failed to send welcome email.");
+        } else {
+          const errorText = await response.text();
+          throw new Error(`Unexpected response format: ${errorText}`);
+        }
+      }
+    } catch (error) {
+      console.error("Error sending welcome email:", error);
+    }
+  };
+
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Password strength validation (can be customized)
-    const strongPasswordRegex = /^(?=.*\d)[A-Za-z\d]{8,}$/;
-    if (!strongPasswordRegex.test(formData.password)) {
-      setErrorMessage(
-        "Please enter a strong password (minimum eight characters, one capital letter, and one number)"
-      );
-      return;
-    }
 
     if (formData.password !== confirmPassword) {
-      setErrorMessage("Password do not match!");
+      setErrorMessage("Passwords do not match.");
       return;
     }
 
@@ -85,70 +110,82 @@ const CreateAccount = () => {
       return;
     }
 
-    for (const key in formData) {
-      if (formData[key as keyof typeof formData] === "") {
-        setErrorMessage("Please fill in all fields");
-        return;
-      }
+    const fieldsEmpty = Object.values(formData).some((field) => field === "");
+    if (fieldsEmpty) {
+      setErrorMessage("Please fill in all fields.");
+      return;
     }
+
+    // Check password strength (customize regex as needed)
+    const strongPasswordRegex = /^(?=.*\d)[A-Za-z\d]{8,}$/;
+    if (!strongPasswordRegex.test(formData.password)) {
+      setErrorMessage(
+        "Please enter a strong password (at least 8 characters, including one digit)."
+      );
+      return;
+    }
+
     setLoading(true);
+    setErrorMessage("");
+
     try {
       // Sign up the user
-      const { error: signUpError, data } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-      });
+      const { error: signUpError, data: signUpData } =
+        await supabase.auth.signUp({
+          email: formData.email,
+          password: formData.password,
+        });
 
       if (signUpError) {
         setErrorMessage("Error signing up: " + signUpError.message);
+        setLoading(false);
         return;
       }
 
-      const user = await supabase.auth.getUser();
-      const userId = user.data.user?.id;
+      const userId = signUpData.user?.id;
       if (userId) {
         dispatch(updateIsAuthenticated(true));
         dispatch(updateUserId(userId));
-      }
-      // Add user info to the database
-      const { error: addInfoError } = await supabase.from("users").insert({
-        name: formData.fullName,
-        phone: formData.phoneNumber,
-        email: formData.email,
-        userId: userId,
-        schedule: [],
-      });
-      if (addInfoError) {
-        setErrorMessage("Error occurred, Try again!");
-        return;
-      }
 
-      // Fetch local image and upload
-      const file = await fetchLocalImage(); // Fetch local image
-      const { error: uploadError } = await supabase.storage
-        .from("profile-picture")
-        .upload(`${userId}/avatar.png`, file); // Upload fetched image
+        // Add user info to the database
+        const { error: insertError } = await supabase.from("users").insert({
+          name: formData.fullName,
+          phone: formData.phoneNumber,
+          email: formData.email,
+          userId: userId,
+          schedule: [],
+        });
 
-      if (uploadError) {
-        console.error("Error uploading image:", uploadError);
-        return;
+        if (insertError) {
+          setErrorMessage("Error occurred while adding user info.");
+          setLoading(false);
+          return;
+        }
+
+        // Fetch and upload the local profile picture
+        const file = await fetchLocalImage();
+        const { error: uploadError } = await supabase.storage
+          .from("profile-picture")
+          .upload(`${userId}/avatar.png`, file);
+
+        if (uploadError) {
+          console.error("Error uploading profile picture:", uploadError);
+          setLoading(false);
+          return;
+        }
+
+        // Send a welcome email to the user
+        await sendWelcomeEmail(formData.email, formData.fullName);
+
+        // Redirect to the dashboard
+        router.push("/dashboard");
       }
-
-      // Both operations succeeded
-      router.push("/dashboard");
     } catch (error) {
-      // Handle all unexpected errors
-      setErrorMessage("Error: " + error);
+      console.error("Unexpected error:", error);
+      setErrorMessage("An unexpected error occurred. Please try again.");
+    } finally {
       setLoading(false);
     }
-
-    // Reset form data
-    setFormData({
-      fullName: "",
-      email: "",
-      phoneNumber: "",
-      password: "",
-    });
   };
 
   return (
@@ -252,13 +289,13 @@ const CreateAccount = () => {
             </div>
           </div>
           <div className="flex flex-col mb-4">
-            <label htmlFor="password" className="text-[14px] mb-1">
+            <label htmlFor="confirmPassword" className="text-[14px] mb-1">
               Confirm Password
             </label>
             <div className="w-full bg-[#EDF2F7] rounded-[10px] mb-4 flex p-4">
               <input
                 type={showConfirmPassword ? "text" : "password"}
-                id="password"
+                id="confirmPassword"
                 name="password"
                 value={confirmPassword}
                 onChange={handleConfirmPassword}

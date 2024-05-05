@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../../store";
 import Image from "next/image";
 import { toast } from "sonner";
 import supabase from "../../../../utils/supabase";
+
 
 import {
   updateIsAuthenticated,
@@ -13,11 +14,17 @@ import {
 import { useRouter } from "next/router";
 import Report from "./Report";
 
+type RefObject<T> = React.RefObject<T>;
+
 interface AccountProps {
   setDrugHxForm: Function;
+  deleteAccountModal: boolean;
   setProfileForm: Function;
   setShowStats: Function;
   setShowContact: Function;
+  setAccountSettings: Function;
+  setDeleteAccountModal: Function;
+  setScreen: Function;
 }
 
 const Account: React.FC<AccountProps> = ({
@@ -25,11 +32,26 @@ const Account: React.FC<AccountProps> = ({
   setDrugHxForm,
   setShowStats,
   setShowContact,
+  setAccountSettings,
+  deleteAccountModal,
+  setDeleteAccountModal,
+  setScreen,
 }) => {
   const { info, userId } = useSelector((state: RootState) => state.app);
   const router = useRouter();
   const dispatch = useDispatch();
   const { name, phone, email } = info[0];
+
+  const dropdownRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
+
+  const handleClickOutside = (event: MouseEvent): void => {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target as Node)
+    ) {
+      setTab("default");
+    }
+  };
 
   const [tab, setTab] = useState("Account");
 
@@ -47,6 +69,31 @@ const Account: React.FC<AccountProps> = ({
       toast.error("Error signing out: " + error);
     }
   };
+
+   const deleteUser = async () => {
+     try {
+       const response = await fetch("/api/deleteUser", {
+         method: "POST",
+         headers: {
+           "Content-Type": "application/json",
+         },
+         body: JSON.stringify({ userId }),
+       });
+
+       const data = await response.json();
+
+       if (response.ok) {
+         toast.success(data.message);
+         router.push("./login");
+         // Redirect or update state as needed
+       } else {
+         toast.error(data.error);
+       }
+     } catch (error) {
+       console.error("Error deleting account:", error);
+       toast.error("Error deleting account");
+     }
+   };
 
   const CDNURL =
     "https://opshqmqagtfidynwftzk.supabase.co/storage/v1/object/public/profile-picture/";
@@ -71,7 +118,7 @@ const Account: React.FC<AccountProps> = ({
                     height={100}
                     alt="user"
                     quality={100}
-                    className="w-auto h-[150px] object-cover"
+                    className="w-[150px] h-[150px] object-cover"
                     priority
                   />
                 </div>
@@ -161,7 +208,7 @@ const Account: React.FC<AccountProps> = ({
               </button>
               <button
                 onClick={() => {
-                  setShowContact("Report");
+                  setShowContact(true);
                 }}
                 className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex justify-between gap-3 cursor-pointer"
               >
@@ -174,6 +221,23 @@ const Account: React.FC<AccountProps> = ({
                     className="w-6 h-auto"
                   />
                   <h2 className="">Contact Us</h2>
+                </div>
+              </button>
+              <button
+                onClick={() => {
+                  setAccountSettings(true);
+                }}
+                className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex justify-between gap-3 cursor-pointer"
+              >
+                <div className="flex gap-3">
+                  <Image
+                    src="/assets/account/support.png"
+                    width={24}
+                    height={24}
+                    alt="contact"
+                    className="w-6 h-auto"
+                  />
+                  <h2 className="">Account Settings</h2>
                 </div>
               </button>
 
@@ -201,6 +265,41 @@ const Account: React.FC<AccountProps> = ({
               </button>
             </div>
           </div>
+          {deleteAccountModal && (
+            <div className="w-full h-full fixed flex top-0 left-0 justify-center items-center z-[143] p-4 font-Inter">
+              <div
+                ref={dropdownRef}
+                className="bg-white rounded-[10px] text-white relative flex flex-col justify-center items-center"
+              >
+                <h1 className="text-navyBlue font-semibold py-4 px-4 border-b-[1px] text-left w-full text-[13px] ss:text-[16px] leading-tight">
+                  Confirm to DELETE YOUR ACCOUNT
+                </h1>
+                <h2 className="text-navyBlue border-b-[1px] text-left px-4 py-4 text-[12px] ss:text-[14px]">
+                  Are you sure you want to delete your account? <br /> This
+                  action cannot be undone.
+                </h2>
+                <div className="w-full flex gap-3 justify-start flex-row-reverse text-[12px] py-4 px-4">
+                  <button
+                    onClick={() => {
+                      deleteUser();
+                      setDeleteAccountModal(false);
+                    }}
+                    className="px-4 py-1 flex items-center gap-2 bg-navyBlue rounded-[10px]  "
+                  >
+                    Delete
+                  </button>
+                  <button
+                    onClick={() => {
+                      setScreen(false), setDeleteAccountModal(false);
+                    }}
+                    className="px-4 py-1 flex items-center gap-2 bg-none border text-navyBlue border-navyBlue rounded-[10px]  "
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         <Report setTab={setTab} />

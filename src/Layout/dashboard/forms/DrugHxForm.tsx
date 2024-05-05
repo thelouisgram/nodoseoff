@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, {
   useRef,
   useEffect,
@@ -10,7 +9,6 @@ import Image from "next/image";
 import { RootState } from "../../../../store";
 import { useSelector, useDispatch } from "react-redux";
 import supabase from "../../../../utils/supabase";
-
 import { toast } from "sonner";
 import { updateInfo } from "../../../../store/stateSlice";
 
@@ -28,11 +26,11 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
   const dispatch = useDispatch();
 
   const [formData, setFormData] = useState({
-    name: name,
-    phone: phone,
-    email: email,
-    otcDrugs: otcDrugs,
-    herbs: herbs,
+    name: name || "",
+    phone: phone || "",
+    email: email || "",
+    otcDrugs: otcDrugs || "",
+    herbs: herbs || "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -70,7 +68,9 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
         .eq("userId", userId);
 
       if (error) {
-        console.error("Failed to update profile", error);
+        toast.error(
+          "Failed to update profile, Check Internet Connection and Try again!"
+        );
         setLoading(false);
         return;
       }
@@ -80,21 +80,23 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
       setLoading(false);
       toast.success("Profile updated successfully");
     } catch (error) {
-      console.error("Error updating Profile:", error);
+      toast.error(
+        "Failed to update profile, Check Internet Connection and Try again!"
+      );
       setLoading(false);
     }
   };
 
   return (
     <div
-      className={` ${
+      className={`${
         drugHxForm ? "w-full h-[100dvh]" : "w-0 h-0"
       } right-0 bg-none fixed z-[2]`}
     >
       <div
-        className={` ${
-          drugHxForm ? "right-0 ss:w-[450px]" : "-right-[450px] ss:w-[450px] "
-        } transition duration-300 absolute w-full bg-white h-full z-[4] `}
+        className={`${
+          drugHxForm ? "right-0 ss:w-[450px]" : "-right-[450px] ss:w-[450px]"
+        } transition duration-300 absolute w-full bg-white h-full z-[4]`}
       >
         <div
           className={`h-full flex flex-col w-full justify-between gap-8 p-8 pt-0 overflow-y-scroll bg-white`}
@@ -106,9 +108,7 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
                 width={18}
                 height={18}
                 alt="cancel"
-                onClick={() => {
-                  setDrugHxForm(false);
-                }}
+                onClick={() => setDrugHxForm(false)}
                 id="top-drugHx"
                 className="cursor-pointer pt-8"
               />
@@ -133,7 +133,7 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
                   <select
                     id="otcDrugs"
                     name="otcDrugs"
-                    value={formData.otcDrugs}
+                    value={formData.otcDrugs !== null ? formData.otcDrugs : ""}
                     onChange={handleSelectChange("otcDrugs")}
                     className=" bg-[#EDF2F7] border-none w-full outline-none p-4 cursor-pointer h-[56px] rounded-[10px]"
                   >
@@ -154,9 +154,9 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
                   <select
                     id="herbs"
                     name="herbs"
-                    value={formData.herbs}
+                    value={formData.herbs !== null ? formData.herbs : ""}
                     onChange={handleSelectChange("herbs")}
-                    className=" bg-[#EDF2F7] border-none w-full outline-none p-4 cursor-pointer h-[56px] rounded-[10px]"
+                    className="bg-[#EDF2F7] border-none w-full outline-none p-4 cursor-pointer h-[56px] rounded-[10px]"
                   >
                     <option value="">--</option>
                     <option value="yes">Yes</option>

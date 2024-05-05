@@ -9,6 +9,7 @@ interface ScreenProps {
   setAllergyModal: Function;
   setProfileForm: Function;
   setShowStats: Function;
+  setDeleteAccountModal: Function;
 }
 
 const Screen: React.FC<ScreenProps> = ({
@@ -19,6 +20,7 @@ const Screen: React.FC<ScreenProps> = ({
   setAllergyModal,
   setProfileForm,
   setShowStats,
+  setDeleteAccountModal,
 }) => {
   const handleClose = () => {
     setEditModal(false);
@@ -28,6 +30,7 @@ const Screen: React.FC<ScreenProps> = ({
     setProfileForm(false);
     setShowStats(false);
     setScreen(false);
+    setDeleteAccountModal(false);
   };
 
   return (

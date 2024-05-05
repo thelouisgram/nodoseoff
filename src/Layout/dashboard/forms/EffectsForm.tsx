@@ -82,7 +82,7 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
       });
 
       if (error) {
-        console.error("Failed to add effect", error);
+        toast.error("Failed to add effect, Check Internet Connection and Try again!");
         setLoading(false);
         return;
       }
@@ -98,7 +98,9 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
       setFormErrors({ effect: "", severity: "", date: "" });
       setEffectsForm(false);
     } catch (error) {
-      console.error("Error adding effect:", error);
+      toast.error(
+        "Failed to add effect, Check Internet Connection and Try again!"
+      );
       setLoading(false);
     }
   };

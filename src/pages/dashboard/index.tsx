@@ -37,8 +37,8 @@ import {
 import { DrugProps, ScheduleItem } from "../../../types/dashboard";
 import { uploadScheduleToServer } from "../../../utils/schedule";
 import supabase from "../../../utils/supabase";
-
 import { tabs, tabsMobile } from "./../../../utils/dashboard";
+import AccountSettings from "@/Layout/dashboard/account/AccountSettings";
 
 interface tabsMobileProps {
   name: string;
@@ -74,6 +74,8 @@ const Page = () => {
   const router = useRouter();
   const [add, setAdd] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [accountSettings, setAccountSettings] = useState(false);
+  const [deleteAccountModal, setDeleteAccountModal] = useState(false)
 
   useEffect(() => {
     if (!userId) {
@@ -491,6 +493,10 @@ const Page = () => {
                 setProfileForm={setProfileForm}
                 setShowStats={setShowStats}
                 setShowContact={setShowContact}
+                setAccountSettings={setAccountSettings}
+                setScreen={setScreen}
+                setDeleteAccountModal={setDeleteAccountModal}
+                deleteAccountModal={deleteAccountModal}
               />
             )}
           </div>
@@ -519,6 +525,12 @@ const Page = () => {
                 drugHxForm={drugHxForm}
                 setDrugHxForm={setDrugHxForm}
               />
+              <AccountSettings
+                accountSettings={accountSettings}
+                setAccountSettings={setAccountSettings}
+                setDeleteAccountModal={setDeleteAccountModal}
+                setScreen={setScreen}
+              />
             </>
           )}
           <AllDoses
@@ -536,6 +548,7 @@ const Page = () => {
               setAdd={setAdd}
               screen={screen}
               setShowStats={setShowStats}
+              setDeleteAccountModal={setDeleteAccountModal}
             />
           )}
           <div className="fixed w-full h-[64px] bg-white shadow bottom-0 flex justify-between items-center md:hidden px-4 ss:px-8 ss:pr-12">

@@ -2,48 +2,27 @@
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { ChangeEvent, FormEvent, useState, useEffect } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import supabase from "../../../utils/supabase";
-import Image from 'next/image'
+import Image from "next/image";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
 import { toast } from "sonner";
-import { FaCheck } from "react-icons/fa";
 
 const ResetPassword = () => {
   const router = useRouter();
- const { userId } = useSelector(
-   (state: RootState) => state.app
- );
+  const { userId } = useSelector((state: RootState) => state.app);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [success, setSuccess] = useState(false)
+  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     if (!userId) {
       router.push("/login");
     }
   }, []);
-
-  const fetchUserData = async () => {
-  try {
-    // Fetch user information
-    const { data: user, error } = await supabase.auth.getUser();
-
-    if (error) {
-      console.error('Error fetching user:', error);
-    } else {
-      console.log('Authenticated user:', user);
-    }
-  } catch (error) {
-    console.error('Error fetching user:', error);
-  }
-};
-
-// Call the function to fetch user data
-fetchUserData();
 
   const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
@@ -65,15 +44,12 @@ fetchUserData();
 
       try {
         // Update the user's password using the token
-        const { error } = await supabase.auth.updateUser(
-          { password },
-        );
+        const { error } = await supabase.auth.updateUser({ password });
 
         if (error) {
           setErrorMessage(`Error updating password: ${error.message}`);
         } else {
-          toast.success("Password updated successfully. Please log in.");
-          setSuccess(true)
+          setSuccess(true);
         }
       } catch (error) {
         setErrorMessage(`Error updating password: ${error}`);
@@ -160,18 +136,17 @@ fetchUserData();
             </button>
           </form>
         ) : (
-            <div className="w-full flex flex-col items-center font-Inter mt-10 text-white">
-              <div className="p-3 border border-white rounded-full mb-4">
-                <FaCheck className=" text-[32px] " />
-              </div>
+          <>
+            <div className="w-full ss:w-[450px] h-auto p-7 ss:p-10 mb-10 bg-white rounded-[15px] flex flex-col items-center text-navyBlue">
               <h2 className=" text-[32px] font-semibold">Password changed!</h2>
-              <p className="mb-10">
+              <p className="text-center mb-10">
                 Your Password has been successfully changed!
               </p>
-              <Link href="/login" className=" hover:underline">
-                Back to Login
-              </Link>
+                <Link href="/login" className=" underline ">
+                  Back to Login
+                </Link>
             </div>
+          </>
         )}
       </div>
     </>

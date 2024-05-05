@@ -474,14 +474,14 @@ const Drugs: React.FC<DrugsProps> = ({
             className={`fixed right-4 ss:right-10 md:right-16 bottom-20 md:bottom-6 z-[144] font-karla`}
           >
             {add ? (
-              <div className="flex flex-col fixed right-6 ss:right-12 md:right-[72px] bottom-36 md:bottom-24 gap-4">
+              <div className="flex flex-col fixed right-6 ss:right-12 md:right-[72px] bottom-36 md:bottom-24 gap-4 items-end">
                 <button
                   onClick={() => {
                     setAdd(false);
                     setDrugsForm(true);
                     setScreen(false);
                   }}
-                  className="bg-white py-2 px-4 rounded-full font-semibold text-center justify-center flex gap-2 ss:gap-3 items-center"
+                  className="bg-white py-2 w-[124px] rounded-[8px] font-semibold justify-center flex gap-2 ss:gap-3 items-center "
                 >
                   + Add a Drug
                 </button>
@@ -491,7 +491,7 @@ const Drugs: React.FC<DrugsProps> = ({
                     setAllergiesForm(true);
                     setScreen(false);
                   }}
-                  className="bg-white py-2 px-4 rounded-full font-semibold justify-center flex gap-2 ss:gap-3 items-center"
+                  className="bg-white py-2 w-[148px] rounded-[8px] font-semibold justify-center flex gap-2 ss:gap-3 items-center"
                 >
                   + Add an Allergy
                 </button>
@@ -501,7 +501,7 @@ const Drugs: React.FC<DrugsProps> = ({
                     setEffectsForm(true);
                     setScreen(false);
                   }}
-                  className="bg-white py-2 px-4 rounded-full font-semibold justify-center flex gap-2 ss:gap-3 items-center"
+                  className="bg-white py-2 w-[160px] rounded-[8px] font-semibold justify-center flex gap-2 ss:gap-3 items-center"
                 >
                   + Add Side Effect
                 </button>
@@ -526,8 +526,8 @@ const Drugs: React.FC<DrugsProps> = ({
                   : "flex"
               }`}
             >
-              <FaPlus
-                className={`text-[20px] ss:text-[24px] text-white font-normal ${
+              <Image width={20} height={20} alt="add" src='/assets/x.png'
+                className={` ${
                   screen ? "rotate-45" : "rotate-180"
                 }  transition-all`}
               />

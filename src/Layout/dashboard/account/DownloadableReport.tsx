@@ -29,9 +29,13 @@ const DownloadableReport: React.FC = () => {
     return recentDrugs;
   }
 
-  const recentDrugs = filterRecentDrugs(completedDrugs).map(
+  // Filter recent drugs and map to get the drug names
+  const filteredDrugNames = filterRecentDrugs(completedDrugs).map(
     (drug) => drug.drug
   );
+
+  // Use a Set to eliminate duplicates and then convert it back to an array
+  const recentDrugs = Array.from(new Set(filteredDrugNames));
 
   const currentTime = new Date(); // Get the current date and time
 

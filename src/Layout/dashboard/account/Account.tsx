@@ -231,7 +231,7 @@ const Account: React.FC<AccountProps> = ({
               >
                 <div className="flex gap-3">
                   <Image
-                    src="/assets/account/support.png"
+                    src="/assets/account/settings.png"
                     width={24}
                     height={24}
                     alt="contact"
@@ -271,7 +271,7 @@ const Account: React.FC<AccountProps> = ({
                 ref={dropdownRef}
                 className="bg-white rounded-[10px] text-white relative flex flex-col justify-center items-center"
               >
-                <h1 className="text-navyBlue font-semibold py-4 px-4 border-b-[1px] text-left w-full text-[13px] ss:text-[16px] leading-tight">
+                <h1 className="text-red font-semibold py-4 px-4 border-b-[1px] text-left w-full text-[13px] ss:text-[16px] leading-tight">
                   Confirm to DELETE YOUR ACCOUNT
                 </h1>
                 <h2 className="text-navyBlue border-b-[1px] text-left px-4 py-4 text-[12px] ss:text-[14px]">
@@ -284,7 +284,7 @@ const Account: React.FC<AccountProps> = ({
                       deleteUser();
                       setDeleteAccountModal(false);
                     }}
-                    className="px-4 py-1 flex items-center gap-2 bg-navyBlue rounded-[10px]  "
+                    className="px-4 py-1 flex items-center gap-2 bg-red rounded-[10px]  "
                   >
                     Delete
                   </button>

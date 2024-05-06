@@ -1,7 +1,7 @@
 "use-client";
 import Image from "next/image";
 import Link from "next/link";
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { useRouter } from "next/router";
 import supabase from "../../../utils/supabase";
 
@@ -9,7 +9,6 @@ import { updateIsAuthenticated, updateUserId } from "../../../store/stateSlice";
 import { useDispatch } from "react-redux";
 import Head from "next/head";
 import ReCAPTCHA from "react-google-recaptcha";
-import sendMail  from '@/pages/api/sendMail'
 
 const CreateAccount = () => {
   const router = useRouter();
@@ -64,37 +63,6 @@ const CreateAccount = () => {
       throw new Error("Error fetching local image");
     }
   }
-
- 
-  const sendWelcomeEmail = async (email:string, name:string) => {
-    try {
-      const response = await fetch("/api/send-email", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          to: email,
-          subject: "Welcome to NoDoseOff!",
-          text: `Hello ${name},\n\nWelcome to NoDoseOff! We're excited to have you on board. If you have any questions, feel free to reach out to us.\n\nBest,\nThe NoDoseOff Team`,
-        }),
-      });
-
-      if (!response.ok) {
-        // Handle different error cases, e.g., non-JSON response
-        const contentType = response.headers.get("content-type");
-        if (contentType && contentType.includes("application/json")) {
-          const data = await response.json();
-          throw new Error(data.error || "Failed to send welcome email.");
-        } else {
-          const errorText = await response.text();
-          throw new Error(`Unexpected response format: ${errorText}`);
-        }
-      }
-    } catch (error) {
-      console.error("Error sending welcome email:", error);
-    }
-  };
 
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -173,9 +141,28 @@ const CreateAccount = () => {
           setLoading(false);
           return;
         }
+        // Send the welcome email
+        try {
+          const welcomeEmailResponse = await fetch("/api/sendMail", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name: formData.fullName,
+              email: formData.email,
+            }),
+          });
 
-        // Send a welcome email to the user
-        await sendWelcomeEmail(formData.email, formData.fullName);
+          if (!welcomeEmailResponse.ok) {
+            console.error(
+              "Failed to send welcome email:",
+              await welcomeEmailResponse.text()
+            );
+          }
+        } catch (error) {
+          console.error("Error sending welcome email:", error);
+        }
 
         // Redirect to the dashboard
         router.push("/dashboard");

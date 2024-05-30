@@ -52,7 +52,7 @@ interface tabsProps {
 }
 
 const Page = () => {
-  const { userId, active, schedule, drugs } = useSelector(
+  const { userId, active, schedule } = useSelector(
     (state: RootState) => state.app
   );
   const dispatch = useDispatch();
@@ -76,6 +76,8 @@ const Page = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [accountSettings, setAccountSettings] = useState(false);
   const [deleteAccountModal, setDeleteAccountModal] = useState(false)
+  const [drugsLoading, setDrugsLoading] = useState(true)
+  const [accountLoading, setAccountLoading] = useState(true)
 
   useEffect(() => {
     if (!userId) {
@@ -155,7 +157,9 @@ const Page = () => {
         );
         dispatch(updateSchedule(flattenedScheduleData));
 
-        setIsLoading(false);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 1000);
       } catch (error) {
         toast.error("Error fetching data");
       }
@@ -486,6 +490,8 @@ const Page = () => {
                 effectsForm={effectsForm}
                 allergiesForm={allergiesForm}
                 setAllergiesForm={setAllergiesForm}
+                setDrugsLoading={setDrugsLoading}
+                drugsLoading={drugsLoading}
               />
             ) : (
               <Account
@@ -497,6 +503,8 @@ const Page = () => {
                 setScreen={setScreen}
                 setDeleteAccountModal={setDeleteAccountModal}
                 deleteAccountModal={deleteAccountModal}
+                setAccountLoading={setAccountLoading}
+                accountLoading={accountLoading}
               />
             )}
           </div>

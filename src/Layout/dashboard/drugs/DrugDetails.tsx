@@ -282,7 +282,7 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
                     alt="edit"
                     width={20}
                     height={20}
-                    className="ss:w-[20px] w-[16px]"
+                    className="w-[20px]"
                   />
                   Edit Drug
                 </button>
@@ -301,7 +301,7 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
                   alt="edit"
                   width={20}
                   height={20}
-                  className="ss:w-[20px] w-[16px]"
+                  className="w-[20px]"
                 />
                 Delete Drug
               </button>
@@ -313,14 +313,14 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
                       setAllergyModal(true);
                     setOptions(false);
                   }}
-                  className="h-8 hover:bg-gray-100 flex items-center gap-3 w-full px-3 pl-[14px]"
+                  className="h-8 hover:bg-gray-100 flex items-center gap-3 w-full px-3"
                 >
                   <Image
                     src="/assets/disabled.png"
                     alt="disabled"
-                    width={20}
-                    height={20}
-                    className="ss:w-[16px] w-[12px]"
+                    width={16}
+                    height={16}
+                    className="w-[16px]"
                   />
                   Add to Allergies
                 </button>

@@ -7,8 +7,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../../store";
 import { calculateClosestDoseCountdown } from "../../../../utils/dashboard";
 import { updateActive } from "../../../../store/stateSlice";
-import supabase from "../../../../utils/supabase";
-
 import Tracker from "./Tracker";
 
 interface HomeProps {
@@ -29,7 +27,7 @@ const Home: React.FC<HomeProps> = ({
   tracker,
   dosesToRender,
 }) => {
-  const { drugs, info, schedule, userId, profilePicture } = useSelector(
+  const { drugs, info, schedule, userId } = useSelector(
     (state: RootState) => state.app
   );
 

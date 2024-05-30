@@ -1,10 +1,10 @@
-import React, { useRef, useState } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../../store";
 import Image from "next/image";
 import { toast } from "sonner";
 import supabase from "../../../../utils/supabase";
-
 
 import {
   updateIsAuthenticated,
@@ -13,6 +13,7 @@ import {
 } from "../../../../store/stateSlice";
 import { useRouter } from "next/router";
 import Report from "./Report";
+import Loader from "../shared/Loader";
 
 type RefObject<T> = React.RefObject<T>;
 
@@ -25,6 +26,8 @@ interface AccountProps {
   setAccountSettings: Function;
   setDeleteAccountModal: Function;
   setScreen: Function;
+  setAccountLoading: Function;
+  accountLoading: boolean;
 }
 
 const Account: React.FC<AccountProps> = ({
@@ -36,6 +39,8 @@ const Account: React.FC<AccountProps> = ({
   deleteAccountModal,
   setDeleteAccountModal,
   setScreen,
+  setAccountLoading,
+  accountLoading,
 }) => {
   const { info, userId } = useSelector((state: RootState) => state.app);
   const router = useRouter();
@@ -52,6 +57,14 @@ const Account: React.FC<AccountProps> = ({
       setTab("default");
     }
   };
+
+   useEffect(() => {
+     if (accountLoading) {
+       setTimeout(() => {
+         setAccountLoading(false);
+       }, 1200);
+     }
+   }, []);
 
   const [tab, setTab] = useState("Account");
 
@@ -70,36 +83,41 @@ const Account: React.FC<AccountProps> = ({
     }
   };
 
-   const deleteUser = async () => {
-     try {
-       const response = await fetch("/api/deleteUser", {
-         method: "POST",
-         headers: {
-           "Content-Type": "application/json",
-         },
-         body: JSON.stringify({ userId }),
-       });
+  const deleteUser = async () => {
+    try {
+      const response = await fetch("/api/deleteUser", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId }),
+      });
 
-       const data = await response.json();
+      const data = await response.json();
 
-       if (response.ok) {
-         toast.success(data.message);
-         router.push("./login");
-         // Redirect or update state as needed
-       } else {
-         toast.error(data.error);
-       }
-     } catch (error) {
-       console.error("Error deleting account:", error);
-       toast.error("Error deleting account");
-     }
-   };
+      if (response.ok) {
+        toast.success(data.message);
+        router.push("./login");
+        // Redirect or update state as needed
+      } else {
+        toast.error(data.error);
+      }
+    } catch (error) {
+      console.error("Error deleting account:", error);
+      toast.error("Error deleting account");
+    }
+  };
 
   const CDNURL =
     "https://opshqmqagtfidynwftzk.supabase.co/storage/v1/object/public/profile-picture/";
 
   return (
     <>
+      {accountLoading && (
+        <div className="w-full h-full flex items-center justify-center">
+          <Loader />
+        </div>
+      )}
       {tab === "Account" ? (
         <div className="h-[100dvh] overflow-y-scroll w-full md:py-16 md:px-12 px-4 pt-10 pb-24 ss:p-10 ss:pb-24  mb-10 text-navyBlue font-karla relative">
           <div className="mb-[28px]">

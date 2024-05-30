@@ -75,20 +75,30 @@ const DownloadableReport: React.FC = () => {
 
   return (
     <div className="flex flex-col items-start w-full font-Inter">
-      <button
-        onClick={handleDownload}
-        className="mb-6 px-4 py-3 flex gap-2 items-center text-navyBlue  rounded-md border-navyBlue border"
-      >
-        Download Report
-        <Image
-          src="/assets/download.png"
-          width={512}
-          height={512}
-          alt="download"
-          quality={100}
-          className="w-[20px] h-auto"
-        />
-      </button>
+      <div className='w-full flex justify-between items-center mb-10'>
+        <div className="">
+          <h1 className="text-[24px] ss:text-[32px] font-semibold font-karla ">
+            Reports
+          </h1>
+          <p className="text-[16px] text-grey">
+            Share your Drug History with your Physician!
+          </p>
+        </div>
+        <button
+          onClick={handleDownload}
+          className="px-4 py-3 flex gap-2 h-12 items-center text-white rounded-md bg-navyBlue"
+        >
+          <Image
+            src="/assets/download-report.png"
+            width={512}
+            height={512}
+            alt="download"
+            quality={100}
+            className="w-[20px] h-auto"
+          />
+          <p className="hidden sm:flex">Download</p>
+        </button>
+      </div>
       <div className="w-full h-auto border border-navyBlue">
         <div ref={imageRef} className="relative w-full h-auto">
           <Image

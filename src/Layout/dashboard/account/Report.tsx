@@ -22,14 +22,7 @@ const Report: React.FC<ReportProps> = ({ setTab }) => {
         />
         <p className="font-[500] text-[18px]">Back</p>
       </button>
-      <div className="mb-[28px] ">
-        <h1 className="text-[24px] ss:text-[32px] font-semibold font-karla ">
-          Reports
-        </h1>
-        <p className="text-[16px] text-grey">
-          Share your Drug History with your Physician!
-        </p>
-      </div>
+     
       <DownloadableReport />
     </div>
   );

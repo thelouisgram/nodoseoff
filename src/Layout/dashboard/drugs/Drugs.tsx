@@ -24,7 +24,7 @@ import DrugDetails from "./DrugDetails";
 import Allergies from "./tabs/Allergies";
 import Completed from "./tabs/Completed";
 import Ongoing from "./tabs/Ongoing";
-import { FaPlus } from "react-icons/fa";
+import Loader from "../shared/Loader";
 
 interface DrugsProps {
   screen: boolean;
@@ -36,8 +36,10 @@ interface DrugsProps {
   setAllergyModal: Function;
   setEffectsForm: Function;
   setAllergiesForm: Function;
+  setDrugsLoading: Function;
   setAdd: Function;
   deleteModal: boolean;
+  drugsLoading: boolean;
   editModal: boolean;
   allergyModal: boolean;
   add: boolean;
@@ -68,6 +70,8 @@ const Drugs: React.FC<DrugsProps> = ({
   drugsForm,
   setAllergyModal,
   allergyModal,
+  drugsLoading,
+  setDrugsLoading,
 }) => {
   const {
     drugs,
@@ -108,6 +112,14 @@ const Drugs: React.FC<DrugsProps> = ({
       // remove event listener when component unmounts
       document.removeEventListener("mousedown", handleOutsideClick);
     };
+  }, []);
+
+  useEffect(() => {
+    if (drugsLoading) {
+      setTimeout(() => {
+        setDrugsLoading(false);
+      }, 1200);
+    }
   }, []);
 
   useEffect(() => {
@@ -202,7 +214,9 @@ const Drugs: React.FC<DrugsProps> = ({
         });
 
         // Update the Redux state after deleting and uploading the schedule
-        dispatch(setDrugs(drugs.filter((drug) => drug.drugId !== activeDrugId)));
+        dispatch(
+          setDrugs(drugs.filter((drug) => drug.drugId !== activeDrugId))
+        );
         dispatch(updateSchedule(updatedSchedule));
       } catch (error) {
         console.error("Error deleting drug:", error);
@@ -318,8 +332,17 @@ const Drugs: React.FC<DrugsProps> = ({
 
   return (
     <>
+      {drugsLoading && (
+        <div className="w-full h-full flex items-center justify-center">
+          <Loader />
+        </div>
+      )}
       {displayDrugs ? (
-        <div className="h-[100dvh] ss:pb-28 overflow-y-scroll w-full md:py-16 md:px-12 md:pb-28 px-4 pt-10 pb-28 ss:p-10 text-navyBlue font-karla relative">
+        <div
+          className={`${
+            drugsLoading ? "opacity-0" : "opacity-100"
+          } transition-all h-[100dvh] ss:pb-28 overflow-y-scroll w-full md:py-16 md:px-12 md:pb-28 px-4 pt-10 pb-28 ss:p-10 text-navyBlue font-karla relative`}
+        >
           <div className="mb-[28px]">
             <h1 className="text-[24px] ss:text-[32px] font-semibold font-karla ">
               Drugs
@@ -526,9 +549,13 @@ const Drugs: React.FC<DrugsProps> = ({
                   : "flex"
               }`}
             >
-              <Image width={20} height={20} alt="add" src='/assets/x.png'
+              <Image
+                width={20}
+                height={20}
+                alt="add"
+                src="/assets/x.png"
                 className={` ${
-                  screen ? "rotate-45" : "rotate-180"
+                  screen ? "rotate-180" : "rotate-45"
                 }  transition-all`}
               />
             </button>

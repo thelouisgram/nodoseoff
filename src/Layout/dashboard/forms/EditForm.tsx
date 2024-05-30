@@ -346,7 +346,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
                 name="route"
                 value={formData.route}
                 onChange={handleSelectChange("route")}
-                className=" bg-[#EDF2F7] border-none rounded-[10px] w-full outline-none p-4 text-grey cursor-pointer h-[56px]"
+                className=" bg-[#EDF2F7] border-none rounded-[10px] w-full outline-none p-4 text-grey cursor-pointer h-[56px] mb-4"
               >
                 <option value="">Select Route</option>
                 <option value="oral">Oral</option>

@@ -74,7 +74,7 @@ const AllDoses: React.FC<AllDosesProps> = ({
             />
           </div>
           <div className="mb-10">
-            <h1 className="text-[24px] text-darkBlue font-bold leading-tight">
+            <h1 className="text-[24px] text-blue-700 font-bold leading-tight">
               Medications
             </h1>
             <p className="text-[16px] text-grey leading-snug font-karla">

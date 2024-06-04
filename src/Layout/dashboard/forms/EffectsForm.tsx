@@ -197,12 +197,12 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
                 </select>
               </div>
               <label
-                htmlFor="end"
+                htmlFor="date"
                 className="text-[14px] mb-1 font-semibold text-navyBlue"
               >
                 Select Date
               </label>
-              <div className="bg-[#EDF2F7] w-full rounded-[10px]  mb-8">
+              <div className="bg-[#EDF2F7] w-full rounded-[10px]">
                 <input
                   type="date"
                   id="date"

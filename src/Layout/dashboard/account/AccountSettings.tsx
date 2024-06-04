@@ -49,7 +49,6 @@ const AccountSettings: React.FC<Settings> = ({
     };
   }, []);
 
- 
   return (
     <div
       className={` ${

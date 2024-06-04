@@ -119,9 +119,6 @@ const DownloadableReport: React.FC = () => {
                   quality={100}
                 />
               </div>
-              {/* <div className="w-full justify-center text-center font-bold text-[14px] ss:text-[24px] flex md:hidden ">
-                NoDoseOff
-              </div> */}
             </div>
             <div className="w-full flex justify-center text-center font-[500] text-[8px] ss:text-[18px] uppercase ">
               Drug History Report

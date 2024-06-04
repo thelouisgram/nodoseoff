@@ -282,13 +282,13 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
   return (
     <div
       className={` ${
-        editForm ? "w-full h-[100dvh]" : "w-0 h-0"
-      } left-0 bg-none fixed z-[2]`}
+        editForm ? "w-full" : "w-0"
+      } left-0 bg-none fixed z-[2]  h-[100dvh]`}
     >
       <div
         className={` ${
           editForm ? "left-0 ss:w-[450px]" : "-left-[450px] ss:w-[450px] "
-        } transition duration-300 absolute w-full bg-white h-full z-[4] `}
+        } transition-all duration-300 absolute w-full bg-white h-full z-[4] `}
       >
         <div
           className={`h-full flex flex-col w-full justify-between gap-8 p-8 pt-0 overflow-y-scroll bg-white`}

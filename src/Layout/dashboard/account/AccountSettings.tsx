@@ -53,15 +53,15 @@ const AccountSettings: React.FC<Settings> = ({
   return (
     <div
       className={` ${
-        accountSettings ? "w-full min-h-[100dvh]" : "w-0 h-0"
-      } right-0 bg-none fixed z-[2]`}
+        accountSettings ? "w-full " : "w-0"
+      } right-0 bg-none fixed z-[2] h-[100dvh]`}
     >
       <div
         className={` ${
           accountSettings
             ? "right-0 ss:w-[450px]"
             : "-right-[450px] ss:w-[450px]"
-        } transition duration-300 absolute w-full bg-white h-full z-[4] `}
+        } transition-all duration-300 absolute w-full bg-white h-full z-[4] `}
       >
         <div
           ref={dropdownRef}

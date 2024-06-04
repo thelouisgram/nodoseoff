@@ -297,8 +297,12 @@ const Drugs: React.FC<DrugsProps> = ({
           userId: userId,
           schedule: updatedSchedule,
         });
+ 
+        const drugsToBeUsed = tab === 'Ongoing' ? drugs : completedDrugs
 
-        const allergicDrug = drugs?.find((drug) => drug.drug === activeDrug);
+        const allergicDrug = drugsToBeUsed?.find(
+          (drug) => drug.drug === activeDrug
+        );
         if (allergicDrug) {
           dispatch(updateAllergies([...allergies, allergicDrug]));
         }

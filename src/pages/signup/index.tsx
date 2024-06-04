@@ -88,7 +88,7 @@ const CreateAccount = () => {
     const strongPasswordRegex = /^(?=.*\d)[A-Za-z\d]{8,}$/;
     if (!strongPasswordRegex.test(formData.password)) {
       setErrorMessage(
-        "Please enter a strong password (at least 8 characters, including one digit)."
+        "Please enter a strong password (at least 8 characters, including one digit, one small letter and one capital letter)."
       );
       return;
     }

@@ -78,7 +78,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
               height={20}
               className="rotate-90"
             />
-            <p className="font-[500] text-[18px]">Back</p>
+            <p className="font-[500] text-[18px] text-navyBlue">Back</p>
           </button>
           <Image
             src="/assets/x (1).png"

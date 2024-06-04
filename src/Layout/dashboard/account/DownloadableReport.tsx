@@ -75,12 +75,12 @@ const DownloadableReport: React.FC = () => {
 
   return (
     <div className="flex flex-col items-start w-full font-Inter">
-      <div className='w-full flex justify-between items-center mb-10'>
+      <div className="w-full flex justify-between items-center mb-10">
         <div className="">
           <h1 className="text-[24px] ss:text-[32px] font-semibold font-karla ">
             Reports
           </h1>
-          <p className="text-[16px] text-grey">
+          <p className="text-[16px] text-grey font-karla">
             Share your Drug History with your Physician!
           </p>
         </div>
@@ -109,17 +109,19 @@ const DownloadableReport: React.FC = () => {
           />
           <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-start items-start text-[8px] ss:text-[14px] md:text-[16px] px-2 md:px-6">
             <div className="w-full flex justify-center pt-2 ss:pt-6">
-              <Image
-                src="/assets/logo/logo with name - blue color.png"
-                alt="logo"
-                width={1084}
-                height={257}
-                className={`w-[100px] h-[19.95px] ss:w-[150px] ss:h-[29.94px] md:w-[200px] md:h-auto hidden md:flex`}
-                quality={100}
-              />
-              <div className="w-full justify-center text-center font-bold text-[14px] ss:text-[24px] flex md:hidden ">
-                NoDoseOff
+              <div className="w-[100px] h-[19.95px] ss:w-[150px] ss:h-[29.94px] md:w-[200px] md:h-auto">
+                <Image
+                  src="/assets/logo/logo with name - blue color.png"
+                  alt="logo"
+                  width={1084}
+                  height={257}
+                  className='object-cover'
+                  quality={100}
+                />
               </div>
+              {/* <div className="w-full justify-center text-center font-bold text-[14px] ss:text-[24px] flex md:hidden ">
+                NoDoseOff
+              </div> */}
             </div>
             <div className="w-full flex justify-center text-center font-[500] text-[8px] ss:text-[18px] uppercase ">
               Drug History Report

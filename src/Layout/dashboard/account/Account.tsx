@@ -85,6 +85,8 @@ const Account: React.FC<AccountProps> = ({
 
   const deleteUser = async () => {
     try {
+      toast.loading('Deleting Account')
+      setScreen(false)
       const response = await fetch("/api/deleteUser", {
         method: "POST",
         headers: {
@@ -96,7 +98,7 @@ const Account: React.FC<AccountProps> = ({
       const data = await response.json();
 
       if (response.ok) {
-        toast.success(data.message);
+        toast.success('Account Deleted Successfully');
         router.push("./login");
         // Redirect or update state as needed
       } else {
@@ -289,7 +291,7 @@ const Account: React.FC<AccountProps> = ({
                 ref={dropdownRef}
                 className="bg-white rounded-[10px] text-white relative flex flex-col justify-center items-center"
               >
-                <h1 className="text-red font-semibold py-4 px-4 border-b-[1px] text-left w-full text-[13px] ss:text-[16px] leading-tight">
+                <h1 className="text-navyBlue font-semibold py-4 px-4 border-b-[1px] text-left w-full text-[13px] ss:text-[16px] leading-tight">
                   Confirm to DELETE YOUR ACCOUNT
                 </h1>
                 <h2 className="text-navyBlue border-b-[1px] text-left px-4 py-4 text-[12px] ss:text-[14px]">

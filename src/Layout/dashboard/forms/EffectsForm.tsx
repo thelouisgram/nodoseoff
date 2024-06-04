@@ -122,15 +122,15 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
   return (
     <div
       className={`${
-        effectsForm ? "w-full min-h-[100dvh] h-full" : "w-0 h-0"
-      } left-0 bg-none fixed z-[2]`}
+        effectsForm ? "w-full" : "w-0"
+      } left-0 bg-none fixed z-[2] h-[100dvh]`}
     >
       <div
         className={`${
           effectsForm
             ? "left-0 ss:w-[450px] h-full"
             : "-left-[450px] ss:w-[450px] h-full"
-        } transition duration-300 absolute  bg-white h-full w-full z-[4] `}
+        } transition-all duration-300 absolute  bg-white h-full w-full z-[4] `}
       >
         <div
           className={`h-full flex flex-col w-full justify-between gap-8 p-8 pt-0 overflow-y-scroll bg-white`}
@@ -189,20 +189,20 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
                   name="severity"
                   value={formData.severity}
                   onChange={handleEffectChange}
-                  className=" bg-[#EDF2F7] border-none w-full outline-none p-4 cursor-pointer h-[56px]"
+                  className=" bg-[#EDF2F7] border-none w-full outline-none p-4 cursor-pointer h-[56px] rounded-[10px]"
                 >
                   <option value="mild">Mild</option>
                   <option value="intermediate">Intermediate</option>
                   <option value="severe">Severe</option>
                 </select>
               </div>
-              <div className="flex flex-col w-full">
-                <label
-                  htmlFor="end"
-                  className="text-[14px] mb-1 font-semibold text-navyBlue"
-                >
-                  Select Date
-                </label>
+              <label
+                htmlFor="end"
+                className="text-[14px] mb-1 font-semibold text-navyBlue"
+              >
+                Select Date
+              </label>
+              <div className="bg-[#EDF2F7] w-full rounded-[10px]  mb-8">
                 <input
                   type="date"
                   id="date"

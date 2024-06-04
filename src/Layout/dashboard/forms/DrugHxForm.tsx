@@ -90,13 +90,13 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
   return (
     <div
       className={`${
-        drugHxForm ? "w-full h-[100dvh]" : "w-0 h-0"
-      } right-0 bg-none fixed z-[2]`}
+        drugHxForm ? "w-full " : "w-0"
+      } right-0 bg-none fixed z-[2] h-[100dvh]`}
     >
       <div
         className={`${
           drugHxForm ? "right-0 ss:w-[450px]" : "-right-[450px] ss:w-[450px]"
-        } transition duration-300 absolute w-full bg-white h-full z-[4]`}
+        } transition-all duration-300 absolute w-full bg-white h-full z-[4]`}
       >
         <div
           className={`h-full flex flex-col w-full justify-between gap-8 p-8 pt-0 overflow-y-scroll bg-white`}

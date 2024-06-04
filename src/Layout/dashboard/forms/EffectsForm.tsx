@@ -82,7 +82,9 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
       });
 
       if (error) {
-        toast.error("Failed to add effect, Check Internet Connection and Try again!");
+        toast.error(
+          "Failed to add effect, Check Internet Connection and Try again!"
+        );
         setLoading(false);
         return;
       }
@@ -202,7 +204,7 @@ const EffectsForm: React.FC<EffectsFormProps> = ({
               >
                 Select Date
               </label>
-              <div className="bg-[#EDF2F7] w-full rounded-[10px]">
+              <div className="bg-[#EDF2F7] w-full rounded-[10px] mb-8">
                 <input
                   type="date"
                   id="date"

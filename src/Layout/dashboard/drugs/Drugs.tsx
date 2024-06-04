@@ -471,9 +471,8 @@ const Drugs: React.FC<DrugsProps> = ({
                   Continue to Edit {activeDrug.toUpperCase()} ?
                 </h1>
                 <h2 className="text-navyBlue border-b-[1px] text-left px-4 py-4 text-[12px] ss:text-[14px]">
-                  Proceed to edit the selected drug. Changes apply only
-                  <br className="hidden ss:flex" />
-                  to doses from Today forward.
+                  Proceed to edit the selected drug. <br className="hidden ss:flex" /> Changes apply only
+                  from today's doses.
                 </h2>
                 <div className="w-full flex gap-3 justify-start flex-row-reverse text-[12px] py-4 px-4">
                   <button

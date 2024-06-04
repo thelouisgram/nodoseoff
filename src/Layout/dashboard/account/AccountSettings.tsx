@@ -111,7 +111,8 @@ const AccountSettings: React.FC<Settings> = ({
                       setAccountSettings(false),
                       setScreen(true);
                   }}
-                  className="w-full border border-gray-300 rounded-lg py-4 px-4 flex justify-between gap-3 cursor-pointer"
+                  disabled={true}
+                  className="w-full border border-gray-300 rounded-lg py-4 px-4 flex justify-between gap-3 cursor-pointer opacity-20"
                 >
                   <div className="flex gap-3">
                     <Image

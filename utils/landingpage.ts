@@ -7,7 +7,7 @@ export const links = [
 
 export const steps = [
   {
-    title: "Create an Account",
+    title: "Create a NoDoseOff Account",
     desc: "Creating an account is the first step to ensuring absolute drug compliance, granting access to vital tools for managing medication.",
   },{
     title: "Add and Track Medication",

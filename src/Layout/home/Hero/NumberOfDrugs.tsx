@@ -4,7 +4,7 @@ import Image from "next/image";
 const NumberOfDrugs = () => {
   return (
     <div
-      className="absolute bottom-16 ss:bottom-36 md:bottom-48 -left-6 ss:-left-[72px] md:-left-20 bg-white rounded-[8px] ss:rounded-[16px] p-2 ss:py-3 ss:pl-3 flex 
+      className="absolute bottom-[20%] -left-6 ss:-left-[72px] md:-left-20 bg-white rounded-[8px] ss:rounded-[16px] p-2 ss:py-3 ss:pl-3 flex 
             gap-2 ss:gap-3 items-center ss:pr-6 shadow-sm"
     >
       <div className="bg-lightGreen p-1 ss:p-2 rounded-[5px] ss:rounded-[10px]">

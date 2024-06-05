@@ -3,7 +3,7 @@ import Image from "next/image";
 
 const MissedDoses = () => {
   return (
-    <div className="absolute -bottom-4 ss:-bottom-6 md:bottom-4 left-20 xs:left-24 ss:left-48 ip:left-[40%] bg-white rounded-[8px] ss:rounded-[16px] p-2 ss:py-3 ss:pl-3 flex gap-2 ss:gap-3 items-center pr-6 shadow-sm">
+    <div className="absolute top-[48%] -right-6 ss:-right-16  bg-white rounded-[8px] ss:rounded-[16px] p-2 ss:py-3 ss:pl-3 flex gap-2 ss:gap-3 items-center pr-6 shadow-sm">
       <div className="bg-lightPink p-1 ss:p-2 rounded-[5px] ss:rounded-[10px]">
         <Image
           src="/assets/hero/warning.png"

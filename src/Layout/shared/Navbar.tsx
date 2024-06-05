@@ -47,7 +47,7 @@ const Navbar: React.FC<navProps> = ({ isScrolled, setNav, showLinks }) => {
         </div>
         <div className="flex gap-6 font-Inter">
           <Image
-            src="/assets/burger-menu.png"
+            src="/assets/menu.png"
             width="512"
             height="512"
             alt="menu"

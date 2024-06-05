@@ -27,10 +27,19 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // Check password strength (customize regex as needed)
+    const strongPasswordRegex = /^(?=.*\d)[A-Za-z\d]{8,}$/;
+    
     if (!password || !confirmPassword) {
       setErrorMessage("Please fill in both password fields.");
     } else if (password !== confirmPassword) {
       setErrorMessage("Passwords do not match.");
+    } else if (!strongPasswordRegex.test(password)) {
+      setErrorMessage(
+        "Please enter a strong password (at least 8 characters, including one digit, one small letter and one capital letter)."
+      );
+      return;
     } else {
       setLoading(true);
       setErrorMessage("");
@@ -43,7 +52,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
           setErrorMessage(`Error updating password: ${error.message}`);
         } else {
           toast.success("Password updated successfully!");
-          setTab("default")
+          setTab("default");
         }
       } catch (error) {
         setErrorMessage(`Error updating password: ${error}`);
@@ -128,6 +137,11 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
           />
         </div>
       </form>
+      {errorMessage && (
+        <p className="mb-4 -mt-4 text-red font-[500] tracking-none leading-none text-[14px]">
+          {errorMessage}
+        </p>
+      )}
       <button
         onClick={handleClick}
         disabled={loading}

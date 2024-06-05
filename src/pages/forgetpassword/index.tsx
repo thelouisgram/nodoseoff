@@ -121,7 +121,7 @@ const ForgotPassword = () => {
               Forgot Password
             </legend>
             <p className="text-center text-[14px]">
-              Enter your email to reset your password
+              {showOtp ? 'Please check your Email inbox for the OTP.' : 'Enter your email to reset your password'}
             </p>
           </div>
           {!showOtp ? (

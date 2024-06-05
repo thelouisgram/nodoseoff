@@ -138,7 +138,7 @@ const ResetPassword = () => {
         ) : (
           <>
             <div className="w-full ss:w-[450px] h-auto p-7 ss:p-10 mb-10 bg-white rounded-[15px] flex flex-col items-center text-navyBlue">
-              <h2 className=" text-[32px] font-semibold">Password changed!</h2>
+              <h2 className=" text-[32px] font-bold text-blue-700 text-center">Success!</h2>
               <p className="text-center mb-10">
                 Your Password has been successfully changed!
               </p>

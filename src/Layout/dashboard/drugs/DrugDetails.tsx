@@ -197,12 +197,6 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
   const { drug, route, frequency, start, end, time, reminder } = drugDetails;
   const duration = calculateTimePeriod(start, end);
   const details: Detail[] = [
-    {
-      name: "Current Status",
-      details: tab === "Ongoing" ? "Ongoing" : "Completed",
-    },
-    { name: "Route of Administration", details: route },
-    { name: "Compliance level", details: `${compliance.toFixed()}%` },
     { name: "Frequency", details: frequencyToPlaceholder[frequency] },
     { name: "Time", details: convertedTimes(time).join(", ") },
     { name: "Duration", details: duration },
@@ -252,6 +246,7 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
             {drug}
           </h1>
           <button
+          disabled={options}
             onClick={() => {
               setOptions((prev) => !prev), dispatch(updateActiveDrug(drug));
             }}
@@ -327,6 +322,43 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
               )}
             </div>
           )}
+        </div>
+        <div className="w-full ss:w-[450px] flex rounded-[10px] border mb-4 ">
+          <div className="border-r flex flex-col justify-center px-6">
+            <h2 className="text-[12px] ss:text-[14px] font-semibold text-grey font-karla">
+              Status
+            </h2>
+            <div className="flex items-center gap-2">
+              <h3 className="text-[14px] ss:text-[16px] capitalize font-Inter">
+                {tab}
+              </h3>
+              <div
+                className={`w-2 ss:w-3 h-2 ss:h-3 rounded-full ${
+                  tab === "Ongoing" ? "bg-green-400" : "bg-red"
+                }`}
+              />
+            </div>
+          </div>
+          <div className="w-full flex flex-col ">
+            <div className="border-b px-6 py-3">
+              <h2 className="text-[12px] ss:text-[14px] font-semibold text-grey font-karla">
+                Route Of Administration
+              </h2>
+                <h3 className="text-[14px] ss:text-[16px] capitalize font-Inter">
+                  {route}
+                </h3>
+              
+            </div>
+            <div className=" px-6 py-3">
+              <h2 className="text-[12px] ss:text-[14px] font-semibold text-grey font-karla">
+                Compliance level
+              </h2>
+                <h3 className="text-[14px] ss:text-[16px] capitalize font-Inter">
+                  {compliance.toFixed()}%
+                </h3>
+              
+            </div>
+          </div>
         </div>
         <div className="grid ss:grid-cols-2 ip:grid-cols-3 gap-4">
           {RenderedDetails}

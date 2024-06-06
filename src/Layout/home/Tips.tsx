@@ -28,8 +28,8 @@ const Tips = () => {
         Tips for better health and sticking to your medications.
       </h2>
       <motion.div
-        initial={{ opacity: 0, x: 40 }}
-        whileInView={{ opacity: 1, x: 0 }}
+        initial={{ opacity: 0, y: 100 }}
+        whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{
           ease: "easeInOut",

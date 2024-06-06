@@ -3,7 +3,7 @@ import React from "react";
 
 const Header = () => {
   return (
-    <AnimatedComponent animationType="fadeIn" delay={0}>
+    <AnimatedComponent animationType="fadeIn" delay={0.1}>
       <div className="tracking-tighter relative text-[40px]  font-semibold h-[220px]">
         <div className="bg-lightPink px-8 py-3 rounded-[16px] text-darkPink  ">
           Monitor Your

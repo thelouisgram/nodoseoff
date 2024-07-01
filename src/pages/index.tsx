@@ -7,10 +7,33 @@ import Banner from "@/Layout/home/Banner";
 import Footer from "@/Layout/shared/Footer";
 import Navbar from "@/Layout/shared/Navbar";
 import MobileNavBar from "@/Layout/shared/MobileNavBar";
+import LogoCarousel from "@/Layout/home/LogoCarousel";
 
 const Home = () => {
   const [nav, setNav] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+
+  const logos = [
+    "/assets/logo/logo with name - blue color.png",
+    "/assets/logo/logo with name - blue color.png",
+    "/assets/logo/logo with name - blue color.png",
+    "/assets/logo/logo with name - blue color.png",
+    "/assets/logo/logo with name - blue color.png",
+    "/assets/logo/logo with name - blue color.png",
+    "/assets/logo/logo with name - blue color.png",
+    "/assets/logo/logo with name - blue color.png",
+    "/assets/logo/logo with name - blue color.png",
+    "/assets/logo/logo with name - blue color.png",
+    "/assets/logo/logo with name - blue color.png",
+    "/assets/logo/logo with name - blue color.png",
+    "/assets/logo/logo with name - blue color.png",
+    "/assets/logo/logo with name - blue color.png",
+    "/assets/logo/logo with name - blue color.png",
+    "/assets/logo/logo with name - blue color.png",
+    "/assets/logo/logo with name - blue color.png",
+    "/assets/logo/logo with name - blue color.png",
+  ];
+
 
   useEffect(() => {
     const checkScrollPosition = () => {
@@ -40,6 +63,7 @@ const Home = () => {
         isScrolled={isScrolled}
       />
       <Hero nav={nav} setNav={setNav} />
+      <LogoCarousel logos={logos} />
       <Features />
       <Steps />
       <Tips />

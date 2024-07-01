@@ -23,7 +23,7 @@ const Hero: React.FC<navProps> = ({ nav, setNav }) => {
         <div className="md:w-1/2 h-full flex flex-col justify-center gap-7 items-center md:items-start py-12">
           <Header />
           <AnimatedComponent animationType="slideIn" delay={0.6}>
-            <p className="w-full ss:w-[425px] text-center md:text-left font-Inter text-[16px]">
+            <p className="w-full ss:w-[425px] text-center md:text-left font-Inter font-[500] text-[16px]">
               Boost Your Health with NoDoseOff: Our Accurate Medication Tracker.
               Monitor Dosage, Track Effectiveness, Enhance Health.
             </p>
@@ -49,7 +49,7 @@ const Hero: React.FC<navProps> = ({ nav, setNav }) => {
                 priority
               />
             </AnimatedComponent>
-            <AnimatedComponent animationType="fadeIn" delay={1.5}>
+            <AnimatedComponent animationType="fadeIn" delay={0.8}>
               <NextDose />
               <Compliance />
               <NumberOfDrugs />

@@ -10,6 +10,7 @@ export default function App({ Component, pageProps }: AppProps) {
   const [mode, setMode] = useState("light");
 
   useEffect(() => {
+    // Function to get the system's preferred color scheme
     function getSystemColorScheme() {
       if (window.matchMedia) {
         if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
@@ -21,6 +22,7 @@ export default function App({ Component, pageProps }: AppProps) {
       return "light";
     }
 
+    // Set the mode state based on the system's color scheme
     const systemColorScheme = getSystemColorScheme();
     setMode(systemColorScheme);
   }, []);
@@ -28,24 +30,24 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <Provider store={store}>
       <Head>
-        {/* Favicon links */}
+        {/* Dynamically set favicon links based on the mode */}
         <link
           rel="icon"
-          href={mode === "dark" ? "/logo-white.png" : "/logo-blue.png"}
+          href="/logo.png"
         />
         <link
           rel="icon"
           type="image/png"
           sizes="32x32"
-          href={mode === "dark" ? "/logo-white.png" : "/logo-blue.png"}
+          href="/logo.png"
         />
         <link
           rel="icon"
           type="image/png"
           sizes="16x16"
-          href={mode === "dark" ? "/logo-white.png" : "/logo-blue.png"}
+          href="/logo.png" 
         />
-        <title>NoDoseOff</title>
+        <title>NoDoseOff - Drug Tracking and Reminder App</title>
       </Head>
       <Toaster position="top-center" richColors={true} closeButton={true} />
       <Component {...pageProps} />

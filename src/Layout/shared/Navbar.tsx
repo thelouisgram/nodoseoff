@@ -66,7 +66,7 @@ const Navbar: React.FC<navProps> = ({ isScrolled, setNav, showLinks }) => {
             href="/signup"
             className="hidden ss:flex px-5 py-3 bg-navyBlue rounded-[10px] font-semibold text-white text-[16px]"
           >
-            Create an Account
+            Create free Account
           </Link>
         </div>
       </nav>

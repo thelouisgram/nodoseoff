@@ -6,7 +6,7 @@ import Reports from "./features/Reports";
 
 const Features = () => {
   return (
-    <div id="features" className="bg-white md:py-24 font-Inter">
+    <div id="features" className="bg-white py-24 font-Inter">
       <motion.div
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
@@ -15,7 +15,7 @@ const Features = () => {
           ease: "easeInOut",
           duration: 0.5,
         }}
-        className="container md:w-[1165px] lg:w-[1165px] mx-auto px-4 xs:px-1 ss:px-5 md:px-0 w-full grid ip:grid-cols-2 gap-6"
+        className="container md:w-[1165px] lg:w-[1165px] mx-auto px-4 xs:px-1 ss:px-5 md:px-0 w-full grid ip:grid-cols-2 gap-8"
       >
         <div className="px-6 py-10 md:py-12 bg-[#EFF4F5] flex flex-col md:flex-row justify-between rounded-[16px] w-full gap-8">
           <div className="flex flex-col text-grey md:w-[325px] gap-2 md:pt-14">

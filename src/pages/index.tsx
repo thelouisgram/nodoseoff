@@ -32,6 +32,19 @@ const Home = () => {
     "/assets/logo/logo with name - blue color.png",
     "/assets/logo/logo with name - blue color.png",
     "/assets/logo/logo with name - blue color.png",
+    "/assets/logo/logo with name - blue color.png",
+    "/assets/logo/logo with name - blue color.png",
+    "/assets/logo/logo with name - blue color.png",
+    "/assets/logo/logo with name - blue color.png",
+    "/assets/logo/logo with name - blue color.png",
+    "/assets/logo/logo with name - blue color.png",
+    "/assets/logo/logo with name - blue color.png",
+    "/assets/logo/logo with name - blue color.png",
+    "/assets/logo/logo with name - blue color.png",
+    "/assets/logo/logo with name - blue color.png",
+    "/assets/logo/logo with name - blue color.png",
+    "/assets/logo/logo with name - blue color.png",
+    "/assets/logo/logo with name - blue color.png",
   ];
 
 

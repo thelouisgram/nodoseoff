@@ -44,7 +44,6 @@ const Footer = () => {
               <Link href="https://www.instagram.com/nodoseoff">
                 <FaInstagram className="text-[28px]" />
               </Link>
-              <FaTwitter className="text-[28px]" />
             </div>
             <h3 className="text-left md:text-right">Abuja, Nigeria</h3>
             <h3 className="text-left md:text-right">nodoseoff@gmail.com</h3>

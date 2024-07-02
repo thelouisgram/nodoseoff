@@ -6,7 +6,7 @@ import Reports from "./features/Reports";
 
 const Features = () => {
   return (
-    <div id="features" className="bg-white pt-16 pb-24 ss:py-24 font-Inter">
+    <div id="features" className="bg-white md:py-24 font-Inter">
       <motion.div
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}

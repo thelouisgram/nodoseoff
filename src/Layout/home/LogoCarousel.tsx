@@ -48,7 +48,7 @@ const LogoCarousel: React.FC<LogoCarouselProps> = ({ logos }) => {
         style={{ display: "flex", whiteSpace: "nowrap" }}
       >
         {logos.map((logo, index) => (
-          <div key={index} className="pt-8 md:px-6 flex-shrink-0">
+          <div key={index} className="px-4 pt-8 md:px-6 flex-shrink-0">
             <Image
               src={logo}
               alt={`Logo ${index}`}

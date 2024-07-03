@@ -507,7 +507,7 @@ const Drugs: React.FC<DrugsProps> = ({
                     setScreen(false);
                   }}
                   className={`bg-white py-2 aspect-square w-12 h-12 ${
-                    !add ? "right-10" : "bottom-20 md:bottom-6 right-32 md:right-36 "
+                    !add ? "right-10" : "bottom-20 md:bottom-6 right-36 "
                   } transition-all fixed rounded-full font-semibold justify-center flex gap-2 
                   ss:gap-3 items-center`}
                 >

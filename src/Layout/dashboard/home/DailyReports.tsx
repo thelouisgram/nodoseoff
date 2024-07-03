@@ -110,12 +110,12 @@ export default function DailyReports() {
                           : "",
                         selectDate.toDate().toDateString() ===
                           date.toDate().toDateString()
-                          ? "border border-[#0054DB]"
+                          ? "bg-darkPurple text-white"
                           : "",
                         `h-10 w-10 rounded-full grid place-content-center ${
                           today
-                            ? "hover-border-[4px] border-darkBlue"
-                            : "hover:border hover:border-gray-400"
+                            ? " bg-darkBlue text-white"
+                            : " hover:bg-navyBlue hover:text-white"
                         } 0 transition-all cursor-pointer select-none`
                       )}
                       onClick={() => {

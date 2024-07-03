@@ -1,4 +1,5 @@
 import React from "react";
+import ProfileForm from "./forms/ProfileForm";
 
 interface ScreenProps {
   setScreen: Function;
@@ -10,6 +11,7 @@ interface ScreenProps {
   setProfileForm: Function;
   setShowStats: Function;
   setDeleteAccountModal: Function;
+  
 }
 
 const Screen: React.FC<ScreenProps> = ({
@@ -21,6 +23,7 @@ const Screen: React.FC<ScreenProps> = ({
   setProfileForm,
   setShowStats,
   setDeleteAccountModal,
+  screen
 }) => {
   const handleClose = () => {
     setEditModal(false);
@@ -34,12 +37,14 @@ const Screen: React.FC<ScreenProps> = ({
   };
 
   return (
-    <div className="fixed w-full h-full z-[3]">
-      <div
-        onClick={handleClose}
-        className="absolute w-full h-full bg-grey opacity-[40]"
-      />
-    </div>
+    <div
+      onClick={handleClose}
+      className={`${
+        screen
+          ? " w-full h-full opacity-100"
+          : "w-0 h-0 opacity-0"
+      }   bg-grey fixed transition-opacity duration-500 right-0 bottom-0 z-[3]`}
+    />
   );
 };
 

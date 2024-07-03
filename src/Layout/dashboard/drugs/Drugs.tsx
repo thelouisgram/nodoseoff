@@ -297,8 +297,8 @@ const Drugs: React.FC<DrugsProps> = ({
           userId: userId,
           schedule: updatedSchedule,
         });
- 
-        const drugsToBeUsed = tab === 'Ongoing' ? drugs : completedDrugs
+
+        const drugsToBeUsed = tab === "Ongoing" ? drugs : completedDrugs;
 
         const allergicDrug = drugsToBeUsed?.find(
           (drug) => drug.drug === activeDrug
@@ -497,67 +497,69 @@ const Drugs: React.FC<DrugsProps> = ({
               </div>
             </div>
           )}
-          <div className={`fixed z-[144] font-karla`}>
-            {add ? (
-              <>
-                <button
-                  onClick={() => {
-                    setAdd(false);
-                    setDrugsForm(true);
-                    setScreen(false);
-                  }}
-                  className={`bg-white py-2 aspect-square w-12 h-12 ${
-                    !add ? "right-10" : "bottom-20 md:bottom-6 right-36 "
-                  } transition-all fixed rounded-full font-semibold justify-center flex gap-2 
+          <div className={`fixed ${add && 'z-[144]'} font-karla`}>
+            <button
+              onClick={() => {
+                setAdd(false);
+                setDrugsForm(true);
+                setScreen(false);
+              }}
+              title="Add Drug"
+              className={`bg-white py-2 aspect-square  ${
+                !add ? "right-4 ss:right-10 w-12 h-12" : "right-24 md:right-36 w-16 h-16"
+              } transition-all duration-400 fixed rounded-full bottom-20 md:bottom-6 font-semibold justify-center flex gap-2 
                   ss:gap-3 items-center`}
-                >
-                  <Image
-                    src="/assets/add/capsule.png"
-                    width={28}
-                    height={28}
-                    alt="capsule"
-                  />
-                </button>
-                <button
-                  onClick={() => {
-                    setAdd(false);
-                    setAllergiesForm(true);
-                    setScreen(false);
-                  }}
-                  className={`bg-white py-2 aspect-square w-12 h-12 ${
-                    !add
-                      ? "right-10 md:bottom-6"
-                      : "bottom-40 md:bottom-[100px] right-24 md:right-[120px]"
-                  } fixed rounded-full font-semibold justify-center 
+            >
+              <Image
+                src="/assets/add/capsule.png"
+                width={28}
+                height={28}
+                alt="capsule"
+              />
+            </button>
+            <button
+              onClick={() => {
+                setAdd(false);
+                setAllergiesForm(true);
+                setScreen(false);
+              }}
+              title="Add Allergies"
+              className={`bg-white py-2 aspect-square  ${
+                !add
+                  ? "right-4 ss:right-10 w-12 h-12 bottom-20 md:bottom-6"
+                  : "bottom-[160px] md:bottom-[100px] right-20 md:right-[120px] w-16 h-16"
+              } fixed rounded-full font-semibold justify-center transition-all duration-400
                   flex gap-2 ss:gap-3 items-center `}
-                >
-                  <Image
-                    src="/assets/add/allergy.png"
-                    width={32}
-                    height={32}
-                    alt="capsule"
-                  />
-                </button>
-                <button
-                  onClick={() => {
-                    setAdd(false);
-                    setEffectsForm(true);
-                    setScreen(false);
-                  }}
-                  className="bg-white py-2 aspect-square w-12 h-12 bottom-56 md:bottom-36 right-6 md:right-12 fixed rounded-full 
-                  font-semibold justify-center flex gap-2 ss:gap-3 items-center "
-                >
-                  <Image
-                    src="/assets/add/cough.png"
-                    width={28}
-                    height={28}
-                    alt="capsule"
-                  />
-                </button>
-              </>
-            ) : (
-              ""
-            )}
+            >
+              <Image
+                src="/assets/add/allergy.png"
+                width={32}
+                height={32}
+                alt="capsule"
+              />
+            </button>
+            <button
+              onClick={() => {
+                setAdd(false);
+                setEffectsForm(true);
+                setScreen(false);
+              }}
+              title="Add Side Effects"
+              className={`bg-white py-2 aspect-square ${
+                !add
+                  ? "right-4 ss:right-10 w-12 h-12 bottom-20 md:bottom-6"
+                  : "w-16 h-16 bottom-56 md:bottom-36 right-6 md:right-12"
+              }
+               fixed rounded-full transition-all duration-400
+                  font-semibold justify-center flex gap-2 ss:gap-3 items-center `}
+            >
+              <Image
+                src="/assets/add/cough.png"
+                width={28}
+                height={28}
+                alt="capsule"
+              />
+            </button>
             <button
               onClick={() => {
                 setScreen((prev: boolean) => !prev);

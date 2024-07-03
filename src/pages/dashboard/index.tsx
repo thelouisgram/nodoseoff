@@ -75,9 +75,9 @@ const Page = () => {
   const [add, setAdd] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [accountSettings, setAccountSettings] = useState(false);
-  const [deleteAccountModal, setDeleteAccountModal] = useState(false)
-  const [drugsLoading, setDrugsLoading] = useState(true)
-  const [accountLoading, setAccountLoading] = useState(true)
+  const [deleteAccountModal, setDeleteAccountModal] = useState(false);
+  const [drugsLoading, setDrugsLoading] = useState(true);
+  const [accountLoading, setAccountLoading] = useState(true);
 
   useEffect(() => {
     if (!userId) {
@@ -546,19 +546,19 @@ const Page = () => {
             setAllDoses={setAllDoses}
             dosesToRender={dosesToRender}
           />
-          {screen && (
-            <Screen
-              setDeleteModal={setDeleteModal}
-              setAllergyModal={setAllergyModal}
-              setEditModal={setEditModal}
-              setProfileForm={setProfileForm}
-              setScreen={setScreen}
-              setAdd={setAdd}
-              screen={screen}
-              setShowStats={setShowStats}
-              setDeleteAccountModal={setDeleteAccountModal}
-            />
-          )}
+
+          <Screen
+            setDeleteModal={setDeleteModal}
+            setAllergyModal={setAllergyModal}
+            setEditModal={setEditModal}
+            setProfileForm={setProfileForm}
+            setScreen={setScreen}
+            setAdd={setAdd}
+            screen={screen}
+            setShowStats={setShowStats}
+            setDeleteAccountModal={setDeleteAccountModal}
+          />
+
           <div className="fixed w-full h-[64px] bg-white shadow bottom-0 flex justify-between items-center md:hidden px-4 ss:px-8 ss:pr-12">
             {renderedTabsMobile}
           </div>

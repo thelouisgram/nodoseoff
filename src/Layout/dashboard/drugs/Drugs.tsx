@@ -471,8 +471,9 @@ const Drugs: React.FC<DrugsProps> = ({
                   Continue to Edit {activeDrug.toUpperCase()} ?
                 </h1>
                 <h2 className="text-navyBlue border-b-[1px] text-left px-4 py-4 text-[12px] ss:text-[14px]">
-                  Proceed to edit the selected drug. <br className="hidden ss:flex" /> Changes apply only
-                  from today's doses.
+                  Proceed to edit the selected drug.{" "}
+                  <br className="hidden ss:flex" /> Changes apply only from
+                  today's doses.
                 </h2>
                 <div className="w-full flex gap-3 justify-start flex-row-reverse text-[12px] py-4 px-4">
                   <button
@@ -496,20 +497,26 @@ const Drugs: React.FC<DrugsProps> = ({
               </div>
             </div>
           )}
-          <div
-            className={`fixed right-4 ss:right-10 md:right-16 bottom-20 md:bottom-6 z-[144] font-karla`}
-          >
+          <div className={`fixed z-[144] font-karla`}>
             {add ? (
-              <div className="flex flex-col fixed right-6 ss:right-12 md:right-[72px] bottom-36 md:bottom-24 gap-4 items-end">
+              <>
                 <button
                   onClick={() => {
                     setAdd(false);
                     setDrugsForm(true);
                     setScreen(false);
                   }}
-                  className="bg-white py-2 w-[124px] rounded-[8px] font-semibold justify-center flex gap-2 ss:gap-3 items-center "
+                  className={`bg-white py-2 aspect-square w-12 h-12 ${
+                    !add ? "right-10" : "bottom-20 md:bottom-6 right-32 md:right-36 "
+                  } transition-all fixed rounded-full font-semibold justify-center flex gap-2 
+                  ss:gap-3 items-center`}
                 >
-                  + Add a Drug
+                  <Image
+                    src="/assets/add/capsule.png"
+                    width={28}
+                    height={28}
+                    alt="capsule"
+                  />
                 </button>
                 <button
                   onClick={() => {
@@ -517,9 +524,19 @@ const Drugs: React.FC<DrugsProps> = ({
                     setAllergiesForm(true);
                     setScreen(false);
                   }}
-                  className="bg-white py-2 w-[148px] rounded-[8px] font-semibold justify-center flex gap-2 ss:gap-3 items-center"
+                  className={`bg-white py-2 aspect-square w-12 h-12 ${
+                    !add
+                      ? "right-10 md:bottom-6"
+                      : "bottom-40 md:bottom-[100px] right-24 md:right-[120px]"
+                  } fixed rounded-full font-semibold justify-center 
+                  flex gap-2 ss:gap-3 items-center `}
                 >
-                  + Add an Allergy
+                  <Image
+                    src="/assets/add/allergy.png"
+                    width={32}
+                    height={32}
+                    alt="capsule"
+                  />
                 </button>
                 <button
                   onClick={() => {
@@ -527,11 +544,17 @@ const Drugs: React.FC<DrugsProps> = ({
                     setEffectsForm(true);
                     setScreen(false);
                   }}
-                  className="bg-white py-2 w-[160px] rounded-[8px] font-semibold justify-center flex gap-2 ss:gap-3 items-center"
+                  className="bg-white py-2 aspect-square w-12 h-12 bottom-56 md:bottom-36 right-6 md:right-12 fixed rounded-full 
+                  font-semibold justify-center flex gap-2 ss:gap-3 items-center "
                 >
-                  + Add Side Effect
+                  <Image
+                    src="/assets/add/cough.png"
+                    width={28}
+                    height={28}
+                    alt="capsule"
+                  />
                 </button>
-              </div>
+              </>
             ) : (
               ""
             )}
@@ -540,7 +563,7 @@ const Drugs: React.FC<DrugsProps> = ({
                 setScreen((prev: boolean) => !prev);
                 setAdd((prev: boolean) => !prev);
               }}
-              className={`rounded-full p-4 bg-navyBlue ${
+              className={`rounded-full p-4 bg-navyBlue right-4 ss:right-10 fixed bottom-20 md:bottom-6 ${
                 editForm ||
                 drugsForm ||
                 effectsForm ||

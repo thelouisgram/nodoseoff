@@ -3,14 +3,12 @@ import React from "react";
 const Story = () => {
   return (
     <div className="w-full h-auto bg-lightBlue relative pt-[80px]  ">
+      <h1 className="font-bold font-navyBlue text-[36px] text-center mb-12">About NoDoseOff</h1>
       <div
         className="container md:w-[1165px] lg:w-[1165px] mx-auto px-4 xs:px-1 
-        ss:px-5 md:px-0 flex flex-col md:flex-row gap-10 w-full"
+        ss:px-5 md:px-0 flex flex-col sm:flex-row gap-10 w-full"
       >
-        <div className=" w-full h-auto gap-4 flex flex-col text-left md:py-6 font-Inter text-[18px]">
-          <h1 className="font-bold font-navyBlue text-[36px]">
-            About NoDoseOff
-          </h1>
+        <div className=" w-full h-auto gap-4 flex flex-col text-left md:py-6 font-Inter text-[16px]">
           <p>
             What started as a hack-a-thon challenge turned into a personal
             mission for Adeyeye Adesanoye, inspired by his medical background.
@@ -19,11 +17,11 @@ const Story = () => {
             development.
           </p>
           <p>
-            Collaborating with his friends, Adeyeye focused
-            on creating features that ensure accurate drug monitoring and
-            adherence. Their combined expertise and careful attention to detail
-            were crucial in transforming this project into an effective tool for
-            improving patient care and medication compliance.
+            Collaborating with his friends, Adeyeye focused on creating features
+            that ensure accurate drug monitoring and adherence. Their combined
+            expertise and careful attention to detail were crucial in
+            transforming this project into an effective tool for improving
+            patient care and medication compliance.
           </p>
           <p>
             By working with other medical professionals, the project aims to
@@ -37,7 +35,7 @@ const Story = () => {
           width={720}
           height={846}
           controls
-          className="w-full md:w-[500px] h-auto"
+          className="w-full sm:w-1/2 md:w-[500px] h-auto"
         >
           <source
             src="/assets/video.mp4"

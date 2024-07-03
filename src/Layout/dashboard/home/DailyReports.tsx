@@ -90,10 +90,10 @@ export default function DailyReports() {
                     className={cn(
                       "p-2 text-center relative h-12 md:h-14 grid place-content-center",
                       {
-                        "border-[4px] border-dotted border-darkBlue":
+                        "":
                           today && !isPastDate && !isSelected,
-                        "border border-[#0054DB]": isSelected && !isPastDate,
-                        "hover:border hover:border-gray-300 border-darkBlue hover:text-white transition-all cursor-pointer select-none":
+                        "": isSelected && !isPastDate,
+                        "  hover:text-white transition-all cursor-pointer select-none":
                           true,
                       }
                     )}
@@ -106,7 +106,7 @@ export default function DailyReports() {
                         // Conditionally applying classes based on date properties
                         currentMonth ? "" : "text-gray-400",
                         today
-                          ? "border-[4px] border-dotted border-darkBlue"
+                          ? ""
                           : "",
                         selectDate.toDate().toDateString() ===
                           date.toDate().toDateString()

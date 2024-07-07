@@ -295,7 +295,7 @@ const Account: React.FC<AccountProps> = ({
                   Confirm to DELETE YOUR ACCOUNT
                 </h1>
                 <h2 className="text-navyBlue border-b-[1px] text-left px-4 py-4 text-[12px] ss:text-[14px]">
-                  Are you sure you want to delete your account? <br /> This
+                  Are you sure you want to delete your account? <br className="hidden md:flex"/> This
                   action cannot be undone.
                 </h2>
                 <div className="w-full flex gap-3 justify-start flex-row-reverse text-[12px] py-4 px-4">

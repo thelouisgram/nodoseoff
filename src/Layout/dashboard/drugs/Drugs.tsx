@@ -394,7 +394,7 @@ const Drugs: React.FC<DrugsProps> = ({
                   Confirm to delete {activeDrug.toUpperCase()} ?
                 </h1>
                 <h2 className="text-navyBlue border-b-[1px] text-left px-4 py-4 text-[12px] ss:text-[14px]">
-                  Are you sure you want to delete the selected drug? <br /> This
+                  Are you sure you want to delete the selected drug? <br className="hidden md:flex"/> This
                   action cannot be undone.
                 </h2>
                 <div className="w-full flex gap-3 justify-start flex-row-reverse text-[12px] py-4 px-4">
@@ -407,7 +407,7 @@ const Drugs: React.FC<DrugsProps> = ({
                         dispatch(updateActiveDrug(""));
                       setDeleteModal(false);
                     }}
-                    className="px-4 py-1 flex items-center gap-2 bg-navyBlue rounded-[10px]  "
+                    className="px-4 py-1 flex items-center gap-2 bg-navyBlue rounded-[10px]"
                   >
                     Delete
                   </button>
@@ -435,8 +435,8 @@ const Drugs: React.FC<DrugsProps> = ({
                   Confirm to add {activeDrug.toUpperCase()} to Allergies?
                 </h1>
                 <h2 className="text-navyBlue border-b-[1px] text-left px-4 py-4 text-[12px] ss:text-[14px]">
-                  Are you sure you want to mark the selected drug as Allergy?{" "}
-                  <br /> This action cannot be undone.
+                  Are you sure you want to mark the selected drug as Allergy?
+                  <br className="hidden md:flex"/> This action cannot be undone.
                 </h2>
                 <div className="w-full flex gap-3 justify-start flex-row-reverse text-[12px] py-4 px-4">
                   <button
@@ -471,8 +471,8 @@ const Drugs: React.FC<DrugsProps> = ({
                   Continue to Edit {activeDrug.toUpperCase()} ?
                 </h1>
                 <h2 className="text-navyBlue border-b-[1px] text-left px-4 py-4 text-[12px] ss:text-[14px]">
-                  Proceed to edit the selected drug.{" "}
-                  <br className="hidden ss:flex" /> Changes apply only from
+                  Proceed to edit the selected drug.
+                   Changes apply only <br className="hidden md:flex" /> from
                   today's doses.
                 </h2>
                 <div className="w-full flex gap-3 justify-start flex-row-reverse text-[12px] py-4 px-4">

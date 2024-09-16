@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 
 const Story = () => {
   return (
@@ -6,9 +7,9 @@ const Story = () => {
       <h1 className="font-bold font-navyBlue text-[36px] text-center mb-12">About NoDoseOff</h1>
       <div
         className="container md:w-[1165px] lg:w-[1165px] mx-auto px-4 xs:px-1 
-        ss:px-5 md:px-0 flex flex-col sm:flex-row gap-10 w-full"
+        ss:px-5 md:px-0 flex flex-col sm:flex-row gap-10 md:gap-20 w-full"
       >
-        <div className=" w-full h-auto gap-4 flex flex-col text-left md:py-6 font-Inter text-[16px]">
+        <div className="h-auto gap-4 flex flex-col text-left md:py-6 font-Inter text-[16px]">
           <p>
             What started as a hack-a-thon challenge turned into a personal
             mission for Adeyeye Adesanoye, inspired by his medical background.
@@ -31,19 +32,17 @@ const Story = () => {
             outcomes and ensure patient safety.
           </p>
         </div>
-        <video
-          width={720}
-          height={846}
-          controls
-          className="w-full sm:w-1/2 md:w-[500px] h-auto"
-        >
-          <source
-            src="/assets/video.mp4"
-            type="video/mp4"
-            className="w-[300px] h-auto"
-          />
-          Your browser does not support the video tag.
-        </video>
+        <div className="md:w-[800px]">
+        <Image
+          width={1154}
+          height={1519}
+          alt='dev'
+          className="w-full sm:w-1/2 md:w-full h-auto"
+          src='/assets/dev.JPG'
+        />
+        <h3 className="text-center font-bold text-[24px] mt-4">Adeyeye Adesanoye</h3>
+        <p className="text-center font-semibold text-[16px]">SoftWare Developer, Final Year Medical student</p>
+        </div>
       </div>
     </div>
   );

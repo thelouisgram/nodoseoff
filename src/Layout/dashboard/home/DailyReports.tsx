@@ -125,7 +125,7 @@ export default function DailyReports() {
                         isPastDate &&
                         completionTally[dayjs(date).format("YYYY-MM-DD")]
                           ?.total > 0 && (
-                          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+                          <div className="absolute bottom-3 md:bottom-4 left-1/2 transform -translate-x-1/2">
                             <div
                               className="w-[5px] h-[5px] rounded-full"
                               style={{

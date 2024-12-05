@@ -140,28 +140,6 @@ const CreateAccount = () => {
           setLoading(false);
           return;
         }
-        // Send the welcome email
-        try {
-          const welcomeEmailResponse = await fetch("/api/sendMail", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              name: formData.fullName,
-              email: formData.email,
-            }),
-          });
-
-          if (!welcomeEmailResponse.ok) {
-            console.error(
-              "Failed to send welcome email:",
-              await welcomeEmailResponse.text()
-            );
-          }
-        } catch (error) {
-          console.error("Error sending welcome email:", error);
-        }
 
         // Redirect to the dashboard
         router.push("/dashboard");

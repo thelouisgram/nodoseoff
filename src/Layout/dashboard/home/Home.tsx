@@ -146,10 +146,10 @@ const Home: React.FC<HomeProps> = ({
           />
           <div className="flex flex-col text-white justify-center w-full items-start gap-1">
             <h2 className="leading-none font-semibold text-[14px]">
-              Number of Drugs
+              Ongoing Drugs
             </h2>
             <h4 className="font-bold text-[28px] tracking-wider leading-none">
-              {drugs.length}
+              {countDown ? drugs.length : '0'}
             </h4>
           </div>
         </div>

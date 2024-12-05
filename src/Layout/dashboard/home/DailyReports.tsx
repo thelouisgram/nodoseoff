@@ -90,8 +90,7 @@ export default function DailyReports() {
                     className={cn(
                       "p-2 text-center relative h-12 md:h-14 grid place-content-center",
                       {
-                        "":
-                          today && !isPastDate && !isSelected,
+                        "": today && !isPastDate && !isSelected,
                         "": isSelected && !isPastDate,
                         "  hover:text-white transition-all cursor-pointer select-none":
                           true,
@@ -105,17 +104,15 @@ export default function DailyReports() {
                       className={cn(
                         // Conditionally applying classes based on date properties
                         currentMonth ? "" : "text-gray-400",
-                        today
-                          ? ""
-                          : "",
+                        today ? "" : "",
                         selectDate.toDate().toDateString() ===
                           date.toDate().toDateString()
-                          ? "bg-darkPurple text-white"
+                          ? "bg-navyBlue text-white border-navyBlue"
                           : "",
                         `h-10 w-10 rounded-full grid place-content-center ${
                           today
-                            ? " bg-darkBlue text-white"
-                            : " hover:bg-navyBlue hover:text-white"
+                            ? " bg-darkBlue border-darkBlue text-white"
+                            : " hover:border-navyBlue border-[2px]"
                         } 0 transition-all cursor-pointer select-none`
                       )}
                       onClick={() => {
@@ -128,7 +125,7 @@ export default function DailyReports() {
                         isPastDate &&
                         completionTally[dayjs(date).format("YYYY-MM-DD")]
                           ?.total > 0 && (
-                          <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2">
+                          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
                             <div
                               className="w-[5px] h-[5px] rounded-full"
                               style={{

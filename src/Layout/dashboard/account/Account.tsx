@@ -49,15 +49,6 @@ const Account: React.FC<AccountProps> = ({
 
   const dropdownRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
 
-  const handleClickOutside = (event: MouseEvent): void => {
-    if (
-      dropdownRef.current &&
-      !dropdownRef.current.contains(event.target as Node)
-    ) {
-      setTab("default");
-    }
-  };
-
    useEffect(() => {
      if (accountLoading) {
        setTimeout(() => {

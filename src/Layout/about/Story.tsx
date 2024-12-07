@@ -38,8 +38,8 @@ const Story = () => {
             width={1154}
             height={1519}
             alt="dev"
-            className="w-full sm:w-1/2 md:w-full h-auto rounded-xl"
-            src="/assets/dev.jpg"
+            className="w-full sm:w-1/2 md:w-full h-auto"
+            src="/assets/dev.JPG"
           />
           <h3 className="text-center font-bold text-[24px] md:text-[30px] mt-4">
             Adeyeye Adesanoye

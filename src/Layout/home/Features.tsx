@@ -7,17 +7,19 @@ import Reports from "./features/Reports";
 const Features = () => {
   return (
     <div id="features" className="bg-white py-24 font-Inter">
-      <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{
-          ease: "easeInOut",
-          duration: 0.5,
-        }}
+      <div
         className="container md:w-[1165px] lg:w-[1165px] mx-auto px-4 xs:px-1 ss:px-5 md:px-0 w-full grid ip:grid-cols-2 gap-8"
       >
-        <div className="px-6 py-10 md:py-12 bg-[#EFF4F5] flex flex-col md:flex-row justify-between rounded-[16px] w-full gap-8">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0}}
+          viewport={{ once: true }}
+          transition={{
+            ease: "easeInOut",
+            duration: 0.5,
+          }}
+          className="px-6 py-10 md:py-12 bg-[#EFF4F5] flex flex-col md:flex-row justify-between rounded-[16px] w-full gap-8"
+        >
           <div className="flex flex-col text-grey md:w-[325px] gap-2 md:pt-14">
             <h2 className="font-bold leading-none text-[18px]">
               Medication Tracker Calendar
@@ -30,8 +32,16 @@ const Features = () => {
           <div className="relative w-full">
             <Calendar />
           </div>
-        </div>
-        <div className="px-6 py-10 md:py-12 bg-lightBlue flex flex-col md:flex-row justify-between rounded-[16px] w-full gap-8">
+        </motion.div>
+         <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{
+            ease: "easeInOut",
+            duration: 0.5,
+          }} 
+        className="px-6 py-10 md:py-12 bg-lightBlue flex flex-col md:flex-row justify-between rounded-[16px] w-full gap-8">
           <div className="flex flex-col text-grey md:w-[325px] gap-2 md:pt-14">
             <h2 className="font-bold leading-none text-[18px]">
               Daily Medication Summary
@@ -44,8 +54,16 @@ const Features = () => {
           <div className="relative w-full">
             <Reports />
           </div>
-        </div>
-        <div className="px-6 py-10 md:py-12 bg-lightPink flex flex-col md:flex-row justify-between rounded-[16px] w-full gap-8">
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{
+            ease: "easeInOut",
+            duration: 0.5,
+          }} 
+        className="px-6 py-10 md:py-12 bg-lightPink flex flex-col md:flex-row justify-between rounded-[16px] w-full gap-8">
           <div className="flex flex-col text-grey md:w-[325px] gap-2 md:pt-14">
             <h2 className="font-bold leading-none text-[18px]">
               Daily Medication Tracker
@@ -57,8 +75,16 @@ const Features = () => {
           <div className="relative w-full h-full flex items-start justify-center">
             <Tracker />
           </div>
-        </div>
-        <div className="px-6 py-10 md:py-12 bg-lightPurple flex flex-col md:flex-row justify-between rounded-[16px] w-full gap-8">
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{
+            ease: "easeInOut",
+            duration: 0.5,
+          }} 
+        className="px-6 py-10 md:py-12 bg-lightPurple flex flex-col md:flex-row justify-between rounded-[16px] w-full gap-8">
           <div className="flex flex-col text-grey md:w-[325px] gap-2 h-auto md:pt-14">
             <h2 className="font-bold leading-none text-[18px]">
               Access your Drug History Report
@@ -68,8 +94,8 @@ const Features = () => {
             </p>
           </div>
           <Summary />
-        </div>
-      </motion.div>
+        </motion.div>
+      </div>
     </div>
   );
 };

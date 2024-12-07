@@ -7,7 +7,13 @@ import { motion } from "framer-motion";
 const Steps = () => {
   const renderedSteps = steps.map((step, index) => {
     return (
-      <div key={index} className="flex flex-col w-full">
+      <motion.div
+        key={index}
+        className="flex flex-col w-full"
+        initial={{ opacity: 0, x: -20 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        transition={{ delay: index * 0.15, duration: 0.4 }}
+      >
         <div className="flex gap-4 text-[20px] w-full">
           <h2>0{index + 1}</h2>
           <div className="flex flex-col w-full gap-2">
@@ -16,11 +22,11 @@ const Steps = () => {
           </div>
         </div>
         <div
-          className={` ${
+          className={`${
             index === 3 ? "hidden" : ""
-          } h-[1px] w-full bg-gray-300 mt-4 `}
+          } h-[1px] w-full bg-gray-300 mt-4`}
         />
-      </div>
+      </motion.div>
     );
   });
 
@@ -34,24 +40,13 @@ const Steps = () => {
           className="w-full grid ss:grid-cols-2 items-center
         gap-16"
         >
+          <div className="flex flex-col gap-6">{renderedSteps}</div>
           <motion.div
-            initial={{ opacity: 0, x: -40 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             transition={{
               ease: "easeInOut",
-              duration: 0.5,
-            }}
-          >
-            <div className="flex flex-col gap-6">{renderedSteps}</div>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, x: 40 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{
-              ease: "easeInOut",
-              duration: 0.5,
+              duration: 1,
             }}
             className="w-full h-full flex items-center justify-end"
           >

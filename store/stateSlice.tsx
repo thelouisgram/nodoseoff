@@ -18,8 +18,8 @@ const initialState: AppType = {
   active: "Home",
   completedDrugs: [],
   confetti: false,
-  profilePicture: [],
-  activeDrugId: ''
+  profilePicture: '',
+  activeDrugId: '', 
 };
 
 const stateSlice = createSlice({
@@ -71,7 +71,7 @@ const stateSlice = createSlice({
     updateCompletedDrugs: (state, action: PayloadAction<DrugProps[]>) => {
       state.completedDrugs = action.payload;
     },
-    updateProfilePicture: (state, action: PayloadAction<any>) => {
+    updateProfilePicture: (state, action: PayloadAction<string>) => {
       state.profilePicture = action.payload;
     },
   },

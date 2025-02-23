@@ -88,13 +88,6 @@ const Allergies: React.FC<AllergiesProps> = ({
     }
   };
 
-  // Hook to revert back to the previous page if necessary
-  useEffect(() => {
-    if (currentItems.length < 7 && currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  }, [currentItems, currentPage]);
-
   const renderedAllergies = currentItems.map((item, index: number) => {
     return (
       <RenderedDrugs

@@ -128,8 +128,8 @@ const Page = () => {
         dispatch(updateInfo([userInfo]));
 
         const profilePicture = profilePictureData.data
-          ? [profilePictureData.data[0]?.name]
-          : [];
+          ? String(profilePictureData.data[0]?.name)
+          : "";
         dispatch(updateProfilePicture(profilePicture));
 
         const drugs = drugsData.data ?? [];
@@ -169,6 +169,7 @@ const Page = () => {
       fetchData();
     }
   }, [userId]);
+
 
   const renderedTabs = tabs.map((item: tabsProps, index: number) => {
     return (

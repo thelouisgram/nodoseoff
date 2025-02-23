@@ -1,18 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {
-  useRef,
-  useEffect,
-  useState,
-  FormEvent,
-  ChangeEvent,
-} from "react";
+import React, { useEffect, useState, FormEvent, ChangeEvent } from "react";
 import Image from "next/image";
 import { RootState } from "../../../../store";
 import { useSelector, useDispatch } from "react-redux";
 import supabase from "../../../../utils/supabase";
-
 import { toast } from "sonner";
-import { updateInfo } from "../../../../store/stateSlice";
+import { updateInfo, updateProfilePicture } from "../../../../store/stateSlice";
 
 interface ProfileFormProps {
   setProfileForm: Function;
@@ -26,18 +19,16 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
   const { info, userId, profilePicture } = useSelector(
     (state: RootState) => state.app
   );
-
   const { name, phone, email, otcDrugs, herbs } = info[0];
   const dispatch = useDispatch();
 
   const [formData, setFormData] = useState({
-    name: name,
-    phone: phone,
-    email: email,
-    otcDrugs: otcDrugs,
-    herbs: herbs,
+    name,
+    phone,
+    email,
+    otcDrugs,
+    herbs,
   });
-
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -49,37 +40,33 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
         .from("users")
         .update({
           name: formData.name,
-          phone: formData.phone,
         })
         .eq("userId", userId);
 
       if (error) {
-        toast.error("Failed to update profile, Check Internet Connection and Try again!");
+        toast.error(
+          "Failed to update profile. Check your connection and try again!"
+        );
         setLoading(false);
         return;
       }
 
       dispatch(updateInfo([formData]));
       setProfileForm(false);
-      setLoading(false);
-      toast.success("Profile updated successfully");
+      toast.success("Profile updated successfully!");
     } catch (error) {
-      toast.error(
-        "Failed to update profile, Check Internet Connection and Try again!"
-      );
+      toast.error("Failed to update profile. Please try again!");
+    } finally {
       setLoading(false);
     }
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value.toLowerCase(),
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value.toLowerCase() });
   };
 
-  const avatar = `/${profilePicture}`;
+  const CDNURL =
+    "https://opshqmqagtfidynwftzk.supabase.co/storage/v1/object/public/profile-picture/";
 
   async function updateImage(e: ChangeEvent<HTMLInputElement>) {
     if (!e.target.files || e.target.files.length === 0) {
@@ -87,52 +74,45 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
       return;
     }
 
-    let file = e.target.files[0];
+    const file = e.target.files[0];
+    const newFileName = `${userId}/${Date.now()}-${file.name}`; // Unique filename
+    const localFileName = `${Date.now()}-${file.name}`; // Unique filename
+    const storageBucket = "profile-picture";
 
+    // Delete old profile picture if it exists
+    if (profilePicture) {
+      const oldFilePath = `${userId}/${profilePicture}`;
+      await supabase.storage.from(storageBucket).remove([oldFilePath]);
+    }
+
+    // Upload new profile picture
     const { data, error } = await supabase.storage
-      .from("profile-picture")
-      .update(userId + avatar, file, {
-        upsert: true,
-      });
+      .from(storageBucket)
+      .upload(newFileName, file);
 
-    if (data) {
-    } else {
+    if (error) {
       console.error("Error uploading image:", error);
-      toast.error("error");
+      toast.error("Failed to upload image.");
+      return;
     }
+
+    // Update Redux state with new profile picture
+    dispatch(updateProfilePicture(localFileName));
   }
-
-  const CDNURL =
-    "https://opshqmqagtfidynwftzk.supabase.co/storage/v1/object/public/profile-picture/";
-
-  const handleClick = () => {
-    const syntheticEvent = new Event(
-      "submit"
-    ) as unknown as FormEvent<HTMLFormElement>;
-    handleSubmit(syntheticEvent);
-  };
-
-  useEffect(() => {
-    const formElement = document.getElementById("top-profile");
-    if (formElement) {
-      formElement.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, [profileForm]);
 
   return (
     <div
       className={` ${
         profileForm ? "w-full" : "w-0"
-      } right-0 bg-none fixed z-[2] h-[100dvh]`}
+      } fixed right-0 bg-none z-[2] h-[100dvh]`}
     >
       <div
         className={` ${
           profileForm ? "right-0 ss:w-[450px]" : "-right-[450px] ss:w-[450px] "
-        } transition-all duration-300 absolute w-full bg-white h-full z-[4] `}
+        } 
+        transition-all duration-300 absolute w-full bg-white h-full z-[4] `}
       >
-        <div
-          className={`h-full flex flex-col w-full justify-between gap-8 p-8 pt-0 overflow-y-scroll bg-white`}
-        >
+        <div className="h-full flex flex-col w-full justify-between gap-8 p-8 pt-0 overflow-y-scroll bg-white">
           <div>
             <div className="w-full flex justify-end mb-10">
               <Image
@@ -140,9 +120,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                 width={18}
                 height={18}
                 alt="cancel"
-                onClick={() => {
-                  setProfileForm(false);
-                }}
+                onClick={() => setProfileForm(false)}
                 id="top-profile"
                 className="cursor-pointer pt-8"
               />
@@ -174,9 +152,8 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                     />
                     <div className="w-[100px] h-[100px] rounded-full overflow-hidden">
                       <Image
-                        src={
-                          CDNURL + userId + "/avatar.png" || "/assets/user.png"
-                        }
+                        key={profilePicture}
+                        src={CDNURL + userId + "/" + profilePicture}
                         width={3000}
                         height={3000}
                         alt="user"
@@ -204,27 +181,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                     value={formData.name}
                     required
                     onChange={handleInputChange}
-                    className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4 capitalize h-[56px] "
-                    placeholder="Enter your Full Name"
-                  />
-                </div>
-              </div>
-              <div className="w-full">
-                <div className="flex flex-col mb-4">
-                  <label
-                    htmlFor="phone"
-                    className="text-[14px] mb-1 font-semibold text-navyBlue"
-                  >
-                    Phone Number
-                  </label>
-                  <input
-                    type="phone"
-                    id="phone"
-                    name="phone"
-                    value={formData.phone}
-                    required
-                    onChange={handleInputChange}
-                    className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4 capitalize h-[56px] "
+                    className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4 capitalize h-[56px]"
                     placeholder="Enter your Full Name"
                   />
                 </div>
@@ -232,19 +189,21 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
             </form>
           </div>
           <button
-            onClick={handleClick}
+            onClick={() =>
+              handleSubmit(
+                new Event("submit") as unknown as FormEvent<HTMLFormElement>
+              )
+            }
             disabled={loading}
-            className={`font-semibold text-white rounded-[10px] w-full items-center 
-              justify-center flex transition duration-300 ${
-                loading ? "bg-navyBlue opacity-85" : "bg-blue-700 h-14"
-              }`}
+            className={`font-semibold text-white rounded-[10px] w-full items-center justify-center flex transition duration-300 
+              ${loading ? "bg-navyBlue opacity-85" : "bg-blue-700 h-14"}`}
           >
             {loading ? (
-              <div className=" h-14 flex items-center">
+              <div className="h-14 flex items-center">
                 <div className="loaderInfinity" />
               </div>
             ) : (
-              <div className="h-14 flex items-center">PROCEED</div>
+              "PROCEED"
             )}
           </button>
         </div>

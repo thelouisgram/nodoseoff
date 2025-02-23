@@ -61,12 +61,6 @@ const Completed: React.FC<CompletedProps> = ({
     }
   };
 
-  // Hook to revert back to the previous page if necessary
-  useEffect(() => {
-    if (currentItems.length < 7 && currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  }, [currentItems, currentPage]);
 
   const renderedDrugs = currentItems.map((drug: DrugProps, index: number) => {
     return (

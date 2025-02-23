@@ -27,7 +27,7 @@ const Home: React.FC<HomeProps> = ({
   tracker,
   dosesToRender,
 }) => {
-  const { drugs, info, schedule, userId } = useSelector(
+  const { drugs, info, schedule, userId, profilePicture } = useSelector(
     (state: RootState) => state.app
   );
 
@@ -96,7 +96,7 @@ const Home: React.FC<HomeProps> = ({
           className="w-[60px] h-[60px] rounded-full overflow-hidden cursor-pointer"
         >
           <Image
-            src={CDNURL + userId + "/avatar.png" || "/assets/user.png"}
+            src={CDNURL + userId + "/" + profilePicture}
             width={100}
             height={100}
             alt="user"
@@ -149,7 +149,7 @@ const Home: React.FC<HomeProps> = ({
               Ongoing Drugs
             </h2>
             <h4 className="font-bold text-[28px] tracking-wider leading-none">
-              {countDown ? drugs.length : '0'}
+              {countDown ? drugs.length : "0"}
             </h4>
           </div>
         </div>

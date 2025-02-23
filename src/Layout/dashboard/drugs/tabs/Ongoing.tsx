@@ -71,13 +71,6 @@ const Ongoing: React.FC<OngoingProps> = ({
     }
   };
 
-  // Hook to revert back to the previous page if necessary
-  useEffect(() => {
-    if (currentItems.length === 0 && currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  }, [currentItems, currentPage]);
-
   // Render the drugs list
   const renderedDrugs = currentItems.map((drug: DrugProps, index: number) => {
     return (

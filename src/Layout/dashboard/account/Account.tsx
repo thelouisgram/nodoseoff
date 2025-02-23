@@ -42,7 +42,7 @@ const Account: React.FC<AccountProps> = ({
   setAccountLoading,
   accountLoading,
 }) => {
-  const { info, userId } = useSelector((state: RootState) => state.app);
+  const { info, userId, profilePicture } = useSelector((state: RootState) => state.app);
   const router = useRouter();
   const dispatch = useDispatch();
   const { name, phone, email } = info[0];
@@ -124,7 +124,7 @@ const Account: React.FC<AccountProps> = ({
               <div className="w-full items-center flex flex-col mb-8">
                 <div className="w-[150px] h-[150px] rounded-full overflow-hidden">
                   <Image
-                    src={CDNURL + userId + "/avatar.png" || "/assets/user.png"}
+                    src={CDNURL + userId + "/" + profilePicture }
                     width={100}
                     height={100}
                     alt="user"

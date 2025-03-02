@@ -9,6 +9,7 @@ import { updateIsAuthenticated, updateUserId } from "../../../store/stateSlice";
 import { useDispatch } from "react-redux";
 import Head from "next/head";
 import ReCAPTCHA from "react-google-recaptcha";
+import { sendWelcomeEmail } from "../../../utils/lib/sendWelcomeMail";
 
 const CreateAccount = () => {
   const router = useRouter();
@@ -63,7 +64,6 @@ const CreateAccount = () => {
       throw new Error("Error fetching local image");
     }
   }
-
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -140,6 +140,8 @@ const CreateAccount = () => {
           setLoading(false);
           return;
         }
+
+        await sendWelcomeEmail(formData.email, formData.fullName);
 
         // Redirect to the dashboard
         router.push("/dashboard");

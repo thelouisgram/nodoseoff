@@ -144,7 +144,7 @@ const CreateAccount = () => {
 
         // Redirect to the dashboard
         const { html, subject } = generateWelcomeEmail(formData.fullName);
-        await sendMail('hadesanoye01@gmail.com', html, subject, );
+        await sendMail(formData.email, html, subject, );
     
       console.log("Welcome email sent successfully!");
 

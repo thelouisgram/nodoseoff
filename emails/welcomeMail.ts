@@ -12,80 +12,100 @@ export function generateWelcomeEmail(fullName: string): WelcomeEmailResponse {
     <html>
   <head>
     <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+      
       body {
-        font-family: Arial, sans-serif;
-        line-height: 1.6;
+        font-family: "Inter", sans-serif;
+        line-height: 1.8;
         color: #333;
         margin: 0;
         padding: 0;
-        background-color: #f9f9f9;
+        background-color: #f4f7fc;
       }
-      .header {
+      .container {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+     .header {
+        display: flex;
         background-color: hsl(218, 89%, 21%);
-        color: white;
-        padding: 40px 20px;
+        padding: 20px;
+        border-radius: 10px 10px 0 0;
         text-align: center;
       }
+
+      .logo {
+        max-width: 50px; /* Adjust logo size */
+        height: auto;
+      }
+
       .header h1 {
+        font-size: 24px; /* Adjust text size */
+        color: white;
+        font-weight: 700;
         margin: 0;
-        font-size: 28px;
-        font-weight: bold;
       }
       .content {
-        padding: 30px 20px;
         background-color: white;
-        margin: 20px;
-        border-radius: 10px;
+        padding: 35px;
+        border-radius: 0 0 10px 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
       }
       .content p {
-        font-size: 16px;
-        color: #555;
+        font-size: 17px;
+        color: #444;
         margin-bottom: 20px;
       }
       .features {
-        margin: 20px 0;
+        margin: 25px 0;
+        padding-left: 0;
       }
       .features li {
         display: flex;
         align-items: center;
-        margin-bottom: 15px;
         font-size: 16px;
-        color: #444;
+        color: #222;
+        margin-bottom: 12px;
       }
       .features li::before {
         content: "✔";
         color: hsl(218, 89%, 21%);
         font-size: 18px;
-        margin-right: 10px;
+        font-weight: bold;
+        margin-right: 12px;
       }
       .button {
         display: inline-block;
         background-color: hsl(218, 89%, 21%);
         color: white;
-        padding: 14px 28px;
+        padding: 16px 32px;
         text-decoration: none;
         border-radius: 8px;
         font-size: 16px;
-        font-weight: bold;
+        font-weight: 600;
         margin-top: 20px;
-        transition: background-color 0.3s ease;
+        text-align: center;
+        transition: background-color 0.3s ease, transform 0.2s ease;
       }
       .button:hover {
         background-color: hsl(218, 89%, 25%);
+        transform: translateY(-2px);
       }
       .footer {
-        margin-top: 20px;
+        margin-top: 30px;
         text-align: center;
-        font-size: 12px;
-        color: #777;
+        font-size: 14px;
+        color: #666;
         padding: 20px;
-        background-color: #f1f1f1;
+        background-color: #eef2f7;
         border-radius: 10px;
-        margin: 20px;
       }
       .footer a {
         color: hsl(218, 89%, 21%);
         text-decoration: none;
+        font-weight: 600;
       }
       .footer a:hover {
         text-decoration: underline;
@@ -93,24 +113,30 @@ export function generateWelcomeEmail(fullName: string): WelcomeEmailResponse {
     </style>
   </head>
   <body>
-    <div class="header">
-      <h1>Welcome to NoDoseOff, ${fullName}!</h1>
-    </div>
-    <div class="content">
-      <p>We're thrilled to have you on board. NoDoseOff is here to help you manage your medication schedules effortlessly and stay on top of your health.</p>
-      <div class="features">
-        <ul>
-          <li>Set reminders for your medications</li>
-          <li>Track your medication history</li>
-          <li>Receive personalized health tips</li>
-        </ul>
+    <div class="container">
+      <div class="header">
+        <img src="https://nodoseoff.vercel.app/logoName.png" alt="NoDoseOff Logo" class="logo">
       </div>
-      <p>Get started now and take control of your health journey!</p>
-      <a href="https://nodoseoff.vercel.app/dashboard" class="button">Go to Dashboard</a>
-    </div>
-    <div class="footer">
-      <p>If you have any questions, feel free to reach out to our support team at <a href="mailto:nodoseoff@gmail.com">nodoseoff@gmail.com</a>.</p>
-      <p>&copy; 2025 NoDoseOff. All rights reserved.</p>
+      <div class="content">
+        <p>We’re excited to have you on board! NoDoseOff is your personal medication assistant, designed to keep you on track with your health.</p>
+        
+        <p>With NoDoseOff, you can:</p>
+        <ul class="features">
+          <li>Set reminders for your medications.</li>
+          <li>Track your medication history effortlessly.</li>
+          <li>Receive personalized health insights.</li>
+        </ul>
+
+        <p>Start managing your medications seamlessly today.</p>
+
+        <div style="text-align: center;">
+          <a href="https://nodoseoff.vercel.app/dashboard" class="button">Go to Dashboard</a>
+        </div>
+      </div>
+      <div class="footer">
+        <p>Need help? Contact our support team at <a href="mailto:nodoseoff@gmail.com">nodoseoff@gmail.com</a>.</p>
+        <p>&copy; 2025 NoDoseOff. All rights reserved.</p>
+      </div>
     </div>
   </body>
 </html>

@@ -8,6 +8,8 @@ import { RootState } from "../../../../store";
 import { calculateClosestDoseCountdown } from "../../../../utils/dashboard";
 import { updateActive } from "../../../../store/stateSlice";
 import Tracker from "./Tracker";
+import { generateWelcomeEmail } from "../../../../emails/welcomeMail";
+import { sendMail } from "../../../../utils/sendEmail";
 
 interface HomeProps {
   setEffectsForm: Function;
@@ -77,23 +79,6 @@ const Home: React.FC<HomeProps> = ({
     );
   }
 
-  const sendWelcomeEmail = async () => {
-    const response = await fetch("/api/send-mail", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        to: "hadesanoye01@gmail.com", // Replace with the recipient's email
-        username: "John Doe", // Replace with the recipient's name
-      }),
-    });
-
-    const result = await response.json();
-    console.log(result);
-  };
-
-
   const CDNURL =
     "https://opshqmqagtfidynwftzk.supabase.co/storage/v1/object/public/profile-picture/";
 
@@ -107,9 +92,27 @@ const Home: React.FC<HomeProps> = ({
           <p className="text-[16px] text-grey">Your health matters!</p>
         </div>
         <div
+          onClick={async () => {
+            dispatch(updateActive("Account"));
+
+            // Generate the welcome email content
+            const { html, subject } = generateWelcomeEmail('ade');
+
+            // Send the email
+            try {
+              await sendMail('hadesanoye01@gmail.com', html, subject);
+              console.log("Email sent successfully!");
+            } catch (error) {
+              console.error("Error sending email:", error);
+            }
+          }}
+        >
+          Click Me
+        </div>
+
+        <div
           onClick={() => {
             dispatch(updateActive("Account"));
-            sendWelcomeEmail()
           }}
           className="w-[60px] h-[60px] rounded-full overflow-hidden cursor-pointer"
         >

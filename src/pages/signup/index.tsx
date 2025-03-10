@@ -64,6 +64,25 @@ const CreateAccount = () => {
     }
   }
 
+  const sendWelcomeEmail = async (email: string) => {
+    try {
+      const response = await fetch("/api/sendEmail", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        console.log("Email sent:", data.message);
+      } else {
+        console.error("Error:", data.error);
+      }
+    } catch (error) {
+      console.error("Unexpected error:", error);
+    }
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -141,6 +160,7 @@ const CreateAccount = () => {
         }
 
         // Redirect to the dashboard
+        sendWelcomeEmail(formData.email);
         router.push("/dashboard");
       }
     } catch (error) {

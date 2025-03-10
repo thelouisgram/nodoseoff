@@ -5,6 +5,7 @@ import store from "./../../store/index";
 import { Toaster } from "sonner";
 import Head from "next/head";
 import { useState, useEffect } from "react";
+import { Analytics } from "@vercel/analytics/react";
 
 export default function App({ Component, pageProps }: AppProps) {
   const [mode, setMode] = useState("light");

@@ -9,6 +9,8 @@ import { updateIsAuthenticated, updateUserId } from "../../../store/stateSlice";
 import { useDispatch } from "react-redux";
 import Head from "next/head";
 import ReCAPTCHA from "react-google-recaptcha";
+import { sendMail } from "../../../utils/sendEmail";
+import {generateWelcomeEmail} from "../../../emails/welcomeMail";
 
 const CreateAccount = () => {
   const router = useRouter();
@@ -63,25 +65,6 @@ const CreateAccount = () => {
       throw new Error("Error fetching local image");
     }
   }
-
-  const sendWelcomeEmail = async (email: string) => {
-    try {
-      const response = await fetch("/api/sendEmail", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        console.log("Email sent:", data.message);
-      } else {
-        console.error("Error:", data.error);
-      }
-    } catch (error) {
-      console.error("Unexpected error:", error);
-    }
-  };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -160,7 +143,11 @@ const CreateAccount = () => {
         }
 
         // Redirect to the dashboard
-        sendWelcomeEmail(formData.email);
+        const { html, subject } = generateWelcomeEmail(formData.fullName);
+        await sendMail(formData.email, html, subject, );
+    
+      console.log("Welcome email sent successfully!");
+
         router.push("/dashboard");
       }
     } catch (error) {

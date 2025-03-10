@@ -92,6 +92,7 @@ const Home: React.FC<HomeProps> = ({
         <div
           onClick={() => {
             dispatch(updateActive("Account"));
+
           }}
           className="w-[60px] h-[60px] rounded-full overflow-hidden cursor-pointer"
         >

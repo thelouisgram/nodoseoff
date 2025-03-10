@@ -77,6 +77,23 @@ const Home: React.FC<HomeProps> = ({
     );
   }
 
+  const sendWelcomeEmail = async () => {
+    const response = await fetch("/api/send-mail", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        to: "hadesanoye01@gmail.com", // Replace with the recipient's email
+        username: "John Doe", // Replace with the recipient's name
+      }),
+    });
+
+    const result = await response.json();
+    console.log(result);
+  };
+
+
   const CDNURL =
     "https://opshqmqagtfidynwftzk.supabase.co/storage/v1/object/public/profile-picture/";
 
@@ -92,7 +109,7 @@ const Home: React.FC<HomeProps> = ({
         <div
           onClick={() => {
             dispatch(updateActive("Account"));
-
+            sendWelcomeEmail()
           }}
           className="w-[60px] h-[60px] rounded-full overflow-hidden cursor-pointer"
         >

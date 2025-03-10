@@ -5,7 +5,7 @@ export const sendMail = async (to:string, html:string, subject:string) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        to: to, // Replace with the recipient's email
+        to: to, 
         html: html,
         subject: subject,
       }),

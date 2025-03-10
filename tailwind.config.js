@@ -14,7 +14,7 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-         spartan: ["League Spartan", "sans-serif"],
+        spartan: ["League Spartan", "sans-serif"],
         karla: ["Karla", "sans-serif"],
         Inter: ["Inter", "sans-serif"],
         Poppins: ["Open Sans", "sans-serif"],

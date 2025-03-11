@@ -1,11 +1,18 @@
-interface WelcomeEmailResponse {
+interface DrugCompletionEmailResponse {
   subject: string;
   html: string;
 }
 
-export function generateWelcomeEmail(): WelcomeEmailResponse {
+export function generateDrugCompletionEmail(
+  fullName: string,
+  drugName: string,
+  startDate: string,
+  stopDate: string,
+  percentage: number,
+  level: string,
+): DrugCompletionEmailResponse {
   // Email subject
-  const subject = `Welcome to NoDoseOff!`;
+  const subject = `Congratulations on Completing: ${drugName.charAt(0).toUpperCase() + drugName.slice(1)}`;
 
   // Email HTML content
   const html = `
@@ -32,13 +39,13 @@ export function generateWelcomeEmail(): WelcomeEmailResponse {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 16px; /* Space between logo and text */
-            background-color: hsl(218, 89%, 21%);
+            gap: 16px;
+            background-color: hsl(150, 70%, 40%);
             padding: 20px;
             border-radius: 10px 10px 0 0;
           }
           .logo {
-            height: 32px; /* Fixed width for the logo */
+            height: 32px;
           }
           .content {
             background-color: white;
@@ -51,40 +58,16 @@ export function generateWelcomeEmail(): WelcomeEmailResponse {
             color: #444;
             margin-bottom: 20px;
           }
-          .features {
-            margin: 25px 0;
-            padding-left: 0;
-          }
-          .features li {
-            display: flex;
-            align-items: center;
-            font-size: 16px;
-            color: #222;
-            margin-bottom: 12px;
-          }
-          .features li::before {
-            content: "✔";
-            color: hsl(218, 89%, 21%);
-            font-size: 18px;
-            font-weight: bold;
-            margin-right: 12px;
-          }
-          .button {
-            display: inline-block;
-            background-color: hsl(218, 89%, 21%);
-            color: white;
-            padding: 16px 32px;
-            text-decoration: none;
+          .details {
+            background-color: #eef2f7;
+            padding: 15px;
             border-radius: 8px;
             font-size: 16px;
-            font-weight: 600;
-            margin-top: 20px;
-            text-align: center;
-            transition: background-color 0.3s ease, transform 0.2s ease;
+            color: #222;
+            margin-bottom: 20px;
           }
-          .button:hover {
-            background-color: hsl(218, 89%, 25%);
-            transform: translateY(-2px);
+          .details strong {
+            color: hsl(150, 70%, 40%);
           }
           .footer {
             margin-top: 30px;
@@ -96,7 +79,7 @@ export function generateWelcomeEmail(): WelcomeEmailResponse {
             border-radius: 10px;
           }
           .footer a {
-            color: hsl(218, 89%, 21%);
+            color: hsl(150, 70%, 40%);
             text-decoration: none;
             font-weight: 600;
           }
@@ -111,20 +94,18 @@ export function generateWelcomeEmail(): WelcomeEmailResponse {
             <img src="https://nodoseoff.vercel.app/logoName.png" alt="NoDoseOff Logo" class="logo">
           </div>
           <div class="content">
-            <p>We're thrilled to welcome you! NoDoseOff is your trusted medication companion, here to help you stay on top of your health with ease.</p>
-            
-            <p>With NoDoseOff, you can:</p>
-            <ul class="features">
-              <li>Set reminders for your medications.</li>
-              <li>Track your medication history effortlessly.</li>
-              <li>Receive personalized health insights.</li>
-            </ul>
+            <p>Hi ${fullName.split(' ')[0]},</p>
+            <p>Congratulations on completing your medication! Your commitment to your health is commendable.</p>
 
-            <p>Start managing your medications seamlessly today.</p>
-
-            <div style="text-align: center;">
-              <a href="https://nodoseoff.vercel.app/dashboard" class="button">Go to Dashboard</a>
+            <div class="details">
+              <p><strong>Medication:</strong> ${drugName.charAt(0).toUpperCase() + drugName.slice(1).toLowerCase()}</p>
+              <p><strong>Start Date:</strong> ${startDate}</p>
+              <p><strong>Completion Date:</strong> ${stopDate}</p>
+              <p><strong>Compliance:</strong> ${percentage}%</p>
+              <p><strong>Remark:</strong> ${level}</p>
             </div>
+
+            <p>We hope you’re feeling better! If you need a refill or have any concerns, consider visiting your physician.</p>
           </div>
           <div class="footer">
             <p>Need help? Contact our support team at <a href="mailto:nodoseoff@gmail.com">nodoseoff@gmail.com</a>.</p>

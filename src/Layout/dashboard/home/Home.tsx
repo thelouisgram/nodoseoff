@@ -8,8 +8,6 @@ import { RootState } from "../../../../store";
 import { calculateClosestDoseCountdown } from "../../../../utils/dashboard";
 import { updateActive } from "../../../../store/stateSlice";
 import Tracker from "./Tracker";
-import { generateWelcomeEmail } from "../../../../emails/welcomeMail";
-import { sendMail } from "../../../../utils/sendEmail";
 
 interface HomeProps {
   setEffectsForm: Function;
@@ -91,25 +89,6 @@ const Home: React.FC<HomeProps> = ({
           </h1>
           <p className="text-[16px] text-grey">Your health matters!</p>
         </div>
-        <div
-          onClick={async () => {
-            dispatch(updateActive("Account"));
-
-            // Generate the welcome email content
-            const { html, subject } = generateWelcomeEmail('ade');
-
-            // Send the email
-            try {
-              await sendMail('hadesanoye01@gmail.com', html, subject);
-              console.log("Email sent successfully!");
-            } catch (error) {
-              console.error("Error sending email:", error);
-            }
-          }}
-        >
-          Click Me
-        </div>
-
         <div
           onClick={() => {
             dispatch(updateActive("Account"));

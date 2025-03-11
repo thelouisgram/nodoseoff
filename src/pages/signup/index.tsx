@@ -143,11 +143,9 @@ const CreateAccount = () => {
         }
 
         // Redirect to the dashboard
-        const { html, subject } = generateWelcomeEmail(formData.fullName);
+        const { html, subject } = generateWelcomeEmail();
         await sendMail(formData.email, html, subject, );
     
-      console.log("Welcome email sent successfully!");
-
         router.push("/dashboard");
       }
     } catch (error) {

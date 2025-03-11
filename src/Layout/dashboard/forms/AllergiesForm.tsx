@@ -5,6 +5,8 @@ import { toast } from "sonner";
 import { RootState } from "../../../../store";
 import { updateAllergies } from "../../../../store/stateSlice";
 import supabase from "../../../../utils/supabase";
+import { generateDrugAllergyEmail } from "../../../../emails/drugAllergy";
+import { sendMail } from "../../../../utils/sendEmail";
 
 interface AllergiesFormProps {
   allergiesForm: boolean;
@@ -19,8 +21,10 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
   allergiesForm,
   setAllergiesForm,
 }) => {
-  const { allergies, userId } = useSelector((state: RootState) => state.app);
+  // Getting data from Global State
+  const { allergies, userId, info } = useSelector((state: RootState) => state.app);
   const dispatch = useDispatch();
+  // Allergic Drug form
   const [formData, setFormData] = useState({
     drug: "",
     frequency: "",
@@ -32,6 +36,7 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
     drugId: "",
   });
 
+  // Ensure top of form in frame on opening
   useEffect(() => {
     const formElement = document.getElementById("top-allergies");
     if (formElement) {
@@ -39,10 +44,12 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
     }
   }, [allergiesForm]);
 
+  // Error State
   const [formErrors, setFormErrors] = useState({
     drug: "",
   });
 
+  // Handle Form Input
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({
@@ -51,6 +58,7 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
     });
   };
 
+  // Empty Form after success/failure
   const resetFormData = () => {
     setFormData({
       drug: "",
@@ -64,14 +72,17 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
     });
   };
 
+  // Loading state
   const [loading, setLoading] = useState(false);
 
+  // Submit Form Function
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const errors: FormErrors = {
       allergy: formData.drug ? "" : "Please fill in the Drug field.",
     };
 
+    // Preventing adding an already existing allergy
     const drugAlreadyExists = allergies.some(
       (item) => item.drug.toLowerCase() === formData.drug.toLowerCase()
     );
@@ -114,20 +125,26 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
         return;
       }
 
+      // Update Global State of New Drug
       dispatch(updateAllergies([...allergies, formData]));
+      // Success Notification
       toast.success(`${formData.drug.toUpperCase()}  added successfully!`);
-      setFormData({
-        drug: "",
-        frequency: "",
-        route: "",
-        start: "",
-        end: "",
-        time: [""],
-        reminder: true,
-        drugId: "",
-      });
+
+      // Send Drug Allergy Email Function
+      const { html, subject } = generateDrugAllergyEmail(
+              info[0].name,
+              formData.drug,
+            );
+      await sendMail(info[0].email, html, subject);
+           
+      // Reset Form
+      resetFormData;
+
+      // Reset Error State
       setFormErrors({ drug: "" });
+      // Close Allergies Form
       setAllergiesForm(false);
+      // Stop loading
       setLoading(false);
     } catch (error) {
       toast.error(
@@ -137,6 +154,7 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
     }
   };
 
+  // Submit Function
   const handleClick = () => {
     const syntheticEvent = new Event(
       "submit"

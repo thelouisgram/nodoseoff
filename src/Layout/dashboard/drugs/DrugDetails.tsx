@@ -3,7 +3,10 @@ import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../../store";
-import { updateActiveDrug, updateActiveDrugId } from "../../../../store/stateSlice";
+import {
+  updateActiveDrug,
+  updateActiveDrugId,
+} from "../../../../store/stateSlice";
 import {
   formatDate,
   frequencyToPlaceholder,
@@ -69,9 +72,8 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
   handleDeleteAllergy,
   setEditForm,
 }) => {
-  const { schedule, drugs, completedDrugs, activeDrug, activeDrugId } = useSelector(
-    (state: RootState) => state.app
-  );
+  const { schedule, drugs, completedDrugs, activeDrug, activeDrugId, info } =
+    useSelector((state: RootState) => state.app);
 
   function calculateCompliance(
     schedule: ScheduleItem[]
@@ -246,7 +248,7 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
             {drug}
           </h1>
           <button
-          disabled={options}
+            disabled={options}
             onClick={() => {
               setOptions((prev) => !prev), dispatch(updateActiveDrug(drug));
             }}
@@ -302,11 +304,10 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
               </button>
               {tab !== "Allergies" && (
                 <button
-                  onClick={() => {
+                  onClick={async () => {
                     dispatch(updateActiveDrug(drug)),
                       setScreen(true),
                       setAllergyModal(true);
-                    setOptions(false);
                   }}
                   className="h-8 hover:bg-gray-100 flex items-center gap-3 w-full px-3"
                 >
@@ -344,19 +345,17 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
               <h2 className="text-[12px] ss:text-[14px] font-semibold text-grey font-karla">
                 Route Of Administration
               </h2>
-                <h3 className="text-[14px] ss:text-[16px] capitalize font-Inter">
-                  {route}
-                </h3>
-              
+              <h3 className="text-[14px] ss:text-[16px] capitalize font-Inter">
+                {route}
+              </h3>
             </div>
             <div className=" px-6 py-3">
               <h2 className="text-[12px] ss:text-[14px] font-semibold text-grey font-karla">
                 Compliance level
               </h2>
-                <h3 className="text-[14px] ss:text-[16px] capitalize font-Inter">
-                  {compliance.toFixed()}%
-                </h3>
-              
+              <h3 className="text-[14px] ss:text-[16px] capitalize font-Inter">
+                {compliance.toFixed()}%
+              </h3>
             </div>
           </div>
         </div>
@@ -374,8 +373,8 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
               Confirm to delete {activeDrug.toUpperCase()}?
             </h1>
             <h2 className="text-navyBlue border-b-[1px] text-left px-4 py-4 text-[12px] ss:text-[14px]">
-              Are you sure you want to delete the selected drug? <br className="hidden md:flex" /> This
-              action cannot be undone.
+              Are you sure you want to delete the selected drug?{" "}
+              <br className="hidden md:flex" /> This action cannot be undone.
             </h2>
             <div className="w-full flex gap-3 justify-start flex-row-reverse text-[12px] py-4 px-4">
               <button
@@ -414,7 +413,8 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
               Confirm to add &apos;{activeDrug}&apos; to Allergies?
             </h1>
             <h2 className="text-navyBlue border-b-[1px] text-left px-4 py-4 text-[12px] ss:text-[14px]">
-              Are you sure you want to mark the selected drug as Allergy? <br className="hidden md:flex"/>
+              Are you sure you want to mark the selected drug as Allergy?{" "}
+              <br className="hidden md:flex" />
               This action cannot be undone.
             </h2>
             <div className="w-full flex gap-3 justify-start flex-row-reverse text-[12px] py-4 px-4">

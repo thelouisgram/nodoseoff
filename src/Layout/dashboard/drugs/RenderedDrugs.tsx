@@ -1,13 +1,12 @@
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../../../store";
 import {
   updateActiveDrug,
   updateActiveDrugId,
 } from "../../../../store/stateSlice";
 import { DrugProps } from "../../../../types/dashboard";
-import { formatDate, formatDateToSlash } from "../../../../utils/dashboard";
+import { formatDate } from "../../../../utils/dashboard";
 import { calculateTimePeriod } from "../../../../utils/drugs";
 
 interface thisProps {

@@ -1,11 +1,20 @@
-interface WelcomeEmailResponse {
+import { formatDate } from "../utils/dashboard";
+
+interface DrugAddedEmailResponse {
   subject: string;
   html: string;
 }
 
-export function generateWelcomeEmail(): WelcomeEmailResponse {
+export function generateDrugAddedEmail(
+  fullName: string,
+  drugName: string,
+  startDate: string,
+  stopDate: string,
+  route: string,
+  time: string[]
+): DrugAddedEmailResponse {
   // Email subject
-  const subject = `Welcome to NoDoseOff!`;
+  const subject = `New Medication Added: ${drugName.charAt(0).toUpperCase() + drugName.slice(1)}`;
 
   // Email HTML content
   const html = `
@@ -38,7 +47,7 @@ export function generateWelcomeEmail(): WelcomeEmailResponse {
             border-radius: 10px 10px 0 0;
           }
           .logo {
-            height: 32px; /* Fixed width for the logo */
+            height: 32px;
           }
           .content {
             background-color: white;
@@ -51,23 +60,16 @@ export function generateWelcomeEmail(): WelcomeEmailResponse {
             color: #444;
             margin-bottom: 20px;
           }
-          .features {
-            margin: 25px 0;
-            padding-left: 0;
-          }
-          .features li {
-            display: flex;
-            align-items: center;
+          .details {
+            background-color: #eef2f7;
+            padding: 15px;
+            border-radius: 8px;
             font-size: 16px;
             color: #222;
-            margin-bottom: 12px;
+            margin-bottom: 20px;
           }
-          .features li::before {
-            content: "✔";
+          .details strong {
             color: hsl(218, 89%, 21%);
-            font-size: 18px;
-            font-weight: bold;
-            margin-right: 12px;
           }
           .button {
             display: inline-block;
@@ -111,19 +113,21 @@ export function generateWelcomeEmail(): WelcomeEmailResponse {
             <img src="https://nodoseoff.vercel.app/logoName.png" alt="NoDoseOff Logo" class="logo">
           </div>
           <div class="content">
-            <p>We're thrilled to welcome you! NoDoseOff is your trusted medication companion, here to help you stay on top of your health with ease.</p>
-            
-            <p>With NoDoseOff, you can:</p>
-            <ul class="features">
-              <li>Set reminders for your medications.</li>
-              <li>Track your medication history effortlessly.</li>
-              <li>Receive personalized health insights.</li>
-            </ul>
+            <p>Hi  ${fullName.split(' ')[0]},</p>
+            <p>You have successfully added a new medication to your NoDoseOff schedule.</p>
 
-            <p>Start managing your medications seamlessly today.</p>
+            <div class="details">
+              <p><strong>Medication:</strong> ${drugName.charAt(0).toUpperCase() + drugName.slice(1).toLowerCase()}</p>
+              <p><strong>From:</strong> ${formatDate(startDate)}</p>
+             <p><strong>To:</strong> ${formatDate(stopDate)}</p>
+              <p><strong>Time:</strong> ${time.join(', ')}</p>
+              <p><strong>Route of Administration:</strong> ${route.charAt(0).toUpperCase() + route.slice(1).toLowerCase()}</p>
+            </div>
+
+            <p>Stay consistent with your medication and keep track of your health effortlessly with NoDoseOff.</p>
 
             <div style="text-align: center;">
-              <a href="https://nodoseoff.vercel.app/dashboard" class="button">Go to Dashboard</a>
+              <a href="https://nodoseoff.vercel.app/dashboard" class="button">View Medication Schedule</a>
             </div>
           </div>
           <div class="footer">

@@ -12,8 +12,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const { data, error } = await resend.emails.send({
-      from: 'NoDoseOff <onboarding@resend.dev>', 
-      to: to, // Recipient email address
+      from: 'Ade from NoDoseOff <onboarding@resend.dev>',
+      to: to, 
       subject: subject,
       html: html,
     });

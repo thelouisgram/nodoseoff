@@ -87,6 +87,7 @@ const Drugs: React.FC<DrugsProps> = ({
   const [displayDrugs, setDisplayDrugs] = useState(true);
   const dispatch = useDispatch();
 
+  // Closes Dropdown when clicked outside the dropdown
   const dropdownRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
   const handleClickOutside = (event: MouseEvent): void => {
     if (
@@ -122,53 +123,7 @@ const Drugs: React.FC<DrugsProps> = ({
     }
   }, []);
 
-  useEffect(() => {
-    dispatch(updateActiveDrug(activeDrug));
-  }, [activeDrug]);
-
-  const handleDeleteExpiredDrugs = async (drugName: string) => {
-    try {
-      const { error } = await supabase
-        .from("drugs")
-        .delete()
-        .eq("drug", drugName);
-
-      if (error) {
-        console.error("Error deleting drug:", error);
-      }
-    } catch (error) {
-      console.error("Error deleting drug:", error);
-    }
-  };
-
-  useEffect(() => {
-    const currentDate = new Date();
-    const twoDaysPastDate = new Date();
-    twoDaysPastDate.setDate(currentDate.getDate() - 2);
-
-    const justCompletedDrugs = drugs.filter(
-      (drug) => new Date(drug.end) <= twoDaysPastDate
-    );
-
-    const nonCompletedDrugs = drugs.filter(
-      (drug) => new Date(drug.end) > twoDaysPastDate
-    );
-
-    const newCompletedDrugs = [...completedDrugs, ...justCompletedDrugs];
-
-    // Dispatch nonCompletedDrugs immediately
-    dispatch(setDrugs(nonCompletedDrugs));
-    dispatch(updateCompletedDrugs(newCompletedDrugs));
-
-    // Upload newCompletedDrugs to the database
-    uploadCompletedDrugs(newCompletedDrugs);
-
-    // Delete each non-completed drug
-    justCompletedDrugs.forEach(async (drug) => {
-      await handleDeleteExpiredDrugs(drug.drug);
-    });
-  }, []);
-
+  // Upload Database of completed drug
   const uploadCompletedDrugs = async (newCompletedDrugs: DrugProps[]) => {
     try {
       const { error } = await supabase
@@ -186,6 +141,7 @@ const Drugs: React.FC<DrugsProps> = ({
     }
   };
 
+  // Function to delete Drug
   const handleDelete = async () => {
     toast.loading("Deleting drug", { duration: 2000 });
 
@@ -230,6 +186,7 @@ const Drugs: React.FC<DrugsProps> = ({
     }
   };
 
+  // Function to delete Drug Allergy
   const handleDeleteAllergy = async (drug: string) => {
     // Show loading toast while uploading the schedule
     toast.loading("Deleting drug", { duration: 2000 });
@@ -394,8 +351,9 @@ const Drugs: React.FC<DrugsProps> = ({
                   Confirm to delete {activeDrug.toUpperCase()} ?
                 </h1>
                 <h2 className="text-navyBlue border-b-[1px] text-left px-4 py-4 text-[12px] ss:text-[14px]">
-                  Are you sure you want to delete the selected drug? <br className="hidden md:flex"/> This
-                  action cannot be undone.
+                  Are you sure you want to delete the selected drug?{" "}
+                  <br className="hidden md:flex" /> This action cannot be
+                  undone.
                 </h2>
                 <div className="w-full flex gap-3 justify-start flex-row-reverse text-[12px] py-4 px-4">
                   <button
@@ -436,7 +394,8 @@ const Drugs: React.FC<DrugsProps> = ({
                 </h1>
                 <h2 className="text-navyBlue border-b-[1px] text-left px-4 py-4 text-[12px] ss:text-[14px]">
                   Are you sure you want to mark the selected drug as Allergy?
-                  <br className="hidden md:flex"/> This action cannot be undone.
+                  <br className="hidden md:flex" /> This action cannot be
+                  undone.
                 </h2>
                 <div className="w-full flex gap-3 justify-start flex-row-reverse text-[12px] py-4 px-4">
                   <button
@@ -471,9 +430,8 @@ const Drugs: React.FC<DrugsProps> = ({
                   Continue to Edit {activeDrug.toUpperCase()} ?
                 </h1>
                 <h2 className="text-navyBlue border-b-[1px] text-left px-4 py-4 text-[12px] ss:text-[14px]">
-                  Proceed to edit the selected drug.
-                   Changes apply only <br className="hidden md:flex" /> from
-                  today's doses.
+                  Proceed to edit the selected drug. Changes apply only{" "}
+                  <br className="hidden md:flex" /> from today's doses.
                 </h2>
                 <div className="w-full flex gap-3 justify-start flex-row-reverse text-[12px] py-4 px-4">
                   <button
@@ -497,7 +455,7 @@ const Drugs: React.FC<DrugsProps> = ({
               </div>
             </div>
           )}
-          <div className={`fixed ${add && 'z-[144]'} font-karla`}>
+          <div className={`fixed ${add && "z-[144]"} font-karla`}>
             <button
               onClick={() => {
                 setAdd(false);
@@ -506,7 +464,9 @@ const Drugs: React.FC<DrugsProps> = ({
               }}
               title="Add Drug"
               className={`bg-white py-2 aspect-square  ${
-                !add ? "right-4 ss:right-10 w-12 h-12 opacity-0" : "right-24 md:right-36 w-16 h-16 opacity-100"
+                !add
+                  ? "right-4 ss:right-10 w-12 h-12 opacity-0"
+                  : "right-24 md:right-36 w-16 h-16 opacity-100"
               } transition-all duration-450 fixed rounded-full bottom-20 md:bottom-6 font-semibold justify-center flex gap-2 
                   ss:gap-3 items-center`}
             >

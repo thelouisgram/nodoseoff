@@ -52,7 +52,7 @@ interface tabsProps {
 }
 
 const Page = () => {
-  const { userId, active, schedule } = useSelector(
+  const { userId, active, schedule, completedDrugs } = useSelector(
     (state: RootState) => state.app
   );
   const dispatch = useDispatch();
@@ -85,91 +85,118 @@ const Page = () => {
     }
   }, []);
 
-  useEffect(() => {
-    dispatch(updateActive("Home"));
-    const fetchData = async () => {
-      try {
-        const [
-          userData,
-          profilePictureData,
-          drugsData,
-          completedDrugsData,
-          effectsData,
-          allergiesData,
-          scheduleData,
-        ] = await Promise.all([
-          supabase
-            .from("users")
-            .select("name, phone, email, otcDrugs, herbs")
-            .eq("userId", userId),
-          supabase.storage
-            .from("profile-picture")
-            .list(userId + "/", { limit: 1, offset: 0 }),
-          supabase.from("drugs").select("*").eq("userId", userId),
-          supabase.from("users").select("completedDrugs").eq("userId", userId),
-          supabase.from("effects").select("*").eq("userId", userId),
-          supabase.from("allergies").select("*").eq("userId", userId),
-          supabase.from("users").select("schedule").eq("userId", userId),
-        ]);
+ useEffect(() => {
+   dispatch(updateActive("Home"));
 
-        if (
-          userData.error ||
-          profilePictureData.error ||
-          drugsData.error ||
-          completedDrugsData.error ||
-          effectsData.error ||
-          allergiesData.error ||
-          scheduleData.error
-        ) {
-          throw new Error("Error fetching data");
-        }
+   const fetchData = async () => {
+     try {
+       const [
+         userData,
+         profilePictureData,
+         drugsData,
+         completedDrugsData,
+         effectsData,
+         allergiesData,
+         scheduleData,
+       ] = await Promise.all([
+         supabase
+           .from("users")
+           .select("name, phone, email, otcDrugs, herbs")
+           .eq("userId", userId),
+         supabase.storage
+           .from("profile-picture")
+           .list(userId + "/", { limit: 1, offset: 0 }),
+         supabase.from("drugs").select("*").eq("userId", userId),
+         supabase.from("users").select("completedDrugs").eq("userId", userId),
+         supabase.from("effects").select("*").eq("userId", userId),
+         supabase.from("allergies").select("*").eq("userId", userId),
+         supabase.from("users").select("schedule").eq("userId", userId),
+       ]);
 
-        const userInfo = userData.data && userData.data[0];
-        dispatch(updateInfo([userInfo]));
+       if (
+         userData.error ||
+         profilePictureData.error ||
+         drugsData.error ||
+         completedDrugsData.error ||
+         effectsData.error ||
+         allergiesData.error ||
+         scheduleData.error
+       ) {
+         throw new Error("Error fetching data");
+       }
 
-        const profilePicture = profilePictureData.data
-          ? String(profilePictureData.data[0]?.name)
-          : "";
-        dispatch(updateProfilePicture(profilePicture));
+       // Ensure user info is dispatched properly
+       const userInfo = userData.data?.[0] ?? {};
+       dispatch(updateInfo([userInfo]));
 
-        const drugs = drugsData.data ?? [];
-        dispatch(setDrugs(drugs));
+       // Profile picture update
+       const profilePicture = profilePictureData.data?.[0]?.name ?? "";
+       dispatch(updateProfilePicture(profilePicture));
 
-        const transformedCompletedDrugsData =
-          completedDrugsData.data?.map((item) => [...item.completedDrugs]) ??
-          [];
-        const flattenedCompletedDrugsData =
-          transformedCompletedDrugsData.flatMap(
-            (innerArray: DrugProps[]) => innerArray
-          );
-        dispatch(updateCompletedDrugs(flattenedCompletedDrugsData));
+       // Ensure completedDrugsData is loaded
+       const completedDrugs =
+         completedDrugsData.data?.[0]?.completedDrugs ?? [];
+       dispatch(updateCompletedDrugs(completedDrugs));
 
-        const effects = effectsData.data ?? [];
-        dispatch(setEffects(effects));
+       // Wait for drugs to load before proceeding
+       if (!drugsData.data) return;
 
-        const allergies = allergiesData.data ?? [];
-        dispatch(updateAllergies(allergies));
+       const drugs = drugsData.data;
+       const currentDate = new Date();
+       const twoDaysPastDate = new Date();
+       twoDaysPastDate.setDate(currentDate.getDate() - 2);
 
-        const transformedScheduleData =
-          scheduleData.data?.map((item) => [...item.schedule]) ?? [];
-        const flattenedScheduleData = transformedScheduleData.flatMap(
-          (innerArray: ScheduleItem[]) => innerArray
-        );
-        dispatch(updateSchedule(flattenedScheduleData));
+       // Filter active and expired drugs
+       const activeDrugs = drugs.filter(
+         (drug) => new Date(drug.end) > twoDaysPastDate
+       );
+       const expiredDrugs = drugs.filter(
+         (drug) => new Date(drug.end) <= twoDaysPastDate
+       );
 
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 1000);
-      } catch (error) {
-        toast.error("Error fetching data");
-      }
-    };
+       // Combine expired drugs with existing completed drugs
+       const updatedCompletedDrugs = [...completedDrugs, ...expiredDrugs];
 
-    if (userId) {
-      fetchData();
-    }
-  }, [userId]);
+       console.log("Updated Completed Drugs:", updatedCompletedDrugs);
 
+       // Dispatch the updated data
+       dispatch(setDrugs(activeDrugs));
+       dispatch(updateCompletedDrugs(updatedCompletedDrugs));
+
+       // Update completed drugs in database asynchronously
+       await supabase
+         .from("users")
+         .update({ completedDrugs: updatedCompletedDrugs })
+         .eq("userId", userId);
+
+       // Delete expired drugs from the database
+       if (expiredDrugs.length > 0) {
+         await Promise.all(
+           expiredDrugs.map(async (drug) => {
+             await supabase.from("drugs").delete().eq("drug", drug.drug);
+           })
+         );
+       }
+
+       // Update effects and allergies
+       dispatch(setEffects(effectsData.data ?? []));
+       dispatch(updateAllergies(allergiesData.data ?? []));
+
+       // Ensure schedule is updated
+       dispatch(updateSchedule(scheduleData?.data?.[0]?.schedule ?? []));
+
+       setTimeout(() => {
+         setIsLoading(false);
+       }, 1000);
+     } catch (error) {
+       toast.error("Error fetching data");
+     }
+   };
+
+   if (userId) {
+     fetchData();
+   }
+ }, [userId]);
 
   const renderedTabs = tabs.map((item: tabsProps, index: number) => {
     return (
@@ -397,7 +424,7 @@ const Page = () => {
         </div>
       );
     });
-
+    
   return (
     <Suspense fallback={<Loader />}>
       <Head>

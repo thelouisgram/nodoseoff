@@ -10,6 +10,8 @@ import { dose, generateSchedule } from "../../../../utils/dashboard";
 import { uploadScheduleToServer } from "../../../../utils/schedule";
 import supabase from "../../../../utils/supabase";
 import { generateDrugId } from "../../../../utils/drugs";
+import { sendMail } from "../../../../utils/sendEmail";
+import { generateDrugAddedEmail } from "../../../../emails/newDrug";
 
 interface DrugFormProps {
   drugsForm: boolean;
@@ -23,7 +25,7 @@ interface SelectedDoseTypes {
 }
 
 const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
-  const { drugs, schedule, userId, allergies } = useSelector(
+  const { drugs, schedule, userId, allergies, info } = useSelector(
     (state: RootState) => state.app
   );
 
@@ -211,6 +213,17 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
       // Update formData state with drugId
       formData.drugId = drugId;
 
+      const { html, subject } = generateDrugAddedEmail(
+        info[0].name,
+        formData.drug,
+        formData.start,
+        formData.end,
+        formData.route,
+        formData.time
+      );
+      await sendMail(info[0].email, html, subject);
+     
+      
       dispatch(setDrugs([...drugs, formData]));
       toast.success(`${formData.drug.toUpperCase()} added successfully!`);
       setDrugsForm(false);
@@ -233,6 +246,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
       resetFormData();
       resetFormErrors();
       setLoading(false);
+      
     }
   };
 

@@ -83,7 +83,7 @@ const Drugs: React.FC<DrugsProps> = ({
     activeDrug,
     completedDrugs,
     activeDrugId,
-    info
+    info,
   } = useSelector((state: RootState) => state.app);
 
   const [tab, setTab] = useState<string>("Ongoing");
@@ -270,12 +270,12 @@ const Drugs: React.FC<DrugsProps> = ({
         // Update the Redux state after deleting and uploading the schedule
         dispatch(setDrugs(drugs.filter((drug) => drug.drug !== activeDrug)));
         dispatch(updateSchedule(updatedSchedule));
-          // Send Drug Allergy Email Function
-              const { html, subject } = generateDrugAllergyEmail(
-                      info[0].name,
-                      activeDrug,
-                    );
-              await sendMail(info[0].email, html, subject);
+        // Send Drug Allergy Email Function
+        const { html, subject } = generateDrugAllergyEmail(
+          info[0].name,
+          activeDrug
+        );
+        await sendMail(info[0].email, html, subject);
       } catch (error) {
         console.error("Error handling allergies:", error);
       }

@@ -308,6 +308,7 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
                     dispatch(updateActiveDrug(drug)),
                       setScreen(true),
                       setAllergyModal(true);
+                    setOptions(false);
                   }}
                   className="h-8 hover:bg-gray-100 flex items-center gap-3 w-full px-3"
                 >

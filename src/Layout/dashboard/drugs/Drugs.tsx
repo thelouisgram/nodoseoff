@@ -25,6 +25,8 @@ import Allergies from "./tabs/Allergies";
 import Completed from "./tabs/Completed";
 import Ongoing from "./tabs/Ongoing";
 import Loader from "../shared/Loader";
+import { generateDrugAllergyEmail } from "../../../../emails/drugAllergy";
+import { sendMail } from "../../../../utils/sendEmail";
 
 interface DrugsProps {
   screen: boolean;
@@ -81,6 +83,7 @@ const Drugs: React.FC<DrugsProps> = ({
     activeDrug,
     completedDrugs,
     activeDrugId,
+    info
   } = useSelector((state: RootState) => state.app);
 
   const [tab, setTab] = useState<string>("Ongoing");
@@ -267,6 +270,12 @@ const Drugs: React.FC<DrugsProps> = ({
         // Update the Redux state after deleting and uploading the schedule
         dispatch(setDrugs(drugs.filter((drug) => drug.drug !== activeDrug)));
         dispatch(updateSchedule(updatedSchedule));
+          // Send Drug Allergy Email Function
+              const { html, subject } = generateDrugAllergyEmail(
+                      info[0].name,
+                      activeDrug,
+                    );
+              await sendMail(info[0].email, html, subject);
       } catch (error) {
         console.error("Error handling allergies:", error);
       }

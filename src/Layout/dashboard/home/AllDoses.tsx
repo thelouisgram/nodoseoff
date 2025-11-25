@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useRef, useEffect } from "react";
-import Image from "next/image";
+import { X } from "lucide-react";
 
 interface AllDosesProps {
   setAllDoses: Function;
@@ -61,17 +61,15 @@ const AllDoses: React.FC<AllDosesProps> = ({
           className={`h-full flex flex-col w-full p-8 pt-0 overflow-y-scroll bg-white`}
         >
           <div className="w-full flex justify-end mb-10">
-            <Image
-              src="/assets/x (1).png"
-              width={18}
-              height={18}
-              alt="cancel"
+            <button
               onClick={() => {
                 setAllDoses(false);
               }}
               id="top-allDoses"
               className="cursor-pointer pt-8"
-            />
+            >
+              <X className="size-6 text-gray-800" />
+            </button>
           </div>
           <div className="mb-10">
             <h1 className="text-[24px] text-blue-700 font-bold leading-tight">

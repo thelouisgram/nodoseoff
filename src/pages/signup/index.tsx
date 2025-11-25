@@ -10,7 +10,7 @@ import { useDispatch } from "react-redux";
 import Head from "next/head";
 import ReCAPTCHA from "react-google-recaptcha";
 import { sendMail } from "../../../utils/sendEmail";
-import {generateWelcomeEmail} from "../../../emails/welcomeMail";
+import { generateWelcomeEmail } from "../../../emails/welcomeMail";
 
 const CreateAccount = () => {
   const router = useRouter();
@@ -115,37 +115,51 @@ const CreateAccount = () => {
         dispatch(updateIsAuthenticated(true));
         dispatch(updateUserId(userId));
 
-        // Add user info to the database
-        const { error: insertError } = await supabase.from("users").insert({
+        // Insert into "users"
+        const { error: userError } = await supabase.from("users").insert({
           name: formData.fullName,
           phone: formData.phoneNumber,
           email: formData.email,
           userId: userId,
-          schedule: [],
         });
 
-        if (insertError) {
-          setErrorMessage("Error occurred while adding user info.");
-          setLoading(false);
-          return;
-        }
+        if (userError) throw userError;
 
-        // Fetch and upload the local profile picture
-        const file = await fetchLocalImage();
-        const { error: uploadError } = await supabase.storage
-          .from("profile-picture")
-          .upload(`${userId}/avatar.png`, file);
+        // Insert into "schedule"
+        const { error: scheduleError } = await supabase
+          .from("schedule")
+          .insert({
+            userId: userId,
+            schedule: [],
+          });
 
-        if (uploadError) {
-          console.error("Error uploading profile picture:", uploadError);
-          setLoading(false);
-          return;
-        }
+        if (scheduleError) throw scheduleError;
+
+        // Insert into "completedDrugs"
+        const { error: completedError } = await supabase
+          .from("completedDrugs")
+          .insert({
+            userId: userId,
+            completedDrugs: [],
+          });
+
+        if (completedError) throw completedError;
+
+        // Insert into "drugHistory"
+        const { error: historyError } = await supabase
+          .from("drugHistory")
+          .insert({
+            userId: userId,
+            otcDrugs: "",
+            herbs: "",
+          });
+
+        if (historyError) throw historyError;
 
         // Redirect to the dashboard
         const { html, subject } = generateWelcomeEmail();
-        await sendMail(formData.email, html, subject, );
-    
+        await sendMail(formData.email, html, subject);
+
         router.push("/dashboard");
       }
     } catch (error) {

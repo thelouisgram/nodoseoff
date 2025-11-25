@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import supabase from "../../../../utils/supabase";
 import { toast } from "sonner";
 import { updateInfo, updateProfilePicture } from "../../../../store/stateSlice";
+import { UserRoundPen, X } from "lucide-react";
 
 interface ProfileFormProps {
   setProfileForm: Function;
@@ -19,111 +20,109 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
   const { info, userId, profilePicture } = useSelector(
     (state: RootState) => state.app
   );
-  const { name, phone, email, otcDrugs, herbs } = info[0];
-  const dispatch = useDispatch();
+  const { name, phone, email } = info[0];
 
-  const [formData, setFormData] = useState({
-    name,
-    phone,
-    email,
-    otcDrugs,
-    herbs,
-  });
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  // FORM DATA
+  const [formData, setFormData] = useState({ name, phone, email });
+
+  // IMAGE PREVIEW AND SELECTION (DELAYED UPLOAD)
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [previewURL, setPreviewURL] = useState<string | null>(null);
+
+  // ---------------------------
+  // HANDLE IMAGE SELECTION (ONLY PREVIEW)
+  // ---------------------------
+  const handleImageSelect = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files?.length) return;
+    const file = e.target.files[0];
+    setSelectedImage(file);
+    setPreviewURL(URL.createObjectURL(file));
+  };
+
+  // ---------------------------
+  // HANDLE FORM SUBMIT / PROCEED
+  // ---------------------------
+  const handleSubmit = async (e: FormEvent<HTMLFormElement> | undefined) => {
+    if (e) e.preventDefault();
     setLoading(true);
 
-    try {
+    // 1️⃣ Update Name
+    if (formData.name !== name) {
       const { error } = await supabase
         .from("users")
-        .update({
-          name: formData.name,
-        })
+        .update({ name: formData.name })
         .eq("userId", userId);
 
       if (error) {
-        toast.error(
-          "Failed to update profile. Check your connection and try again!"
-        );
+        toast.error("Failed to update name");
         setLoading(false);
         return;
       }
 
-      dispatch(updateInfo([formData]));
-      setProfileForm(false);
-      toast.success("Profile updated successfully!");
-    } catch (error) {
-      toast.error("Failed to update profile. Please try again!");
-    } finally {
-      setLoading(false);
+      dispatch(updateInfo([{ ...info[0], name: formData.name }]));
     }
+
+    // 2️⃣ Upload New Profile Picture (only on submit)
+    if (selectedImage) {
+      const bucket = "profile-picture";
+      const newFileName = `${Date.now()}-${selectedImage.name}`;
+      const filePath = `${userId}/${newFileName}`;
+
+      // Delete old file
+      if (profilePicture) {
+        await supabase.storage.from(bucket).remove([`${userId}/${profilePicture}`]);
+      }
+
+      // Upload new picture
+      const { error: uploadError } = await supabase.storage
+        .from(bucket)
+        .upload(filePath, selectedImage);
+
+      if (uploadError) {
+        toast.error("Failed to upload profile picture");
+        setLoading(false);
+        return;
+      }
+
+      dispatch(updateProfilePicture(newFileName));
+    }
+
+    toast.success("Profile updated!");
+    setLoading(false);
+    setProfileForm(false);
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value.toLowerCase() });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const CDNURL =
     "https://opshqmqagtfidynwftzk.supabase.co/storage/v1/object/public/profile-picture/";
 
-  async function updateImage(e: ChangeEvent<HTMLInputElement>) {
-    if (!e.target.files || e.target.files.length === 0) {
-      console.error("No files selected");
-      return;
-    }
-
-    const file = e.target.files[0];
-    const newFileName = `${userId}/${Date.now()}-${file.name}`; // Unique filename
-    const localFileName = `${Date.now()}-${file.name}`; // Unique filename
-    const storageBucket = "profile-picture";
-
-    // Delete old profile picture if it exists
-    if (profilePicture) {
-      const oldFilePath = `${userId}/${profilePicture}`;
-      await supabase.storage.from(storageBucket).remove([oldFilePath]);
-    }
-
-    // Upload new profile picture
-    const { data, error } = await supabase.storage
-      .from(storageBucket)
-      .upload(newFileName, file);
-
-    if (error) {
-      console.error("Error uploading image:", error);
-      toast.error("Failed to upload image.");
-      return;
-    }
-
-    // Update Redux state with new profile picture
-    dispatch(updateProfilePicture(localFileName));
-  }
-
   return (
     <div
-      className={` ${
+      className={`${
         profileForm ? "w-full" : "w-0"
       } fixed right-0 bg-none z-[2] h-[100dvh]`}
     >
       <div
-        className={` ${
-          profileForm ? "right-0 ss:w-[450px]" : "-right-[450px] ss:w-[450px] "
-        } 
-        transition-all duration-300 absolute w-full bg-white h-full z-[4] `}
+        className={`${
+          profileForm ? "right-0 ss:w-[450px]" : "-right-[450px] ss:w-[450px]"
+        } transition-all duration-300 absolute w-full bg-white h-full z-[4]`}
       >
         <div className="h-full flex flex-col w-full justify-between gap-8 p-8 pt-0 overflow-y-scroll bg-white">
           <div>
             <div className="w-full flex justify-end mb-10">
-              <Image
-                src="/assets/x (1).png"
-                width={18}
-                height={18}
-                alt="cancel"
+              <button
                 onClick={() => setProfileForm(false)}
                 id="top-profile"
                 className="cursor-pointer pt-8"
-              />
+              >
+                <X className="size-6 text-gray-600" />
+              </button>
             </div>
             <div className="mb-10">
               <h1 className="text-[24px] text-blue-700 font-bold">
@@ -134,8 +133,8 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
               onSubmit={handleSubmit}
               className="h-auto flex flex-col justify-between w-full"
             >
-              <div className=" mb-8 text-navyBlue">
-                <div className="text-[14px] mb-1 font-semibold ">
+              <div className="mb-8 text-navyBlue">
+                <div className="text-[14px] mb-1 font-semibold">
                   Change your Profile Picture
                 </div>
                 <div className="flex items-center h-full gap-4">
@@ -148,24 +147,36 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                       id="avatarInput"
                       accept="image/*"
                       style={{ display: "none" }}
-                      onChange={updateImage}
+                      onChange={handleImageSelect}
                     />
-                    <div className="w-[100px] h-[100px] rounded-full overflow-hidden">
-                      <Image
-                        key={profilePicture}
-                        src={CDNURL + userId + "/" + profilePicture}
-                        width={3000}
-                        height={3000}
-                        alt="user"
-                        quality={100}
-                        className="w-[100px] h-[100px] object-cover"
-                        priority
-                      />
+                    <div className="size-20 rounded-full overflow-hidden flex justify-center items-center">
+                      {previewURL ? (
+                        <Image
+                          src={previewURL}
+                          alt="preview"
+                          width={100}
+                          height={100}
+                          className="w-[100px] h-[100px] object-cover"
+                        />
+                      ) : profilePicture ? (
+                        <Image
+                          key={profilePicture}
+                          src={CDNURL + userId + "/" + profilePicture}
+                          width={100}
+                          height={100}
+                          alt="user"
+                          className="w-[100px] h-[100px] object-cover"
+                        />
+                      ) : (
+                        <UserRoundPen className="size-full text-navyBlue" strokeWidth={1} />
+                      )}
                     </div>
                     <p>Tap to change</p>
                   </label>
                 </div>
               </div>
+
+              {/* NAME INPUT */}
               <div className="w-full">
                 <div className="flex flex-col mb-4">
                   <label
@@ -186,26 +197,25 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                   />
                 </div>
               </div>
+
+              {/* PROCEED BUTTON */}
+              <button
+                type="submit"
+                disabled={loading}
+                className={`font-semibold text-white rounded-[10px] w-full items-center justify-center flex transition duration-300 ${
+                  loading ? "bg-navyBlue opacity-85" : "bg-blue-700 h-14"
+                }`}
+              >
+                {loading ? (
+                  <div className="h-14 flex items-center">
+                    <div className="loaderInfinity" />
+                  </div>
+                ) : (
+                  "PROCEED"
+                )}
+              </button>
             </form>
           </div>
-          <button
-            onClick={() =>
-              handleSubmit(
-                new Event("submit") as unknown as FormEvent<HTMLFormElement>
-              )
-            }
-            disabled={loading}
-            className={`font-semibold text-white rounded-[10px] w-full items-center justify-center flex transition duration-300 
-              ${loading ? "bg-navyBlue opacity-85" : "bg-blue-700 h-14"}`}
-          >
-            {loading ? (
-              <div className="h-14 flex items-center">
-                <div className="loaderInfinity" />
-              </div>
-            ) : (
-              "PROCEED"
-            )}
-          </button>
         </div>
       </div>
       <div

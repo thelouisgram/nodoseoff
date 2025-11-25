@@ -27,6 +27,7 @@ import Ongoing from "./tabs/Ongoing";
 import Loader from "../shared/Loader";
 import { generateDrugAllergyEmail } from "../../../../emails/drugAllergy";
 import { sendMail } from "../../../../utils/sendEmail";
+import { Pill, ShieldX, X } from "lucide-react";
 
 interface DrugsProps {
   screen: boolean;
@@ -36,14 +37,12 @@ interface DrugsProps {
   setEditModal: Function;
   setDeleteModal: Function;
   setAllergyModal: Function;
-  setEffectsForm: Function;
   setAllergiesForm: Function;
   setAdd: Function;
   deleteModal: boolean;
   editModal: boolean;
   allergyModal: boolean;
   add: boolean;
-  effectsForm: boolean;
   drugsForm: boolean;
   editForm: boolean;
   allergiesForm: boolean;
@@ -64,9 +63,7 @@ const Drugs: React.FC<DrugsProps> = ({
   screen,
   add,
   setAdd,
-  setEffectsForm,
   editForm,
-  effectsForm,
   drugsForm,
   setAllergyModal,
   allergyModal,
@@ -114,13 +111,11 @@ const Drugs: React.FC<DrugsProps> = ({
     };
   }, []);
 
-  
-
   // Upload Database of completed drug
   const uploadCompletedDrugs = async (newCompletedDrugs: DrugProps[]) => {
     try {
       const { error } = await supabase
-        .from("users")
+        .from("completedDrugs")
         .update({
           completedDrugs: newCompletedDrugs,
         })
@@ -292,7 +287,6 @@ const Drugs: React.FC<DrugsProps> = ({
 
   return (
     <>
-     
       {displayDrugs ? (
         <div
           className={` transition-all h-[100dvh] ss:pb-28 overflow-y-scroll w-full md:py-16 md:px-12 md:pb-28 px-4 pt-10 pb-28 ss:p-10 text-navyBlue font-karla relative`}
@@ -458,17 +452,12 @@ const Drugs: React.FC<DrugsProps> = ({
               title="Add Drug"
               className={`bg-white py-2 aspect-square  ${
                 !add
-                  ? "right-4 ss:right-10 w-12 h-12 opacity-0"
-                  : "right-24 md:right-36 w-16 h-16 opacity-100"
-              } transition-all duration-450 fixed rounded-full bottom-20 md:bottom-6 font-semibold justify-center flex gap-2 
+                  ? "right-4 ss:right-10 bottom-20 md:bottom-6"
+                  : "bottom-[214px] md:bottom-[168px] right-4 ss:right-10"
+              } transition-all duration-450 fixed rounded-full  size-14 font-semibold justify-center flex gap-2 
                   ss:gap-3 items-center`}
             >
-              <Image
-                src="/assets/add/capsule.png"
-                width={28}
-                height={28}
-                alt="capsule"
-              />
+              <Pill className="size-8 text-navyBlue" strokeWidth={1.5} />
             </button>
             <button
               onClick={() => {
@@ -479,49 +468,22 @@ const Drugs: React.FC<DrugsProps> = ({
               title="Add Allergies"
               className={`bg-white py-2 aspect-square  ${
                 !add
-                  ? "right-4 ss:right-10 w-12 h-12 bottom-20 md:bottom-6 opacity-0"
-                  : "bottom-[149px] md:bottom-[100px] right-20 md:right-[120px] w-16 h-16 opacity-100"
-              } fixed rounded-full font-semibold justify-center transition-all duration-450
+                  ? "right-4 ss:right-10 bottom-20 md:bottom-6"
+                  : "bottom-[148px] md:bottom-24 right-4 ss:right-10"
+              } fixed rounded-full font-semibold justify-center transition-all duration-450 size-14
                   flex gap-2 ss:gap-3 items-center `}
             >
-              <Image
-                src="/assets/add/allergy.png"
-                width={32}
-                height={32}
-                alt="capsule"
-              />
-            </button>
-            <button
-              onClick={() => {
-                setAdd(false);
-                setEffectsForm(true);
-                setScreen(false);
-              }}
-              title="Add Side Effects"
-              className={`bg-white py-2 aspect-square ${
-                !add
-                  ? "right-4 ss:right-10 w-12 h-12 bottom-20 md:bottom-6 opacity-0"
-                  : "w-16 h-16 bottom-48 md:bottom-36 right-6 md:right-12 opacity-100"
-              }
-               fixed rounded-full transition-all duration-450
-                  font-semibold justify-center flex gap-2 ss:gap-3 items-center `}
-            >
-              <Image
-                src="/assets/add/cough.png"
-                width={28}
-                height={28}
-                alt="capsule"
-              />
+              <ShieldX className="size-8 text-navyBlue" strokeWidth={1.5} />
             </button>
             <button
               onClick={() => {
                 setScreen((prev: boolean) => !prev);
                 setAdd((prev: boolean) => !prev);
               }}
-              className={`rounded-full p-4 bg-navyBlue right-4 ss:right-10 fixed bottom-20 md:bottom-6 z-[146] ${
+              className={`fixed rounded-full size-14 flex justify-center items-center bg-navyBlue right-4 ss:right-10 
+                 bottom-20 md:bottom-6 z-[146] ${
                 editForm ||
                 drugsForm ||
-                effectsForm ||
                 deleteModal ||
                 editModal ||
                 allergiesForm ||
@@ -530,15 +492,9 @@ const Drugs: React.FC<DrugsProps> = ({
                   : "flex"
               }`}
             >
-              <Image
-                width={20}
-                height={20}
-                alt="add"
-                src="/assets/x.png"
-                className={` ${
+              <X className={` ${
                   screen ? "rotate-180" : "rotate-45"
-                }  transition-all`}
-              />
+                }  transition-all size-8 text-white`}/>
             </button>
           </div>
         </div>

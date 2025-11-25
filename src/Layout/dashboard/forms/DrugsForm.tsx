@@ -12,6 +12,7 @@ import supabase from "../../../../utils/supabase";
 import { generateDrugId } from "../../../../utils/drugs";
 import { sendMail } from "../../../../utils/sendEmail";
 import { generateDrugAddedEmail } from "../../../../emails/newDrug";
+import { X } from "lucide-react";
 
 interface DrugFormProps {
   drugsForm: boolean;
@@ -297,17 +298,15 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
         >
           <div className="w-full bg-white">
             <div className="w-full flex justify-end mb-10">
-              <Image
-                src="/assets/x (1).png"
-                width={18}
-                height={18}
-                alt="cancel"
+              <button
                 onClick={() => {
                   setDrugsForm(false);
                 }}
                 id="top-drug"
                 className="cursor-pointer pt-8"
-              />
+              >
+                <X className="size-6 text-gray-800"/>
+              </button>
             </div>
             <h1 className="text-[24px] text-blue-700 font-bold">Add Drug</h1>
             <p className="text-[14px] text-grey">

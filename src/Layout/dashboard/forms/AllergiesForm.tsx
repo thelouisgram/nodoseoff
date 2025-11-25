@@ -7,6 +7,7 @@ import { updateAllergies } from "../../../../store/stateSlice";
 import supabase from "../../../../utils/supabase";
 import { generateDrugAllergyEmail } from "../../../../emails/drugAllergy";
 import { sendMail } from "../../../../utils/sendEmail";
+import { X } from "lucide-react";
 
 interface AllergiesFormProps {
   allergiesForm: boolean;
@@ -178,18 +179,15 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
         >
           <div className="w-full">
             <div className="w-full flex justify-end mb-10">
-              <Image
-                src="/assets/x (1).png"
-                width={18}
-                height={18}
-                quality={100}
-                alt="cancel"
+              <button
                 onClick={() => {
                   setAllergiesForm(false);
                 }}
                 id="top-allergies"
                 className="cursor-pointer pt-8"
-              />
+              >
+                <X className="size-6 text-gray-800"/>
+              </button>
             </div>
             <div className="mb-10">
               <h1 className="text-[24px] text-blue-700 font-bold">

@@ -13,7 +13,7 @@ export const uploadScheduleToServer = async ({
 }) => {
   try {
     const { error } = await supabase
-      .from("users")
+      .from("schedule")
       .update({ schedule: [...schedule] })
       .eq("userId", userId);
 

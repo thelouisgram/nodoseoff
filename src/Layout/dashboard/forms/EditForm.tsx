@@ -12,6 +12,7 @@ import {
   uploadScheduleToServer,
 } from "../../../../utils/schedule";
 import supabase from "../../../../utils/supabase";
+import { X } from "lucide-react";
 
 interface DrugFormProps {
   editForm: boolean;
@@ -295,17 +296,15 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
         >
           <div className="w-full bg-white">
             <div className="w-full flex justify-end mb-10">
-              <Image
-                src="/assets/x (1).png"
-                width={18}
-                height={18}
-                alt="cancel"
+              <button
                 onClick={() => {
                   setEditForm(false);
                 }}
                 id="top-edit"
                 className="cursor-pointer pt-8"
-              />
+              >
+                <X className="size-6 text-gray-800"/>
+              </button>
             </div>
             <h1 className="text-[24px] text-blue-700 font-bold">Edit Drug</h1>
             <p className="text-[14px] text-grey">

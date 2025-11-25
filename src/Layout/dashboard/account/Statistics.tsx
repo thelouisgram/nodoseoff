@@ -13,7 +13,7 @@ interface Stats {
 type RefObject<T> = React.RefObject<T>;
 
 const Statistics: React.FC<Stats> = ({ setShowStats, showStats }) => {
-  const { drugs, effects, schedule } = useSelector(
+  const { drugs, schedule } = useSelector(
     (state: RootState) => state.app
   );
 
@@ -98,10 +98,6 @@ const Statistics: React.FC<Stats> = ({ setShowStats, showStats }) => {
             <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex flex-col-reverse">
               <h2 className="text-grey">Number of Drugs</h2>
               <p className="font-semibold text-[18px]">{drugs.length}</p>
-            </div>
-            <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex flex-col-reverse">
-              <h2 className="text-grey">Number of side effects</h2>
-              <p className="font-semibold text-[18px]">{effects.length}</p>
             </div>
             <div className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex flex-col-reverse">
               <h2 className="text-grey">Drug compliance</h2>

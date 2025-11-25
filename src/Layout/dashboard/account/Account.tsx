@@ -13,7 +13,6 @@ import {
 } from "../../../../store/stateSlice";
 import { useRouter } from "next/router";
 import Report from "./Report";
-import Loader from "../shared/Loader";
 import {ChartLine, ChevronRight, Cog, FileText, FolderDown, Headset, LogOut, UserRound } from "lucide-react";
 
 type RefObject<T> = React.RefObject<T>;
@@ -107,16 +106,22 @@ const Account: React.FC<AccountProps> = ({
           <div className="w-full flex-col flex md:flex-row-reverse gap-4 ss:gap-30 ">
             <div className="w-full">
               <div className="w-full items-center flex flex-col mb-8">
-                <div className="w-[150px] h-[150px] rounded-full overflow-hidden">
-                  <Image
-                    src={CDNURL + userId + "/" + profilePicture }
-                    width={100}
-                    height={100}
-                    alt="user"
-                    quality={100}
-                    className="w-[150px] h-[150px] object-cover"
-                    priority
-                  />
+                <div className="w-[150px] h-[150px] flex justify-center items-center rounded-full overflow-hidden ring ring-navyBlue p-0.5">
+                  {
+                      (profilePicture === "") ? 
+                      <>
+                      <UserRound className="size-24 text-navyBlue" strokeWidth={1}/>
+                      </>
+                      :<Image
+                        key={profilePicture}
+                        src={CDNURL + userId + "/" + profilePicture}
+                        width={3000}
+                        height={3000}
+                        alt="user"
+                        quality={100}
+                        className="size-full object-cover rounded-full"
+                        priority
+                      />}
                 </div>
                 <h1 className=" text-[20px] ss:text-[32px] mt-4 font-bold font-Inter text-center capitalize">
                   {name}

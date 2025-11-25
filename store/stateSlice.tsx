@@ -1,14 +1,12 @@
-import { Effect } from "@/Layout/dashboard/home/Reports";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { DrugProps, ScheduleItem } from "../types/dashboard";
 import { AppType, Info } from "../utils/store";
 
 const initialState: AppType = {
-  info: [{ name: "", phone: "", email: "", otcDrugs: "", herbs: "" }],
+  info: [{ name: "", phone: "", email: "" }],
   isAuthenticated: true,
   userId: "",
   drugs: [],
-  effects: [],
   schedule: [],
   activeDrug: "",
   allergies: [],
@@ -17,9 +15,10 @@ const initialState: AppType = {
   activeAllergy: "",
   active: "Home",
   completedDrugs: [],
-  confetti: false,
   profilePicture: '',
   activeDrugId: '', 
+  otcDrugs: '',
+  herbs: ''
 };
 
 const stateSlice = createSlice({
@@ -28,9 +27,6 @@ const stateSlice = createSlice({
   reducers: {
     setDrugs: (state, action: PayloadAction<DrugProps[]>) => {
       state.drugs = action.payload;
-    },
-    setEffects: (state, action: PayloadAction<Effect[]>) => {
-      state.effects = action.payload;
     },
     updateActiveDrug: (state, action: PayloadAction<string>) => {
       state.activeDrug = action.payload;
@@ -44,14 +40,17 @@ const stateSlice = createSlice({
     updateIsAuthenticated: (state, action: PayloadAction<boolean>) => {
       state.isAuthenticated = action.payload;
     },
-    updateConfetti: (state, action: PayloadAction<boolean>) => {
-      state.confetti = action.payload;
-    },
     updateUserId: (state, action: PayloadAction<string>) => {
       state.userId = action.payload;
     },
     updateActive: (state, action: PayloadAction<string>) => {
       state.active = action.payload;
+    },
+     updateOtcDrugs: (state, action: PayloadAction<string>) => {
+      state.otcDrugs = action.payload;
+    },
+     updateHerbs: (state, action: PayloadAction<string>) => {
+      state.herbs = action.payload;
     },
     updateSearchedWord: (state, action: PayloadAction<string>) => {
       state.searchedWord = action.payload;
@@ -80,7 +79,6 @@ const stateSlice = createSlice({
 export default stateSlice.reducer;
 export const {
   setDrugs,
-  setEffects,
   updateActiveDrug,
   updateSchedule,
   updateIsAuthenticated,
@@ -92,7 +90,8 @@ export const {
   updateActiveAllergy,
   updateActive,
   updateCompletedDrugs,
-  updateConfetti,
   updateProfilePicture,
   updateActiveDrugId,
+  updateHerbs,
+  updateOtcDrugs
 } = stateSlice.actions;

@@ -8,11 +8,11 @@ import { DrugProps } from "../../../../types/dashboard";
 import { Download } from "lucide-react";
 
 const DownloadableReport: React.FC = () => {
-  const { drugs, schedule, info, allergies, completedDrugs } = useSelector(
+  const { drugs, schedule, info, allergies, completedDrugs, otcDrugs, herbs } = useSelector(
     (state: RootState) => state.app
   );
 
-  const { name, phone, email, otcDrugs, herbs } = info[0];
+  const { name, phone, email } = info[0];
   const currentDrugs = drugs.map((drug) => drug.drug);
   const allergicDrugs = allergies.map((drug) => drug?.drug);
 

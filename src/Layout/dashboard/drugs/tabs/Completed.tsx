@@ -5,6 +5,7 @@ import { RootState } from "../../../../../store";
 import { frequencyToPlaceholder } from "../../../../../utils/dashboard";
 import RenderedDrugs from "../RenderedDrugs";
 import { DrugProps } from "../../../../../types/dashboard";
+import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 
 interface CompletedProps {
   setScreen: Function;
@@ -61,7 +62,6 @@ const Completed: React.FC<CompletedProps> = ({
     }
   };
 
-
   const renderedDrugs = currentItems.map((drug: DrugProps, index: number) => {
     return (
       <RenderedDrugs
@@ -91,13 +91,7 @@ const Completed: React.FC<CompletedProps> = ({
               Completed Drugs
             </h2>
             <div className="flex w-[150px] ss:w-[300px] items-center py-1 px-2 ss:px-3 ss:py-2 border-[1px] rounded-md text-navyBlue gap-1 ss:gap-3 bg-white">
-              <Image
-                src="/assets/loupe.png"
-                width="24"
-                height="24"
-                alt="search"
-                className="w-[16px] h-[16px] ss:w-[20px] ss:h-[20px]"
-              />
+              <Search className="size-6 text-navyBlue" />
               <input
                 placeholder="Search"
                 className="bg-transparent outline-none w-full text-grey"
@@ -146,12 +140,7 @@ const Completed: React.FC<CompletedProps> = ({
                   currentPage === 1 ? "cursor-not-allowed" : ""
                 }`}
               >
-                <Image
-                  src="/assets/back.png"
-                  alt="back"
-                  width={16}
-                  height={16}
-                />
+                <ChevronLeft className="size-4 text-gray-600" />
                 Prev
               </button>
               <span>
@@ -165,13 +154,7 @@ const Completed: React.FC<CompletedProps> = ({
                 }`}
               >
                 Next
-                <Image
-                  src="/assets/back.png"
-                  alt="back"
-                  width={16}
-                  height={16}
-                  className="rotate-180"
-                />
+                <ChevronRight className="size-4 text-gray-600" />
               </button>
             </div>
           )}

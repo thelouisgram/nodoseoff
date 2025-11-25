@@ -8,9 +8,9 @@ import { RootState } from "../../../../store";
 import { calculateClosestDoseCountdown } from "../../../../utils/dashboard";
 import { updateActive } from "../../../../store/stateSlice";
 import Tracker from "./Tracker";
+import { UserRound } from "lucide-react";
 
 interface HomeProps {
-  setEffectsForm: Function;
   setDrugsForm: Function;
   isLoading: boolean;
   setAllDoses: Function;
@@ -93,17 +93,24 @@ const Home: React.FC<HomeProps> = ({
           onClick={() => {
             dispatch(updateActive("Account"));
           }}
-          className="w-[60px] h-[60px] rounded-full overflow-hidden cursor-pointer"
+          className="w-[60px] h-[60px] rounded-full overflow-hidden cursor-pointer ring-2 ring-navyBlue p-0.5"
         >
-          <Image
-            src={CDNURL + userId + "/" + profilePicture}
-            width={100}
-            height={100}
-            alt="user"
-            quality={100}
-            className="w-[60px] h-[60px] object-cover"
-            priority
-          />
+          {profilePicture === "" ? (
+            <>
+              <UserRound className="size-full text-navyBlue" strokeWidth={1} />
+            </>
+          ) : (
+            <Image
+              key={profilePicture}
+              src={CDNURL + userId + "/" + profilePicture}
+              width={3000}
+              height={3000}
+              alt="user"
+              quality={100}
+              className="size-full object-cover rounded-full"
+              priority
+            />
+          )}
         </div>
       </div>
       <div className="w-full flex justify-between items-center px-4 ss:px-8 md:px-0">

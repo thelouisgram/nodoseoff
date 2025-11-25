@@ -10,7 +10,7 @@ import { RootState } from "../../../../store";
 import { useSelector, useDispatch } from "react-redux";
 import supabase from "../../../../utils/supabase";
 import { toast } from "sonner";
-import { updateInfo } from "../../../../store/stateSlice";
+import { updateHerbs, updateInfo, updateOtcDrugs } from "../../../../store/stateSlice";
 import { X } from "lucide-react";
 
 interface DrugHxFormProps {
@@ -22,17 +22,13 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
   drugHxForm,
   setDrugHxForm,
 }) => {
-  const { info, userId } = useSelector((state: RootState) => state.app);
-  const { name, phone, email, otcDrugs, herbs } = info[0];
+  const { info, userId, otcDrugs, herbs } = useSelector((state: RootState) => state.app);
   const dispatch = useDispatch();
 
   const [formData, setFormData] = useState({
-    name: name || "",
-    phone: phone || "",
-    email: email || "",
-    otcDrugs: otcDrugs || "",
-    herbs: herbs || "",
-  });
+  otcDrugs: typeof otcDrugs === "string" ? otcDrugs : "",
+  herbs: typeof herbs === "string" ? herbs : "",
+});
 
   const [loading, setLoading] = useState(false);
 
@@ -61,7 +57,7 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
     setLoading(true);
     try {
       const { error } = await supabase
-        .from("users")
+        .from("drugHistory")
         .update({
           otcDrugs: formData.otcDrugs,
           herbs: formData.herbs,
@@ -76,7 +72,8 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
         return;
       }
 
-      dispatch(updateInfo([formData]));
+      dispatch(updateHerbs(formData.herbs));
+      dispatch(updateOtcDrugs(formData.otcDrugs));
       setDrugHxForm(false);
       setLoading(false);
       toast.success("Profile updated successfully");

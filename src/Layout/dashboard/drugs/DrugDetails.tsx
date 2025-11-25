@@ -13,6 +13,7 @@ import {
 } from "../../../../utils/dashboard";
 import { calculateTimePeriod, convertedTimes } from "../../../../utils/drugs";
 import { ScheduleItem } from "../../../../types/dashboard";
+import { ChevronLeft } from "lucide-react";
 
 interface DrugDetailsProps {
   setDisplayDrugs: Function;
@@ -30,7 +31,6 @@ interface DrugDetailsProps {
   setEditForm: Function;
 }
 
-// Define the DrugData type
 interface DrugData {
   totalDoses: number;
   remainingDoses: number;
@@ -42,7 +42,6 @@ interface DrugData {
   missedPastDoses: number;
 }
 
-// Define the type ExtendedDrugData
 interface ExtendedDrugData extends DrugData {
   scheduledTimestamps: Date[];
   completedTimestamps: Date[];
@@ -72,23 +71,31 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
   handleDeleteAllergy,
   setEditForm,
 }) => {
-  const { schedule, drugs, completedDrugs, activeDrug, activeDrugId, info } =
+  // ============================================================================
+  // HOOKS - MUST BE CALLED FIRST
+  // ============================================================================
+  const { schedule, drugs, completedDrugs, activeDrug, activeDrugId } =
     useSelector((state: RootState) => state.app);
 
+  const dispatch = useDispatch();
+  const [options, setOptions] = useState(false);
+  const [complianceData, setComplianceData] = useState<Record<string, ExtendedDrugData>>({});
+  const [isCalculating, setIsCalculating] = useState(true);
+
+  const dropdownRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
+
+  // ============================================================================
+  // HELPER FUNCTIONS
+  // ============================================================================
   function calculateCompliance(
     schedule: ScheduleItem[]
   ): Record<string, ExtendedDrugData> {
-    // Initialize an object to hold the results for each drug
     const drugData: Record<string, ExtendedDrugData> = {};
-
-    // Get the current date and time
     const currentTime = new Date();
 
-    // Iterate through the schedule and aggregate data for each drug
     for (const record of schedule) {
       const { drug, date, time, completed, drugId } = record;
 
-      // Initialize drug data if not present
       if (!drugData[drugId]) {
         drugData[drugId] = {
           totalDoses: 0,
@@ -106,60 +113,39 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
         };
       }
 
-      // Parse the date and time strings into a Date object
       const doseDateTime = new Date(`${date} ${time}`);
 
-      // Determine the dose status and update the respective data
       if (doseDateTime < currentTime) {
-        // This is a past dose
         drugData[drugId].pastDoses += 1;
 
         if (completed) {
-          // Dose was completed
           drugData[drugId].completedPastDoses += 1;
           drugData[drugId].completedTimestamps.push(doseDateTime);
           drugData[drugId].completedDoses += 1;
         } else {
-          // Dose was missed
           drugData[drugId].missedPastDoses += 1;
           drugData[drugId].missedTimestamps.push(doseDateTime);
           drugData[drugId].missedDoses += 1;
         }
       } else {
-        // This is a remaining dose
         drugData[drugId].remainingDoses += 1;
         drugData[drugId].remainingTimestamps.push(doseDateTime);
       }
 
-      // Increment total doses
       drugData[drugId].totalDoses += 1;
       drugData[drugId].scheduledTimestamps.push(doseDateTime);
     }
 
-    // Calculate compliance for each drug
     for (const drugId in drugData) {
       const data = drugData[drugId];
       const totalPastDoses = data.pastDoses;
       const completedPastDoses = data.completedPastDoses;
-
-      // Calculate compliance as the percentage of completed past doses to total past doses
       data.compliance =
         totalPastDoses > 0 ? (completedPastDoses / totalPastDoses) * 100 : 0;
     }
 
     return drugData;
   }
-
-  const drugData = calculateCompliance(schedule)[activeDrugId];
-  const {
-    missedDoses,
-    compliance,
-    completedDoses,
-    totalDoses,
-    remainingDoses,
-  } = drugData;
-
-  const dropdownRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
 
   const handleClickOutside = (event: MouseEvent): void => {
     if (
@@ -174,30 +160,68 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
     }
   };
 
+  // ============================================================================
+  // EFFECTS
+  // ============================================================================
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent): void => {
       handleClickOutside(event);
     };
 
-    // Add event listener for clicks outside of dropdown
     document.addEventListener("mousedown", handleOutsideClick);
 
     return () => {
-      // Remove event listener when component unmounts
       document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, []);
 
-  const dispatch = useDispatch();
-  const [options, setOptions] = useState(false);
+  // Calculate compliance data when schedule changes
+  useEffect(() => {
+    setIsCalculating(true);
+    const data = calculateCompliance(schedule);
+    setComplianceData(data);
+    setIsCalculating(false);
+  }, [schedule]);
+
+  // Handle redirect when drug details not found
+  useEffect(() => {
+    const drugsArray = tab === "Ongoing" ? drugs : completedDrugs;
+    const drugDetails = drugsArray.find((drug) => drug.drug === activeDrug);
+    const drugData = complianceData[activeDrugId];
+    
+    if (!isCalculating && (!drugDetails || !drugData)) {
+      setDisplayDrugs(true);
+    }
+  }, [tab, drugs, completedDrugs, activeDrug, complianceData, activeDrugId, isCalculating]);
+
+  // ============================================================================
+  // DATA COMPUTATION
+  // ============================================================================
   const drugsArray = tab === "Ongoing" ? drugs : completedDrugs;
   const drugDetails = drugsArray.find((drug) => drug.drug === activeDrug);
-  if (!drugDetails) {
-    setDisplayDrugs(true);
+  const drugData = complianceData[activeDrugId];
+
+  // ============================================================================
+  // EARLY RETURNS (AFTER ALL HOOKS)
+  // ============================================================================
+  if (!drugDetails || !drugData || isCalculating) {
     return null;
   }
+
+  // ============================================================================
+  // DERIVED DATA
+  // ============================================================================
+  const {
+    missedDoses,
+    compliance,
+    completedDoses,
+    totalDoses,
+    remainingDoses,
+  } = drugData;
+
   const { drug, route, frequency, start, end, time, reminder } = drugDetails;
   const duration = calculateTimePeriod(start, end);
+
   const details: Detail[] = [
     { name: "Frequency", details: frequencyToPlaceholder[frequency] },
     { name: "Time", details: convertedTimes(time).join(", ") },
@@ -213,7 +237,7 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
 
   const RenderedDetails = details.map((detail: Detail, index: number) => {
     return (
-      <div key={index} className="border rounded-md  p-5">
+      <div key={index} className="border rounded-md p-5">
         <h2 className="text-[12px] ss:text-[14px] font-semibold text-grey font-karla">
           {detail.name}
         </h2>
@@ -224,6 +248,9 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
     );
   });
 
+  // ============================================================================
+  // RENDER
+  // ============================================================================
   return (
     <div className="h-[100dvh] ss:pb-28 overflow-y-scroll w-full md:py-16 md:px-12 px-4 pt-10 pb-24 ss:p-10 text-navyBlue relative">
       <button
@@ -232,13 +259,7 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
         }}
         className="flex gap-1 items-center font-Inter"
       >
-        <Image
-          src="/assets/down.png"
-          alt="back"
-          width={20}
-          height={20}
-          className="rotate-90"
-        />
+        <ChevronLeft className="size-5 text-navyBlue" />
         <p className="font-[500] text-[18px]">Back</p>
       </button>
 
@@ -250,7 +271,8 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
           <button
             disabled={options}
             onClick={() => {
-              setOptions((prev) => !prev), dispatch(updateActiveDrug(drug));
+              setOptions((prev) => !prev);
+              dispatch(updateActiveDrug(drug));
             }}
             className="flex gap-[5px] cursor-pointer justify-center items-center rounded-full rotate-90 w-[50px] h-[50px]"
           >
@@ -261,15 +283,14 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
           {options && (
             <div
               ref={dropdownRef}
-              className="absolute font-Inter border-[1px] border-gray-300 right-0 z-[200] top-10 text-navyBlue flex flex-col items-start justify-center mt-3 rounded-[10px] 
-        bg-white shadow-md w-[175px] ss:w-[250px] py-4 text-[16px]"
+              className="absolute font-Inter border-[1px] border-gray-300 right-0 z-[200] top-10 text-navyBlue flex flex-col items-start justify-center mt-3 rounded-[10px] bg-white shadow-md w-[175px] ss:w-[250px] py-4 text-[16px]"
             >
               {tab !== "Completed" && (
                 <button
                   onClick={() => {
-                    dispatch(updateActiveDrug(drug)),
-                      setEditModal(true),
-                      setScreen(true);
+                    dispatch(updateActiveDrug(drug));
+                    setEditModal(true);
+                    setScreen(true);
                     setOptions(false);
                   }}
                   className="h-8 hover:bg-gray-100 flex items-center gap-3 w-full px-3"
@@ -286,9 +307,9 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
               )}
               <button
                 onClick={() => {
-                  dispatch(updateActiveDrug(drug)),
-                    setScreen(true),
-                    setDeleteModal(true);
+                  dispatch(updateActiveDrug(drug));
+                  setScreen(true);
+                  setDeleteModal(true);
                   setOptions(false);
                 }}
                 className="h-8 hover:bg-gray-100 flex items-center gap-3 w-full px-3"
@@ -304,10 +325,10 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
               </button>
               {tab !== "Allergies" && (
                 <button
-                  onClick={async () => {
-                    dispatch(updateActiveDrug(drug)),
-                      setScreen(true),
-                      setAllergyModal(true);
+                  onClick={() => {
+                    dispatch(updateActiveDrug(drug));
+                    setScreen(true);
+                    setAllergyModal(true);
                     setOptions(false);
                   }}
                   className="h-8 hover:bg-gray-100 flex items-center gap-3 w-full px-3"
@@ -350,7 +371,7 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
                 {route}
               </h3>
             </div>
-            <div className=" px-6 py-3">
+            <div className="px-6 py-3">
               <h2 className="text-[12px] ss:text-[14px] font-semibold text-grey font-karla">
                 Compliance level
               </h2>
@@ -382,21 +403,22 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
                 onClick={() => {
                   tab !== "Allergies"
                     ? handleDelete()
-                    : handleDeleteAllergy(activeDrug),
-                    setScreen(false),
-                    dispatch(updateActiveDrug(""));
+                    : handleDeleteAllergy(activeDrug);
+                  setScreen(false);
+                  dispatch(updateActiveDrug(""));
                   setDisplayDrugs(true);
                   setDeleteModal(false);
                 }}
-                className="px-4 py-1 flex items-center gap-2 bg-navyBlue rounded-[10px]  "
+                className="px-4 py-1 flex items-center gap-2 bg-navyBlue rounded-[10px]"
               >
                 Delete
               </button>
               <button
                 onClick={() => {
-                  setScreen(false), setDeleteModal(false);
+                  setScreen(false);
+                  setDeleteModal(false);
                 }}
-                className="px-4 py-1 flex items-center gap-2 bg-none border text-navyBlue border-navyBlue rounded-[10px]  "
+                className="px-4 py-1 flex items-center gap-2 bg-none border text-navyBlue border-navyBlue rounded-[10px]"
               >
                 Cancel
               </button>
@@ -421,21 +443,25 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
             <div className="w-full flex gap-3 justify-start flex-row-reverse text-[12px] py-4 px-4">
               <button
                 onClick={() => {
-                  setScreen(false), setAllergyModal(false), handleAllergies();
-                  tab !== "Allergies" &&
-                    (dispatch(updateActiveDrug("")),
-                    dispatch(updateActiveDrugId("")),
-                    setDisplayDrugs(true));
+                  setScreen(false);
+                  setAllergyModal(false);
+                  handleAllergies();
+                  if (tab !== "Allergies") {
+                    dispatch(updateActiveDrug(""));
+                    dispatch(updateActiveDrugId(""));
+                    setDisplayDrugs(true);
+                  }
                 }}
-                className="px-4 py-1 flex items-center gap-2 bg-navyBlue rounded-[10px]  "
+                className="px-4 py-1 flex items-center gap-2 bg-navyBlue rounded-[10px]"
               >
                 Add to Allergies
               </button>
               <button
                 onClick={() => {
-                  setScreen(false), setAllergyModal(false);
+                  setScreen(false);
+                  setAllergyModal(false);
                 }}
-                className="px-4 py-1 flex items-center gap-2 bg-none border text-navyBlue border-navyBlue rounded-[10px]  "
+                className="px-4 py-1 flex items-center gap-2 bg-none border text-navyBlue border-navyBlue rounded-[10px]"
               >
                 Cancel
               </button>
@@ -460,17 +486,21 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
             <div className="w-full flex gap-3 justify-start flex-row-reverse text-[12px] py-4 px-4">
               <button
                 onClick={() => {
-                  setEditForm(true), setScreen(false), setEditModal(false);
+                  setEditForm(true);
+                  setScreen(false);
+                  setEditModal(false);
                 }}
-                className="px-4 py-1 flex items-center gap-2 bg-navyBlue rounded-[10px]  "
+                className="px-4 py-1 flex items-center gap-2 bg-navyBlue rounded-[10px]"
               >
                 Edit
               </button>
               <button
                 onClick={() => {
-                  setScreen(false), setEditForm(false), setEditModal(false);
+                  setScreen(false);
+                  setEditForm(false);
+                  setEditModal(false);
                 }}
-                className="px-4 py-1 flex items-center gap-2 bg-none border text-navyBlue border-navyBlue rounded-[10px]  "
+                className="px-4 py-1 flex items-center gap-2 bg-none border text-navyBlue border-navyBlue rounded-[10px]"
               >
                 Cancel
               </button>

@@ -13,8 +13,8 @@ export const steps = [
     title: "Add and Track Medication",
     desc: "Input your prescribed medications into the app, including dosage, frequency, and start/end dates.",
   },{
-    title: "Add Allergies and Side Effects",
-    desc: "Incorporate allergies and side effects for a thorough medication profile.",
+    title: "Add Allergies",
+    desc: "Incorporate allergies for a thorough medication profile.",
   },{
     title: "Monitoring and Reporting",
     desc: "The app tracks users' medication adherence over time, providing insights into their compliance behavior.",

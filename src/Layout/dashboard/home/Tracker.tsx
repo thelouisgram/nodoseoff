@@ -2,6 +2,7 @@ import React from "react";
 import { FaExclamationTriangle } from "react-icons/fa";
 import Image from "next/image";
 import { days } from "../../../../utils/dashboard";
+import { ChevronRight } from "lucide-react";
 
 interface TrackerProps {
   tracker: string;
@@ -55,13 +56,7 @@ const Tracker: React.FC<TrackerProps> = ({
               className=" text-navyBlue gap-1 flex items-center px-4 py-1"
             >
               VIEW ALL
-              <Image
-                src="/assets/down.png"
-                width="16"
-                height="16"
-                alt="turned down"
-                className="-rotate-90"
-              />
+              <ChevronRight className="size-5 text-navyBlue" strokeWidth={1.5}/>
             </button>
           </div>
         </>

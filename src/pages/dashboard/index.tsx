@@ -8,7 +8,6 @@ import AllergiesForm from "@/Layout/dashboard/forms/AllergiesForm";
 import DrugHxForm from "@/Layout/dashboard/account/DrugHxForm";
 import DrugsForm from "@/Layout/dashboard/forms/DrugsForm";
 import EditForm from "@/Layout/dashboard/forms/EditForm";
-import EffectsForm from "@/Layout/dashboard/forms/EffectsForm";
 import ProfileForm from "@/Layout/dashboard/forms/ProfileForm";
 import AllDoses from "@/Layout/dashboard/home/AllDoses";
 import Home from "@/Layout/dashboard/home/Home";
@@ -25,11 +24,12 @@ import { toast } from "sonner";
 import { RootState } from "../../../store";
 import {
   setDrugs,
-  setEffects,
   updateActive,
   updateAllergies,
   updateCompletedDrugs,
+  updateHerbs,
   updateInfo,
+  updateOtcDrugs,
   updateProfilePicture,
   updateSchedule,
   updateUserId,
@@ -57,7 +57,6 @@ const Page = () => {
   );
   const dispatch = useDispatch();
   const [nav, setNav] = useState(true);
-  const [effectsForm, setEffectsForm] = useState(false);
   const [editForm, setEditForm] = useState(false);
   const [allergiesForm, setAllergiesForm] = useState(false);
   const [drugsForm, setDrugsForm] = useState(false);
@@ -93,22 +92,22 @@ const Page = () => {
           profilePictureData,
           drugsData,
           completedDrugsData,
-          effectsData,
           allergiesData,
+          drugHistory,
           scheduleData,
         ] = await Promise.all([
           supabase
             .from("users")
-            .select("name, phone, email, otcDrugs, herbs")
+            .select("name, phone, email")
             .eq("userId", userId),
           supabase.storage
             .from("profile-picture")
             .list(userId + "/", { limit: 1, offset: 0 }),
           supabase.from("drugs").select("*").eq("userId", userId),
-          supabase.from("users").select("completedDrugs").eq("userId", userId),
-          supabase.from("effects").select("*").eq("userId", userId),
+          supabase.from("completedDrugs").select("completedDrugs").eq("userId", userId),
           supabase.from("allergies").select("*").eq("userId", userId),
-          supabase.from("users").select("schedule").eq("userId", userId),
+          supabase.from("drugHistory").select("otcDrugs, herbs").eq("userId", userId),
+          supabase.from("schedule").select("schedule").eq("userId", userId),
         ]);
 
         if (
@@ -116,7 +115,6 @@ const Page = () => {
           profilePictureData.error ||
           drugsData.error ||
           completedDrugsData.error ||
-          effectsData.error ||
           allergiesData.error ||
           scheduleData.error
         ) {
@@ -155,15 +153,13 @@ const Page = () => {
         // Combine expired drugs with existing completed drugs
         const updatedCompletedDrugs = [...completedDrugs, ...expiredDrugs];
 
-        console.log("Updated Completed Drugs:", updatedCompletedDrugs);
-
         // Dispatch the updated data
         dispatch(setDrugs(activeDrugs));
         dispatch(updateCompletedDrugs(updatedCompletedDrugs));
 
         // Update completed drugs in database asynchronously
         await supabase
-          .from("users")
+          .from("completedDrugs")
           .update({ completedDrugs: updatedCompletedDrugs })
           .eq("userId", userId);
 
@@ -177,11 +173,15 @@ const Page = () => {
         }
 
         // Update effects and allergies
-        dispatch(setEffects(effectsData.data ?? []));
         dispatch(updateAllergies(allergiesData.data ?? []));
 
+        // Update Drug History
+       dispatch(updateHerbs(drugHistory.data?.[0]?.herbs ?? []));
+       dispatch(updateOtcDrugs(drugHistory.data?.[0]?.otcDrugs ?? []));
+
+
         // Ensure schedule is updated
-        dispatch(updateSchedule(scheduleData?.data?.[0]?.schedule ?? []));
+        dispatch(updateSchedule(scheduleData.data[0]?.schedule ?? []));
 
           setIsLoading(false);
       } catch (error) {
@@ -214,7 +214,6 @@ const Page = () => {
           quality={100}
         />
 
-        {/* TEXT — only visible on lg */}
         <span
           className={`
        items-center text-[16px] rounded-md py-1 px-3
@@ -500,7 +499,6 @@ const Page = () => {
           <div className="w-full">
             {active === "Home" ? (
               <Home
-                setEffectsForm={setEffectsForm}
                 setDrugsForm={setDrugsForm}
                 isLoading={isLoading}
                 setAllDoses={setAllDoses}
@@ -522,10 +520,8 @@ const Page = () => {
                 setAllergyModal={setAllergyModal}
                 add={add}
                 setAdd={setAdd}
-                setEffectsForm={setEffectsForm}
                 editForm={editForm}
                 drugsForm={drugsForm}
-                effectsForm={effectsForm}
                 allergiesForm={allergiesForm}
                 setAllergiesForm={setAllergiesForm}
               />
@@ -545,10 +541,6 @@ const Page = () => {
           {!isLoading && (
             <>
               <DrugsForm drugsForm={drugsForm} setDrugsForm={setDrugsForm} />
-              <EffectsForm
-                effectsForm={effectsForm}
-                setEffectsForm={setEffectsForm}
-              />
               <EditForm editForm={editForm} setEditForm={setEditForm} />
               <AllergiesForm
                 allergiesForm={allergiesForm}

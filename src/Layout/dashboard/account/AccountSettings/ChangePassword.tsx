@@ -92,7 +92,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
             id="top-drug"
             className="cursor-pointer"
           >
-            <X className="size-6 " />
+            <X className="size-6 text-gray-800" />
           </button>
         </div>
         <div className="mb-10 w-full flex flex-col">

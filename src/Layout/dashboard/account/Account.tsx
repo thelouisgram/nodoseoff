@@ -14,6 +14,7 @@ import {
 import { useRouter } from "next/router";
 import Report from "./Report";
 import Loader from "../shared/Loader";
+import {ChartLine, ChevronRight, Cog, FileText, FolderDown, Headset, LogOut, UserRound } from "lucide-react";
 
 type RefObject<T> = React.RefObject<T>;
 
@@ -140,13 +141,7 @@ const Account: React.FC<AccountProps> = ({
                 className="w-full border h-full border-gray-300 rounded-lg  py-4 px-4 flex justify-between gap-3 cursor-pointer"
               >
                 <div className="flex gap-3 h-full w-full">
-                  <Image
-                    src="/assets/account/profile.png"
-                    width={24}
-                    height={24}
-                    alt="Profile"
-                    className="w-6 h-auto"
-                  />
+                  <UserRound className="size-6 text-navyBlue" strokeWidth={1.5}/>
                   <h2 className="">Profile Settings</h2>
                 </div>
               </button>
@@ -157,13 +152,7 @@ const Account: React.FC<AccountProps> = ({
                 className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex cursor-pointer"
               >
                 <div className="flex gap-3">
-                  <Image
-                    src="/assets/account/document.png"
-                    width={24}
-                    height={24}
-                    alt="Drug History"
-                    className="w-6 h-auto"
-                  />
+                  <FileText className="size-6 text-navyBlue" strokeWidth={1.5}/>
                   <h2 className="">Drug History</h2>
                 </div>
               </button>
@@ -174,13 +163,7 @@ const Account: React.FC<AccountProps> = ({
                 className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex justify-between gap-3 cursor-pointer"
               >
                 <div className="flex gap-3">
-                  <Image
-                    src="/assets/account/diagram.png"
-                    width={24}
-                    height={24}
-                    alt="Statistics"
-                    className="w-6 h-auto"
-                  />
+                  <ChartLine className="size-6 text-navyBlue" strokeWidth={1.5}/>
                   <h2 className="">Statistics</h2>
                 </div>
               </button>
@@ -191,13 +174,7 @@ const Account: React.FC<AccountProps> = ({
                 className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex justify-between gap-3 cursor-pointer"
               >
                 <div className="flex gap-3">
-                  <Image
-                    src="/assets/account/graph.png"
-                    width={24}
-                    height={24}
-                    alt="Report"
-                    className="w-6 h-auto"
-                  />
+                  <FolderDown className="size-6 text-navyBlue" strokeWidth={1.5}/>
                   <h2 className="">Drug Report</h2>
                 </div>
               </button>
@@ -208,13 +185,7 @@ const Account: React.FC<AccountProps> = ({
                 className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex justify-between gap-3 cursor-pointer"
               >
                 <div className="flex gap-3">
-                  <Image
-                    src="/assets/account/support.png"
-                    width={24}
-                    height={24}
-                    alt="contact"
-                    className="w-6 h-auto"
-                  />
+                  <Headset className="size-6 text-navyBlue" strokeWidth={1.5} />
                   <h2 className="">Contact Us</h2>
                 </div>
               </button>
@@ -225,13 +196,7 @@ const Account: React.FC<AccountProps> = ({
                 className="w-full border border-gray-300 rounded-lg  py-4 px-4 flex justify-between gap-3 cursor-pointer"
               >
                 <div className="flex gap-3">
-                  <Image
-                    src="/assets/account/settings.png"
-                    width={24}
-                    height={24}
-                    alt="contact"
-                    className="w-6 h-auto"
-                  />
+                  <Cog className="size-6 text-navyBlue" strokeWidth={1.5} />
                   <h2 className="">Account Settings</h2>
                 </div>
               </button>
@@ -241,22 +206,10 @@ const Account: React.FC<AccountProps> = ({
                 className="flex justify-between border-[1px] ss:w-[1/2] text-red w-full rounded-[10px]  px-4 py-4 items-center  gap-3"
               >
                 <div className="flex gap-3 items-center h-full">
-                  <Image
-                    src="/assets/exit.png"
-                    width={18}
-                    height={18}
-                    alt="logout"
-                  />
+                  <LogOut className="size-6 " strokeWidth={1.5} />
                   Log out
                 </div>
-                <Image
-                  src="/assets/down.png"
-                  width={512}
-                  height={512}
-                  alt="download"
-                  quality={100}
-                  className="w-[20px] h-auto -rotate-90"
-                />
+            <ChevronRight className="text-navyBlue size-5" />
               </button>
             </div>
           </div>

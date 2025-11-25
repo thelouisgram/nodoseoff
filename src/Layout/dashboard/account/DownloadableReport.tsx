@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import Image from "next/image";
 import { toast } from "sonner";
 import { DrugProps } from "../../../../types/dashboard";
+import { Download } from "lucide-react";
 
 const DownloadableReport: React.FC = () => {
   const { drugs, schedule, info, allergies, completedDrugs } = useSelector(
@@ -88,14 +89,7 @@ const DownloadableReport: React.FC = () => {
           onClick={handleDownload}
           className="px-4 py-3 flex gap-2 h-12 items-center text-white rounded-md bg-navyBlue"
         >
-          <Image
-            src="/assets/download-report.png"
-            width={512}
-            height={512}
-            alt="download"
-            quality={100}
-            className="w-[20px] h-auto"
-          />
+          <Download className="size-6 text-white"/>
           <p className="hidden sm:flex">Download</p>
         </button>
       </div>

@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../../store";
 import ChangePassword from "./AccountSettings/ChangePassword";
+import { Lock, Trash, X } from "lucide-react";
 
 interface Settings {
   setAccountSettings: (value: boolean) => void;
@@ -70,17 +71,15 @@ const AccountSettings: React.FC<Settings> = ({
             <div className="h-auto w-auto">
               {/* Close button */}
               <div className="w-full flex justify-end mb-10">
-                <Image
-                  src="/assets/x (1).png"
-                  width={18}
-                  height={18}
-                  alt="cancel"
+                <button
                   onClick={() => {
                     setAccountSettings(false);
                   }}
                   id="top-drug"
                   className="cursor-pointer pt-8"
-                />
+                >
+                  <X className="size-6 text-gray-800" />
+                </button>
               </div>
               {/* Account Settings heading */}
               <h1 className="text-[24px] text-blue-700 font-bold mb-10">
@@ -95,13 +94,7 @@ const AccountSettings: React.FC<Settings> = ({
                   className="w-full border border-gray-300 rounded-lg py-4 px-4 flex justify-between gap-3 cursor-pointer"
                 >
                   <div className="flex gap-3">
-                    <Image
-                      src="/assets/account/lock.png"
-                      width={24}
-                      height={24}
-                      alt="lock"
-                      className="w-6 h-6"
-                    />
+                    <Lock className="size-5 text-navyBlue" strokeWidth={2}/>
                     <h2>Change Password</h2>
                   </div>
                 </button>
@@ -115,13 +108,7 @@ const AccountSettings: React.FC<Settings> = ({
                   className="w-full border border-gray-300 rounded-lg py-4 px-4 flex justify-between gap-3 cursor-pointer opacity-20"
                 >
                   <div className="flex gap-3">
-                    <Image
-                      src="/assets/delete.png"
-                      width={24}
-                      height={24}
-                      alt="delete"
-                      className="w-6 h-6"
-                    />
+                    <Trash className="size-6 text-red"/>
                     <h2>Delete Account</h2>
                   </div>
                 </button>

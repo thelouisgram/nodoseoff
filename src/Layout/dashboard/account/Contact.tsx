@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../../store";
 import CopyableContent from "./CopyContent";
+import { X } from "lucide-react";
 
 interface ContactProps {
   setShowContact: Function;
@@ -38,7 +39,6 @@ const Contact: React.FC<ContactProps> = ({ showContact, setShowContact }) => {
 
   const contactInfo = [
     { label: "Email:", content: "nodoseoff@gmail.com" },
-    { label: "Phone Number:", content: "+234 814 650 2181" },
   ];
 
   return (
@@ -59,16 +59,15 @@ const Contact: React.FC<ContactProps> = ({ showContact, setShowContact }) => {
           className={` h-[100dvh] w-full bg-white p-8 overflow-y-scroll text-navyBlue text-[14px]`}
         >
           <div className="w-full flex justify-end mb-10">
-            <Image
-              src="/assets/x (1).png"
-              width={18}
-              height={18}
-              alt="cancel"
+            <button
+             
               onClick={() => {
                 setShowContact(false);
               }}
               className="cursor-pointer"
-            />
+            >
+            <X className="size-6 text-gray-800" />
+              </button>
           </div>
           <div className="mb-10">
             <h1 className="text-[24px] text-blue-700 font-bold">Contact Us</h1>

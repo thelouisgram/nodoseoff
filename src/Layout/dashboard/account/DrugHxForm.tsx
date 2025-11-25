@@ -11,6 +11,7 @@ import { useSelector, useDispatch } from "react-redux";
 import supabase from "../../../../utils/supabase";
 import { toast } from "sonner";
 import { updateInfo } from "../../../../store/stateSlice";
+import { X } from "lucide-react";
 
 interface DrugHxFormProps {
   setDrugHxForm: Function;
@@ -103,15 +104,14 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
         >
           <div className="w-full">
             <div className="w-full flex justify-end mb-10">
-              <Image
-                src="/assets/x (1).png"
-                width={18}
-                height={18}
-                alt="cancel"
+
+              <button
                 onClick={() => setDrugHxForm(false)}
                 id="top-drugHx"
                 className="cursor-pointer pt-8"
-              />
+              >
+                <X className="size-6 text-gray-800" />
+              </button>
             </div>
             <div className="mb-10">
               <h1 className="text-[24px] text-blue-700 font-bold">

@@ -3,6 +3,7 @@ import React, { useRef, useEffect } from "react";
 import Image from "next/image";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../../store";
+import { X } from "lucide-react";
 
 interface Stats {
   setShowStats: Function;
@@ -79,16 +80,14 @@ const Statistics: React.FC<Stats> = ({ setShowStats, showStats }) => {
           className={` h-[100dvh] w-full bg-white p-8 overflow-y-scroll text-navyBlue text-[14px]`}
         >
           <div className="w-full flex justify-end mb-10">
-            <Image
-              src="/assets/x (1).png"
-              width={18}
-              height={18}
-              alt="cancel"
+            <button
               onClick={() => {
                 setShowStats(false);
               }}
               className="cursor-pointer"
-            />
+            >
+              <X className="text-gray-800 size-6" />
+            </button>
           </div>
           <div className="mb-10">
             <h1 className="text-[24px] text-blue-700 font-bold">

@@ -5,7 +5,7 @@ import Contact from "@/Layout/dashboard/account/Contact";
 import Statistics from "@/Layout/dashboard/account/Statistics";
 import Drugs from "@/Layout/dashboard/drugs/Drugs";
 import AllergiesForm from "@/Layout/dashboard/forms/AllergiesForm";
-import DrugHxForm from "@/Layout/dashboard/forms/DrugHxForm";
+import DrugHxForm from "@/Layout/dashboard/account/DrugHxForm";
 import DrugsForm from "@/Layout/dashboard/forms/DrugsForm";
 import EditForm from "@/Layout/dashboard/forms/EditForm";
 import EffectsForm from "@/Layout/dashboard/forms/EffectsForm";

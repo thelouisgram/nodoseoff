@@ -1,5 +1,6 @@
 import { Poppins } from "next/font/google";
 import Image from "next/image";
+import Link from "next/link";
 
 const poppins = Poppins({
   weight: [
@@ -71,14 +72,14 @@ export default function Banner() {
       <p className="mt-3 text-white/80 max-w-lg">
         NoDoseOff helps long-term drug users stay on track with their medication, ensuring safety, reminders, and expert guidance.
       </p>
-        <a href="/signup">
+        <Link href="/signup">
 
       <button
         className="px-12 py-2.5 border border-transparent bg-gradient-to-r from-blue-700 to-blue-900 hover:from-blue-800 hover:to-blue-950 transition-all rounded-full text-sm mt-8 text-white"
       >
         Get Started
       </button>
-      </a>
+      </Link>
     </div>
   );
 }

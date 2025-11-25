@@ -207,7 +207,7 @@ const SignIn = () => {
         {/* --- Links --- */}
         <div className="w-full flex flex-col items-center relative z-10">
           <Link href="/signup" className="text-white hover:underline">
-            Don't have an account? Create Account
+            Don`&apos;`t have an account? Create Account
           </Link>
           <Link
             href="/forgetpassword"

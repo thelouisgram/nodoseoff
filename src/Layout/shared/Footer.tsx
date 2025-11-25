@@ -29,38 +29,38 @@ export default function Footer() {
       {/* Social Icons */}
       <div className="flex items-center gap-4 mt-8">
         {/* Instagram */}
-        <a
+        <Link
           href="https://instagram.com/nodoseoff"
           target="_blank"
           className="hover:-translate-y-0.5 transition-all duration-300"
         >
           <Instagram size={24} />
-        </a>
+        </Link>
 
         {/* Website */}
-        <a
+        <Link
           href="https://thelouisgram.vercel.app"
           target="_blank"
           className="hover:-translate-y-0.5 transition-all duration-300"
         >
           <Globe size={24} />
-        </a>
+        </Link>
 
         {/* GitHub */}
-        <a
+        <Link
           href="https://github.com/thelouisgram/nodoseoff"
           target="_blank"
           className="hover:-translate-y-0.5 transition-all duration-300"
         >
           <Github size={24} />
-        </a>
+        </Link>
       </div>
 
       <p className="mt-8 text-center">
         Copyright © {new Date().getFullYear()}{" "}
-        <a href="https://nodoseoff.vercel.app" className="underline">
+        <Link href="https://nodoseoff.vercel.app" className="underline">
           Nodoseoff
-        </a>
+        </Link>
         . All rights reserved.
       </p>
     </footer>

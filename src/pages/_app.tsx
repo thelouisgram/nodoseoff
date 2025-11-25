@@ -1,4 +1,4 @@
-import "@/styles/globals.css";
+import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import { Provider } from "react-redux";
 import store from "./../../store/index";
@@ -6,6 +6,7 @@ import { Toaster } from "sonner";
 import Head from "next/head";
 import { useState, useEffect } from "react";
 import { Analytics } from "@vercel/analytics/react";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 export default function App({ Component, pageProps }: AppProps) {
   const [mode, setMode] = useState("light");
@@ -30,8 +31,8 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <Provider store={store}>
+      <AuthProvider>
       <Head>
-        {/* Dynamically set favicon links based on the mode */}
         <link
           rel="icon"
           href="/logo.png"
@@ -52,6 +53,7 @@ export default function App({ Component, pageProps }: AppProps) {
       </Head>
       <Toaster position="top-center" richColors={true} closeButton={true} />
       <Component {...pageProps} />
+      </AuthProvider>
     </Provider>
   );
 }

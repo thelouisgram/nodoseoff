@@ -39,6 +39,7 @@ import { uploadScheduleToServer } from "../../../utils/schedule";
 import supabase from "../../../utils/supabase";
 import { tabs, tabsMobile } from "./../../../utils/dashboard";
 import AccountSettings from "@/Layout/dashboard/account/AccountSettings";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 interface tabsMobileProps {
   name: string;
@@ -104,9 +105,15 @@ const Page = () => {
             .from("profile-picture")
             .list(userId + "/", { limit: 1, offset: 0 }),
           supabase.from("drugs").select("*").eq("userId", userId),
-          supabase.from("completedDrugs").select("completedDrugs").eq("userId", userId),
+          supabase
+            .from("completedDrugs")
+            .select("completedDrugs")
+            .eq("userId", userId),
           supabase.from("allergies").select("*").eq("userId", userId),
-          supabase.from("drugHistory").select("otcDrugs, herbs").eq("userId", userId),
+          supabase
+            .from("drugHistory")
+            .select("otcDrugs, herbs")
+            .eq("userId", userId),
           supabase.from("schedule").select("schedule").eq("userId", userId),
         ]);
 
@@ -176,14 +183,13 @@ const Page = () => {
         dispatch(updateAllergies(allergiesData.data ?? []));
 
         // Update Drug History
-       dispatch(updateHerbs(drugHistory.data?.[0]?.herbs ?? []));
-       dispatch(updateOtcDrugs(drugHistory.data?.[0]?.otcDrugs ?? []));
-
+        dispatch(updateHerbs(drugHistory.data?.[0]?.herbs ?? []));
+        dispatch(updateOtcDrugs(drugHistory.data?.[0]?.otcDrugs ?? []));
 
         // Ensure schedule is updated
         dispatch(updateSchedule(scheduleData.data[0]?.schedule ?? []));
 
-          setIsLoading(false);
+        setIsLoading(false);
       } catch (error) {
         toast.error("Error fetching data");
       }
@@ -426,177 +432,180 @@ const Page = () => {
     });
 
   return (
-    <Suspense fallback={<Loader />}>
-      <Head>
-        <title>NoDoseOff | DashBoard</title>
-      </Head>
-      {userId && (
-        <section
-          className={`flex relative w-full bg-white ${
-            isLoading ? "opacity-0 h-0" : "opacity-100 h-[100dvh]"
-          } transition-all`}
-        >
-          <div
-            className={` ${!nav ? "" : "lg:w-[300px]"} w-[86px] bg-navyBlue py-10 pl-6 hidden font-karla md:flex flex-col justify-between relative transition-all duration-300`}
+    <ProtectedRoute>
+      <Suspense fallback={<Loader />}>
+        <Head>
+          <title>NoDoseOff | DashBoard</title>
+        </Head>
+        {userId && (
+          <section
+            className={`flex relative w-full bg-white ${
+              isLoading ? "opacity-0 h-0" : "opacity-100 h-[100dvh]"
+            } transition-all`}
           >
-            <div>
-              <div className="flex gap-5 items-center mb-12 cursor-pointer h-[60.81px] justify-start">
-                <Link href="/" className="flex lg:hidden">
+            <div
+              className={` ${!nav ? "" : "lg:w-[300px]"} w-[86px] bg-navyBlue py-10 pl-6 hidden font-karla md:flex flex-col justify-between relative transition-all duration-300`}
+            >
+              <div>
+                <div className="flex gap-5 items-center mb-12 cursor-pointer h-[60.81px] justify-start">
+                  <Link href="/" className="flex lg:hidden">
+                    <Image
+                      src="/assets/logo/logo-white.png"
+                      alt="logo"
+                      width={1084}
+                      height={257}
+                      className={`w-8 h-auto `}
+                      quality={100}
+                    />
+                  </Link>
                   <Image
-                    src="/assets/logo/logo-white.png"
-                    alt="logo"
-                    width={1084}
-                    height={257}
-                    className={`w-8 h-auto `}
-                    quality={100}
+                    onClick={() => {
+                      setNav(!nav);
+                    }}
+                    src="/assets/desktop-dashboard/menu.png"
+                    width={512}
+                    height={512}
+                    className="size-6 lg:flex hidden"
+                    alt="menu"
+                    priority
                   />
-                </Link>
+                  <Link
+                    href={"/"}
+                    className={`w-[140px] h-auto ${nav ? "lg:flex hidden" : "hidden"}`}
+                  >
+                    <Image
+                      src="/assets/logo/logo with name png - white color.png"
+                      alt="logo"
+                      width={1084}
+                      height={257}
+                      quality={100}
+                    />
+                  </Link>
+                </div>
+                <div className="flex flex-col gap-6">{renderedTabs}</div>
+              </div>
+
+              <button
+                onClick={logOut}
+                className="flex items-center gap-6 font-Inter"
+              >
                 <Image
-                  onClick={() => {
-                    setNav(!nav);
-                  }}
-                  src="/assets/desktop-dashboard/menu.png"
+                  src="/assets/desktop-dashboard/power-off.png"
                   width={512}
                   height={512}
-                  className="size-6 lg:flex hidden"
+                  className="w-[24px] h-[24px]"
                   alt="menu"
-                  priority
+                  quality={100}
                 />
-                <Link href={"/"}
-                className={`w-[140px] h-auto ${nav ? "lg:flex hidden" : "hidden"}`}
-                    >
-                  <Image
-                    src="/assets/logo/logo with name png - white color.png"
-                    alt="logo"
-                    width={1084}
-                    height={257}
-                    quality={100}
-                  />
-                </Link>
-              </div>
-              <div className="flex flex-col gap-6">{renderedTabs}</div>
+                <p
+                  className={`text-[16px] text-white ${nav ? " hidden lg:flex" : "hidden"}`}
+                >
+                  Logout
+                </p>
+              </button>
             </div>
-
-            <button
-              onClick={logOut}
-              className="flex items-center gap-6 font-Inter"
-            >
-              <Image
-                src="/assets/desktop-dashboard/power-off.png"
-                width={512}
-                height={512}
-                className="w-[24px] h-[24px]"
-                alt="menu"
-                quality={100}
-              />
-              <p
-                className={`text-[16px] text-white ${nav ? " hidden lg:flex" : "hidden"}`}
-              >
-                Logout
-              </p>
-            </button>
-          </div>
-          <div className="w-full">
-            {active === "Home" ? (
-              <Home
-                setDrugsForm={setDrugsForm}
-                isLoading={isLoading}
-                setAllDoses={setAllDoses}
-                tracker={tracker}
-                setTracker={setTracker}
-                dosesToRender={dosesToRender}
-              />
-            ) : active === "Drugs" ? (
-              <Drugs
-                screen={screen}
-                setScreen={setScreen}
-                setDrugsForm={setDrugsForm}
-                setEditForm={setEditForm}
-                setEditModal={setEditModal}
-                setDeleteModal={setDeleteModal}
-                deleteModal={deleteModal}
-                editModal={editModal}
-                allergyModal={allergyModal}
-                setAllergyModal={setAllergyModal}
-                add={add}
-                setAdd={setAdd}
-                editForm={editForm}
-                drugsForm={drugsForm}
-                allergiesForm={allergiesForm}
-                setAllergiesForm={setAllergiesForm}
-              />
-            ) : (
-              <Account
-                setDrugHxForm={setDrugHxForm}
-                setProfileForm={setProfileForm}
-                setShowStats={setShowStats}
-                setShowContact={setShowContact}
-                setAccountSettings={setAccountSettings}
-                setScreen={setScreen}
-                setDeleteAccountModal={setDeleteAccountModal}
-                deleteAccountModal={deleteAccountModal}
-              />
+            <div className="w-full">
+              {active === "Home" ? (
+                <Home
+                  setDrugsForm={setDrugsForm}
+                  isLoading={isLoading}
+                  setAllDoses={setAllDoses}
+                  tracker={tracker}
+                  setTracker={setTracker}
+                  dosesToRender={dosesToRender}
+                />
+              ) : active === "Drugs" ? (
+                <Drugs
+                  screen={screen}
+                  setScreen={setScreen}
+                  setDrugsForm={setDrugsForm}
+                  setEditForm={setEditForm}
+                  setEditModal={setEditModal}
+                  setDeleteModal={setDeleteModal}
+                  deleteModal={deleteModal}
+                  editModal={editModal}
+                  allergyModal={allergyModal}
+                  setAllergyModal={setAllergyModal}
+                  add={add}
+                  setAdd={setAdd}
+                  editForm={editForm}
+                  drugsForm={drugsForm}
+                  allergiesForm={allergiesForm}
+                  setAllergiesForm={setAllergiesForm}
+                />
+              ) : (
+                <Account
+                  setDrugHxForm={setDrugHxForm}
+                  setProfileForm={setProfileForm}
+                  setShowStats={setShowStats}
+                  setShowContact={setShowContact}
+                  setAccountSettings={setAccountSettings}
+                  setScreen={setScreen}
+                  setDeleteAccountModal={setDeleteAccountModal}
+                  deleteAccountModal={deleteAccountModal}
+                />
+              )}
+            </div>
+            {!isLoading && (
+              <>
+                <DrugsForm drugsForm={drugsForm} setDrugsForm={setDrugsForm} />
+                <EditForm editForm={editForm} setEditForm={setEditForm} />
+                <AllergiesForm
+                  allergiesForm={allergiesForm}
+                  setAllergiesForm={setAllergiesForm}
+                />
+                <ProfileForm
+                  setProfileForm={setProfileForm}
+                  profileForm={profileForm}
+                />
+                <Statistics setShowStats={setShowStats} showStats={showStats} />
+                <Contact
+                  showContact={showContact}
+                  setShowContact={setShowContact}
+                />
+                <DrugHxForm
+                  drugHxForm={drugHxForm}
+                  setDrugHxForm={setDrugHxForm}
+                />
+                <AccountSettings
+                  accountSettings={accountSettings}
+                  setAccountSettings={setAccountSettings}
+                  setDeleteAccountModal={setDeleteAccountModal}
+                  setScreen={setScreen}
+                />
+              </>
             )}
-          </div>
-          {!isLoading && (
-            <>
-              <DrugsForm drugsForm={drugsForm} setDrugsForm={setDrugsForm} />
-              <EditForm editForm={editForm} setEditForm={setEditForm} />
-              <AllergiesForm
-                allergiesForm={allergiesForm}
-                setAllergiesForm={setAllergiesForm}
-              />
-              <ProfileForm
-                setProfileForm={setProfileForm}
-                profileForm={profileForm}
-              />
-              <Statistics setShowStats={setShowStats} showStats={showStats} />
-              <Contact
-                showContact={showContact}
-                setShowContact={setShowContact}
-              />
-              <DrugHxForm
-                drugHxForm={drugHxForm}
-                setDrugHxForm={setDrugHxForm}
-              />
-              <AccountSettings
-                accountSettings={accountSettings}
-                setAccountSettings={setAccountSettings}
-                setDeleteAccountModal={setDeleteAccountModal}
-                setScreen={setScreen}
-              />
-            </>
-          )}
-          <AllDoses
-            allDoses={allDoses}
-            setAllDoses={setAllDoses}
-            dosesToRender={dosesToRender}
-          />
+            <AllDoses
+              allDoses={allDoses}
+              setAllDoses={setAllDoses}
+              dosesToRender={dosesToRender}
+            />
 
-          <Screen
-            setDeleteModal={setDeleteModal}
-            setAllergyModal={setAllergyModal}
-            setEditModal={setEditModal}
-            setProfileForm={setProfileForm}
-            setScreen={setScreen}
-            setAdd={setAdd}
-            screen={screen}
-            setShowStats={setShowStats}
-            setDeleteAccountModal={setDeleteAccountModal}
-          />
+            <Screen
+              setDeleteModal={setDeleteModal}
+              setAllergyModal={setAllergyModal}
+              setEditModal={setEditModal}
+              setProfileForm={setProfileForm}
+              setScreen={setScreen}
+              setAdd={setAdd}
+              screen={screen}
+              setShowStats={setShowStats}
+              setDeleteAccountModal={setDeleteAccountModal}
+            />
 
-          <div className="fixed w-full h-[64px] bg-white shadow bottom-0 flex justify-between items-center md:hidden px-4 ss:px-8 ss:pr-12">
-            {renderedTabsMobile}
+            <div className="fixed w-full h-[64px] bg-white shadow bottom-0 flex justify-between items-center md:hidden px-4 ss:px-8 ss:pr-12">
+              {renderedTabsMobile}
+            </div>
+          </section>
+        )}
+        {isLoading && (
+          <div className="w-full">
+            {" "}
+            <Loader />
           </div>
-        </section>
-      )}
-      {isLoading && (
-        <div className="w-full">
-          {" "}
-          <Loader />
-        </div>
-      )}
-    </Suspense>
+        )}
+      </Suspense>
+    </ProtectedRoute>
   );
 };
 

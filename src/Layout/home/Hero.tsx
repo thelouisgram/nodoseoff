@@ -1,65 +1,135 @@
-import React from "react";
-import Header from "./Hero/Header";
-import Link from "next/link";
+"use client";
+
 import Image from "next/image";
-import NextDose from "./Hero/NextDose";
-import Compliance from "./Hero/Compliance";
-import NumberOfDrugs from "./Hero/NumberOfDrugs";
-import MissedDoses from "./Hero/MissedDoses";
-import AnimatedComponent from "../shared/AnimatedComponent";
+import { useState } from "react";
+import { Poppins } from "next/font/google";
+import {
+  Menu,
+  X,
+  ArrowRight,
+  ArrowRightCircle,
+} from "lucide-react";
+import Link from "next/link";
 
-interface navProps {
-  nav: boolean;
-  setNav: Function;
-}
+const poppins = Poppins({
+  weight: ["400", "500", "600", "700"],
+  subsets: ["latin"],
+});
 
-const Hero: React.FC<navProps> = ({ nav, setNav }) => {
+export default function HeroSection() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
-    <div
+    <section
       id="home"
-      className="w-full h-auto bg-lightBlue relative pb-8 pt-[112px]"
+      className={`${poppins.className} bg-gradient-to-b px-4 sm:px-10 h-screen overflow-hidden from-[#F5F7FF] via-[#fffbee] to-[#E6EFFF] pt-6`}
     >
-      <div className="container md:w-[1165px] lg:w-[1165px] mx-auto px-2 xs:px-1 ss:px-5 md:px-0 w-full h-auto md:h-[625px] flex flex-col md:flex-row gap-10 md:gap-20">
-        <div className="md:w-1/2 h-full flex flex-col justify-center gap-7 items-center md:items-start py-12">
-          <Header />
-          <AnimatedComponent animationType="slideIn" delay={0.6}>
-            <p className="w-full ss:w-[425px] text-center md:text-left font-Inter font-[500] text-[16px]">
-              Boost Your Health with NoDoseOff: Our Accurate Medication Tracker.
-              Monitor Dosage, Track Effectiveness, Enhance Health.
-            </p>
-          </AnimatedComponent>
-          <AnimatedComponent animationType="slideIn" delay={1.2}>
-            <Link
-              href="/signup"
-              className="flex px-12 py-3 bg-navyBlue rounded-[10px] font-semibold text-white"
-            >
-              Get Started
-            </Link>
-          </AnimatedComponent>
-        </div>
-        <div className="md:w-1/2 h-full flex justify-end pb-10 md:pb-0 px-6 xs:px-4 ss:px-20 md:p-0">
-          <div className="flex w-full h-full items-center relative robot">
-            <AnimatedComponent animationType="scaleUp" delay={0}>
-              <Image
-                width={4416}
-                height={4392}
-                src="/assets/hero/hero.jpg"
-                alt="Hero Img"
-                className="w-full h-auto border-[12px] border-white shadow-2xl rounded-[48px]"
-                priority
-              />
-            </AnimatedComponent>
-            <AnimatedComponent animationType="fadeIn" delay={0.8}>
-              <NextDose />
-              <Compliance />
-              <NumberOfDrugs />
-              <MissedDoses />
-            </AnimatedComponent>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+      {/* --- NAVBAR --- */}
+      <header className="flex items-center justify-between px-6 py-3 md:py-4 shadow-sm max-w-5xl rounded-full mx-auto w-full bg-white">
+        {/* Logo */}
+        <Link href="/">
+          <Image
+            src="/assets/logo/logo with name - blue color.png"
+            alt="NoDoseOff Logo"
+            width={150}
+            height={40}
+          />
+        </Link>
 
-export default Hero;
+        {/* Menu */}
+        <nav
+          className={`${
+            menuOpen ? "max-md:w-full" : "max-md:w-0"
+          } max-md:absolute max-md:top-0 max-md:left-0
+          max-md:overflow-hidden max-md:h-full
+          transition-[width] bg-white/70 backdrop-blur
+          flex items-center justify-center 
+          max-md:flex-col md:flex-row gap-8 text-gray-900 text-sm font-normal`}
+        >
+          <Link className="hover:text-blue-600" href="#about">
+            About
+          </Link>
+          <Link className="hover:text-blue-600" href="#tips">
+            Tips
+          </Link>
+          <Link className="hover:text-blue-600" href="#testimonials">
+            Testimonials
+          </Link>
+          <Link className="hover:text-blue-600" href="#team">
+            Team
+          </Link>
+
+          {/* Close Button */}
+          <button
+            onClick={() => setMenuOpen(false)}
+            className="md:hidden text-gray-600 z-999 absolute right-8 top-10"
+          >
+            <X className="w-7 h-7" />
+          </button>
+        </nav>
+
+        {/* Right side */}
+        <div className="flex items-center space-x-4">
+
+          <Link
+            className="hidden md:flex bg-blue-600 text-white px-5 py-2 rounded-full text-sm font-medium hover:bg-blue-700 transition"
+            href="/signup"
+          >
+            Sign up
+          </Link>
+
+          {/* Open menu button */}
+          <button
+            onClick={() => setMenuOpen(true)}
+            className="md:hidden text-gray-600"
+          >
+            <Menu className="w-7 h-7" />
+          </button>
+        </div>
+      </header>
+
+      {/* --- HERO CONTENT --- */}
+      <main className="flex-grow flex flex-col items-center max-w-7xl mx-auto w-full">
+        <Link href='#tips'>
+        <button
+          className="mt-16 mb-6 flex items-center space-x-2 border border-blue-600 text-blue-600 text-xs rounded-full px-4 pr-1.5 py-1.5 hover:bg-blue-50 transition"
+          type="button"
+        >
+          <span>Explore how NoDoseOff supports medication safety.</span>
+
+          <span className="flex items-center justify-center size-6 p-1 rounded-full bg-blue-600">
+            <ArrowRight className="w-4 h-4 text-white" />
+          </span>
+        </button>
+</Link>
+        <h1 className="text-center text-gray-900 font-bold text-3xl sm:text-4xl md:text-5xl max-w-2xl leading-tight">
+          Trusted medication support for
+          <span className="text-blue-600"> everyday users</span>
+        </h1>
+
+        <p className="mt-4 text-center text-gray-600 max-w-md text-sm sm:text-base leading-relaxed">
+          Stay consistent, stay safe. NoDoseOff helps you manage your long-term
+          medications without stress.
+        </p>
+
+        <Link
+          className="mt-8 bg-blue-600 text-white px-6 pr-2.5 py-2.5 rounded-full text-sm font-medium flex items-center space-x-2 hover:bg-blue-700 transition"
+          href="/signup"
+        >
+          <span>Get Started</span>
+          <ArrowRightCircle className="w-5 h-5 text-white" />
+        </Link>
+
+        {/* Hero Image */}
+        <div className="relative mt-16 w-full max-w-5xl h-72 overflow-hidden rounded-[50px] rounded-b-none">
+          <Image
+            src="/assets/hero/newHero.jpg"
+            alt="Medical professional smiling"
+            fill
+            className="object-cover"
+          />
+        </div>
+      </main>
+    </section>
+  );
+}

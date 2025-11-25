@@ -1,4 +1,4 @@
-"use-client";
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import { ChangeEvent, FormEvent, useState } from "react";
@@ -22,16 +22,14 @@ const CreateAccount = () => {
     password: "",
   });
 
-  const recaptchaSiteKey: string =
-    process.env.NEXT_PUBLIC_CAPTCHA_SITE_KEY ?? "";
+  const recaptchaSiteKey: string = process.env.NEXT_PUBLIC_CAPTCHA_SITE_KEY ?? "";
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
   const [confirmPassword, setConfirmPassword] = useState("");
-
   const [loading, setLoading] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -42,29 +40,8 @@ const CreateAccount = () => {
   };
 
   const handleConfirmPassword = (e: ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setConfirmPassword(value);
+    setConfirmPassword(e.target.value);
   };
-
-  const [errorMessage, setErrorMessage] = useState("");
-
-  async function fetchLocalImage() {
-    try {
-      // Fetch the image from your local assets directory
-      const response = await fetch("/assets/user.png");
-      if (!response.ok) {
-        throw new Error("Failed to fetch image");
-      }
-
-      // Convert the image response to a blob
-      const blob = await response.blob();
-
-      return blob; // Return the image blob
-    } catch (error) {
-      console.error("Error fetching local image:", error);
-      throw new Error("Error fetching local image");
-    }
-  }
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -85,7 +62,6 @@ const CreateAccount = () => {
       return;
     }
 
-    // Check password strength (at least 6 characters)
     if (formData.password.length < 6) {
       setErrorMessage(
         "Please enter a password that is at least 6 characters long."
@@ -97,12 +73,10 @@ const CreateAccount = () => {
     setErrorMessage("");
 
     try {
-      // Sign up the user
-      const { error: signUpError, data: signUpData } =
-        await supabase.auth.signUp({
-          email: formData.email,
-          password: formData.password,
-        });
+      const { error: signUpError, data: signUpData } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+      });
 
       if (signUpError) {
         setErrorMessage("Error signing up: " + signUpError.message);
@@ -115,48 +89,18 @@ const CreateAccount = () => {
         dispatch(updateIsAuthenticated(true));
         dispatch(updateUserId(userId));
 
-        // Insert into "users"
         const { error: userError } = await supabase.from("users").insert({
           name: formData.fullName,
           phone: formData.phoneNumber,
           email: formData.email,
           userId: userId,
         });
-
         if (userError) throw userError;
 
-        // Insert into "schedule"
-        const { error: scheduleError } = await supabase
-          .from("schedule")
-          .insert({
-            userId: userId,
-            schedule: [],
-          });
+        await supabase.from("schedule").insert({ userId: userId, schedule: [] });
+        await supabase.from("completedDrugs").insert({ userId: userId, completedDrugs: [] });
+        await supabase.from("drugHistory").insert({ userId: userId, otcDrugs: "", herbs: "" });
 
-        if (scheduleError) throw scheduleError;
-
-        // Insert into "completedDrugs"
-        const { error: completedError } = await supabase
-          .from("completedDrugs")
-          .insert({
-            userId: userId,
-            completedDrugs: [],
-          });
-
-        if (completedError) throw completedError;
-
-        // Insert into "drugHistory"
-        const { error: historyError } = await supabase
-          .from("drugHistory")
-          .insert({
-            userId: userId,
-            otcDrugs: "",
-            herbs: "",
-          });
-
-        if (historyError) throw historyError;
-
-        // Redirect to the dashboard
         const { html, subject } = generateWelcomeEmail();
         await sendMail(formData.email, html, subject);
 
@@ -173,9 +117,51 @@ const CreateAccount = () => {
   return (
     <>
       <Head>
-        <title>NoDoseOff | DashBoard</title>
+        <title>NoDoseOff | Create Account</title>
       </Head>
-      <div className="min-h-[100dvh] w-[100%] py-8 px-6 flex flex-col justify-center items-center ss:py-10 bg-navyBlue font-karla text-grey">
+
+      <div className="relative min-h-screen w-full flex flex-col justify-center items-center bg-navyBlue font-karla text-grey overflow-hidden py-8 px-6 ss:py-10">
+        {/* --- Geometric SVG Background --- */}
+        <svg
+          className="absolute inset-0 w-full h-full"
+          viewBox="0 0 1440 720"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            stroke="#9CA3AF"
+            strokeOpacity=".7"
+            d="M-15.227 702.342H1439.7"
+          />
+          <circle
+            cx="711.819"
+            cy="372.562"
+            r="308.334"
+            stroke="#9CA3AF"
+            strokeOpacity=".7"
+          />
+          <circle
+            cx="16.942"
+            cy="20.834"
+            r="308.334"
+            stroke="#9CA3AF"
+            strokeOpacity=".7"
+          />
+          <path
+            stroke="#9CA3AF"
+            strokeOpacity=".7"
+            d="M-15.227 573.66H1439.7M-15.227 164.029H1439.7"
+          />
+          <circle
+            cx="782.595"
+            cy="411.166"
+            r="308.334"
+            stroke="#9CA3AF"
+            strokeOpacity=".7"
+          />
+        </svg>
+
+        {/* --- Logo --- */}
         <Link href="/">
           <Image
             src="/assets/logo/logo with name png - white color.png"
@@ -183,26 +169,28 @@ const CreateAccount = () => {
             height={1092}
             quality={100}
             alt="logo"
-            className="w-[180px] h-auto mb-10"
+            className="w-[180px] h-auto mb-10 relative z-10"
             priority
           />
         </Link>
+
+        {/* --- Form --- */}
         <form
-          className="bg-white rounded-[15px]  w-full ss:w-[450px] h-auto p-7 ss:p-10 mb-10"
+          className="bg-white rounded-[15px] w-full ss:w-[450px] h-auto p-7 ss:p-10 mb-10 relative z-10"
           onSubmit={handleSubmit}
         >
           <div className="mb-10 w-full items-center flex flex-col">
             <legend className="text-[24px] font-bold text-blue-700 font-Inter">
               Create an Account
             </legend>
-            <p className="text-[14px]">
+            <p className="text-[14px] text-center">
               Welcome to the future of Drug Monitoring
             </p>
           </div>
+
+          {/* --- Inputs --- */}
           <div className="flex flex-col mb-4">
-            <label htmlFor="fullName" className="text-[14px] mb-1">
-              Full Name
-            </label>
+            <label htmlFor="fullName" className="text-[14px] mb-1">Full Name</label>
             <input
               type="text"
               id="fullName"
@@ -213,10 +201,9 @@ const CreateAccount = () => {
               placeholder="Full Name"
             />
           </div>
+
           <div className="flex flex-col mb-4">
-            <label htmlFor="email" className="text-[14px] mb-1">
-              Email
-            </label>
+            <label htmlFor="email" className="text-[14px] mb-1">Email</label>
             <input
               type="email"
               id="email"
@@ -227,10 +214,9 @@ const CreateAccount = () => {
               placeholder="Email Address"
             />
           </div>
+
           <div className="flex flex-col mb-4">
-            <label htmlFor="phoneNumber" className="text-[14px] mb-1">
-              Phone Number
-            </label>
+            <label htmlFor="phoneNumber" className="text-[14px] mb-1">Phone Number</label>
             <input
               type="text"
               id="phoneNumber"
@@ -241,10 +227,9 @@ const CreateAccount = () => {
               placeholder="Phone Number"
             />
           </div>
+
           <div className="flex flex-col mb-4">
-            <label htmlFor="password" className="text-[14px] mb-1">
-              Password
-            </label>
+            <label htmlFor="password" className="text-[14px] mb-1">Password</label>
             <div className="w-full bg-[#EDF2F7] rounded-[10px] mb-4 flex p-4">
               <input
                 type={showPassword ? "text" : "password"}
@@ -252,7 +237,7 @@ const CreateAccount = () => {
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
-                className="border bg-[#EDF2F7] border-none outline-none rounded-[10px]  w-full"
+                className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] w-full"
                 placeholder="Password"
               />
               <button
@@ -270,19 +255,17 @@ const CreateAccount = () => {
               </button>
             </div>
           </div>
+
           <div className="flex flex-col mb-4">
-            <label htmlFor="confirmPassword" className="text-[14px] mb-1">
-              Confirm Password
-            </label>
+            <label htmlFor="confirmPassword" className="text-[14px] mb-1">Confirm Password</label>
             <div className="w-full bg-[#EDF2F7] rounded-[10px] mb-4 flex p-4">
               <input
                 type={showConfirmPassword ? "text" : "password"}
                 id="confirmPassword"
-                name="password"
                 value={confirmPassword}
                 onChange={handleConfirmPassword}
-                className="border bg-[#EDF2F7] border-none outline-none rounded-[10px]  w-full"
-                placeholder="Password"
+                className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] w-full"
+                placeholder="Confirm Password"
               />
               <button
                 type="button"
@@ -290,11 +273,7 @@ const CreateAccount = () => {
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               >
                 <Image
-                  src={
-                    showConfirmPassword
-                      ? "/assets/hide.png"
-                      : "/assets/show.png"
-                  }
+                  src={showConfirmPassword ? "/assets/hide.png" : "/assets/show.png"}
                   width={512}
                   height={512}
                   className="h-5 w-5"
@@ -303,32 +282,32 @@ const CreateAccount = () => {
               </button>
             </div>
           </div>
+
           {errorMessage && (
             <p className="mb-4 -mt-4 text-red font-[500] tracking-none leading-none text-[14px]">
               {errorMessage}
             </p>
           )}
+
           {/* CAPTCHA Verification */}
           <ReCAPTCHA
             onChange={setCaptchaToken}
             sitekey={recaptchaSiteKey}
             className="mx-auto mb-8"
           />
+
           <button
             type="submit"
             disabled={loading}
-            className={` text-white rounded-[10px] h-[56px] w-full items-center justify-center flex transition duration-300 font-semibold ${
+            className={`text-white rounded-[10px] h-[56px] w-full items-center justify-center flex transition duration-300 font-semibold ${
               loading ? "bg-navyBlue" : "bg-blue-700"
             }`}
           >
-            {loading ? (
-              <div className="loaderInfinity"></div>
-            ) : (
-              "CREATE AN ACCOUNT"
-            )}
+            {loading ? <div className="loaderInfinity"></div> : "CREATE AN ACCOUNT"}
           </button>
         </form>
-        <Link href="/login" className="text-white hover:underline">
+
+        <Link href="/login" className="text-white hover:underline z-10 relative">
           Already have an account? Login
         </Link>
       </div>

@@ -10,6 +10,8 @@ const nextConfig = {
         pathname: '/storage/v1/object/public/profile-picture/**',
       },
     ],
+    domains: ["images.unsplash.com"], // add any external image host here
+
   },
 }
 

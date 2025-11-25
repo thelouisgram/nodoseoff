@@ -1,40 +1,52 @@
 import React from "react";
-import { tips } from "../../../utils/tips";
-import Image from "next/image";
 import { motion } from "framer-motion";
+import { tips } from "../../../utils/tips";
 
 const Tips = () => {
-  const renderedTips = tips.map((tip, index) => {
-    return (
-      <motion.div
-        key={index}
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ delay: index * 0.15, duration: 0.3 }}
-        style={{ backgroundColor: tip.bgColor, color: tip.textColor }}
-        className={`py-7 px-4 ss:py-8 ss:px-6 rounded-xl`}
-        viewport={{once: true}}
-      >
-          <Image src={tip.image} alt={tip.title} width="24" height="24" />
-          <h1 className="font-bold text-[18px] my-3 leading-tight">
-            {tip.title}
-          </h1>
-          <p className="text-grey text-[12px] ss:text-[13px]">{tip.desc}</p>
-      </motion.div>
-    );
-  });
   return (
     <div
       id="tips"
-      className="container md:w-[1165px] lg:w-[1165px] py-24 mx-auto px-4 xs:px-1 ss:px-5 md:px-0 w-full flex flex-col"
+      className="container mx-auto px-4 md:px-0 py-24 w-full flex flex-col items-center"
     >
-      <h2 className="text-[24px] md:text-[36px] md:w-[500px] mb-16 font-Poppins leading-tight">
-        Tips for better health and sticking to your medications.
+      <h2 className="text-3xl md:text-4xl font-semibold mb-4 text-center text-slate-800">
+        Tips for better health
       </h2>
-      <div
-        className="grid grid-cols-2 md:grid-cols-3 gap-4"
-      >
-        {renderedTips}
+      <p className="text-sm md:text-base text-slate-500 text-center mb-12 max-w-xl">
+        Practical advice to help you take medications safely and effectively.
+      </p>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8 w-full max-w-5xl">
+        {tips.map((tip, index) => {
+          const Icon = tip.icon;
+          return (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1, duration: 0.3 }}
+              className="group relative flex flex-col items-start gap-3 p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer"
+              style={{ backgroundColor: tip.bgColor, color: tip.textColor }}
+              viewport={{ once: true }}
+            >
+              {/* Icon Circle */}
+              {Icon && (
+                <div className="bg-white/20 rounded-full p-3 mb-2 group-hover:scale-105 transition-transform duration-300">
+                  <Icon size={24} />
+                </div>
+              )}
+
+              {/* Title */}
+              <h3 className="font-bold text-lg md:text-[18px] leading-snug">
+                {tip.title}
+              </h3>
+
+              {/* Description */}
+              <p className="text-sm md:text-[13px] text-slate-800/80">
+                {tip.desc}
+              </p>
+            </motion.div>
+          );
+        })}
       </div>
     </div>
   );

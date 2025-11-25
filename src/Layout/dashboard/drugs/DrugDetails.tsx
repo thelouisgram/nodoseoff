@@ -10,7 +10,7 @@ import {
 import {
   formatDate,
   frequencyToPlaceholder,
-} from "../../../../utils/dashboard";
+} from "../../../../utils/dashboard/dashboard";
 import { calculateTimePeriod, convertedTimes } from "../../../../utils/drugs";
 import { ScheduleItem } from "../../../../types/dashboard";
 import { ChevronLeft } from "lucide-react";
@@ -71,9 +71,6 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
   handleDeleteAllergy,
   setEditForm,
 }) => {
-  // ============================================================================
-  // HOOKS - MUST BE CALLED FIRST
-  // ============================================================================
   const { schedule, drugs, completedDrugs, activeDrug, activeDrugId } =
     useSelector((state: RootState) => state.app);
 
@@ -160,9 +157,6 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
     }
   };
 
-  // ============================================================================
-  // EFFECTS
-  // ============================================================================
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent): void => {
       handleClickOutside(event);
@@ -194,23 +188,15 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
     }
   }, [tab, drugs, completedDrugs, activeDrug, complianceData, activeDrugId, isCalculating]);
 
-  // ============================================================================
-  // DATA COMPUTATION
-  // ============================================================================
   const drugsArray = tab === "Ongoing" ? drugs : completedDrugs;
   const drugDetails = drugsArray.find((drug) => drug.drug === activeDrug);
   const drugData = complianceData[activeDrugId];
 
-  // ============================================================================
-  // EARLY RETURNS (AFTER ALL HOOKS)
-  // ============================================================================
+
   if (!drugDetails || !drugData || isCalculating) {
     return null;
   }
 
-  // ============================================================================
-  // DERIVED DATA
-  // ============================================================================
   const {
     missedDoses,
     compliance,
@@ -248,9 +234,6 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
     );
   });
 
-  // ============================================================================
-  // RENDER
-  // ============================================================================
   return (
     <div className="h-[100dvh] ss:pb-28 overflow-y-scroll w-full md:py-16 md:px-12 px-4 pt-10 pb-24 ss:p-10 text-navyBlue relative">
       <button

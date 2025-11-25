@@ -5,11 +5,10 @@ import React, { useState, useEffect } from "react";
 import DailyReports from "./DailyReports";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../../store";
-import { calculateClosestDoseCountdown } from "../../../../utils/dashboard";
+import { calculateClosestDoseCountdown } from "../../../../utils/dashboard/dashboard";
 import { updateActive } from "../../../../store/stateSlice";
 import Tracker from "./Tracker";
 import { UserRound } from "lucide-react";
-
 interface HomeProps {
   setDrugsForm: Function;
   isLoading: boolean;

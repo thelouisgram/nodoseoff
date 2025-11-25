@@ -1,4 +1,4 @@
-import { formatDate } from "../utils/dashboard";
+import { formatDate } from "../utils/dashboard/dashboard";
 
 interface DrugAddedEmailResponse {
   subject: string;

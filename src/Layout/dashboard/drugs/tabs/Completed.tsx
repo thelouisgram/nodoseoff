@@ -2,7 +2,7 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../store";
-import { frequencyToPlaceholder } from "../../../../../utils/dashboard";
+import { frequencyToPlaceholder } from "../../../../../utils/dashboard/dashboard";
 import RenderedDrugs from "../RenderedDrugs";
 import { DrugProps } from "../../../../../types/dashboard";
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";

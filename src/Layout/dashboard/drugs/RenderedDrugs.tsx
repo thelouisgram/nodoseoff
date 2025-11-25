@@ -6,7 +6,7 @@ import {
   updateActiveDrugId,
 } from "../../../../store/stateSlice";
 import { DrugProps } from "../../../../types/dashboard";
-import { formatDate } from "../../../../utils/dashboard";
+import { formatDate } from "../../../../utils/dashboard/dashboard";
 import { calculateTimePeriod } from "../../../../utils/drugs";
 import { CircleX, EllipsisVertical, Info, Pencil, Trash2 } from "lucide-react";
 

@@ -6,11 +6,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import { RootState } from "../../../../store";
 import { setDrugs, updateSchedule } from "../../../../store/stateSlice";
-import { dose, generateSchedule } from "../../../../utils/dashboard";
+import { dose, generateSchedule } from "../../../../utils/dashboard/dashboard";
 import {
   removePastDoses,
   uploadScheduleToServer,
-} from "../../../../utils/schedule";
+} from "../../../../utils/dashboard/schedule";
 import supabase from "../../../../utils/supabase";
 import { X } from "lucide-react";
 

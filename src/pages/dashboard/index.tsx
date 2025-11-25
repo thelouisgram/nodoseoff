@@ -16,29 +16,24 @@ import { format } from "date-fns";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { FaCheck } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import { RootState } from "../../../store";
 import {
-  setDrugs,
   updateActive,
-  updateAllergies,
-  updateCompletedDrugs,
-  updateHerbs,
-  updateInfo,
-  updateOtcDrugs,
-  updateProfilePicture,
   updateSchedule,
-  updateUserId,
 } from "../../../store/stateSlice";
-import { DrugProps, ScheduleItem } from "../../../types/dashboard";
-import { uploadScheduleToServer } from "../../../utils/schedule";
-import supabase from "../../../utils/supabase";
-import { tabs, tabsMobile } from "./../../../utils/dashboard";
+import { ScheduleItem } from "../../../types/dashboard";
+import { uploadScheduleToServer } from "../../../utils/dashboard/schedule";
 import AccountSettings from "@/Layout/dashboard/account/AccountSettings";
+import { fetchData } from "../../../hooks/fetchData";
+import Tabs from "@/components/Tabs";
+import MobileTabs from "@/components/MobileTabs";
+import { logOut } from "../../../utils/Auth";
+import { tabs, tabsMobile } from "../../../utils/dashboard/dashboard";
 
 interface tabsMobileProps {
   name: string;
@@ -85,192 +80,24 @@ const Page = () => {
   useEffect(() => {
     dispatch(updateActive("Home"));
 
-    const fetchData = async () => {
-      try {
-        const [
-          userData,
-          profilePictureData,
-          drugsData,
-          completedDrugsData,
-          allergiesData,
-          drugHistory,
-          scheduleData,
-        ] = await Promise.all([
-          supabase
-            .from("users")
-            .select("name, phone, email")
-            .eq("userId", userId),
-          supabase.storage
-            .from("profile-picture")
-            .list(userId + "/", { limit: 1, offset: 0 }),
-          supabase.from("drugs").select("*").eq("userId", userId),
-          supabase.from("completedDrugs").select("completedDrugs").eq("userId", userId),
-          supabase.from("allergies").select("*").eq("userId", userId),
-          supabase.from("drugHistory").select("otcDrugs, herbs").eq("userId", userId),
-          supabase.from("schedule").select("schedule").eq("userId", userId),
-        ]);
-
-        if (
-          userData.error ||
-          profilePictureData.error ||
-          drugsData.error ||
-          completedDrugsData.error ||
-          allergiesData.error ||
-          scheduleData.error
-        ) {
-          throw new Error("Error fetching data");
-        }
-
-        // Ensure user info is dispatched properly
-        const userInfo = userData.data?.[0] ?? {};
-        dispatch(updateInfo([userInfo]));
-
-        // Profile picture update
-        const profilePicture = profilePictureData.data?.[0]?.name ?? "";
-        dispatch(updateProfilePicture(profilePicture));
-
-        // Ensure completedDrugsData is loaded
-        const completedDrugs =
-          completedDrugsData.data?.[0]?.completedDrugs ?? [];
-        dispatch(updateCompletedDrugs(completedDrugs));
-
-        // Wait for drugs to load before proceeding
-        if (!drugsData.data) return;
-
-        const drugs = drugsData.data;
-        const currentDate = new Date();
-        const twoDaysPastDate = new Date();
-        twoDaysPastDate.setDate(currentDate.getDate() - 2);
-
-        // Filter active and expired drugs
-        const activeDrugs = drugs.filter(
-          (drug) => new Date(drug.end) > twoDaysPastDate
-        );
-        const expiredDrugs = drugs.filter(
-          (drug) => new Date(drug.end) <= twoDaysPastDate
-        );
-
-        // Combine expired drugs with existing completed drugs
-        const updatedCompletedDrugs = [...completedDrugs, ...expiredDrugs];
-
-        // Dispatch the updated data
-        dispatch(setDrugs(activeDrugs));
-        dispatch(updateCompletedDrugs(updatedCompletedDrugs));
-
-        // Update completed drugs in database asynchronously
-        await supabase
-          .from("completedDrugs")
-          .update({ completedDrugs: updatedCompletedDrugs })
-          .eq("userId", userId);
-
-        // Delete expired drugs from the database
-        if (expiredDrugs.length > 0) {
-          await Promise.all(
-            expiredDrugs.map(async (drug) => {
-              await supabase.from("drugs").delete().eq("drug", drug.drug);
-            })
-          );
-        }
-
-        // Update effects and allergies
-        dispatch(updateAllergies(allergiesData.data ?? []));
-
-        // Update Drug History
-       dispatch(updateHerbs(drugHistory.data?.[0]?.herbs ?? []));
-       dispatch(updateOtcDrugs(drugHistory.data?.[0]?.otcDrugs ?? []));
-
-
-        // Ensure schedule is updated
-        dispatch(updateSchedule(scheduleData.data[0]?.schedule ?? []));
-
-          setIsLoading(false);
-      } catch (error) {
-        toast.error("Error fetching data");
-      }
-    };
-
     if (userId) {
-      fetchData();
+      fetchData(dispatch, userId, setIsLoading);
     }
   }, [userId]);
 
   const renderedTabs = tabs.map((item: tabsProps, index: number) => {
     return (
-      <button
-        key={index}
-        onClick={() => dispatch(updateActive(item.name))}
-        className={`
-    flex items-center lg:gap-3 cursor-pointer h-10 lg:px-3 w-10 lg:w-auto max-lg:justify-center
-    transition-all font-Inter rounded-full
-    ${item.name === active ? "ring-1 ring-white lg:ring-0" : ""}
-  `}
-      >
-        <Image
-          src={item.logo}
-          width={512}
-          height={512}
-          className="w-6 h-6"
-          alt={item.name}
-          quality={100}
-        />
-
-        <span
-          className={`
-       items-center text-[16px] rounded-md py-1 px-3
-      ${nav ? "hidden lg:flex" : "hidden"}
-      ${
-        item.name === active
-          ? "bg-white text-[#062863] font-medium"
-          : "text-white"
-      }
-    `}
-        >
-          {item.name}
-        </span>
-      </button>
+      <div key={index}>
+        <Tabs item={item} active={active} nav={nav} />
+      </div>
     );
   });
-
-  const logOut = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        toast.error("Error signing out");
-      }
-      router.push("/login");
-      dispatch(updateUserId(""));
-      dispatch(updateSchedule([]));
-      dispatch(setDrugs([]));
-    } catch (error) {
-      toast.error("Error signing out: " + error);
-    }
-  };
 
   const renderedTabsMobile = tabsMobile.map(
     (item: tabsMobileProps, index: number) => {
       return (
-        <div
-          onClick={() => dispatch(updateActive(item.name))}
-          key={index}
-          className="flex items-center flex-col cursor-pointer w-full h-full justify-center relative font-Inter "
-        >
-          <Image
-            src={active === item.name ? item.logo : item.inactiveLogo}
-            width={1000}
-            height={1000}
-            className="w-[24px] h-[24px] transition"
-            alt={item.name}
-            quality={100}
-          />
-          <h2
-            className={`${
-              active === item.name
-                ? "font-semibold"
-                : "font-normal text-[#a7a7a7]"
-            } text-[12px] text-[#062863]`}
-          >
-            {item.name}
-          </h2>
+        <div key={index}>
+          <MobileTabs item={item} active={active} />
         </div>
       );
     }
@@ -436,6 +263,7 @@ const Page = () => {
             isLoading ? "opacity-0 h-0" : "opacity-100 h-[100dvh]"
           } transition-all`}
         >
+          {/* Nav */}
           <div
             className={` ${!nav ? "" : "lg:w-[300px]"} w-[86px] bg-navyBlue py-10 pl-6 hidden font-karla md:flex flex-col justify-between relative transition-all duration-300`}
           >
@@ -462,9 +290,10 @@ const Page = () => {
                   alt="menu"
                   priority
                 />
-                <Link href={"/"}
-                className={`w-[140px] h-auto ${nav ? "lg:flex hidden" : "hidden"}`}
-                    >
+                <Link
+                  href={"/"}
+                  className={`w-[140px] h-auto ${nav ? "lg:flex hidden" : "hidden"}`}
+                >
                   <Image
                     src="/assets/logo/logo with name png - white color.png"
                     alt="logo"
@@ -478,7 +307,9 @@ const Page = () => {
             </div>
 
             <button
-              onClick={logOut}
+              onClick={() => {
+                logOut({ dispatch, router });
+              }}
               className="flex items-center gap-6 font-Inter"
             >
               <Image
@@ -496,6 +327,7 @@ const Page = () => {
               </p>
             </button>
           </div>
+          {/* Main Dashboard */}
           <div className="w-full">
             {active === "Home" ? (
               <Home

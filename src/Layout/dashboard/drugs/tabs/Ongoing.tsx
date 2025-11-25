@@ -3,7 +3,7 @@ import Image from "next/image";
 import RenderedDrugs from "../RenderedDrugs";
 import { RootState } from "../../../../../store";
 import { useSelector } from "react-redux";
-import { frequencyToPlaceholder } from "../../../../../utils/dashboard";
+import { frequencyToPlaceholder } from "../../../../../utils/dashboard/dashboard";
 import { DrugProps } from "../../../../../types/dashboard";
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 

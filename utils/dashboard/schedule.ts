@@ -1,6 +1,6 @@
 import { toast } from "sonner";
-import { ScheduleItem } from "../types/dashboard";
-import supabase  from "./supabase";
+import supabase from "../supabase";
+import { ScheduleItem } from "../../types/dashboard";
 
 
 

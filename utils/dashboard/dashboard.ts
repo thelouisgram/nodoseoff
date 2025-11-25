@@ -1,4 +1,4 @@
-import { DrugProps, ScheduleItem } from "../types/dashboard";
+import { DrugProps, ScheduleItem } from "../../types/dashboard";
 
 export const tabs = [
   { name: "Home", logo: "/assets/desktop-dashboard/home.png" },

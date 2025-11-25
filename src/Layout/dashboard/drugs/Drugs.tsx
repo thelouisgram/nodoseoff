@@ -18,7 +18,7 @@ import { drugsTab } from "../../../../utils/drugs";
 import {
   removePastDoses,
   uploadScheduleToServer,
-} from "../../../../utils/schedule";
+} from "../../../../utils/dashboard/schedule";
 import supabase from "../../../../utils/supabase";
 import DrugDetails from "./DrugDetails";
 import Allergies from "./tabs/Allergies";

@@ -1,51 +1,17 @@
 import React, { useEffect, useState } from "react";
 import Hero from "@/Layout/home/Hero";
-import Features from "@/Layout/home/Features";
 import Tips from "@/Layout/home/Tips";
-import Steps from "@/Layout/home/Steps";
 import Banner from "@/Layout/home/Banner";
 import Footer from "@/Layout/shared/Footer";
 import Navbar from "@/Layout/shared/Navbar";
 import MobileNavBar from "@/Layout/shared/MobileNavBar";
-import LogoCarousel from "@/Layout/home/LogoCarousel";
+import MeetTheTeam from "@/Layout/home/Team";
+import Testimonials from "@/Layout/home/Testimonials";
+import AboutNodoseOff from "@/Layout/home/About";
 
 const Home = () => {
   const [nav, setNav] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-
-  const logos = [
-    "/assets/logo/logo with name - blue color.png",
-    "/assets/logo/logo with name - blue color.png",
-    "/assets/logo/logo with name - blue color.png",
-    "/assets/logo/logo with name - blue color.png",
-    "/assets/logo/logo with name - blue color.png",
-    "/assets/logo/logo with name - blue color.png",
-    "/assets/logo/logo with name - blue color.png",
-    "/assets/logo/logo with name - blue color.png",
-    "/assets/logo/logo with name - blue color.png",
-    "/assets/logo/logo with name - blue color.png",
-    "/assets/logo/logo with name - blue color.png",
-    "/assets/logo/logo with name - blue color.png",
-    "/assets/logo/logo with name - blue color.png",
-    "/assets/logo/logo with name - blue color.png",
-    "/assets/logo/logo with name - blue color.png",
-    "/assets/logo/logo with name - blue color.png",
-    "/assets/logo/logo with name - blue color.png",
-    "/assets/logo/logo with name - blue color.png",
-    "/assets/logo/logo with name - blue color.png",
-    "/assets/logo/logo with name - blue color.png",
-    "/assets/logo/logo with name - blue color.png",
-    "/assets/logo/logo with name - blue color.png",
-    "/assets/logo/logo with name - blue color.png",
-    "/assets/logo/logo with name - blue color.png",
-    "/assets/logo/logo with name - blue color.png",
-    "/assets/logo/logo with name - blue color.png",
-    "/assets/logo/logo with name - blue color.png",
-    "/assets/logo/logo with name - blue color.png",
-    "/assets/logo/logo with name - blue color.png",
-    "/assets/logo/logo with name - blue color.png",
-    "/assets/logo/logo with name - blue color.png",
-  ];
 
 
   useEffect(() => {
@@ -68,18 +34,11 @@ const Home = () => {
 
   return (
     <section className="text-blackBlue font-karla overflow-hidden">
-      <MobileNavBar nav={nav} setNav={setNav} showLinks={true} />
-      <Navbar
-        showLinks={true}
-        nav={nav}
-        setNav={setNav}
-        isScrolled={isScrolled}
-      />
-      <Hero nav={nav} setNav={setNav} />
-      <LogoCarousel logos={logos} />
-      <Features />
-      <Steps />
+      <Hero />
+      <AboutNodoseOff />
       <Tips />
+      <Testimonials />
+      <MeetTheTeam />
       <Banner />
       <Footer />
     </section>

@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/no-unescaped-entities */
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
@@ -55,7 +53,7 @@ const SignIn = () => {
           }
         }
       } catch (error) {
-        setErrorMessage("Error signing up: " + error);
+        setErrorMessage("Error signing in: " + error);
         setLoading(false);
       }
     }
@@ -75,21 +73,65 @@ const SignIn = () => {
   return (
     <>
       <Head>
-        <title>NoDoseOff | DashBoard</title>
+        <title>NoDoseOff | SignIn</title>
       </Head>
-      <div className="min-h-[100dvh] w-[100%] py-8 px-6 flex flex-col justify-center items-center ss:py-10 bg-navyBlue font-karla text-grey">
+
+      {/* Parent relative container */}
+      <div className="relative min-h-screen w-full flex flex-col justify-center items-center bg-navyBlue font-karla text-grey overflow-hidden">
+        {/* --- Geometric SVG Background --- */}
+        <svg
+          className="absolute inset-0 w-full h-full"
+          viewBox="0 0 1440 720"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            stroke="#9CA3AF"
+            strokeOpacity=".7"
+            d="M-15.227 702.342H1439.7"
+          />
+          <circle
+            cx="711.819"
+            cy="372.562"
+            r="308.334"
+            stroke="#9CA3AF"
+            strokeOpacity=".7"
+          />
+          <circle
+            cx="16.942"
+            cy="20.834"
+            r="308.334"
+            stroke="#9CA3AF"
+            strokeOpacity=".7"
+          />
+          <path
+            stroke="#9CA3AF"
+            strokeOpacity=".7"
+            d="M-15.227 573.66H1439.7M-15.227 164.029H1439.7"
+          />
+          <circle
+            cx="782.595"
+            cy="411.166"
+            r="308.334"
+            stroke="#9CA3AF"
+            strokeOpacity=".7"
+          />
+        </svg>
+
+        {/* --- Logo --- */}
         <Link href="/">
           <Image
             src="/assets/logo/logo with name png - white color.png"
-            width={1062}
-            height={212}
+            width={180}
+            height={60}
             alt="logo"
-            className="w-[180px] h-auto mb-10"
-            priority
+            className="mb-10 relative z-10"
           />
         </Link>
+
+        {/* --- Sign In Form --- */}
         <form
-          className="bg-white rounded-[15px]  w-full ss:w-[450px] h-auto p-7 ss:p-10 mb-10"
+          className="bg-white rounded-[15px] w-full ss:w-[450px] p-7 ss:p-10 mb-10 relative z-10"
           onSubmit={handleSubmit}
         >
           <div className="mb-10 w-full items-center flex flex-col">
@@ -100,6 +142,7 @@ const SignIn = () => {
               Welcome to the future of Drug Monitoring
             </p>
           </div>
+
           <div className="flex flex-col mb-4">
             <label htmlFor="email" className="text-[14px] mb-1">
               Email
@@ -114,6 +157,7 @@ const SignIn = () => {
               placeholder="Email Address"
             />
           </div>
+
           <div className="flex flex-col mb-8">
             <label htmlFor="passwordLogIn" className="text-[14px] mb-1">
               Password
@@ -135,30 +179,33 @@ const SignIn = () => {
               >
                 <Image
                   src={showPassword ? "/assets/hide.png" : "/assets/show.png"}
-                  width={512}
-                  height={512}
-                  className="h-5 w-5"
+                  width={20}
+                  height={20}
                   alt="show password"
                 />
               </button>
             </div>
           </div>
+
           {errorMessage && (
-            <p className="mb-4 -mt-4 text-red font-[500] tracking-none leading-none text-[14px]">
+            <p className="mb-4 -mt-4 text-red font-[500] text-[14px] text-center">
               {errorMessage}
             </p>
           )}
+
           <button
             type="submit"
             disabled={loading}
-            className={` font-semibold text-white rounded-[10px] h-[56px] w-full items-center justify-center flex transition duration-300 ${
+            className={`font-semibold text-white rounded-[10px] h-[56px] w-full flex items-center justify-center transition duration-300 ${
               loading ? "bg-navyBlue opacity-85" : "bg-blue-700"
             }`}
           >
             {loading ? <div className="loaderInfinity"></div> : "LOG IN"}
           </button>
         </form>
-        <div className="w-full flex flex-col items-center">
+
+        {/* --- Links --- */}
+        <div className="w-full flex flex-col items-center relative z-10">
           <Link href="/signup" className="text-white hover:underline">
             Don't have an account? Create Account
           </Link>

@@ -9,7 +9,7 @@ interface LogOutProps {
     router: AppRouterInstance;
 }
 
-export const logOut:React.FC<LogOutProps> = async ({dispatch, router}) => {
+export const logOut = async ({dispatch, router}:LogOutProps) => {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) {

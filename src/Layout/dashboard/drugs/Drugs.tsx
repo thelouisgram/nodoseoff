@@ -38,10 +38,8 @@ interface DrugsProps {
   setAllergyModal: Function;
   setEffectsForm: Function;
   setAllergiesForm: Function;
-  setDrugsLoading: Function;
   setAdd: Function;
   deleteModal: boolean;
-  drugsLoading: boolean;
   editModal: boolean;
   allergyModal: boolean;
   add: boolean;
@@ -72,8 +70,6 @@ const Drugs: React.FC<DrugsProps> = ({
   drugsForm,
   setAllergyModal,
   allergyModal,
-  drugsLoading,
-  setDrugsLoading,
 }) => {
   const {
     drugs,
@@ -118,13 +114,7 @@ const Drugs: React.FC<DrugsProps> = ({
     };
   }, []);
 
-  useEffect(() => {
-    if (drugsLoading) {
-      setTimeout(() => {
-        setDrugsLoading(false);
-      }, 1200);
-    }
-  }, []);
+  
 
   // Upload Database of completed drug
   const uploadCompletedDrugs = async (newCompletedDrugs: DrugProps[]) => {
@@ -302,16 +292,10 @@ const Drugs: React.FC<DrugsProps> = ({
 
   return (
     <>
-      {drugsLoading && (
-        <div className="w-full h-full flex items-center justify-center">
-          <Loader />
-        </div>
-      )}
+     
       {displayDrugs ? (
         <div
-          className={`${
-            drugsLoading ? "opacity-0" : "opacity-100"
-          } transition-all h-[100dvh] ss:pb-28 overflow-y-scroll w-full md:py-16 md:px-12 md:pb-28 px-4 pt-10 pb-28 ss:p-10 text-navyBlue font-karla relative`}
+          className={` transition-all h-[100dvh] ss:pb-28 overflow-y-scroll w-full md:py-16 md:px-12 md:pb-28 px-4 pt-10 pb-28 ss:p-10 text-navyBlue font-karla relative`}
         >
           <div className="mb-[28px]">
             <h1 className="text-[24px] ss:text-[32px] font-semibold font-karla ">

@@ -26,8 +26,6 @@ interface AccountProps {
   setAccountSettings: Function;
   setDeleteAccountModal: Function;
   setScreen: Function;
-  setAccountLoading: Function;
-  accountLoading: boolean;
 }
 
 const Account: React.FC<AccountProps> = ({
@@ -39,8 +37,6 @@ const Account: React.FC<AccountProps> = ({
   deleteAccountModal,
   setDeleteAccountModal,
   setScreen,
-  setAccountLoading,
-  accountLoading,
 }) => {
   const { info, userId, profilePicture } = useSelector((state: RootState) => state.app);
   const router = useRouter();
@@ -49,13 +45,6 @@ const Account: React.FC<AccountProps> = ({
 
   const dropdownRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
 
-   useEffect(() => {
-     if (accountLoading) {
-       setTimeout(() => {
-         setAccountLoading(false);
-       }, 1200);
-     }
-   }, []);
 
   const [tab, setTab] = useState("Account");
 
@@ -106,11 +95,6 @@ const Account: React.FC<AccountProps> = ({
 
   return (
     <>
-      {accountLoading && (
-        <div className="w-full h-full flex items-center justify-center">
-          <Loader />
-        </div>
-      )}
       {tab === "Account" ? (
         <div className="h-[100dvh] overflow-y-scroll w-full md:py-16 md:px-12 px-4 pt-10 pb-24 ss:p-10 ss:pb-24  mb-10 text-navyBlue font-karla relative">
           <div className="mb-[28px]">

@@ -1,7 +1,8 @@
-import React, { ChangeEvent, FormEvent, useState } from 'react'
-import { toast } from 'sonner';
-import supabase from '../../../../../utils/supabase';
-import Image from 'next/image'
+import React, { ChangeEvent, FormEvent, useState } from "react";
+import { toast } from "sonner";
+import supabase from "../../../../../utils/supabase";
+import Image from "next/image";
+import { ChevronLeft, X } from "lucide-react";
 
 interface ChangePasswordProps {
   setAccountSettings: Function;
@@ -80,27 +81,19 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
             onClick={() => setTab("default")}
             className="flex gap-1 items-center font-Inter "
           >
-            <Image
-              src="/assets/down.png"
-              alt="back"
-              width={20}
-              height={20}
-              className="rotate-90"
-            />
+            <ChevronLeft className="text-navyBlue size-5" />
             <p className="font-[500] text-[18px] text-navyBlue">Back</p>
           </button>
-          <Image
-            src="/assets/x (1).png"
-            width={18}
-            height={18}
-            alt="cancel"
+          <button
             onClick={() => {
               setAccountSettings(false);
               setTab("default");
             }}
             id="top-drug"
             className="cursor-pointer"
-          />
+          >
+            <X className="size-6 " />
+          </button>
         </div>
         <div className="mb-10 w-full flex flex-col">
           <legend className="text-[24px] font-bold text-blue-700 font-Inter">
@@ -155,4 +148,4 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
   );
 };
 
-export default ChangePassword
+export default ChangePassword;

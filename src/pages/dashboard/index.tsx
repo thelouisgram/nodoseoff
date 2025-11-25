@@ -76,8 +76,6 @@ const Page = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [accountSettings, setAccountSettings] = useState(false);
   const [deleteAccountModal, setDeleteAccountModal] = useState(false);
-  const [drugsLoading, setDrugsLoading] = useState(true);
-  const [accountLoading, setAccountLoading] = useState(true);
 
   useEffect(() => {
     if (!userId) {
@@ -85,148 +83,151 @@ const Page = () => {
     }
   }, []);
 
- useEffect(() => {
-   dispatch(updateActive("Home"));
+  useEffect(() => {
+    dispatch(updateActive("Home"));
 
-   const fetchData = async () => {
-     try {
-       const [
-         userData,
-         profilePictureData,
-         drugsData,
-         completedDrugsData,
-         effectsData,
-         allergiesData,
-         scheduleData,
-       ] = await Promise.all([
-         supabase
-           .from("users")
-           .select("name, phone, email, otcDrugs, herbs")
-           .eq("userId", userId),
-         supabase.storage
-           .from("profile-picture")
-           .list(userId + "/", { limit: 1, offset: 0 }),
-         supabase.from("drugs").select("*").eq("userId", userId),
-         supabase.from("users").select("completedDrugs").eq("userId", userId),
-         supabase.from("effects").select("*").eq("userId", userId),
-         supabase.from("allergies").select("*").eq("userId", userId),
-         supabase.from("users").select("schedule").eq("userId", userId),
-       ]);
+    const fetchData = async () => {
+      try {
+        const [
+          userData,
+          profilePictureData,
+          drugsData,
+          completedDrugsData,
+          effectsData,
+          allergiesData,
+          scheduleData,
+        ] = await Promise.all([
+          supabase
+            .from("users")
+            .select("name, phone, email, otcDrugs, herbs")
+            .eq("userId", userId),
+          supabase.storage
+            .from("profile-picture")
+            .list(userId + "/", { limit: 1, offset: 0 }),
+          supabase.from("drugs").select("*").eq("userId", userId),
+          supabase.from("users").select("completedDrugs").eq("userId", userId),
+          supabase.from("effects").select("*").eq("userId", userId),
+          supabase.from("allergies").select("*").eq("userId", userId),
+          supabase.from("users").select("schedule").eq("userId", userId),
+        ]);
 
-       if (
-         userData.error ||
-         profilePictureData.error ||
-         drugsData.error ||
-         completedDrugsData.error ||
-         effectsData.error ||
-         allergiesData.error ||
-         scheduleData.error
-       ) {
-         throw new Error("Error fetching data");
-       }
+        if (
+          userData.error ||
+          profilePictureData.error ||
+          drugsData.error ||
+          completedDrugsData.error ||
+          effectsData.error ||
+          allergiesData.error ||
+          scheduleData.error
+        ) {
+          throw new Error("Error fetching data");
+        }
 
-       // Ensure user info is dispatched properly
-       const userInfo = userData.data?.[0] ?? {};
-       dispatch(updateInfo([userInfo]));
+        // Ensure user info is dispatched properly
+        const userInfo = userData.data?.[0] ?? {};
+        dispatch(updateInfo([userInfo]));
 
-       // Profile picture update
-       const profilePicture = profilePictureData.data?.[0]?.name ?? "";
-       dispatch(updateProfilePicture(profilePicture));
+        // Profile picture update
+        const profilePicture = profilePictureData.data?.[0]?.name ?? "";
+        dispatch(updateProfilePicture(profilePicture));
 
-       // Ensure completedDrugsData is loaded
-       const completedDrugs =
-         completedDrugsData.data?.[0]?.completedDrugs ?? [];
-       dispatch(updateCompletedDrugs(completedDrugs));
+        // Ensure completedDrugsData is loaded
+        const completedDrugs =
+          completedDrugsData.data?.[0]?.completedDrugs ?? [];
+        dispatch(updateCompletedDrugs(completedDrugs));
 
-       // Wait for drugs to load before proceeding
-       if (!drugsData.data) return;
+        // Wait for drugs to load before proceeding
+        if (!drugsData.data) return;
 
-       const drugs = drugsData.data;
-       const currentDate = new Date();
-       const twoDaysPastDate = new Date();
-       twoDaysPastDate.setDate(currentDate.getDate() - 2);
+        const drugs = drugsData.data;
+        const currentDate = new Date();
+        const twoDaysPastDate = new Date();
+        twoDaysPastDate.setDate(currentDate.getDate() - 2);
 
-       // Filter active and expired drugs
-       const activeDrugs = drugs.filter(
-         (drug) => new Date(drug.end) > twoDaysPastDate
-       );
-       const expiredDrugs = drugs.filter(
-         (drug) => new Date(drug.end) <= twoDaysPastDate
-       );
+        // Filter active and expired drugs
+        const activeDrugs = drugs.filter(
+          (drug) => new Date(drug.end) > twoDaysPastDate
+        );
+        const expiredDrugs = drugs.filter(
+          (drug) => new Date(drug.end) <= twoDaysPastDate
+        );
 
-       // Combine expired drugs with existing completed drugs
-       const updatedCompletedDrugs = [...completedDrugs, ...expiredDrugs];
+        // Combine expired drugs with existing completed drugs
+        const updatedCompletedDrugs = [...completedDrugs, ...expiredDrugs];
 
-       console.log("Updated Completed Drugs:", updatedCompletedDrugs);
+        console.log("Updated Completed Drugs:", updatedCompletedDrugs);
 
-       // Dispatch the updated data
-       dispatch(setDrugs(activeDrugs));
-       dispatch(updateCompletedDrugs(updatedCompletedDrugs));
+        // Dispatch the updated data
+        dispatch(setDrugs(activeDrugs));
+        dispatch(updateCompletedDrugs(updatedCompletedDrugs));
 
-       // Update completed drugs in database asynchronously
-       await supabase
-         .from("users")
-         .update({ completedDrugs: updatedCompletedDrugs })
-         .eq("userId", userId);
+        // Update completed drugs in database asynchronously
+        await supabase
+          .from("users")
+          .update({ completedDrugs: updatedCompletedDrugs })
+          .eq("userId", userId);
 
-       // Delete expired drugs from the database
-       if (expiredDrugs.length > 0) {
-         await Promise.all(
-           expiredDrugs.map(async (drug) => {
-             await supabase.from("drugs").delete().eq("drug", drug.drug);
-           })
-         );
-       }
+        // Delete expired drugs from the database
+        if (expiredDrugs.length > 0) {
+          await Promise.all(
+            expiredDrugs.map(async (drug) => {
+              await supabase.from("drugs").delete().eq("drug", drug.drug);
+            })
+          );
+        }
 
-       // Update effects and allergies
-       dispatch(setEffects(effectsData.data ?? []));
-       dispatch(updateAllergies(allergiesData.data ?? []));
+        // Update effects and allergies
+        dispatch(setEffects(effectsData.data ?? []));
+        dispatch(updateAllergies(allergiesData.data ?? []));
 
-       // Ensure schedule is updated
-       dispatch(updateSchedule(scheduleData?.data?.[0]?.schedule ?? []));
+        // Ensure schedule is updated
+        dispatch(updateSchedule(scheduleData?.data?.[0]?.schedule ?? []));
 
-       setTimeout(() => {
-         setIsLoading(false);
-       }, 1000);
-     } catch (error) {
-       toast.error("Error fetching data");
-     }
-   };
+          setIsLoading(false);
+      } catch (error) {
+        toast.error("Error fetching data");
+      }
+    };
 
-   if (userId) {
-     fetchData();
-   }
- }, [userId]);
+    if (userId) {
+      fetchData();
+    }
+  }, [userId]);
 
   const renderedTabs = tabs.map((item: tabsProps, index: number) => {
     return (
       <button
-        onClick={() => dispatch(updateActive(item.name))}
         key={index}
-        className={` ${
-          item.name === active && nav ? "pl-3" : ""
-        } flex items-center gap-6 cursor-pointer h-[40px] transition-all font-Inter`}
+        onClick={() => dispatch(updateActive(item.name))}
+        className={`
+    flex items-center lg:gap-3 cursor-pointer h-10 lg:px-3 w-10 lg:w-auto max-lg:justify-center
+    transition-all font-Inter rounded-full
+    ${item.name === active ? "ring-1 ring-white lg:ring-0" : ""}
+  `}
       >
         <Image
           src={item.logo}
           width={512}
           height={512}
-          className="w-[24px] h-[24px]"
+          className="w-6 h-6"
           alt={item.name}
           quality={100}
         />
-        <div
-          className={` ${
-            nav ? "flex" : "hidden"
-          } text-[16px]  rounded-[8px] py-1   
-        ${
-          active === item.name
-            ? "bg-white text-[#062863] font-[500] w-[100px] pl-4"
-            : "bg-none text-white font-normal w-auto"
-        }`}
+
+        {/* TEXT — only visible on lg */}
+        <span
+          className={`
+       items-center text-[16px] rounded-md py-1 px-3
+      ${nav ? "hidden lg:flex" : "hidden"}
+      ${
+        item.name === active
+          ? "bg-white text-[#062863] font-medium"
+          : "text-white"
+      }
+    `}
         >
           {item.name}
-        </div>
+        </span>
       </button>
     );
   });
@@ -424,7 +425,7 @@ const Page = () => {
         </div>
       );
     });
-    
+
   return (
     <Suspense fallback={<Loader />}>
       <Head>
@@ -437,12 +438,20 @@ const Page = () => {
           } transition-all`}
         >
           <div
-            className={`${
-              !nav ? "w-[86px]" : "w-[300px]"
-            } h-full bg-navyBlue py-10 pl-6 hidden font-karla md:flex flex-col justify-between relative transition-all duration-300`}
+            className={` ${!nav ? "" : "lg:w-[300px]"} w-[86px] bg-navyBlue py-10 pl-6 hidden font-karla md:flex flex-col justify-between relative transition-all duration-300`}
           >
             <div>
-              <div className="flex gap-5 items-center mb-12 cursor-pointer h-[60.81px]">
+              <div className="flex gap-5 items-center mb-12 cursor-pointer h-[60.81px] justify-start">
+                <Link href="/" className="flex lg:hidden">
+                  <Image
+                    src="/assets/logo/logo-white.png"
+                    alt="logo"
+                    width={1084}
+                    height={257}
+                    className={`w-8 h-auto `}
+                    quality={100}
+                  />
+                </Link>
                 <Image
                   onClick={() => {
                     setNav(!nav);
@@ -450,17 +459,18 @@ const Page = () => {
                   src="/assets/desktop-dashboard/menu.png"
                   width={512}
                   height={512}
-                  className="w-[24px] h-[24px]"
+                  className="size-6 lg:flex hidden"
                   alt="menu"
                   priority
                 />
-                <Link href={"/"}>
+                <Link href={"/"}
+                className={`w-[140px] h-auto ${nav ? "lg:flex hidden" : "hidden"}`}
+                    >
                   <Image
                     src="/assets/logo/logo with name png - white color.png"
                     alt="logo"
                     width={1084}
                     height={257}
-                    className={`w-[140px] h-auto ${nav ? "flex" : "hidden"}`}
                     quality={100}
                   />
                 </Link>
@@ -481,7 +491,7 @@ const Page = () => {
                 quality={100}
               />
               <p
-                className={`text-[16px] text-white ${nav ? "flex" : "hidden"}`}
+                className={`text-[16px] text-white ${nav ? " hidden lg:flex" : "hidden"}`}
               >
                 Logout
               </p>
@@ -518,8 +528,6 @@ const Page = () => {
                 effectsForm={effectsForm}
                 allergiesForm={allergiesForm}
                 setAllergiesForm={setAllergiesForm}
-                setDrugsLoading={setDrugsLoading}
-                drugsLoading={drugsLoading}
               />
             ) : (
               <Account
@@ -531,8 +539,6 @@ const Page = () => {
                 setScreen={setScreen}
                 setDeleteAccountModal={setDeleteAccountModal}
                 deleteAccountModal={deleteAccountModal}
-                setAccountLoading={setAccountLoading}
-                accountLoading={accountLoading}
               />
             )}
           </div>

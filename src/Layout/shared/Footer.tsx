@@ -1,5 +1,6 @@
 import { Poppins } from "next/font/google";
 import { Instagram, Github, Music2, Globe } from "lucide-react";
+import Link from "next/link";
 
 const poppins = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -15,13 +16,13 @@ export default function Footer() {
       {/* Desktop Nav */}
       <div className="hidden md:flex items-center gap-8">
         {["Home", "About", "Tips", "Testimonials", "Team"].map((link) => (
-          <a
+          <Link
             key={link}
             href={link === "Home" ? "#home" : `#${link.toLowerCase()}`}
             className="font-medium hover:text-black transition-all"
           >
             {link}
-          </a>
+          </Link>
         ))}
       </div>
 

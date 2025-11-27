@@ -77,7 +77,8 @@ const SignIn = () => {
       </Head>
 
       {/* Parent relative container */}
-      <div className="relative min-h-screen w-full flex flex-col justify-center items-center bg-navyBlue font-karla text-grey overflow-hidden">
+      <div className="relative min-h-screen w-full flex flex-col justify-center items-center
+       bg-navyBlue font-karla text-grey overflow-hidden py-7 px-3">
         {/* --- Geometric SVG Background --- */}
         <svg
           className="absolute inset-0 w-full h-full"
@@ -131,7 +132,7 @@ const SignIn = () => {
 
         {/* --- Sign In Form --- */}
         <form
-          className="bg-white rounded-[15px] w-full ss:w-[450px] p-7 ss:p-10 mb-10 relative z-10"
+          className="bg-white rounded-[15px] w-full ss:w-[450px] p-6 ss:p-10 mb-10 relative z-10"
           onSubmit={handleSubmit}
         >
           <div className="mb-10 w-full items-center flex flex-col">

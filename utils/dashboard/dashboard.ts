@@ -1,33 +1,15 @@
 import { DrugProps, ScheduleItem } from "../../types/dashboard";
+import { Home, Pill, User } from "lucide-react";
 
 export const tabs = [
-  { name: "Home", logo: "/assets/desktop-dashboard/home.png" },
-  { name: "Drugs", logo: "/assets/desktop-dashboard/drugs.png" },
-  { name: "Account", logo: "/assets/desktop-dashboard/user.png" },
-];
+  { name: "Home", icon: Home },
+  { name: "Drugs", icon: Pill },
+  { name: "Account", icon: User },
+] as const;
 
-export const tabsMobile = [
-  {
-    name: "Home",
-    logo: "/assets/mobile-dashboard/home.png",
-    inactiveLogo: "/assets/mobile-dashboard/home (1).png",
-  },
-  {
-    name: "Drugs",
-    logo: "/assets/mobile-dashboard/drugs.png",
-    inactiveLogo: "/assets/mobile-dashboard/drugs (1).png",
-  },
-  {
-    name: "Account",
-    logo: "/assets/mobile-dashboard/user.png",
-    inactiveLogo: "/assets/mobile-dashboard/user (1).png",
-  },
-];
+export const days = ["Yesterday", "Today"] as const;
 
-export const days = [
-  "Yesterday", 'Today'
-]
-
+// Dosage frequency configuration
 export const dose = [
   { frequency: "QD", times: 1, time: ["08:00"] },
   { frequency: "EOD", times: 1, time: ["08:00"] },
@@ -37,9 +19,9 @@ export const dose = [
   { frequency: "BID", times: 2, time: ["08:00", "20:00"] },
   { frequency: "TID", times: 3, time: ["06:00", "14:00", "22:00"] },
   { frequency: "QID", times: 4, time: ["06:00", "12:00", "18:00", "00:00"] },
-];
+] as const;
 
-export const frequencyToPlaceholder: { [key: string]: string } = {
+export const frequencyToPlaceholder: Record<string, string> = {
   QD: "Once daily",
   BID: "Twice daily",
   TID: "Thrice daily",
@@ -48,236 +30,207 @@ export const frequencyToPlaceholder: { [key: string]: string } = {
   W: "Weekly",
   BW: "Biweekly",
   M: "Monthly",
+} as const;
+
+// Constants for time calculations
+const MS_PER_SECOND = 1000;
+const MS_PER_MINUTE = 60 * MS_PER_SECOND;
+const MS_PER_HOUR = 60 * MS_PER_MINUTE;
+const MS_PER_DAY = 24 * MS_PER_HOUR;
+
+// Frequency dose mapping for better performance
+const FREQUENCY_DOSES: Record<string, number> = {
+  QD: 1,
+  BID: 2,
+  TID: 3,
+  QID: 4,
 };
 
-export const generateSchedule = (drugDetails: DrugProps) => {
-  const { drug, start, end, frequency, time, drugId } = drugDetails;
+// Date utilities
+const formatDateISO = (date: Date): string => date.toISOString().slice(0, 10);
 
+const createDateTime = (date: string, time: string): Date => 
+  new Date(`${date}T${time}`);
+
+const getDaysDifference = (start: Date, end: Date): number =>
+  Math.floor((end.getTime() - start.getTime()) / MS_PER_DAY);
+
+const addDays = (date: Date, days: number): Date => {
+  const result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
+};
+
+// Schedule entry factory
+const createScheduleEntry = (
+  drugDetails: DrugProps,
+  date: Date,
+  time: string,
+  id: number
+): ScheduleItem => ({
+  id,
+  drug: drugDetails.drug,
+  date: formatDateISO(date),
+  time,
+  completed: false,
+  drugId: drugDetails.drugId,
+});
+
+// Frequency handlers for better separation of concerns
+const shouldIncludeEOD = (dayIndex: number): boolean => dayIndex % 2 === 0;
+const shouldIncludeWeekly = (dayIndex: number): boolean => dayIndex % 7 === 0;
+const shouldIncludeBiweekly = (dayIndex: number): boolean => dayIndex % 14 === 0;
+const shouldIncludeMonthly = (currentDate: Date, startDate: Date): boolean =>
+  currentDate.getDate() === startDate.getDate();
+
+export const generateSchedule = (drugDetails: DrugProps): ScheduleItem[] => {
+  const { start, end, frequency, time } = drugDetails;
+  
   const startDate = new Date(start);
   const endDate = new Date(end);
+  const daysDifference = getDaysDifference(startDate, endDate);
+  
+  const schedule: ScheduleItem[] = [];
+  let uniqueIndex = 1;
 
-  const schedule = [];
-  let uniqueIndex = 1; // Unique index counter
-
-  // Calculate the difference in days between start and end dates
-  const differenceInDays: number = Math.floor(
-  (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
-);
-
-  // Generate the schedule based on frequency and times
-  for (let i = 0; i <= differenceInDays; i++) {
-    if (
-      frequency === "QD" ||
-      frequency === "BID" ||
-      frequency === "TID" ||
-      frequency === "QID"
-    ) {
-      const dosesPerDay =
-        frequency === "BID"
-          ? 2
-          : frequency === "TID"
-          ? 3
-          : frequency === "QID"
-          ? 4
-          : 1;
-
-      for (let j = 0; j < dosesPerDay; j++) {
-        const currentDate = new Date(startDate);
-        currentDate.setDate(currentDate.getDate() + i);
-        const doseTime = time[j % time.length]; // Get the corresponding time from the array
-
-        const scheduleEntry = {
-          id: uniqueIndex,
-          drug,
-          date: currentDate.toISOString().substr(0, 10),
-          time: doseTime,
-          completed: false, // Set completed as false for each dose
-          drugId
-        };
-
-        schedule.push(scheduleEntry);
-        uniqueIndex++; // Increment unique index for the next entry
-      }
-    } else if (frequency === "EOD" && i % 2 === 0) {
-      const currentDate = new Date(startDate);
-      currentDate.setDate(currentDate.getDate() + i);
-      const doseTime = time[0]; // Get the corresponding time from the array
-
-      const scheduleEntry = {
-        id: uniqueIndex,
-        drug,
-        date: currentDate.toISOString().substr(0, 10),
-        time: doseTime,
-        completed: false, // Set completed as false for each dose
-        drugId
-      };
-
-      schedule.push(scheduleEntry);
-      uniqueIndex++; // Increment unique index for the next entry
-    } else if (frequency === "W" && i % 7 === 0) {
-      const currentDate = new Date(startDate);
-      currentDate.setDate(currentDate.getDate() + i);
-      const doseTime = time[0]; // Get the corresponding time from the array
-
-      const scheduleEntry = {
-        id: uniqueIndex,
-        drug,
-        date: currentDate.toISOString().substr(0, 10),
-        time: doseTime,
-        completed: false, // Set completed as false for each dose
-        drugId
-      };
-
-      schedule.push(scheduleEntry);
-      uniqueIndex++; // Increment unique index for the next entry
-    } else if (frequency === "BW" && i % 14 === 0) {
-      const currentDate = new Date(startDate);
-      currentDate.setDate(currentDate.getDate() + i);
-      const doseTime = time[0]; // Get the corresponding time from the array
-
-      const scheduleEntry = {
-        id: uniqueIndex,
-        drug,
-        date: currentDate.toISOString().substr(0, 10),
-        time: doseTime,
-        completed: false, // Set completed as false for each dose
-        drugId
-      };
-
-      schedule.push(scheduleEntry);
-      uniqueIndex++; // Increment unique index for the next entry
-    } else if (frequency === "M") {
-      const currentDate = new Date(startDate);
-      currentDate.setDate(currentDate.getDate() + i);
-
-      if (currentDate.getDate() === startDate.getDate()) {
-        const doseTime = time[0]; // Get the corresponding time from the array
-
-        const scheduleEntry = {
-          id: uniqueIndex,
-          drug,
-          date: currentDate.toISOString().substr(0, 10),
-          time: doseTime,
-          completed: false, // Set completed as false for each dose
-          drugId
-        };
-
-        schedule.push(scheduleEntry);
-        uniqueIndex++; // Increment unique index for the next entry
+  // Handle daily frequencies (QD, BID, TID, QID)
+  if (frequency in FREQUENCY_DOSES) {
+    const dosesPerDay = FREQUENCY_DOSES[frequency];
+    
+    for (let day = 0; day <= daysDifference; day++) {
+      const currentDate = addDays(startDate, day);
+      
+      for (let dose = 0; dose < dosesPerDay; dose++) {
+        schedule.push(
+          createScheduleEntry(
+            drugDetails,
+            currentDate,
+            time[dose % time.length],
+            uniqueIndex++
+          )
+        );
       }
     }
+    return schedule;
   }
+
+  // Handle non-daily frequencies
+  for (let day = 0; day <= daysDifference; day++) {
+    const currentDate = addDays(startDate, day);
+    let shouldInclude = false;
+
+    switch (frequency) {
+      case "EOD":
+        shouldInclude = shouldIncludeEOD(day);
+        break;
+      case "W":
+        shouldInclude = shouldIncludeWeekly(day);
+        break;
+      case "BW":
+        shouldInclude = shouldIncludeBiweekly(day);
+        break;
+      case "M":
+        shouldInclude = shouldIncludeMonthly(currentDate, startDate);
+        break;
+    }
+
+    if (shouldInclude) {
+      schedule.push(
+        createScheduleEntry(drugDetails, currentDate, time[0], uniqueIndex++)
+      );
+    }
+  }
+
   return schedule;
 };
 
-function calculateNextDoseTime(schedule: ScheduleItem[]): Date | null {
-  let nextDoseTime: Date | null = null;
+// Optimized next dose calculation using reduce
+const calculateNextDoseTime = (schedule: ScheduleItem[]): Date | null => {
+  const currentTime = new Date().getTime();
 
-  schedule.forEach((dose) => {
-    const doseTime = new Date(`${dose?.date}T${dose?.time}`);
-    const currentTime = new Date();
+  return schedule.reduce<Date | null>((nextDose, dose) => {
+    const doseTime = createDateTime(dose.date, dose.time);
+    const doseTimestamp = doseTime.getTime();
 
-    if (
-      doseTime > currentTime &&
-      (!nextDoseTime || doseTime < nextDoseTime)
-    ) {
-      nextDoseTime = doseTime;
-    }
-});
+    if (doseTimestamp <= currentTime) return nextDose;
+    if (!nextDose || doseTimestamp < nextDose.getTime()) return doseTime;
 
-  return nextDoseTime;
-}
+    return nextDose;
+  }, null);
+};
 
-export function calculateClosestDoseCountdown(schedule: ScheduleItem[]): string {
-  let closestDose: DrugProps | null = null;
-  let nextDoseTime: Date | null = null;
+// Time formatting utilities
+const padZero = (num: number): string => num.toString().padStart(2, "0");
 
-  function updateCountdown() {
-    if (!nextDoseTime) {
-      // Calculate next dose time and store it
-      nextDoseTime = calculateNextDoseTime(schedule);
-    }
-
-    if (!nextDoseTime) {
-      return "00:00:00"; // No upcoming doses found
-    }
-
-    const currentTime = new Date();
-    const timeDiff = nextDoseTime.getTime() - currentTime.getTime();
-
-    if (timeDiff > 0) {
-      // Calculate time durations
-      const seconds = Math.floor(timeDiff / 1000);
-      const minutes = Math.floor(seconds / 60);
-      const hours = Math.floor(minutes / 60);
-      const days = Math.floor(hours / 24);
-
-      if (days >= 1) {
-        // If days are more than or equal to 1, return days
-        return `${days} days`;
-      } else {
-        // If remaining time is less than 24 hours, format as HH:MM:SS
-        const remainingHours = Math.floor(timeDiff / 3600000); // 1 hour = 3600000 milliseconds
-        const remainingMinutes = Math.floor((timeDiff % 3600000) / 60000); // 1 minute = 60000 milliseconds
-        const remainingSeconds = Math.floor((timeDiff % 60000) / 1000); // 1 second = 1000 milliseconds
-
-        return `${remainingHours.toString().padStart(2, "0")}:${remainingMinutes
-          .toString()
-          .padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
-      }
-    } else {
-      // Next dose time has passed, recalculate next dose time and update countdown
-      nextDoseTime = null;
-      return updateCountdown();
-    }
+const formatTimeRemaining = (timeDiff: number): string => {
+  const days = Math.floor(timeDiff / MS_PER_DAY);
+  
+  if (days >= 1) {
+    return `${days} day${days > 1 ? "s" : ""}`;
   }
 
-  return updateCountdown();
-}
+  const hours = Math.floor(timeDiff / MS_PER_HOUR);
+  const minutes = Math.floor((timeDiff % MS_PER_HOUR) / MS_PER_MINUTE);
+  const seconds = Math.floor((timeDiff % MS_PER_MINUTE) / MS_PER_SECOND);
 
-export function formatDate(dateString: string) {
-  const options: Intl.DateTimeFormatOptions = {
+  return `${padZero(hours)}:${padZero(minutes)}:${padZero(seconds)}`;
+};
+
+export const calculateClosestDoseCountdown = (
+  schedule: ScheduleItem[]
+): string => {
+  if (!schedule.length) return "00:00:00";
+
+  const nextDoseTime = calculateNextDoseTime(schedule);
+  
+  if (!nextDoseTime) return "00:00:00";
+
+  const timeDiff = nextDoseTime.getTime() - Date.now();
+
+  return timeDiff > 0 ? formatTimeRemaining(timeDiff) : "00:00:00";
+};
+
+// Date formatting
+export const formatDate = (dateString: string): string => {
+  const date = new Date(dateString);
+  return new Intl.DateTimeFormat("en-US", {
     day: "numeric",
     month: "long",
     year: "numeric",
-  };
-  const date = new Date(dateString);
-  return date.toLocaleDateString("en-US", options);
-}
+  }).format(date);
+};
 
+// Optimized past dose filtering
 interface FilteredDosesResult {
-    remainingDoses: ScheduleItem[];
-    filteredDoses: ScheduleItem[];
+  remainingDoses: ScheduleItem[];
+  filteredDoses: ScheduleItem[];
 }
 
-export function filterPastDoses(doses: ScheduleItem[]): FilteredDosesResult {
-    const twentyFourHoursInMilliseconds: number = 24 * 60 * 60 * 1000;
-    const currentTime: number = Date.now();
+export const filterPastDoses = (
+  doses: ScheduleItem[]
+): FilteredDosesResult => {
+  const currentTime = Date.now();
+  const cutoffTime = currentTime - MS_PER_DAY;
 
-    const filteredDoses: ScheduleItem[] = [];
-    const remainingDoses: ScheduleItem[] = doses.filter((dose: ScheduleItem) => {
-        const doseTime: number = new Date(`${dose.date}T${dose.time}`).getTime();
-        const isWithin24Hours: boolean = currentTime - doseTime <= twentyFourHoursInMilliseconds;
+  return doses.reduce<FilteredDosesResult>(
+    (result, dose) => {
+      const doseTime = createDateTime(dose.date, dose.time).getTime();
+      const isWithin24Hours = doseTime > cutoffTime && doseTime <= currentTime;
 
-        if (isWithin24Hours) {
-            filteredDoses.push(dose);
-            return false;
-        }
+      if (isWithin24Hours) {
+        result.filteredDoses.push(dose);
+      } else {
+        result.remainingDoses.push(dose);
+      }
 
-        return true;
-    });
+      return result;
+    },
+    { remainingDoses: [], filteredDoses: [] }
+  );
+};
 
-    return { remainingDoses, filteredDoses };
-}
-
-
-export function formatDateToSlash(inputDate:string) {
-    // Split the input date string into year, month, and day
-    var parts = inputDate.split('-');
-    
-    // Rearrange the parts into the desired format
-    var formattedDate = parts[2] + '/' + parts[1] + '/' + parts[0];
-    
-    // Return the formatted date
-    return formattedDate;
-}
+// Optimized date format conversion
+export const formatDateToSlash = (inputDate: string): string => {
+  const [year, month, day] = inputDate.split("-");
+  return `${day}/${month}/${year}`;
+};

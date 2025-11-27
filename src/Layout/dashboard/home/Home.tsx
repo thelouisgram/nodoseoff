@@ -38,21 +38,20 @@ const Home: React.FC<HomeProps> = ({
   const { name } = info[0];
 
   useEffect(() => {
-    // Function to calculate the countdown
-    const calculateAndSetCountdown = () => {
-      const newCountdown = calculateClosestDoseCountdown(schedule);
-      setCountDown(newCountdown);
-    };
+  const calculateAndSetCountdown = async () => {
+    const newCountdown = await calculateClosestDoseCountdown(schedule);
+    setCountDown(newCountdown);
+  };
+  
+  // Initial countdown calculation
+  calculateAndSetCountdown();
 
-    // Initial countdown calculation and process schedule
-    calculateAndSetCountdown();
+  // Set interval to update countdown every second
+  const intervalId = setInterval(calculateAndSetCountdown, 1000);
 
-    // Set interval to update countdown every second
-    const intervalId = setInterval(calculateAndSetCountdown, 1000);
-
-    // Clear interval on unmount or when 'schedule' changes
-    return () => clearInterval(intervalId);
-  }, [drugs, isLoading]);
+  // Cleanup on unmount
+  return () => clearInterval(intervalId);
+}, [schedule]); // Re-run when schedule changes
 
   const displayedDoses = dosesToRender?.slice(displayIndex, displayIndex + 4);
 

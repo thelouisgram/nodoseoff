@@ -22,7 +22,7 @@ export default function HeroSection() {
   return (
     <section
       id="home"
-      className={`${poppins.className} bg-gradient-to-b px-4 sm:px-10 h-screen overflow-hidden from-[#F5F7FF] via-[#fffbee] to-[#E6EFFF] pt-6`}
+      className={`${poppins.className} bg-gradient-to-b px-4 sm:px-10 overflow-hidden from-[#F5F7FF] via-[#fffbee] to-[#E6EFFF] pt-6`}
     >
       {/* --- NAVBAR --- */}
       <header className="flex items-center justify-between px-6 py-3 md:py-4 shadow-sm max-w-5xl rounded-full mx-auto w-full bg-white">

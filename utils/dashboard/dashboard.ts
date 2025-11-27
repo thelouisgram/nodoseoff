@@ -1,28 +1,19 @@
 import { DrugProps, ScheduleItem } from "../../types/dashboard";
+import { Home, Pill, User } from "lucide-react";
+import { LucideIcon } from "lucide-react";
 
-export const tabs = [
-  { name: "Home", logo: "/assets/desktop-dashboard/home.png" },
-  { name: "Drugs", logo: "/assets/desktop-dashboard/drugs.png" },
-  { name: "Account", logo: "/assets/desktop-dashboard/user.png" },
+interface TabItem {
+  name: string;
+  icon: LucideIcon;
+}
+
+export const tabs: TabItem[] = [
+  { name: "Home", icon: Home },
+  { name: "Drugs", icon: Pill },
+  { name: "Account", icon: User },
 ];
 
-export const tabsMobile = [
-  {
-    name: "Home",
-    logo: "/assets/mobile-dashboard/home.png",
-    inactiveLogo: "/assets/mobile-dashboard/home (1).png",
-  },
-  {
-    name: "Drugs",
-    logo: "/assets/mobile-dashboard/drugs.png",
-    inactiveLogo: "/assets/mobile-dashboard/drugs (1).png",
-  },
-  {
-    name: "Account",
-    logo: "/assets/mobile-dashboard/user.png",
-    inactiveLogo: "/assets/mobile-dashboard/user (1).png",
-  },
-];
+
 
 export const days = [
   "Yesterday", 'Today'

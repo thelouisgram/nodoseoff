@@ -22,18 +22,17 @@ import { FaCheck } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import { RootState } from "../../../store";
-import {
-  updateActive,
-  updateSchedule,
-} from "../../../store/stateSlice";
+import { updateActive, updateSchedule } from "../../../store/stateSlice";
 import { ScheduleItem } from "../../../types/dashboard";
 import { uploadScheduleToServer } from "../../../utils/dashboard/schedule";
 import AccountSettings from "@/Layout/dashboard/account/AccountSettings";
-import { fetchData } from "../../../hooks/fetchData";
-import Tabs from "@/components/Tabs";
-import MobileTabs from "@/components/MobileTabs";
+import { fetchData } from "../../../utils/fetchData";
+import Tabs from "@/Layout/dashboard/shared/Tabs";
+import MobileTabs from "@/Layout/dashboard/shared/MobileTabs";
 import { logOut } from "../../../utils/Auth";
-import { tabs, tabsMobile } from "../../../utils/dashboard/dashboard";
+import { tabs } from "../../../utils/dashboard/dashboard";
+import { LogOut, Menu, PowerOff } from "lucide-react";
+import { LucideIcon } from "lucide-react";
 
 interface tabsMobileProps {
   name: string;
@@ -43,7 +42,7 @@ interface tabsMobileProps {
 
 interface tabsProps {
   name: string;
-  logo: string;
+  icon: LucideIcon;
 }
 
 const Page = () => {
@@ -93,8 +92,8 @@ const Page = () => {
     );
   });
 
-  const renderedTabsMobile = tabsMobile.map(
-    (item: tabsMobileProps, index: number) => {
+  const renderedTabsMobile = tabs.map(
+    (item: tabsProps, index: number) => {
       return (
         <div key={index}>
           <MobileTabs item={item} active={active} />
@@ -263,7 +262,7 @@ const Page = () => {
             isLoading ? "opacity-0 h-0" : "opacity-100 h-[100dvh]"
           } transition-all`}
         >
-          {/* Nav */}
+          {/* Sidebar */}
           <div
             className={` ${!nav ? "" : "lg:w-[300px]"} w-[86px] bg-navyBlue py-10 pl-6 hidden font-karla md:flex flex-col justify-between relative transition-all duration-300`}
           >
@@ -279,17 +278,14 @@ const Page = () => {
                     quality={100}
                   />
                 </Link>
-                <Image
+
+                <button
                   onClick={() => {
                     setNav(!nav);
                   }}
-                  src="/assets/desktop-dashboard/menu.png"
-                  width={512}
-                  height={512}
-                  className="size-6 lg:flex hidden"
-                  alt="menu"
-                  priority
-                />
+                >
+                  <Menu className="size-6 lg:flex hidden text-white" />
+                </button>
                 <Link
                   href={"/"}
                   className={`w-[140px] h-auto ${nav ? "lg:flex hidden" : "hidden"}`}
@@ -312,14 +308,7 @@ const Page = () => {
               }}
               className="flex items-center gap-6 font-Inter"
             >
-              <Image
-                src="/assets/desktop-dashboard/power-off.png"
-                width={512}
-                height={512}
-                className="w-[24px] h-[24px]"
-                alt="menu"
-                quality={100}
-              />
+              <LogOut className="text-white size-6"/>
               <p
                 className={`text-[16px] text-white ${nav ? " hidden lg:flex" : "hidden"}`}
               >
@@ -404,7 +393,6 @@ const Page = () => {
             setAllDoses={setAllDoses}
             dosesToRender={dosesToRender}
           />
-
           <Screen
             setDeleteModal={setDeleteModal}
             setAllergyModal={setAllergyModal}
@@ -416,7 +404,6 @@ const Page = () => {
             setShowStats={setShowStats}
             setDeleteAccountModal={setDeleteAccountModal}
           />
-
           <div className="fixed w-full h-[64px] bg-white shadow bottom-0 flex justify-between items-center md:hidden px-4 ss:px-8 ss:pr-12">
             {renderedTabsMobile}
           </div>

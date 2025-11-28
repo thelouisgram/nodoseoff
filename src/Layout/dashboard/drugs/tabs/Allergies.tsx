@@ -10,21 +10,15 @@ import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 type RefObject<T> = React.RefObject<T>;
 
 interface AllergiesProps {
-  setDeleteModal: Function;
   setScreen: Function;
-  setEditModal: Function;
-  displayDrugs: boolean;
-  setDisplayDrugs: Function;
-  setAllergyModal: Function;
+  activeView: string;
+  setActiveView: Function;
 }
 
 const Allergies: React.FC<AllergiesProps> = ({
-  setDeleteModal,
   setScreen,
-  setAllergyModal,
-  setEditModal,
-  displayDrugs,
-  setDisplayDrugs,
+  activeView,
+  setActiveView,
 }) => {
   const { allergies } = useSelector((state: RootState) => state.app);
   const [options, setOptions] = useState(false);
@@ -97,11 +91,8 @@ const Allergies: React.FC<AllergiesProps> = ({
         drug={item}
         frequencyToPlaceholder={frequencyToPlaceholder}
         setScreen={setScreen}
-        setDeleteModal={setDeleteModal}
-        setEditModal={setEditModal}
-        setAllergyModal={setAllergyModal}
-        displayDrugs={displayDrugs}
-        setDisplayDrugs={setDisplayDrugs}
+        activeView={activeView}
+        setActiveView={setActiveView}
         showEditButton={false}
         tab={"Allergies"}
         currentPage={currentPage}

@@ -8,7 +8,7 @@ import React, {
 import Image from "next/image";
 import { RootState } from "../../../../store";
 import { useSelector, useDispatch } from "react-redux";
-import supabase from "../../../../utils/supabase";
+import { createClient } from "../../../../lib/supabase/client";
 import { toast } from "sonner";
 import { updateHerbs, updateInfo, updateOtcDrugs } from "../../../../store/stateSlice";
 import { X } from "lucide-react";
@@ -30,6 +30,7 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
   herbs: typeof herbs === "string" ? herbs : "",
 });
 
+ const supabase = createClient()
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {

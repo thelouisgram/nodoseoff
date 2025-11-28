@@ -30,7 +30,7 @@ const MobileTabs: React.FC<TabsProps> = ({ item, active }) => {
         strokeWidth={isActive ? 1 : 2}
       />
       <h2
-        className={`text-[12px] text-[#062863] uppercase ${
+        className={`text-[12px] text-[#062863] ${
           isActive
             ? "font-semibold "
             : "font-normal "

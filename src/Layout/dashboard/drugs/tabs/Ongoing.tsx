@@ -4,26 +4,20 @@ import RenderedDrugs from "../RenderedDrugs";
 import { RootState } from "../../../../../store";
 import { useSelector } from "react-redux";
 import { frequencyToPlaceholder } from "../../../../../utils/dashboard/dashboard";
-import { DrugProps } from "../../../../../types/dashboard";
+import { DrugProps } from "../../../../../types/dashboard/dashboard";
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 
 interface OngoingProps {
   setScreen: Function;
-  setAllergyModal: Function;
-  setEditModal: Function;
-  setDeleteModal: Function;
-  displayDrugs: boolean;
-  setDisplayDrugs: Function;
+  activeView: string;
+  setActiveView: Function;
 }
 
 // Define the Ongoing component with the required props
 const Ongoing: React.FC<OngoingProps> = ({
   setScreen,
-  setEditModal,
-  setDeleteModal,
-  setAllergyModal,
-  displayDrugs,
-  setDisplayDrugs,
+  activeView,
+  setActiveView,
 }) => {
   // Define state variables for searched query and current page
   const [searched, setSearched] = useState("");
@@ -81,11 +75,8 @@ const Ongoing: React.FC<OngoingProps> = ({
         drug={drug}
         frequencyToPlaceholder={frequencyToPlaceholder}
         setScreen={setScreen}
-        setDeleteModal={setDeleteModal}
-        setEditModal={setEditModal}
-        setAllergyModal={setAllergyModal}
-        displayDrugs={displayDrugs}
-        setDisplayDrugs={setDisplayDrugs}
+        activeView={activeView}
+        setActiveView={setActiveView}
         showEditButton={true}
         tab={"Ongoing"}
         currentPage={currentPage}

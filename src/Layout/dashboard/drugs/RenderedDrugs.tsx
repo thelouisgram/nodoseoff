@@ -1,11 +1,11 @@
 import Image from "next/image";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, SetStateAction } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   updateActiveDrug,
   updateActiveDrugId,
 } from "../../../../store/stateSlice";
-import { DrugProps } from "../../../../types/dashboard";
+import { DrugProps } from "../../../../types/dashboard/dashboard";
 import { formatDate } from "../../../../utils/dashboard/dashboard";
 import { calculateTimePeriod } from "../../../../utils/drugs";
 import { CircleX, EllipsisVertical, Info, Pencil, Trash2 } from "lucide-react";
@@ -14,12 +14,9 @@ interface thisProps {
   drug: DrugProps;
   frequencyToPlaceholder: { [key: string]: string };
   setScreen: Function;
-  setAllergyModal: Function;
-  setEditModal: Function;
-  setDeleteModal: Function;
   id: number;
-  displayDrugs: boolean;
-  setDisplayDrugs: Function;
+  activeView: string;
+  setActiveView:  React.Dispatch<SetStateAction<"details" | "list">>
   showEditButton: boolean;
   tab: string;
   currentPage: number;
@@ -31,13 +28,10 @@ const RenderedDrugs: React.FC<thisProps> = ({
   drug,
   id,
   setScreen,
-  setEditModal,
-  setDeleteModal,
-  setAllergyModal,
   frequencyToPlaceholder,
   tab,
   showEditButton,
-  setDisplayDrugs,
+  setActiveView,
   currentPage,
 }) => {
   const dispatch = useDispatch();
@@ -117,7 +111,6 @@ const RenderedDrugs: React.FC<thisProps> = ({
               onClick={() => {
                 dispatch(updateActiveDrug(drug.drug));
                 dispatch(updateActiveDrugId(drug.drugId));
-                setDisplayDrugs(false);
                 setOptions(false);
               }}
               className="h-8 hover:bg-gray-100 flex items-center gap-2 w-full px-3"
@@ -131,7 +124,6 @@ const RenderedDrugs: React.FC<thisProps> = ({
               onClick={() => {
                 dispatch(updateActiveDrug(drug.drug)),
                   dispatch(updateActiveDrugId(drug.drugId)),
-                  setEditModal(true),
                   setScreen(true);
                 setOptions(false);
               }}
@@ -145,7 +137,7 @@ const RenderedDrugs: React.FC<thisProps> = ({
             onClick={() => {
               dispatch(updateActiveDrug(drug.drug)),
                 dispatch(updateActiveDrugId(drug.drugId));
-              setScreen(true), setDeleteModal(true);
+              setScreen(true)
               setOptions(false);
             }}
             className="h-8 hover:bg-gray-100 flex items-center gap-2 w-full px-3"
@@ -159,7 +151,6 @@ const RenderedDrugs: React.FC<thisProps> = ({
                 dispatch(updateActiveDrugId(drug.drugId));
                 dispatch(updateActiveDrug(drug.drug)),
                   setScreen(true),
-                  setAllergyModal(true);
                 setOptions(false);
               }}
               className="h-8 hover:bg-gray-100 flex items-center gap-2 w-full px-3 pl-[14px]"

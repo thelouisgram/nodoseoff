@@ -4,25 +4,19 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../../../store";
 import { frequencyToPlaceholder } from "../../../../../utils/dashboard/dashboard";
 import RenderedDrugs from "../RenderedDrugs";
-import { DrugProps } from "../../../../../types/dashboard";
+import { DrugProps } from "../../../../../types/dashboard/dashboard";
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 
 interface CompletedProps {
   setScreen: Function;
-  setAllergyModal: Function;
-  setEditModal: Function;
-  setDeleteModal: Function;
-  displayDrugs: boolean;
-  setDisplayDrugs: Function;
+  activeView: string;
+  setActiveView: Function;
 }
 
 const Completed: React.FC<CompletedProps> = ({
   setScreen,
-  setEditModal,
-  setDeleteModal,
-  setAllergyModal,
-  displayDrugs,
-  setDisplayDrugs,
+  activeView,
+  setActiveView,
 }) => {
   const [searched, setSearched] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -70,11 +64,8 @@ const Completed: React.FC<CompletedProps> = ({
         drug={drug}
         frequencyToPlaceholder={frequencyToPlaceholder}
         setScreen={setScreen}
-        setDeleteModal={setDeleteModal}
-        setEditModal={setEditModal}
-        setAllergyModal={setAllergyModal}
-        displayDrugs={displayDrugs}
-        setDisplayDrugs={setDisplayDrugs}
+        activeView={activeView}
+        setActiveView={setActiveView}
         showEditButton={false}
         tab={"Completed"}
         currentPage={currentPage}

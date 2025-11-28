@@ -2,21 +2,22 @@ import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { updateIsAuthenticated, updateUserId } from "../../../store/stateSlice";
-import supabase from "../../../utils/supabase";
+import { useAuth } from "../../../contexts/AuthContext"; // Import the new hook
 
 const SignIn = () => {
   const router = useRouter();
   const dispatch = useDispatch();
+  const { signIn, user, loading: authLoading } = useAuth(); // Destructure signIn and user/loading state from context
+
   const [formData, setFormData] = useState({
-    fullName: "",
     email: "",
-    phoneNumber: "",
     password: "",
   });
-  const [loading, setLoading] = useState(false);
+  // Use a separate loading state for the form submission
+  const [formSubmitting, setFormSubmitting] = useState(false); 
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -28,58 +29,59 @@ const SignIn = () => {
     });
   };
 
+  // 1. Redirect if the user is already authenticated (using the context user state)
+  useEffect(() => {
+    // Check if the user is available and not in the initial loading state
+    if (!authLoading && user) {
+      dispatch(updateIsAuthenticated(true));
+      dispatch(updateUserId(user.id));
+      router.push("/dashboard");
+    }
+    // Also, if the auth is not loading but there's no user, ensure isAuthenticated is false
+    if (!authLoading && !user) {
+        dispatch(updateIsAuthenticated(false));
+    }
+  }, [user, authLoading, dispatch, router]);
+
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!formData.password || !formData.email) {
       setErrorMessage("Input Email & Password");
-    } else {
-      setLoading(true);
-      setErrorMessage("");
-      try {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: formData.email,
-          password: formData.password,
-        });
-        if (error) {
-          setErrorMessage("Error signing in: " + error.message);
-          setLoading(false);
-        } else {
-          const user = await supabase.auth.getUser();
-          const userId = user.data.user?.id;
-          if (userId) {
-            dispatch(updateIsAuthenticated(true));
-            dispatch(updateUserId(userId));
-            router.push("/dashboard");
-          }
-        }
-      } catch (error) {
-        setErrorMessage("Error signing in: " + error);
-        setLoading(false);
-      }
+      return;
+    }
+
+    setFormSubmitting(true); // Start form submission loading
+    setErrorMessage("");
+
+    try {
+      // 2. Use the signIn function from AuthContext
+      await signIn(formData.email, formData.password);
+      
+      // The useEffect above will handle the dispatch and redirect when the 'user' state 
+      // in the AuthContext updates after a successful sign in.
+      
+    } catch (error: any) {
+      // Catch any error thrown by the context's signIn function
+      const message = error.message || "An unknown error occurred during sign in.";
+      setErrorMessage("Error signing in: " + message);
+      setFormSubmitting(false); // Stop loading on failure
+    } finally {
+      // We don't set formSubmitting to false on success here, because the redirect
+      // will happen via the useEffect hook.
     }
   };
-
-  useEffect(() => {
-    const getUser = async () => {
-      const user = await supabase.auth.getUser();
-      const userId = user.data.user?.id;
-      if (userId) {
-        dispatch(updateIsAuthenticated(true));
-      }
-    };
-    getUser();
-  }, []);
 
   return (
     <>
       <Head>
-        <title>NoDoseOff | SignIn</title>
+        <title>NoDoseOff | Login</title>
       </Head>
-
-      {/* Parent relative container */}
+      
+      {/* ... rest of your existing JSX UI remains the same ... */}
       <div className="relative min-h-screen w-full flex flex-col justify-center items-center
        bg-navyBlue font-karla text-grey overflow-hidden py-7 px-3">
-        {/* --- Geometric SVG Background --- */}
+        {/* Your SVG background and Logo link */}
         <svg
           className="absolute inset-0 w-full h-full"
           viewBox="0 0 1440 720"
@@ -119,10 +121,9 @@ const SignIn = () => {
           />
         </svg>
 
-        {/* --- Logo --- */}
         <Link href="/">
           <Image
-            src="/assets/logo/logo with name png - white color.png"
+            src="/assets/logo/logo-with-name-white.png"
             width={180}
             height={60}
             alt="logo"
@@ -130,7 +131,6 @@ const SignIn = () => {
           />
         </Link>
 
-        {/* --- Sign In Form --- */}
         <form
           className="bg-white rounded-[15px] w-full ss:w-[450px] p-6 ss:p-10 mb-10 relative z-10"
           onSubmit={handleSubmit}
@@ -189,26 +189,26 @@ const SignIn = () => {
           </div>
 
           {errorMessage && (
-            <p className="mb-4 -mt-4 text-red font-[500] text-[14px] text-center">
+            <p className="mb-4 -mt-4 text-red-500 font-[500] text-[14px] text-center">
               {errorMessage}
             </p>
           )}
 
           <button
             type="submit"
-            disabled={loading}
+            // Use the formSubmitting state for the button
+            disabled={formSubmitting}
             className={`font-semibold text-white rounded-[10px] h-[56px] w-full flex items-center justify-center transition duration-300 ${
-              loading ? "bg-navyBlue opacity-85" : "bg-blue-700"
+              formSubmitting ? "bg-navyBlue opacity-85" : "bg-blue-700"
             }`}
           >
-            {loading ? <div className="loaderInfinity"></div> : "LOG IN"}
+            {formSubmitting ? <div className="loaderInfinity"></div> : "LOG IN"}
           </button>
         </form>
 
-        {/* --- Links --- */}
         <div className="w-full flex flex-col items-center relative z-10">
           <Link href="/signup" className="text-white hover:underline">
-            Don`&apos;`t have an account? Create Account
+            Don&apos;t have an account? Create Account
           </Link>
           <Link
             href="/forgetpassword"

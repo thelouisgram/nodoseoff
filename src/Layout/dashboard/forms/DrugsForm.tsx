@@ -8,15 +8,16 @@ import { RootState } from "../../../../store";
 import { setDrugs, updateSchedule } from "../../../../store/stateSlice";
 import { dose, generateSchedule } from "../../../../utils/dashboard/dashboard";
 import { uploadScheduleToServer } from "../../../../utils/dashboard/schedule";
-import supabase from "../../../../utils/supabase";
+import { createClient } from "../../../../lib/supabase/client";
 import { generateDrugId } from "../../../../utils/drugs";
 import { sendMail } from "../../../../utils/sendEmail";
 import { generateDrugAddedEmail } from "../../../../emails/newDrug";
 import { X } from "lucide-react";
+import dayjs from "dayjs"; // Import dayjs for date comparison
 
 interface DrugFormProps {
-  drugsForm: boolean;
-  setDrugsForm: Function;
+  setActiveForm: (value: string) => void;
+  activeForm: string;
 }
 
 interface SelectedDoseTypes {
@@ -25,10 +26,12 @@ interface SelectedDoseTypes {
   time: string[];
 }
 
-const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
-  const { drugs, schedule, userId, allergies, info } = useSelector(
+const DrugsForm: React.FC<DrugFormProps> = ({ activeForm, setActiveForm }) => {
+  const { drugs, schedule, allergies, info, userId } = useSelector(
     (state: RootState) => state.app
   );
+
+  const supabase = createClient();
 
   const [loading, setLoading] = useState(false);
 
@@ -73,7 +76,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
     if (formElement) {
       formElement.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  }, [drugsForm]);
+  }, [activeForm]);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
@@ -150,6 +153,15 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
       end: formData.end ? "" : "Please select an End Date.",
     };
 
+    if (formData.start && formData.end) {
+      const startDate = dayjs(formData.start);
+      const endDate = dayjs(formData.end);
+
+      if (endDate.isBefore(startDate, "day")) {
+        errors.end = "The End Date cannot be before the Start Date.";
+      }
+    }
+
     const hasErrors = Object.values(errors).some((err) => err !== "");
 
     if (hasErrors) {
@@ -223,11 +235,10 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
         formData.time
       );
       await sendMail(info[0].email, html, subject);
-     
-      
+
       dispatch(setDrugs([...drugs, formData]));
       toast.success(`${formData.drug.toUpperCase()} added successfully!`);
-      setDrugsForm(false);
+      setActiveForm("");
       setLoading(false);
 
       const data = generateSchedule(formData);
@@ -247,7 +258,6 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
       resetFormData();
       resetFormErrors();
       setLoading(false);
-      
     }
   };
 
@@ -285,12 +295,14 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
   return (
     <div
       className={` ${
-        drugsForm ? "w-full " : "w-0"
+        activeForm === "drugs" ? "w-full " : "w-0"
       } left-0 bg-none fixed z-[2] h-[100dvh]`}
     >
       <div
         className={` ${
-          drugsForm ? "left-0 ss:w-[450px]" : "-left-[450px] ss:w-[450px] "
+          activeForm === "drugs"
+            ? "left-0 ss:w-[450px]"
+            : "-left-[450px] ss:w-[450px] "
         } transition-all duration-300 absolute w-full bg-white h-full z-[4] `}
       >
         <div
@@ -300,12 +312,12 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
             <div className="w-full flex justify-end mb-10">
               <button
                 onClick={() => {
-                  setDrugsForm(false);
+                  setActiveForm("");
                 }}
                 id="top-drug"
                 className="cursor-pointer pt-8"
               >
-                <X className="size-6 text-gray-800"/>
+                <X className="size-6 text-gray-800" />
               </button>
             </div>
             <h1 className="text-[24px] text-blue-700 font-bold">Add Drug</h1>
@@ -472,7 +484,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ drugsForm, setDrugsForm }) => {
       </div>
       <div
         onClick={() => {
-          setDrugsForm(false);
+          setActiveForm("");
         }}
         className="absolute w-full h-full bg-grey opacity-[40] z-[3]"
       />

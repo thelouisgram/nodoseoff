@@ -1,4 +1,4 @@
-import supabase from "./supabase";
+import { createClient } from "../lib/supabase/client"; 
 import { toast } from "sonner";
 import { updateUserId,setDrugs, updateSchedule } from "../store/stateSlice";
 import { AppDispatch } from "../store";
@@ -10,6 +10,7 @@ interface LogOutProps {
 }
 
 export const logOut = async ({dispatch, router}:LogOutProps) => {
+  const supabase =createClient()
     try {
       const { error } = await supabase.auth.signOut();
       if (error) {

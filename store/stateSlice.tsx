@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { DrugProps, ScheduleItem } from "../types/dashboard";
+import { DrugProps, ScheduleItem } from "../types/dashboard/dashboard";
 import { AppType, Info } from "../utils/store";
 
 const initialState: AppType = {

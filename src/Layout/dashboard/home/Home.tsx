@@ -8,9 +8,8 @@ import { RootState } from "../../../../store";
 import { calculateClosestDoseCountdown } from "../../../../utils/dashboard/dashboard";
 import { updateActive } from "../../../../store/stateSlice";
 import Tracker from "./Tracker";
-import { UserRound } from "lucide-react";
+import { CirclePlus, UserRound } from "lucide-react";
 interface HomeProps {
-  setDrugsForm: Function;
   isLoading: boolean;
   setAllDoses: Function;
   setTracker: Function;
@@ -19,7 +18,6 @@ interface HomeProps {
 }
 
 const Home: React.FC<HomeProps> = ({
-  setDrugsForm,
   isLoading,
   setAllDoses,
   setTracker,
@@ -38,20 +36,21 @@ const Home: React.FC<HomeProps> = ({
   const { name } = info[0];
 
   useEffect(() => {
-  const calculateAndSetCountdown = async () => {
-    const newCountdown = await calculateClosestDoseCountdown(schedule);
-    setCountDown(newCountdown);
-  };
-  
-  // Initial countdown calculation
-  calculateAndSetCountdown();
+    // Function to calculate the countdown
+    const calculateAndSetCountdown = () => {
+      const newCountdown = calculateClosestDoseCountdown(schedule);
+      setCountDown(newCountdown);
+    };
 
-  // Set interval to update countdown every second
-  const intervalId = setInterval(calculateAndSetCountdown, 1000);
+    // Initial countdown calculation and process schedule
+    calculateAndSetCountdown();
 
-  // Cleanup on unmount
-  return () => clearInterval(intervalId);
-}, [schedule]); // Re-run when schedule changes
+    // Set interval to update countdown every second
+    const intervalId = setInterval(calculateAndSetCountdown, 1000);
+
+    // Clear interval on unmount or when 'schedule' changes
+    return () => clearInterval(intervalId);
+  }, [drugs, isLoading]);
 
   const displayedDoses = dosesToRender?.slice(displayIndex, displayIndex + 4);
 
@@ -112,15 +111,6 @@ const Home: React.FC<HomeProps> = ({
         </div>
       </div>
       <div className="w-full flex justify-between items-center px-4 ss:px-8 md:px-0">
-        <button
-          onClick={() => {
-            setDrugsForm(true);
-          }}
-          className="mb-3 w-[160px] cursor-pointer h-[40px] bg-navyBlue rounded-[6px] flex justify-center items-center 
-          font-bold text-white"
-        >
-          + ADD DRUG
-        </button>
       </div>
       <section className="md:w-full flex gap-4 ss:gap-5 mb-8 ss:mb-12 overflow-x-scroll md:overflow-hidden px-4 ss:px-8 md:px-0 bar">
         <div className="min-w-[300px] ss:w-full h-[120px] ss:h-[150px] bg-[#A755F7] rounded-[10px]  flex justify-start items-center p-4 gap-2">

@@ -3,7 +3,7 @@ import React, { useEffect, useState, FormEvent, ChangeEvent } from "react";
 import Image from "next/image";
 import { RootState } from "../../../../store";
 import { useSelector, useDispatch } from "react-redux";
-import supabase from "../../../../utils/supabase";
+import { createClient } from "../../../../lib/supabase/client";
 import { toast } from "sonner";
 import { updateInfo, updateProfilePicture } from "../../../../store/stateSlice";
 import { UserRoundPen, X } from "lucide-react";
@@ -21,6 +21,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
     (state: RootState) => state.app
   );
   const { name, phone, email } = info[0];
+   const supabase = createClient()
 
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);

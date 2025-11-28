@@ -14,7 +14,8 @@
     "@react-email/render": "^1.0.5",
     "@reduxjs/toolkit": "^1.9.7",
     "@supabase/auth-helpers-nextjs": "^0.10.0",
-    "@supabase/supabase-js": "^2.39.1",
+    "@supabase/ssr": "^0.8.0",
+    "@supabase/supabase-js": "^2.86.0",
     "@types/react-redux": "^7.1.31",
     "@vercel/analytics": "^1.5.0",
     "axios": "^1.6.5",
@@ -22,6 +23,7 @@
     "dayjs": "^1.11.10",
     "framer-motion": "^11.1.7",
     "html2canvas": "^1.4.1",
+    "jspdf": "^3.0.4",
     "lucide-react": "^0.554.0",
     "next": "^14.2.24",
     "node-cron": "^3.0.3",
@@ -40,7 +42,7 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
-    "@types/node": "^20",
+    "@types/node": "^20.19.25",
     "@types/node-cron": "^3.0.11",
     "@types/nodemailer": "^6.4.14",
     "@types/react": "^18",

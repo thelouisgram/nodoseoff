@@ -4,14 +4,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import { RootState } from "../../../../store";
 import { updateAllergies } from "../../../../store/stateSlice";
-import supabase from "../../../../utils/supabase";
+import { createClient } from "../../../../lib/supabase/client";
 import { generateDrugAllergyEmail } from "../../../../emails/drugAllergy";
 import { sendMail } from "../../../../utils/sendEmail";
 import { X } from "lucide-react";
 
 interface AllergiesFormProps {
-  allergiesForm: boolean;
-  setAllergiesForm: Function;
+  setActiveForm: (value: string) => void;
+  activeForm: string;
 }
 
 interface FormErrors {
@@ -19,8 +19,7 @@ interface FormErrors {
 }
 
 const AllergiesForm: React.FC<AllergiesFormProps> = ({
-  allergiesForm,
-  setAllergiesForm,
+  activeForm, setActiveForm 
 }) => {
   // Getting data from Global State
   const { allergies, userId, info } = useSelector((state: RootState) => state.app);
@@ -43,7 +42,9 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
     if (formElement) {
       formElement.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  }, [allergiesForm]);
+  }, [activeForm]);
+
+   const supabase = createClient()
 
   // Error State
   const [formErrors, setFormErrors] = useState({
@@ -144,7 +145,7 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
       // Reset Error State
       setFormErrors({ drug: "" });
       // Close Allergies Form
-      setAllergiesForm(false);
+      setActiveForm('');
       // Stop loading
       setLoading(false);
     } catch (error) {
@@ -166,12 +167,12 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
   return (
     <div
       className={`${
-        allergiesForm ? "w-full " : "w-0"
+        activeForm === 'allergies' ? "w-full " : "w-0"
       } left-0 bg-none fixed z-[2] h-[100dvh]`}
     >
       <div
         className={`${
-          allergiesForm ? "left-0 ss:w-[450px]" : "-left-[450px] ss:w-[450px] "
+          activeForm === 'allergies' ? "left-0 ss:w-[450px]" : "-left-[450px] ss:w-[450px] "
         } duration-300 absolute w-full bg-white h-full z-[4] transition-all`}
       >
         <div
@@ -181,7 +182,7 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
             <div className="w-full flex justify-end mb-10">
               <button
                 onClick={() => {
-                  setAllergiesForm(false);
+                  setActiveForm('');
                 }}
                 id="top-allergies"
                 className="cursor-pointer pt-8"
@@ -242,7 +243,7 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
       </div>
       <div
         onClick={() => {
-          setAllergiesForm(false);
+          setActiveForm('');
         }}
         className="absolute w-full h-full bg-grey z-[3]"
       />

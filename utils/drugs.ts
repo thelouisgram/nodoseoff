@@ -1,5 +1,5 @@
 export const drugsTab: string[] =[
-   "Ongoing", "Completed", "Allergies" 
+   "ongoing", "completed", "allergies" 
 ]
 
 export function calculateTimePeriod(startDate: string, endDate: string): string {

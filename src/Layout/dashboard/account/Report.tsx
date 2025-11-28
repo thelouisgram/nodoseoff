@@ -1,5 +1,5 @@
 import React from "react";
-import DownloadableReport from "./DownloadableReport";
+import DownloadableReport from "./DownloadReport";
 import { ChevronLeft } from "lucide-react";
 
 interface ReportProps {

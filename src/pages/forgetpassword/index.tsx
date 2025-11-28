@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ChangeEvent, FormEvent, useState } from "react";
-import supabase from "../../../utils/supabase";
+import { createClient } from "../../../lib/supabase/client";
 import { updateIsAuthenticated, updateUserId } from "../../../store/stateSlice";
 import { useDispatch } from "react-redux";
 import { toast } from "sonner";
@@ -18,6 +18,9 @@ const ForgotPassword = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [otp, setOtp] = useState("");
   const [showOtp, setShowOtp] = useState(false);
+
+   const supabase = createClient()
+
 
   const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -104,7 +107,7 @@ const ForgotPassword = () => {
       <div className="min-h-[100dvh] w-full py-8 px-6 flex flex-col justify-center items-center ss:py-10 bg-navyBlue font-karla text-grey">
         <Link href="/">
           <Image
-            src="/assets/logo/logo with name png - white color.png"
+            src="/assets/logo/logo-with-name-white.png"
             width={1062}
             height={212}
             alt="logo"

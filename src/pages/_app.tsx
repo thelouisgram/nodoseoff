@@ -6,6 +6,7 @@ import { Toaster } from "sonner";
 import Head from "next/head";
 import { useState, useEffect } from "react";
 import { Analytics } from "@vercel/analytics/react";
+import { AuthProvider } from "../../contexts/AuthContext";
 
 export default function App({ Component, pageProps }: AppProps) {
   const [mode, setMode] = useState("light");
@@ -51,7 +52,9 @@ export default function App({ Component, pageProps }: AppProps) {
         <title>NoDoseOff - Drug Tracking and Reminder App</title>
       </Head>
       <Toaster position="top-center" richColors={true} closeButton={true} />
+      <AuthProvider>
       <Component {...pageProps} />
+      </AuthProvider>
     </Provider>
   );
 }

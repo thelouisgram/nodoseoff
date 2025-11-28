@@ -3,18 +3,23 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useRouter } from "next/router";
-import supabase from "../../../utils/supabase";
-
+import { createClient } from "../../../lib/supabase/client";
 import { updateIsAuthenticated, updateUserId } from "../../../store/stateSlice";
 import { useDispatch } from "react-redux";
 import Head from "next/head";
 import ReCAPTCHA from "react-google-recaptcha";
 import { sendMail } from "../../../utils/sendEmail";
 import { generateWelcomeEmail } from "../../../emails/welcomeMail";
+import { useAuth } from "../../../contexts/AuthContext"; // Import useAuth
 
 const CreateAccount = () => {
+  const supabase = createClient()
   const router = useRouter();
   const dispatch = useDispatch();
+  
+  // Destructure the signUp function from the AuthContext
+  const { signUp } = useAuth(); 
+
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -73,22 +78,25 @@ const CreateAccount = () => {
     setErrorMessage("");
 
     try {
-      const { error: signUpError, data: signUpData } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-      });
+      // 1. Use the context's signUp function and correctly destructure the result
+      const { user: signedUpUser, error: signUpError } = await signUp(
+        formData.email,
+        formData.password,
+      );
 
-      if (signUpError) {
-        setErrorMessage("Error signing up: " + signUpError.message);
+      if (signUpError || !signedUpUser) {
+        setErrorMessage("Error signing up: " + (signUpError?.message || "Sign up failed."));
         setLoading(false);
         return;
       }
 
-      const userId = signUpData.user?.id;
+      // 2. Use the user data returned from the context
+      const userId = signedUpUser.id;
       if (userId) {
         dispatch(updateIsAuthenticated(true));
         dispatch(updateUserId(userId));
 
+        // 3. Insert user profile data
         const { error: userError } = await supabase.from("users").insert({
           name: formData.fullName,
           phone: formData.phoneNumber,
@@ -97,10 +105,12 @@ const CreateAccount = () => {
         });
         if (userError) throw userError;
 
+        // 4. Initialize other necessary tables
         await supabase.from("schedule").insert({ userId: userId, schedule: [] });
         await supabase.from("completedDrugs").insert({ userId: userId, completedDrugs: [] });
         await supabase.from("drugHistory").insert({ userId: userId, otcDrugs: "", herbs: "" });
 
+        // 5. Send welcome email
         const { html, subject } = generateWelcomeEmail();
         await sendMail(formData.email, html, subject);
 
@@ -108,7 +118,8 @@ const CreateAccount = () => {
       }
     } catch (error) {
       console.error("Unexpected error:", error);
-      setErrorMessage("An unexpected error occurred. Please try again.");
+      // Catch errors from Supabase inserts or sendMail
+      setErrorMessage("An unexpected error occurred during profile creation. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -164,7 +175,7 @@ const CreateAccount = () => {
         {/* --- Logo --- */}
         <Link href="/">
           <Image
-            src="/assets/logo/logo with name png - white color.png"
+            src="/assets/logo/logo-with-name-white.png"
             width={3916}
             height={1092}
             quality={100}

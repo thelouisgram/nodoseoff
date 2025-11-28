@@ -29,7 +29,7 @@ export default function HeroSection() {
         {/* Logo */}
         <Link href="/">
           <Image
-            src="/assets/logo/logo with name - blue color.png"
+            src="/assets/logo/logo-with-name-blue.png"
             alt="NoDoseOff Logo"
             width={150}
             height={40}

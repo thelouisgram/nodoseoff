@@ -3,37 +3,30 @@ import ProfileForm from "./forms/ProfileForm";
 
 interface ScreenProps {
   setScreen: Function;
-  setEditModal: Function;
-  setDeleteModal: Function;
   screen: boolean;
   setAdd: Function;
-  setAllergyModal: Function;
   setProfileForm: Function;
   setShowStats: Function;
   setDeleteAccountModal: Function;
-  
+  setActiveAction: (value:string) => void;
 }
 
 const Screen: React.FC<ScreenProps> = ({
-  setEditModal,
-  setDeleteModal,
   setScreen,
   setAdd,
-  setAllergyModal,
+  setActiveAction,
   setProfileForm,
   setShowStats,
   setDeleteAccountModal,
   screen
 }) => {
   const handleClose = () => {
-    setEditModal(false);
-    setDeleteModal(false);
     setAdd(false);
-    setAllergyModal(false);
     setProfileForm(false);
     setShowStats(false);
     setScreen(false);
     setDeleteAccountModal(false);
+    setActiveAction('')
   };
 
   return (

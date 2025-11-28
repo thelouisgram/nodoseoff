@@ -1,6 +1,5 @@
 import React from "react";
 import { FaExclamationTriangle } from "react-icons/fa";
-import Image from "next/image";
 import { days } from "../../../../utils/dashboard/dashboard";
 import { ChevronRight } from "lucide-react";
 

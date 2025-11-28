@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../../store";
 import Image from "next/image";
 import { toast } from "sonner";
-import supabase from "../../../../utils/supabase";
+import { useAuth } from "../../../../contexts/AuthContext";
 
 import {
   updateIsAuthenticated,
@@ -48,12 +48,11 @@ const Account: React.FC<AccountProps> = ({
 
   const [tab, setTab] = useState("Account");
 
+  const {signOut} = useAuth()
+
   const logOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        toast.error("Error signing out");
-      }
+      signOut()
       dispatch(updateUserId(""));
       dispatch(updateIsAuthenticated(false));
       router.push("/login");
@@ -208,7 +207,7 @@ const Account: React.FC<AccountProps> = ({
 
               <button
                 onClick={logOut}
-                className="flex justify-between border-[1px] ss:w-[1/2] text-red w-full rounded-[10px]  px-4 py-4 items-center  gap-3"
+                className="flex justify-between border-[1px] ss:w-[1/2] text-red-600 w-full rounded-[10px]  px-4 py-4 items-center  gap-3"
               >
                 <div className="flex gap-3 items-center h-full">
                   <LogOut className="size-6 " strokeWidth={1.5} />
@@ -237,7 +236,7 @@ const Account: React.FC<AccountProps> = ({
                       deleteUser();
                       setDeleteAccountModal(false);
                     }}
-                    className="px-4 py-1 flex items-center gap-2 bg-red rounded-[10px]  "
+                    className="px-4 py-1 flex items-center gap-2 bg-red-600 rounded-[10px]  "
                   >
                     Delete
                   </button>

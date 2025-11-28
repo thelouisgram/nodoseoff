@@ -1,7 +1,6 @@
 import React, { ChangeEvent, FormEvent, useState } from "react";
 import { toast } from "sonner";
-import supabase from "../../../../../utils/supabase";
-import Image from "next/image";
+import { createClient } from "../../../../../lib/supabase/client";
 import { ChevronLeft, X } from "lucide-react";
 
 interface ChangePasswordProps {
@@ -17,6 +16,9 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+
+   const supabase = createClient()
+  
 
   const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);

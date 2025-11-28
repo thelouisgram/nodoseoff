@@ -3,7 +3,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import supabase from "../../../utils/supabase";
+import { createClient } from "../../../lib/supabase/client";
 import Image from "next/image";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
@@ -23,6 +23,8 @@ const ResetPassword = () => {
       router.push("/login");
     }
   }, []);
+
+   const supabase = createClient()
 
   const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
@@ -67,7 +69,7 @@ const ResetPassword = () => {
       <div className="min-h-[100dvh] w-full py-8 px-6 flex  flex-col justify-center items-center ss:py-10 bg-navyBlue font-karla text-grey">
         <Link href="/">
           <Image
-            src="/assets/logo/logo with name png - white color.png"
+            src="/assets/logo/logo-with-name-white.png"
             width={1062}
             height={212}
             alt="logo"

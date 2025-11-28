@@ -22,7 +22,6 @@ module.exports = {
       colors: {
         white: "hsl(0, 0%, 100%)",
         dark: "hsl(240, 8%, 12%)",
-        red: "hsl(355, 73%, 56%)",
         navyBlue: "hsl(218,89%,21%)",
         darkBlue: "hsl(216,89%,63%)",
         darkGreen: "hsl(145, 49%, 51%)",

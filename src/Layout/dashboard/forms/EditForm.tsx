@@ -11,12 +11,13 @@ import {
   removePastDoses,
   uploadScheduleToServer,
 } from "../../../../utils/dashboard/schedule";
-import supabase from "../../../../utils/supabase";
+import { createClient } from "../../../../lib/supabase/client";
 import { X } from "lucide-react";
+import dayjs from "dayjs"; // Import dayjs for date comparison
 
 interface DrugFormProps {
-  editForm: boolean;
-  setEditForm: Function;
+  setActiveForm: (value: string) => void;
+  activeForm: string;
 }
 
 interface SelectedDoseTypes {
@@ -29,7 +30,7 @@ interface FormErrors {
   [key: string]: string;
 }
 
-const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
+const EditForm: React.FC<DrugFormProps> = ({ activeForm, setActiveForm }) => {
   const { drugs, activeDrug, schedule, userId, activeDrugId } = useSelector(
     (state: RootState) => state.app
   );
@@ -37,6 +38,8 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
 
   const currentDrug = drugs.find((drug) => drug.drug === activeDrug);
   const [loading, setLoading] = useState(false);
+
+   const supabase = createClient()
 
   const [formData, setFormData] = useState({
     drug: "",
@@ -96,7 +99,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
     if (formElement) {
       formElement.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  }, [editForm]);
+  }, [activeForm]);
 
   useEffect(() => {
     let defaultTimeValues: string[] = [];
@@ -185,6 +188,21 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
       start: formData.start ? "" : "Please select a Start Date.",
       end: formData.end ? "" : "Please select an End Date.",
     };
+    
+    // --- NEW DATE VALIDATION LOGIC ---
+    // Start date is set to getCurrentDate(), so we compare end date against today
+    const todayDate = dayjs(getCurrentDate());
+    
+    if (formData.end) {
+      const endDate = dayjs(formData.end);
+
+      // Check if End Date is strictly before today's Date
+      if (endDate.isBefore(todayDate, 'day')) {
+        errors.end = "The End Date cannot be before today's Start Date.";
+      }
+    }
+    // --- END NEW DATE VALIDATION LOGIC ---
+
 
     const errorValues = Object.values(errors);
 
@@ -194,6 +212,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
           toast.error(errors[field]);
         }
       });
+      setLoading(false); // Stop loading on error
       return;
     }
 
@@ -265,7 +284,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
       // Hide loading toast and show success toast
       toast.success(`${formData.drug.toUpperCase()}  updated successfully`);
       setLoading(false);
-      setEditForm(false);
+      setActiveForm('');
       setFormErrors({
         drug: "",
         frequency: "",
@@ -283,12 +302,12 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
   return (
     <div
       className={` ${
-        editForm ? "w-full" : "w-0"
+        activeForm === 'edit' ? "w-full" : "w-0"
       } left-0 bg-none fixed z-[2]  h-[100dvh]`}
     >
       <div
         className={` ${
-          editForm ? "left-0 ss:w-[450px]" : "-left-[450px] ss:w-[450px] "
+          activeForm === 'edit' ? "left-0 ss:w-[450px]" : "-left-[450px] ss:w-[450px] "
         } transition-all duration-300 absolute w-full bg-white h-full z-[4] `}
       >
         <div
@@ -298,7 +317,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
             <div className="w-full flex justify-end mb-10">
               <button
                 onClick={() => {
-                  setEditForm(false);
+                  setActiveForm('');
                 }}
                 id="top-edit"
                 className="cursor-pointer pt-8"
@@ -469,7 +488,7 @@ const EditForm: React.FC<DrugFormProps> = ({ editForm, setEditForm }) => {
       </div>
       <div
         onClick={() => {
-          setEditForm(false);
+          setActiveForm('');
         }}
         className="absolute w-full h-full bg-grey opacity-[40] z-[3]"
       />

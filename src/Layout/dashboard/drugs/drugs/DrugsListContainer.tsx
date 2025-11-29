@@ -18,7 +18,6 @@ const DrugsListContainer = ({
   tab,
   options,
   setOptions,
-  setScreen,
   activeAction,
   setActiveAction,
   setActiveView,
@@ -101,7 +100,6 @@ const DrugsListContainer = ({
             tab={tab}
             options={options}
             setOptions={setOptions}
-            setScreen={setScreen}
             activeAction={activeAction}
             setActiveAction={setActiveAction}
             setActiveView={setActiveView}

@@ -37,7 +37,6 @@ export interface Detail {
 
 export interface DrugsProps {
   screen: boolean;
-  setScreen: React.Dispatch<React.SetStateAction<boolean>>;
   setAdd: React.Dispatch<React.SetStateAction<boolean>>;
   add: boolean;
   activeAction: string;

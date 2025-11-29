@@ -16,7 +16,6 @@ interface DrugsListProps {
   tab: string;
   options: boolean;
   setOptions: React.Dispatch<SetStateAction<boolean>>;
-  setScreen: React.Dispatch<SetStateAction<boolean>>;
   activeAction: string;
   setActiveAction: (value: string) => void;
   setActiveView: React.Dispatch<SetStateAction<"details" | "list">>;
@@ -28,7 +27,6 @@ const DrugsList: React.FC<DrugsListProps> = ({
   tab,
   options,
   setOptions,
-  setScreen,
   activeAction,
   setActiveAction,
   setActiveView,
@@ -120,7 +118,6 @@ const DrugsList: React.FC<DrugsListProps> = ({
               <OptionModal
                 options={options && activeDrug === data.drug}
                 setOptions={setOptions}
-                setScreen={setScreen}
                 tab={tab}
                 drug={data.drug}
                 activeAction={activeAction}

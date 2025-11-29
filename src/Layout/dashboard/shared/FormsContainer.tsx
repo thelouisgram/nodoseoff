@@ -1,5 +1,4 @@
 import React from "react";
-import Screen from "../Screen";
 import Contact from "../account/Contact";
 import AccountSettings from "../account/AccountSettings";
 import ChangePassword from "../account/AccountSettings/ChangePassword";

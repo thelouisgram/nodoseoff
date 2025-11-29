@@ -4,8 +4,7 @@ export interface DrugDetailsProps {
   activeView: string;
   setActiveView: React.Dispatch<SetStateAction<"details" | "list">>
   tab: string;
-  setScreen: React.Dispatch<React.SetStateAction<boolean>>;
-  setActiveForm: (value: string) => void;
+  setActiveModal: (value: string) => void;
   activeAction: string;
   setActiveAction: (value: string) => void;
   options: boolean;
@@ -38,11 +37,10 @@ export interface Detail {
 
 export interface DrugsProps {
   screen: boolean;
-  setScreen: React.Dispatch<React.SetStateAction<boolean>>;
   setAdd: React.Dispatch<React.SetStateAction<boolean>>;
   add: boolean;
   activeAction: string;
   setActiveAction: (value: string) => void;
-  activeForm: string;
-  setActiveForm: (value: string) => void;
+  activeModal: string;
+  setActiveModal: (value: string) => void;
 }

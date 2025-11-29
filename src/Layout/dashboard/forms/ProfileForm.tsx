@@ -9,13 +9,13 @@ import { updateInfo, updateProfilePicture } from "../../../../store/stateSlice";
 import { UserRoundPen, X } from "lucide-react";
 
 interface ProfileFormProps {
-  setProfileForm: Function;
-  profileForm: boolean;
+ setActiveModal: (value: string) => void
+ activeModal: string;
 }
 
 const ProfileForm: React.FC<ProfileFormProps> = ({
-  setProfileForm,
-  profileForm,
+ setActiveModal,
+ activeModal,
 }) => {
   const { info, userId, profilePicture } = useSelector(
     (state: RootState) => state.app
@@ -93,7 +93,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 
     toast.success("Profile updated!");
     setLoading(false);
-    setProfileForm(false);
+  setActiveModal("")
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -106,19 +106,19 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
   return (
     <div
       className={`${
-        profileForm ? "w-full" : "w-0"
-      } fixed right-0 bg-none z-[2] h-[100dvh]`}
+       activeModal === 'profile' ? "w-full" : "w-0"
+      } fixed right-0 bg-none z-[4] h-[100dvh]`}
     >
       <div
         className={`${
-          profileForm ? "right-0 ss:w-[450px]" : "-right-[450px] ss:w-[450px]"
+         activeModal === 'profile'? "right-0 ss:w-[450px]" : "-right-[450px] ss:w-[450px]"
         } transition-all duration-300 absolute w-full bg-white h-full z-[4]`}
       >
         <div className="h-full flex flex-col w-full justify-between gap-8 p-8 pt-0 overflow-y-scroll bg-white">
           <div>
             <div className="w-full flex justify-end mb-10">
               <button
-                onClick={() => setProfileForm(false)}
+                onClick={() =>setActiveModal("")}
                 id="top-profile"
                 className="cursor-pointer pt-8"
               >
@@ -219,12 +219,6 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
           </div>
         </div>
       </div>
-      <div
-        onClick={() => {
-          setProfileForm(false);
-        }}
-        className="absolute w-full h-full bg-grey opacity-[40] z-[3]"
-      />
     </div>
   );
 };

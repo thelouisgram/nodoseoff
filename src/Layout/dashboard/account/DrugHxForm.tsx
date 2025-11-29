@@ -5,7 +5,6 @@ import React, {
   FormEvent,
   ChangeEvent,
 } from "react";
-import Image from "next/image";
 import { RootState } from "../../../../store";
 import { useSelector, useDispatch } from "react-redux";
 import { createClient } from "../../../../lib/supabase/client";
@@ -14,13 +13,13 @@ import { updateHerbs, updateInfo, updateOtcDrugs } from "../../../../store/state
 import { X } from "lucide-react";
 
 interface DrugHxFormProps {
-  setDrugHxForm: Function;
-  drugHxForm: boolean;
+ setActiveModal: (value: string) => void
+ activeModal: string;
 }
 
 const DrugHxForm: React.FC<DrugHxFormProps> = ({
-  drugHxForm,
-  setDrugHxForm,
+ activeModal,
+ setActiveModal,
 }) => {
   const { info, userId, otcDrugs, herbs } = useSelector((state: RootState) => state.app);
   const dispatch = useDispatch();
@@ -38,7 +37,7 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
     if (formElement) {
       formElement.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  }, [drugHxForm]);
+  }, [activeModal]);
 
   const handleClick = () => {
     const syntheticEvent = new Event(
@@ -75,7 +74,7 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
 
       dispatch(updateHerbs(formData.herbs));
       dispatch(updateOtcDrugs(formData.otcDrugs));
-      setDrugHxForm(false);
+     setActiveModal("")
       setLoading(false);
       toast.success("Profile updated successfully");
     } catch (error) {
@@ -89,12 +88,12 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
   return (
     <div
       className={`${
-        drugHxForm ? "w-full " : "w-0"
-      } right-0 bg-none fixed z-[2] h-[100dvh]`}
+       activeModal === 'drugHx' ? "w-full " : "w-0"
+      } right-0 bg-none fixed z-[4] h-[100dvh]`}
     >
       <div
         className={`${
-          drugHxForm ? "right-0 ss:w-[450px]" : "-right-[450px] ss:w-[450px]"
+         activeModal === 'drugHx' ? "right-0 ss:w-[450px]" : "-right-[450px] ss:w-[450px]"
         } transition-all duration-300 absolute w-full bg-white h-full z-[4]`}
       >
         <div
@@ -104,7 +103,7 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
             <div className="w-full flex justify-end mb-10">
 
               <button
-                onClick={() => setDrugHxForm(false)}
+                onClick={() =>setActiveModal("")}
                 id="top-drugHx"
                 className="cursor-pointer pt-8"
               >
@@ -182,12 +181,6 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
           </button>
         </div>
       </div>
-      <div
-        onClick={() => {
-          setDrugHxForm(false);
-        }}
-        className="absolute w-full h-full bg-grey opacity-[40] z-[3]"
-      />
     </div>
   );
 };

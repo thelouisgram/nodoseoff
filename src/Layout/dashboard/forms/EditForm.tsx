@@ -16,8 +16,8 @@ import { X } from "lucide-react";
 import dayjs from "dayjs"; // Import dayjs for date comparison
 
 interface DrugFormProps {
-  setActiveForm: (value: string) => void;
-  activeForm: string;
+  setActiveModal: (value: string) => void;
+  activeModal: string;
 }
 
 interface SelectedDoseTypes {
@@ -30,7 +30,7 @@ interface FormErrors {
   [key: string]: string;
 }
 
-const EditForm: React.FC<DrugFormProps> = ({ activeForm, setActiveForm }) => {
+const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
   const { drugs, activeDrug, schedule, userId, activeDrugId } = useSelector(
     (state: RootState) => state.app
   );
@@ -99,7 +99,7 @@ const EditForm: React.FC<DrugFormProps> = ({ activeForm, setActiveForm }) => {
     if (formElement) {
       formElement.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  }, [activeForm]);
+  }, [activeModal]);
 
   useEffect(() => {
     let defaultTimeValues: string[] = [];
@@ -284,7 +284,7 @@ const EditForm: React.FC<DrugFormProps> = ({ activeForm, setActiveForm }) => {
       // Hide loading toast and show success toast
       toast.success(`${formData.drug.toUpperCase()}  updated successfully`);
       setLoading(false);
-      setActiveForm('');
+      setActiveModal('');
       setFormErrors({
         drug: "",
         frequency: "",
@@ -302,12 +302,12 @@ const EditForm: React.FC<DrugFormProps> = ({ activeForm, setActiveForm }) => {
   return (
     <div
       className={` ${
-        activeForm === 'edit' ? "w-full" : "w-0"
-      } left-0 bg-none fixed z-[2]  h-[100dvh]`}
+        activeModal === 'edit' ? "w-full" : "w-0"
+      } left-0 bg-none fixed z-[4]  h-[100dvh]`}
     >
       <div
         className={` ${
-          activeForm === 'edit' ? "left-0 ss:w-[450px]" : "-left-[450px] ss:w-[450px] "
+          activeModal === 'edit' ? "left-0 ss:w-[450px]" : "-left-[450px] ss:w-[450px] "
         } transition-all duration-300 absolute w-full bg-white h-full z-[4] `}
       >
         <div
@@ -317,7 +317,7 @@ const EditForm: React.FC<DrugFormProps> = ({ activeForm, setActiveForm }) => {
             <div className="w-full flex justify-end mb-10">
               <button
                 onClick={() => {
-                  setActiveForm('');
+                  setActiveModal('');
                 }}
                 id="top-edit"
                 className="cursor-pointer pt-8"
@@ -486,12 +486,6 @@ const EditForm: React.FC<DrugFormProps> = ({ activeForm, setActiveForm }) => {
           </form>
         </div>
       </div>
-      <div
-        onClick={() => {
-          setActiveForm('');
-        }}
-        className="absolute w-full h-full bg-grey opacity-[40] z-[3]"
-      />
     </div>
   );
 };

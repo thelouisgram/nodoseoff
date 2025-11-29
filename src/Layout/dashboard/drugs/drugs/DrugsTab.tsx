@@ -17,7 +17,7 @@ const DrugsTab: React.FC<DrugsTabProps> = ({ setTab, tab }) => {
             px-3 py-2 ss:px-4
             text-[14px] font-Inter font-[500]
             w-full
-            rounded-[6px]
+            rounded-[6px] capitalize
             border
             transition-all duration-200
             ${

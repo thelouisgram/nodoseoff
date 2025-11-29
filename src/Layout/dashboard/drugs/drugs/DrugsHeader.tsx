@@ -1,12 +1,14 @@
 import React from "react";
 
-const DrugsHeader = () => {
+const DrugsHeader: React.FC = () => {
   return (
-    <div className="mb-[28px]">
-      <h1 className="text-[24px] ss:text-[32px] font-semibold font-karla ">
+    <div className="mb-7">
+      <h1 className="text-2xl ss:text-3xl font-semibold font-karla">
         Drugs
       </h1>
-      <p className="text-[16px] text-grey">Manage medications wisely!</p>
+      <p className="text-base text-gray-500">
+        Manage medications wisely!
+      </p>
     </div>
   );
 };

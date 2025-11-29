@@ -8,28 +8,24 @@ import { RootState } from "../../../../store";
 type DivRef = RefObject<HTMLDivElement>;
 
 interface DrugActionModalsProps {
-  setScreen: Dispatch<SetStateAction<boolean>>;
-  dropdownRef: DivRef;
   deleteCompletedDrug: (drugName: string) => Promise<void>;
   deleteOngoingDrug: (drugName: string) => Promise<void>;
   deleteAllergy: (drugName: string) => Promise<void>;
   tab: string;
   handleAllergies: (drugName: string) => Promise<void>;
-  setActiveForm: (value: string) => void;
+  setActiveModal: (value: string) => void;
   activeAction: string;
   setActiveAction: (value: string) => void;
   setActiveView: React.Dispatch<SetStateAction<"details" | "list">>
 }
 
 const DrugActionModals: React.FC<DrugActionModalsProps> = ({
-  setScreen,
-  dropdownRef,
   deleteCompletedDrug,
   deleteOngoingDrug,
   deleteAllergy,
   tab,
   handleAllergies,
-  setActiveForm,
+  setActiveModal,
   activeAction,
   setActiveAction,
   setActiveView
@@ -52,8 +48,6 @@ const DrugActionModals: React.FC<DrugActionModalsProps> = ({
       onConfirm: async () => {
         setIsProcessing(true);
         try {
-          console.log("Modal executing delete for:", { activeDrug, tab });
-          
           if (tab === 'ongoing') {
             await deleteOngoingDrug(activeDrug);
           } else if (tab === 'completed') {
@@ -62,11 +56,8 @@ const DrugActionModals: React.FC<DrugActionModalsProps> = ({
             await deleteAllergy(activeDrug);
           }
           
-          console.log("Delete operation completed successfully");
-          
           // Only cleanup after successful completion
           setActiveAction(""); 
-          setScreen(false); 
           setActiveView('list');
           
           // Clear Redux state
@@ -90,15 +81,10 @@ const DrugActionModals: React.FC<DrugActionModalsProps> = ({
       onConfirm: async () => {
         setIsProcessing(true);
         try {
-          console.log("Modal executing allergy for:", activeDrug);
-          
           await handleAllergies(activeDrug);
-          
-          console.log("Allergy operation completed successfully");
           
           // Clean up state *after* the async handler is complete
           setActiveAction("");
-          setScreen(false); 
           setActiveView('list');
           
           // Redux cleanup
@@ -122,8 +108,7 @@ const DrugActionModals: React.FC<DrugActionModalsProps> = ({
       confirmIcon: Pencil,
       confirmClass: "bg-blue-600 hover:bg-blue-700",
       onConfirm: async () => {
-        setActiveForm('edit');
-        setScreen(false);
+        setActiveModal('edit');
         setActiveAction("");
       },
     },
@@ -137,7 +122,6 @@ const DrugActionModals: React.FC<DrugActionModalsProps> = ({
 
   const handleClose = () => {
     if (!isProcessing) {
-      setScreen(false);
       setActiveAction("");
     }
   };
@@ -147,10 +131,6 @@ const DrugActionModals: React.FC<DrugActionModalsProps> = ({
     e.stopPropagation();
     
     if (isProcessing) return;
-    
-    console.log("Confirm button clicked for action:", activeAction);
-    console.log("Active drug:", activeDrug);
-    
     await config.onConfirm();
   };
 
@@ -160,7 +140,6 @@ const DrugActionModals: React.FC<DrugActionModalsProps> = ({
       onClick={handleClose}
     >
       <div
-        ref={dropdownRef}
         className="bg-white rounded-xl max-w-sm w-full relative transform transition-all duration-300"
         onClick={(e) => e.stopPropagation()}
       >

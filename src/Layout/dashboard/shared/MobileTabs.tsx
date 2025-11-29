@@ -11,34 +11,67 @@ interface TabItem {
 interface TabsProps {
   item: TabItem;
   active: string;
+  nav?: boolean; // optional, show label
 }
 
-const MobileTabs: React.FC<TabsProps> = ({ item, active }) => {
+const MobileTabs: React.FC<TabsProps> = ({ item, active, nav }) => {
   const dispatch = useDispatch();
   const Icon = item.icon;
   const isActive = active === item.name;
 
+  // Single blue color for all tabs
+  const colors = {
+    bg: "bg-blue-100",
+    border: "border-blue-500",
+    icon: "text-blue-600",
+    text: "text-blue-600",
+  };
+
   return (
-    <div
+    <button
       onClick={() => dispatch(updateActive(item.name))}
-      className="flex items-center flex-col cursor-pointer w-full h-full justify-center relative font-Inter px-6"
+      className="relative flex flex-col items-center justify-center cursor-pointer transition-all duration-200 font-Inter w-full group"
     >
-      <Icon
-        className={`w-6 h-6 transition-all text-[#062863] ${
-          isActive ? "fill-[#062863] stroke-[#062863]" : ""
-        }`}
-        strokeWidth={isActive ? 1 : 2}
+      {/* Optional top indicator line */}
+      <div
+        className={`
+          absolute top-0 left-1/2 -translate-x-1/2 h-0.5 rounded-b-full
+          transition-all duration-200
+          ${isActive ? `w-10 ${colors.icon}` : "w-0 bg-transparent"}
+        `}
       />
-      <h2
-        className={`text-[12px] text-[#062863] ${
-          isActive
-            ? "font-semibold "
-            : "font-normal "
-        }`}
+
+      {/* Icon with circular background */}
+      <div
+        className={`
+          rounded-lg p-2 transition-all duration-200 border-2
+          ${isActive
+            ? `${colors.bg} ${colors.border}`
+            : "bg-transparent border-transparent group-hover:bg-gray-100"
+          }
+        `}
       >
-        {item.name}
-      </h2>
-    </div>
+        <Icon
+          className={`
+            w-5 h-5 transition-colors duration-200
+            ${isActive ? colors.icon : "text-gray-400 group-hover:text-gray-600"}
+          `}
+          strokeWidth={2}
+        />
+      </div>
+
+      {/* Optional label below icon */}
+      {nav && (
+        <span
+          className={`
+            text-[12px] mt-1 transition-colors duration-200
+            ${isActive ? colors.text : "text-gray-500 group-hover:text-gray-700"}
+          `}
+        >
+          {item.name}
+        </span>
+      )}
+    </button>
   );
 };
 

@@ -1,136 +1,72 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useRef, useEffect, useState } from "react";
-import Image from "next/image";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../../../../store";
-import ChangePassword from "./AccountSettings/ChangePassword";
+import React from "react";
 import { Lock, Trash, X } from "lucide-react";
 
 interface Settings {
-  setAccountSettings: (value: boolean) => void;
-  setDeleteAccountModal: (value: boolean) => void;
-  setScreen: (value: boolean) => void;
-  accountSettings: boolean;
+  setActiveModal: (value: string) => void;
+  activeModal: string;
 }
 
-type RefObject<T> = React.RefObject<T>;
-
 const AccountSettings: React.FC<Settings> = ({
-  setAccountSettings,
-  accountSettings,
-  setDeleteAccountModal,
-  setScreen,
+  setActiveModal,
+  activeModal,
 }) => {
-  const {} = useSelector((state: RootState) => state.app);
-
-  const [tab, setTab] = useState<string>("default");
-  const dropdownRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
-
-  const handleClickOutside = (event: MouseEvent): void => {
-    if (
-      dropdownRef.current &&
-      !dropdownRef.current.contains(event.target as Node)
-    ) {
-      setAccountSettings(false);
-      setTab("default");
-    }
-  };
-
-  useEffect(() => {
-    const handleOutsideClick = (event: MouseEvent): void => {
-      handleClickOutside(event);
-    };
-
-    // Add event listener for clicks outside of dropdown
-    document.addEventListener("mousedown", handleOutsideClick);
-
-    return () => {
-      // Remove event listener when component unmounts
-      document.removeEventListener("mousedown", handleOutsideClick);
-    };
-  }, []);
+  if (activeModal !== "accountSettings") return null;
 
   return (
-    <div
-      className={` ${
-        accountSettings ? "w-full " : "w-0"
-      } right-0 bg-none fixed z-[2] h-[100dvh]`}
-    >
+    <div className="w-full min-h-[100dvh] h-full right-0 bg-none fixed z-[32] font-Inter">
       <div
-        className={` ${
-          accountSettings
-            ? "right-0 ss:w-[450px]"
-            : "-right-[450px] ss:w-[450px]"
-        } transition-all duration-300 absolute w-full bg-white h-full z-[4] `}
+        onClick={(e) => e.stopPropagation()}
+        className={`${
+          activeModal === "accountSettings" ? "right-0" : "-right-[450px]"
+        } transition-all duration-300 absolute w-full ss:w-[450px] bg-white h-full z-10`}
       >
-        <div
-          ref={dropdownRef}
-          className={`h-full flex flex-col w-full justify-between gap-8 p-8 pt-0 overflow-y-scroll bg-white`}
-        >
-          {tab === "default" ? (
-            <div className="h-auto w-auto">
-              {/* Close button */}
-              <div className="w-full flex justify-end mb-10">
-                <button
-                  onClick={() => {
-                    setAccountSettings(false);
-                  }}
-                  id="top-drug"
-                  className="cursor-pointer pt-8"
-                >
-                  <X className="size-6 text-gray-800" />
-                </button>
-              </div>
-              {/* Account Settings heading */}
-              <h1 className="text-[24px] text-blue-700 font-bold mb-10">
-                Account Settings
-              </h1>
-              {/* Options */}
-              <div className="flex flex-col gap-4">
-                <button
-                  onClick={() => {
-                    setTab("changePassword");
-                  }}
-                  className="w-full border border-gray-300 rounded-lg py-4 px-4 flex justify-between gap-3 cursor-pointer"
-                >
-                  <div className="flex gap-3">
-                    <Lock className="size-5 text-navyBlue" strokeWidth={2}/>
-                    <h2>Change Password</h2>
-                  </div>
-                </button>
-                <button
-                  onClick={() => {
-                    setDeleteAccountModal(true),
-                      setAccountSettings(false),
-                      setScreen(true);
-                  }}
-                  disabled={true}
-                  className="w-full border border-gray-300 rounded-lg py-4 px-4 flex justify-between gap-3 cursor-pointer opacity-20"
-                >
-                  <div className="flex gap-3">
-                    <Trash className="size-6 text-red"/>
-                    <h2>Delete Account</h2>
-                  </div>
-                </button>
-              </div>
+        <div className="h-full flex flex-col w-full gap-8 p-8 pt-0 overflow-y-scroll bg-white">
+          <div className="h-auto w-auto">
+            {/* Close button */}
+            <div className="w-full flex justify-end mb-10">
+              <button
+                onClick={() => setActiveModal("")}
+                className="cursor-pointer pt-8 hover:opacity-70 transition-opacity"
+              >
+                <X className="size-6 text-gray-800" />
+              </button>
             </div>
-          ) : (
-            <ChangePassword
-              setAccountSettings={setAccountSettings}
-              setTab={setTab}
-            />
-          )}
+
+            {/* Account Settings heading */}
+            <h1 className="text-[24px] text-blue-700 font-bold mb-10">
+              Account Settings
+            </h1>
+
+            {/* Options */}
+            <div className="flex flex-col gap-4">
+              <button
+                onClick={() => setActiveModal("changePassword")}
+                className="w-full border border-gray-300 rounded-lg py-4 px-4 flex justify-between gap-3 cursor-pointer hover:bg-gray-50 transition-colors"
+              >
+                <div className="flex gap-3 items-center">
+                  <Lock className="size-5 text-navyBlue" strokeWidth={2} />
+                  <h2 className="font-Inter text-[14px] font-medium text-navyBlue">
+                    Change Password
+                  </h2>
+                </div>
+              </button>
+
+              <button
+                disabled={true}
+                className="w-full border border-gray-300 rounded-lg py-4 px-4 flex justify-between gap-3 cursor-not-allowed opacity-50"
+              >
+                <div className="flex gap-3 items-center">
+                  <Trash className="size-5 text-red-600" strokeWidth={2} />
+                  <h2 className="font-Inter text-[14px] font-medium text-navyBlue">
+                    Delete Account
+                  </h2>
+                </div>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-
-      {/* Background overlay */}
-      <div
-        onClick={() => {
-          setTab("default");
-          setAccountSettings(false);
-        }}
-        className="absolute w-full h-full bg-grey opacity-[40] z-[3]"
-      />
     </div>
   );
 };

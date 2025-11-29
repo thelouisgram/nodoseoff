@@ -1,4 +1,3 @@
-import Image from "next/image";
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
@@ -10,8 +9,8 @@ import { sendMail } from "../../../../utils/sendEmail";
 import { X } from "lucide-react";
 
 interface AllergiesFormProps {
-  setActiveForm: (value: string) => void;
-  activeForm: string;
+  setActiveModal: (value: string) => void;
+  activeModal: string;
 }
 
 interface FormErrors {
@@ -19,7 +18,7 @@ interface FormErrors {
 }
 
 const AllergiesForm: React.FC<AllergiesFormProps> = ({
-  activeForm, setActiveForm 
+  activeModal, setActiveModal 
 }) => {
   // Getting data from Global State
   const { allergies, userId, info } = useSelector((state: RootState) => state.app);
@@ -42,7 +41,7 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
     if (formElement) {
       formElement.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  }, [activeForm]);
+  }, [activeModal]);
 
    const supabase = createClient()
 
@@ -145,7 +144,7 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
       // Reset Error State
       setFormErrors({ drug: "" });
       // Close Allergies Form
-      setActiveForm('');
+      setActiveModal('');
       // Stop loading
       setLoading(false);
     } catch (error) {
@@ -165,24 +164,20 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
   };
 
   return (
-    <div
-      className={`${
-        activeForm === 'allergies' ? "w-full " : "w-0"
-      } left-0 bg-none fixed z-[2] h-[100dvh]`}
-    >
       <div
         className={`${
-          activeForm === 'allergies' ? "left-0 ss:w-[450px]" : "-left-[450px] ss:w-[450px] "
+          activeModal === 'allergies' ? "left-0 ss:w-[450px]" : "-left-[450px] ss:w-[450px] "
         } duration-300 absolute w-full bg-white h-full z-[4] transition-all`}
       >
         <div
-          className={`h-full flex flex-col w-full justify-between gap-8 p-8 pt-0 overflow-y-scroll bg-white`}
+          className={`h-full flex flex-col w-full justify-between gap-8 p-8 pt-0 overflow-y-scroll bg-white
+            `}
         >
           <div className="w-full">
             <div className="w-full flex justify-end mb-10">
               <button
                 onClick={() => {
-                  setActiveForm('');
+                  setActiveModal('');
                 }}
                 id="top-allergies"
                 className="cursor-pointer pt-8"
@@ -233,7 +228,7 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
           >
             {loading ? (
               <div className=" h-14 flex items-center">
-                <div className="loaderInfinity" />
+                <div className="loaderInfinity" /> 
               </div>
             ) : (
               <div className="h-14 flex items-center">PROCEED</div>
@@ -241,13 +236,6 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
           </button>
         </div>
       </div>
-      <div
-        onClick={() => {
-          setActiveForm('');
-        }}
-        className="absolute w-full h-full bg-grey z-[3]"
-      />
-    </div>
   );
 };
 

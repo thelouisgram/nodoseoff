@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use-client";
-import Image from "next/image";
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
@@ -16,8 +15,8 @@ import { X } from "lucide-react";
 import dayjs from "dayjs"; // Import dayjs for date comparison
 
 interface DrugFormProps {
-  setActiveForm: (value: string) => void;
-  activeForm: string;
+  setActiveModal: (value: string) => void;
+  activeModal: string;
 }
 
 interface SelectedDoseTypes {
@@ -26,7 +25,7 @@ interface SelectedDoseTypes {
   time: string[];
 }
 
-const DrugsForm: React.FC<DrugFormProps> = ({ activeForm, setActiveForm }) => {
+const DrugsForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
   const { drugs, schedule, allergies, info, userId } = useSelector(
     (state: RootState) => state.app
   );
@@ -76,7 +75,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ activeForm, setActiveForm }) => {
     if (formElement) {
       formElement.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  }, [activeForm]);
+  }, [activeModal]);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
@@ -238,7 +237,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ activeForm, setActiveForm }) => {
 
       dispatch(setDrugs([...drugs, formData]));
       toast.success(`${formData.drug.toUpperCase()} added successfully!`);
-      setActiveForm("");
+      setActiveModal("");
       setLoading(false);
 
       const data = generateSchedule(formData);
@@ -295,12 +294,12 @@ const DrugsForm: React.FC<DrugFormProps> = ({ activeForm, setActiveForm }) => {
   return (
     <div
       className={` ${
-        activeForm === "drugs" ? "w-full " : "w-0"
-      } left-0 bg-none fixed z-[2] h-[100dvh]`}
+        activeModal === "drugs" ? "w-full " : "w-0"
+      } left-0 bg-none fixed z-[4] h-[100dvh]`}
     >
       <div
         className={` ${
-          activeForm === "drugs"
+          activeModal === "drugs"
             ? "left-0 ss:w-[450px]"
             : "-left-[450px] ss:w-[450px] "
         } transition-all duration-300 absolute w-full bg-white h-full z-[4] `}
@@ -312,7 +311,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ activeForm, setActiveForm }) => {
             <div className="w-full flex justify-end mb-10">
               <button
                 onClick={() => {
-                  setActiveForm("");
+                  setActiveModal("");
                 }}
                 id="top-drug"
                 className="cursor-pointer pt-8"
@@ -482,12 +481,6 @@ const DrugsForm: React.FC<DrugFormProps> = ({ activeForm, setActiveForm }) => {
           </button>
         </div>
       </div>
-      <div
-        onClick={() => {
-          setActiveForm("");
-        }}
-        className="absolute w-full h-full bg-grey opacity-[40] z-[3]"
-      />
     </div>
   );
 };

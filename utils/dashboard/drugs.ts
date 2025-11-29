@@ -1,18 +1,31 @@
 import { ScheduleItem } from "../../types/dashboard/dashboard";
-import { ExtendedDrugData } from "../../types/dashboard/drug";
+
+export interface calculateComplianceProps {
+  totalDoses: number;
+  pastDoses: number;
+  remainingDoses: number;
+  completedPastDoses: number;
+  missedPastDoses: number;
+  compliance: number; // percentage of past doses taken
+  scheduledTimestamps: Date[];
+  completedTimestamps: Date[];
+  missedTimestamps: Date[];
+  remainingTimestamps: Date[];
+  missedDoses: number;
+  completedDoses: number;
+}
 
 export function calculateCompliance(
   schedule: ScheduleItem[]
-): Record<string, ExtendedDrugData> {
-  const drugData: Record<string, ExtendedDrugData> = {};
+): Record<string, calculateComplianceProps> {
+  const drugData: Record<string, calculateComplianceProps> = {};
   const now = new Date();
 
   for (const record of schedule) {
-    const { date, time, completed, drugId } = record;
+    const { date, time, completed, drug } = record;
 
-    // Initialize drug data
-    if (!drugData[drugId]) {
-      drugData[drugId] = {
+    if (!drugData[drug]) {
+      drugData[drug] = {
         totalDoses: 0,
         pastDoses: 0,
         remainingDoses: 0,
@@ -28,54 +41,39 @@ export function calculateCompliance(
       };
     }
 
-    // ✅ Safe datetime creation
+    const drugEntry = drugData[drug];
     const [hours, minutes] = time.split(":").map(Number);
     const doseDateTime = new Date(date);
     doseDateTime.setHours(hours, minutes, 0, 0);
 
-    const drug = drugData[drugId];
+    drugEntry.totalDoses += 1;
+    drugEntry.scheduledTimestamps.push(doseDateTime);
 
-    // Track total doses
-    drug.totalDoses += 1;
-    drug.scheduledTimestamps.push(doseDateTime);
-
-    // ================= TIME LOGIC =================
     if (doseDateTime < now) {
-      // Past dose (should have been taken)
-      drug.pastDoses += 1;
-
+      drugEntry.pastDoses += 1;
       if (completed) {
-        drug.completedPastDoses += 1;
-        drug.completedDoses += 1;
-        drug.completedTimestamps.push(doseDateTime);
+        drugEntry.completedPastDoses += 1;
+        drugEntry.completedDoses += 1;
+        drugEntry.completedTimestamps.push(doseDateTime);
       } else {
-        drug.missedPastDoses += 1;
-        drug.missedDoses += 1;
-        drug.missedTimestamps.push(doseDateTime);
+        drugEntry.missedPastDoses += 1;
+        drugEntry.missedDoses += 1;
+        drugEntry.missedTimestamps.push(doseDateTime);
       }
     } else {
-      // Future dose (not due yet)
-      drug.remainingDoses += 1;
-      drug.remainingTimestamps.push(doseDateTime);
-
-      // Optional: allow early completion tracking
+      drugEntry.remainingDoses += 1;
+      drugEntry.remainingTimestamps.push(doseDateTime);
       if (completed) {
-        drug.completedDoses += 1;
-        drug.completedTimestamps.push(doseDateTime);
+        drugEntry.completedDoses += 1;
+        drugEntry.completedTimestamps.push(doseDateTime);
       }
     }
   }
 
-  // ================= COMPLIANCE CALC =================
-  for (const drugId in drugData) {
-    const drug = drugData[drugId];
-
-    drug.compliance =
-      drug.pastDoses > 0
-        ? Math.round(
-            (drug.completedPastDoses / drug.pastDoses) * 100
-          )
-        : 0;
+  for (const drug in drugData) {
+    const d = drugData[drug];
+    d.compliance =
+      d.pastDoses > 0 ? Math.round((d.completedPastDoses / d.pastDoses) * 100) : 0;
   }
 
   return drugData;

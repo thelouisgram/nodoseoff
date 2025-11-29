@@ -7,10 +7,8 @@ import { SetStateAction } from 'react';
 interface OptionModal {
   options: boolean;
   setOptions: React.Dispatch<React.SetStateAction<boolean>>;
-  setScreen: React.Dispatch<React.SetStateAction<boolean>>;
   tab: string;
   drug: string;
-  dropdownRef: React.RefObject<HTMLDivElement>;
   activeAction: string;
   setActiveAction: (value: string) => void;
   activeView: string;
@@ -29,9 +27,7 @@ interface DropdownButton {
 const OptionModal: React.FC<OptionModal> = ({
   options,
   setOptions,
-  setScreen,
   tab,
-  dropdownRef,
   drug,
   setActiveAction,
   activeView,
@@ -47,12 +43,9 @@ const OptionModal: React.FC<OptionModal> = ({
     
     // Set screen and activeView based on action
     if (action === "edit") {
-      setScreen(true);
     } else if (action === "view") {
       setActiveView('details');
-      setScreen(false); 
     } else {
-      setScreen(true);
     }
   };
 
@@ -98,14 +91,15 @@ const OptionModal: React.FC<OptionModal> = ({
   );
 
   return (
-    <div ref={dropdownRef} className="relative">
+    <div className="relative">
       {/* Options Toggle Button */}
       <button
-        onClick={() => {
+        onClick={(e) => {
           setOptions((prev) => !prev);
           dispatch(updateActiveDrug(drug));
+          e.stopPropagation()
         }}
-        className="w-10 h-10 flex items-center justify-center rounded-full text-gray-600 hover:bg-gray-200 transition-colors"
+        className="size-8 flex items-center justify-center rounded-full text-gray-600 hover:bg-gray-200 transition-colors"
         aria-label="Drug options"
       >
         <MoreVertical className="size-4 ss:size-6" />

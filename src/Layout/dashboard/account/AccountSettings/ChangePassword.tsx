@@ -1,24 +1,24 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { ChangeEvent, FormEvent, useState } from "react";
 import { toast } from "sonner";
 import { createClient } from "../../../../../lib/supabase/client";
-import { ChevronLeft, X } from "lucide-react";
+import { ChevronLeft, X, Lock } from "lucide-react";
 
 interface ChangePasswordProps {
-  setAccountSettings: Function;
-  setTab: Function;
+  setActiveModal: (value: string) => void;
+  activeModal: string;
 }
 
 const ChangePassword: React.FC<ChangePasswordProps> = ({
-  setAccountSettings,
-  setTab,
+  setActiveModal,
+  activeModal,
 }) => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-   const supabase = createClient()
-  
+  const supabase = createClient();
 
   const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
@@ -31,121 +31,145 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Check password strength (at least 6 characters)
     if (password.length < 6) {
-      setErrorMessage(
-        "Please enter a password that is at least 6 characters long."
-      );
+      setErrorMessage("Please enter a password that is at least 6 characters long.");
       return;
     }
 
     if (!password || !confirmPassword) {
       setErrorMessage("Please fill in both password fields.");
-    } else if (password !== confirmPassword) {
+      return;
+    }
+    
+    if (password !== confirmPassword) {
       setErrorMessage("Passwords do not match.");
-    } else {
-      setLoading(true);
-      setErrorMessage("");
+      return;
+    }
 
-      try {
-        // Update the user's password using the token
-        const { error } = await supabase.auth.updateUser({ password });
-
-        if (error) {
-          setErrorMessage(`Error updating password: ${error.message}`);
-        } else {
-          toast.success("Password updated successfully!");
-          setTab("default");
-        }
-      } catch (error) {
-        setErrorMessage(`Error updating password: ${error}`);
-      } finally {
-        setLoading(false);
+    setLoading(true);
+    setErrorMessage("");
+    
+    try {
+      const { error } = await supabase.auth.updateUser({ password });
+      if (error) {
+        setErrorMessage(`Error updating password: ${error.message}`);
+      } else {
+        toast.success("Password updated successfully!");
+        setPassword("");
+        setConfirmPassword("");
+        setActiveModal("");
       }
+    } catch (error) {
+      setErrorMessage(`Error updating password: ${error}`);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleClick = () => {
-    const syntheticEvent = new Event(
-      "submit"
-    ) as unknown as FormEvent<HTMLFormElement>;
-    handleSubmit(syntheticEvent);
-  };
-
   return (
-    <div className="h-full flex flex-col justify-between">
-      <form
-        className="bg-white rounded-[15px] w-full h-full"
-        onSubmit={handleSubmit}
+    <div
+      className={`${
+        activeModal === "changePassword" ? "w-full" : "w-0"
+      } right-0 bg-none fixed z-[10] h-[100dvh]`}
+    >
+      {/* Sliding panel */}
+      <div
+        className={`${
+          activeModal === "changePassword"
+            ? "right-0 ss:w-[450px]"
+            : "-right-[450px] ss:w-[450px]"
+        } transition-all duration-300 absolute w-full bg-white h-full z-[20] p-8 pt-0 overflow-y-scroll flex flex-col`}
       >
-        <div className="w-full flex items-center h-auto justify-between mb-10 pt-8">
+        {/* Header */}
+        <div className="w-full flex justify-between items-center mb-10 pt-8">
           <button
-            onClick={() => setTab("default")}
-            className="flex gap-1 items-center font-Inter "
+            onClick={() => setActiveModal("accountSettings")}
+            className="flex gap-2 items-center text-navyBlue font-Inter text-[14px] font-medium hover:text-blue-700 transition-colors"
           >
-            <ChevronLeft className="text-navyBlue size-5" />
-            <p className="font-[500] text-[18px] text-navyBlue">Back</p>
+            <ChevronLeft className="size-5" strokeWidth={2} />
+            Back
           </button>
           <button
-            onClick={() => {
-              setAccountSettings(false);
-              setTab("default");
-            }}
-            id="top-drug"
+            onClick={() => setActiveModal("")}
             className="cursor-pointer"
           >
             <X className="size-6 text-gray-800" />
           </button>
         </div>
-        <div className="mb-10 w-full flex flex-col">
-          <legend className="text-[24px] font-bold text-blue-700 font-Inter">
-            Reset Password
-          </legend>
-          <p className="text-[14px]">Please enter your new password</p>
-        </div>
-        <div className="flex flex-col mb-4">
-          <label htmlFor="changePassword" className="text-[14px] mb-1">
-            New Password
-          </label>
-          <input
-            type="password"
-            id="changePassword"
-            name="password"
-            value={password}
-            onChange={handlePasswordChange}
-            className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4"
-            placeholder="New Password"
-          />
-        </div>
-        <div className="flex flex-col mb-4">
-          <label htmlFor="confirmPassword" className="text-[14px] mb-1">
-            Confirm Password
-          </label>
-          <input
-            type="password"
-            id="confirmPassword"
-            name="confirmPassword"
-            value={confirmPassword}
-            onChange={handleConfirmPasswordChange}
-            className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4"
-            placeholder="Confirm New Password"
-          />
-        </div>
-      </form>
-      {errorMessage && (
-        <p className="mb-4 -mt-4 text-red font-[500] tracking-none leading-none text-[14px]">
-          {errorMessage}
-        </p>
-      )}
-      <button
-        onClick={handleClick}
-        disabled={loading}
-        className={`font-semibold  rounded-[10px] h-[56px] w-full text-white items-center justify-center flex transition duration-300 ${
-          loading ? "bg-navyBlue opacity-85" : "bg-blue-700"
-        }`}
-      >
-        {loading ? <div className="loaderInfinity"></div> : "Change Password"}
-      </button>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+          <div className="flex flex-col gap-2">
+            <h1 className="text-[24px] font-bold text-blue-700 flex items-center gap-3">
+              <Lock className="size-6" strokeWidth={2} />
+              Reset Password
+            </h1>
+            <p className="text-[14px] text-grey font-Inter">
+              Please enter your new password
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label
+              htmlFor="password"
+              className="text-[14px] font-Inter font-medium text-navyBlue"
+            >
+              New Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={handlePasswordChange}
+              placeholder="Enter new password"
+              className="p-4 rounded-[10px] bg-[#EDF2F7] border-none outline-none font-Inter text-[14px] focus:ring-2 focus:ring-blue-700"
+              required
+            />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label
+              htmlFor="confirmPassword"
+              className="text-[14px] font-Inter font-medium text-navyBlue"
+            >
+              Confirm Password
+            </label>
+            <input
+              type="password"
+              id="confirmPassword"
+              value={confirmPassword}
+              onChange={handleConfirmPasswordChange}
+              placeholder="Confirm new password"
+              className="p-4 rounded-[10px] bg-[#EDF2F7] border-none outline-none font-Inter text-[14px] focus:ring-2 focus:ring-blue-700"
+              required
+            />
+          </div>
+
+          {errorMessage && (
+            <div className="p-4 bg-red-50 border border-red-200 rounded-[10px]">
+              <p className="text-red-600 font-Inter font-medium text-[14px]">
+                {errorMessage}
+              </p>
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full h-[56px] rounded-[10px] text-white font-Inter font-semibold text-[16px] flex items-center justify-center transition-all ${
+              loading
+                ? "bg-blue-700 opacity-75 cursor-not-allowed"
+                : "bg-blue-700 hover:bg-blue-800"
+            }`}
+          >
+            {loading ? (
+              <div className="loaderInfinity"></div>
+            ) : (
+              "Change Password"
+            )}
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

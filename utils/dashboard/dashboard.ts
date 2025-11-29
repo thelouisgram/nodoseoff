@@ -13,8 +13,6 @@ export const tabs: TabItem[] = [
   { name: "Account", icon: User },
 ];
 
-
-
 export const days = [
   "Yesterday", 'Today'
 ]

@@ -89,6 +89,7 @@ const DrugsListContainer = ({
         searched={search}
         setSearched={setSearch}
         setCurrentPage={setPage}
+            total={filtered.length}
       />
 
       {filtered.length ? (

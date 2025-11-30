@@ -71,7 +71,7 @@ export default function DailyReports() {
           currentMonth
             ? "bg-white border-gray-200 "
             : "bg-gray-50 text-gray-400 border-gray-100",
-          isSelected && "border-blue-500 bg-blue-10 text-blue-700"
+          isSelected && "border-blue-500 bg-blue-10 text-blue-600"
         )}
       >
         <span className="text-sm font-medium">{date.date()}</span>

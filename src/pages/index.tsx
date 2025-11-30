@@ -8,9 +8,7 @@ import Testimonials from "@/Layout/home/Testimonials";
 import AboutNodoseOff from "@/Layout/home/About";
 
 const Home = () => {
-  const [nav, setNav] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-
 
   useEffect(() => {
     const checkScrollPosition = () => {

@@ -72,7 +72,7 @@ export default function HeroSection() {
         <div className="flex items-center space-x-4">
 
           <Link
-            className="hidden md:flex bg-blue-600 text-white px-5 py-2 rounded-full text-sm font-medium hover:bg-blue-700 transition"
+            className="hidden md:flex bg-blue-600 text-white px-5 py-2 rounded-full text-sm font-medium hover:bg-blue-600 transition"
             href="/signup"
           >
             Sign up
@@ -113,7 +113,7 @@ export default function HeroSection() {
         </p>
 
         <Link
-          className="mt-8 bg-blue-600 text-white px-6 pr-2.5 py-2.5 rounded-full text-sm font-medium flex items-center space-x-2 hover:bg-blue-700 transition"
+          className="mt-8 bg-blue-600 text-white px-6 pr-2.5 py-2.5 rounded-full text-sm font-medium flex items-center space-x-2 hover:bg-blue-600 transition"
           href="/signup"
         >
           <span>Get Started</span>

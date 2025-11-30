@@ -39,7 +39,7 @@ const AccountSettings: React.FC<Settings> = ({
           </div>
 
           {/* Account Settings heading */}
-          <h1 className="text-[24px] text-blue-700 font-bold mb-10">
+          <h1 className="text-[24px] text-blue-600 font-bold mb-10">
             Account Settings
           </h1>
 

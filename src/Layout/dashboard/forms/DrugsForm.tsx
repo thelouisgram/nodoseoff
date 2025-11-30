@@ -313,7 +313,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => 
                 <X className="size-6 text-gray-800" />
               </button>
             </div>
-            <h1 className="text-[24px] text-blue-700 font-bold">Add Drug</h1>
+            <h1 className="text-[24px] text-blue-600 font-bold">Add Drug</h1>
             <p className="text-[14px] text-grey">
               To ensure adequate tracking of drug compliance.
             </p>
@@ -468,7 +468,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => 
             disabled={loading}
             className={`font-semibold text-white rounded-[10px] w-full items-center 
               justify-center flex transition duration-300 ${
-                loading ? "bg-navyBlue opacity-85" : "bg-blue-700 h-14"
+                loading ? "bg-navyBlue opacity-85" : "bg-blue-600 h-14"
               }`}
           >
             {loading ? (

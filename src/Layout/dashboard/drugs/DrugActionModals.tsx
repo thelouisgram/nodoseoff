@@ -106,7 +106,7 @@ const DrugActionModals: React.FC<DrugActionModalsProps> = ({
         "Proceed to edit the selected drug. Note that changes will only apply to doses from today forward.",
       confirmText: "Edit",
       confirmIcon: Pencil,
-      confirmClass: "bg-blue-600 hover:bg-blue-700",
+      confirmClass: "bg-blue-600 hover:bg-blue-600",
       onConfirm: async () => {
         setActiveModal('edit');
         setActiveAction("");

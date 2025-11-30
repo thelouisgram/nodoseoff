@@ -155,7 +155,7 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
 
             {/* Title */}
             <div className="mb-10">
-              <h1 className="text-[24px] text-blue-700 font-bold flex items-center gap-2">
+              <h1 className="text-[24px] text-blue-600 font-bold flex items-center gap-2">
                 Add Drug Allergies
               </h1>
               <p className="text-[14px] text-grey font-Inter">
@@ -197,8 +197,8 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
             disabled={loading}
             className={`font-semibold text-white rounded-[10px] w-full h-14 flex items-center justify-center transition-all ${
               loading
-                ? "bg-blue-700 opacity-75 cursor-not-allowed"
-                : "bg-blue-700 hover:bg-blue-800"
+                ? "bg-blue-600 opacity-75 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-800"
             }`}
           >
             {loading ? (

@@ -22,7 +22,7 @@ const DrugsTab: React.FC<DrugsTabProps> = ({ setTab, tab }) => {
             transition-all duration-200
             ${
               item === tab
-                ? "text-blue-700 bg-white shadow-sm border-gray-300"
+                ? "text-blue-600 bg-white shadow-sm border-gray-300"
                 : "text-grey bg-transparent border-transparent"
             }
           `}

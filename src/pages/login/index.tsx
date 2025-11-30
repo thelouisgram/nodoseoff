@@ -51,25 +51,15 @@ const SignIn = () => {
       setErrorMessage("Input Email & Password");
       return;
     }
-
     setFormSubmitting(true); // Start form submission loading
     setErrorMessage("");
-
     try {
-      // 2. Use the signIn function from AuthContext
       await signIn(formData.email, formData.password);
-      
-      // The useEffect above will handle the dispatch and redirect when the 'user' state 
-      // in the AuthContext updates after a successful sign in.
-      
     } catch (error: any) {
-      // Catch any error thrown by the context's signIn function
       const message = error.message || "An unknown error occurred during sign in.";
       setErrorMessage("Error signing in: " + message);
       setFormSubmitting(false); // Stop loading on failure
     } finally {
-      // We don't set formSubmitting to false on success here, because the redirect
-      // will happen via the useEffect hook.
     }
   };
 
@@ -135,7 +125,7 @@ const SignIn = () => {
           onSubmit={handleSubmit}
         >
           <div className="mb-10 w-full items-center flex flex-col">
-            <legend className="text-[24px] font-bold text-blue-700 text-center font-Inter">
+            <legend className="text-[24px] font-bold text-blue-600 text-center font-Inter">
               Login to your account
             </legend>
             <p className="text-center text-[14px]">
@@ -193,7 +183,7 @@ const SignIn = () => {
             // Use the formSubmitting state for the button
             disabled={formSubmitting}
             className={`font-semibold text-white rounded-[10px] h-[56px] w-full flex items-center justify-center transition duration-300 ${
-              formSubmitting ? "bg-navyBlue opacity-85" : "bg-blue-700"
+              formSubmitting ? "bg-navyBlue opacity-85" : "bg-blue-600"
             }`}
           >
             {formSubmitting ? <div className="loaderInfinity"></div> : "LOG IN"}

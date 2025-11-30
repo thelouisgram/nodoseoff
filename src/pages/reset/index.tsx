@@ -83,7 +83,7 @@ const ResetPassword = () => {
             onSubmit={handleSubmit}
           >
             <div className="mb-10 w-full items-center flex flex-col">
-              <legend className="text-[24px] font-bold text-blue-700 text-center font-Inter">
+              <legend className="text-[24px] font-bold text-blue-600 text-center font-Inter">
                 Reset Password
               </legend>
               <p className="text-center text-[14px]">
@@ -127,7 +127,7 @@ const ResetPassword = () => {
               type="submit"
               disabled={loading}
               className={`font-semibold  rounded-[10px] h-[56px] w-full text-white items-center justify-center flex transition duration-300 ${
-                loading ? "bg-navyBlue opacity-85" : "bg-blue-700"
+                loading ? "bg-navyBlue opacity-85" : "bg-blue-600"
               }`}
             >
               {loading ? (
@@ -140,7 +140,7 @@ const ResetPassword = () => {
         ) : (
           <>
             <div className="w-full ss:w-[450px] h-auto p-7 ss:p-10 mb-10 bg-white rounded-[15px] flex flex-col items-center text-navyBlue">
-              <h2 className=" text-[32px] font-bold text-blue-700 text-center">Success!</h2>
+              <h2 className=" text-[32px] font-bold text-blue-600 text-center">Success!</h2>
               <p className="text-center mb-10">
                 Your Password has been successfully changed!
               </p>

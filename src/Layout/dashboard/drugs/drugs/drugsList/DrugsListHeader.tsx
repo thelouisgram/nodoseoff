@@ -24,11 +24,11 @@ const DrugsListHeader: React.FC<DrugsListHeaderProps> = ({
   };
   return (
     <div className="w-full flex justify-between items-center p-4 sm:p-6 bg-white border-b border-gray-200 rounded-t-lg">
-      <h2 className="text-xl sm:text-2xl font-sans text-gray-800 font-semibold capitalize">
+      <h2 className="text-md sm:text-2xl font-sans text-gray-800 font-semibold capitalize">
         {tab} List ({total})
       </h2>
       <div
-        className="flex w-40 sm:w-64 items-center p-2 border border-gray-200 
+        className="flex w-48 sm:w-64 items-center p-2 border border-gray-200 
              rounded-lg text-gray-600 gap-2 bg-white transition duration-150 ease-in-out 
              focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500"
       >

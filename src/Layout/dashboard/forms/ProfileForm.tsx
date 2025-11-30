@@ -137,7 +137,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
               </button>
             </div>
             <div className="mb-10">
-              <h1 className="text-[24px] text-blue-700 font-bold">
+              <h1 className="text-[24px] text-blue-600 font-bold">
                 Basic Data
               </h1>
             </div>
@@ -222,7 +222,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                 type="submit"
                 disabled={loading}
                 className={`font-semibold text-white rounded-[10px] w-full items-center justify-center flex transition duration-300 ${
-                  loading ? "bg-navyBlue opacity-85" : "bg-blue-700 h-14"
+                  loading ? "bg-navyBlue opacity-85" : "bg-blue-600 h-14"
                 }`}
               >
                 {loading ? (

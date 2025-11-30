@@ -44,7 +44,7 @@ const Tracker: React.FC<TrackerProps> = ({
                 transition-all
                 ${
                   tracker === item
-                    ? "bg-white text-blue-700 border border-gray-300 shadow-sm"
+                    ? "bg-white text-blue-600 border border-gray-300 shadow-sm"
                     : "text-grey hover:text-blue-600"
                 }
               `}

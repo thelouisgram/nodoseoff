@@ -38,6 +38,7 @@ export default function HeroSection() {
 
         {/* Menu */}
         <nav
+        onClick={()=>{setMenuOpen(false)}}
           className={`${
             menuOpen ? "max-md:w-full" : "max-md:w-0"
           } max-md:absolute max-md:top-0 max-md:left-0
@@ -81,7 +82,7 @@ export default function HeroSection() {
           {/* Open menu button */}
           <button
             onClick={() => setMenuOpen(true)}
-            className="md:hidden text-gray-600"
+            className="md:hidden text-navyBlue"
           >
             <Menu className="w-7 h-7" />
           </button>

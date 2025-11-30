@@ -21,7 +21,7 @@ const DrugsListHeader: React.FC<DrugsListHeaderProps> = ({
     setCurrentPage(1);
   };
   return (
-    <div className="w-full flex justify-between items-center p-4 sm:p-6 bg-white border-b border-gray-100 rounded-t-lg">
+    <div className="w-full flex justify-between items-center p-4 sm:p-6 bg-white border-b border-gray-200 rounded-t-lg">
       <h2 className="text-xl sm:text-2xl font-sans text-gray-800 font-semibold capitalize">
         {tab} List
       </h2>

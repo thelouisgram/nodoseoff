@@ -13,16 +13,16 @@ const Header = () => {
     const dispatch = useDispatch()
     const {profilePicture,info, userId } = useSelector((state: RootState) => state.app)
   return (
-    <div className="mb-[28px] px-4 ss:px-8 md:px-0 w-full flex justify-between items-center">
+    <div className="mb-7 px-4 ss:px-8 md:px-0 w-full flex justify-between items-center">
         <div>
-          <h1 className="text-[24px] ss:text-[32px] font-semibold capitalize">
+          <h1 className="text-2xl ss:text-3xl font-semibold font-karla text-slate-800">
             Hi {info[0]?.name?.split(" ")[0]},
           </h1>
-          <p className="text-[16px] text-grey">Your health matters!</p>
+          <p className="text-base text-gray-500">Your health matters!</p>
         </div>
         <button
           onClick={() => dispatch(updateActive("Account"))}
-          className="w-[60px] h-[60px] rounded-full overflow-hidden cursor-pointer ring-2 ring-navyBlue p-0.5"
+          className="w-[60px] h-[60px] rounded-full overflow-hidden cursor-pointer ring-1 ring-gray-400 p-0.5"
           aria-label="View account"
         >
           {profilePicture ? (

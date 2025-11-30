@@ -2,7 +2,7 @@
 import React, { ChangeEvent, FormEvent, useState } from "react";
 import { toast } from "sonner";
 import { createClient } from "../../../../../lib/supabase/client";
-import { ChevronLeft, X, Lock } from "lucide-react";
+import { ChevronLeft, X, Lock, Loader2 } from "lucide-react";
 
 interface ChangePasswordProps {
   setActiveModal: (value: string) => void;
@@ -28,11 +28,22 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
     setConfirmPassword(e.target.value);
   };
 
+  const handleClose = () => {
+    if (!loading) {
+      setActiveModal("");
+      setPassword("");
+      setConfirmPassword("");
+      setErrorMessage("");
+    }
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (password.length < 6) {
-      setErrorMessage("Please enter a password that is at least 6 characters long.");
+      setErrorMessage(
+        "Please enter a password that is at least 6 characters long."
+      );
       return;
     }
 
@@ -40,7 +51,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
       setErrorMessage("Please fill in both password fields.");
       return;
     }
-    
+
     if (password !== confirmPassword) {
       setErrorMessage("Passwords do not match.");
       return;
@@ -48,7 +59,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
 
     setLoading(true);
     setErrorMessage("");
-    
+
     try {
       const { error } = await supabase.auth.updateUser({ password });
       if (error) {
@@ -66,32 +77,34 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
     }
   };
 
+  if (activeModal !== "changePassword") return null;
+
   return (
     <div
-      className={`${
-        activeModal === "changePassword" ? "w-full" : "w-0"
-      } right-0 bg-none fixed z-[10] h-[100dvh]`}
+      className="fixed inset-0 bg-black bg-opacity-50 flex justify-end z-[100] transition-opacity duration-300"
+      onClick={handleClose}
     >
       {/* Sliding panel */}
       <div
+        onClick={(e) => e.stopPropagation()}
         className={`${
-          activeModal === "changePassword"
-            ? "right-0 ss:w-[450px]"
-            : "-right-[450px] ss:w-[450px]"
-        } transition-all duration-300 absolute w-full bg-white h-full z-[20] p-8 pt-0 overflow-y-scroll flex flex-col`}
+          activeModal === "changePassword" ? "translate-x-0" : "translate-x-full"
+        } transition-transform duration-300 w-full ss:w-[450px] bg-white h-full p-8 pt-0 overflow-y-scroll flex flex-col`}
       >
         {/* Header */}
         <div className="w-full flex justify-between items-center mb-10 pt-8">
           <button
             onClick={() => setActiveModal("accountSettings")}
-            className="flex gap-2 items-center text-navyBlue font-Inter text-[14px] font-medium hover:text-blue-700 transition-colors"
+            disabled={loading}
+            className="flex gap-2 items-center text-navyBlue font-Inter text-[14px] font-medium hover:text-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ChevronLeft className="size-5" strokeWidth={2} />
             Back
           </button>
           <button
-            onClick={() => setActiveModal("")}
-            className="cursor-pointer"
+            onClick={handleClose}
+            disabled={loading}
+            className="cursor-pointer hover:opacity-70 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <X className="size-6 text-gray-800" />
           </button>
@@ -122,7 +135,8 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
               value={password}
               onChange={handlePasswordChange}
               placeholder="Enter new password"
-              className="p-4 rounded-[10px] bg-[#EDF2F7] border-none outline-none font-Inter text-[14px] focus:ring-2 focus:ring-blue-700"
+              disabled={loading}
+              className="p-4 rounded-[10px] bg-[#EDF2F7] border-none outline-none font-Inter text-[14px] focus:ring-2 focus:ring-blue-700 disabled:opacity-50"
               required
             />
           </div>
@@ -140,7 +154,8 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
               value={confirmPassword}
               onChange={handleConfirmPasswordChange}
               placeholder="Confirm new password"
-              className="p-4 rounded-[10px] bg-[#EDF2F7] border-none outline-none font-Inter text-[14px] focus:ring-2 focus:ring-blue-700"
+              disabled={loading}
+              className="p-4 rounded-[10px] bg-[#EDF2F7] border-none outline-none font-Inter text-[14px] focus:ring-2 focus:ring-blue-700 disabled:opacity-50"
               required
             />
           </div>
@@ -163,7 +178,10 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
             }`}
           >
             {loading ? (
-              <div className="loaderInfinity"></div>
+              <>
+                <Loader2 className="size-5 mr-2 animate-spin" />
+                Updating...
+              </>
             ) : (
               "Change Password"
             )}

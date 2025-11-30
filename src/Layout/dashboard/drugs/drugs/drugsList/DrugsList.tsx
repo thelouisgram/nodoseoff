@@ -70,7 +70,7 @@ const DrugsList: React.FC<DrugsListProps> = ({
             }}
             className={`
               relative flex justify-between items-center capitalize
-              px-4 ss:px-6 py-3 border-b border-gray-100
+              px-4 ss:px-6 py-3 border-b border-gray-200
               transition-colors duration-200
              bg-white hover:bg-gray-50 cursor-pointer text-sm
             `}

@@ -65,7 +65,7 @@ const Tabs: React.FC<TabsProps> = ({ item, active, nav }) => {
       >
         <Icon
           className={`
-            w-5 h-5 transition-colors duration-200
+            size-6 transition-colors duration-200
             ${isActive ? colors.icon : "text-gray-400 group-hover:text-gray-600"}
           `}
           strokeWidth={2}

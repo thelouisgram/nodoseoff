@@ -17,25 +17,41 @@ export default function DrugsListPagination({
   if (total === 0) return null;
 
   return (
-    <div className="flex justify-end items-center gap-3 px-6 py-4 text-sm">
+    <div className="flex justify-between ss:justify-end items-center gap-3 px-6 py-4 text-sm">
       <button
         disabled={page === 1}
         onClick={() => setPage(p => Math.max(1, p - 1))}
-        className="px-3 py-1.5 border rounded disabled:opacity-40"
+        className="
+              px-4 py-2 rounded-[8px]
+              text-sm font-medium
+              border border-gray-300
+              text-grey
+              disabled:opacity-40
+              disabled:cursor-not-allowed
+              hover:bg-gray-50
+            "
       >
-        <ChevronLeft className="w-4 h-4" />
+        Prev
       </button>
 
       <span className="font-semibold text-gray-600">
-        {page} / {maxPage}
+        Page {page} of {maxPage}
       </span>
 
       <button
         disabled={page === maxPage}
         onClick={() => setPage(p => Math.min(maxPage, p + 1))}
-        className="px-3 py-1.5 border rounded disabled:opacity-40"
+        className="
+              px-4 py-2 rounded-[8px]
+              text-sm font-medium
+              border border-gray-300
+              text-grey
+              disabled:opacity-40
+              disabled:cursor-not-allowed
+              hover:bg-gray-50
+            "
       >
-        <ChevronRight className="w-4 h-4" />
+        Next
       </button>
     </div>
   );

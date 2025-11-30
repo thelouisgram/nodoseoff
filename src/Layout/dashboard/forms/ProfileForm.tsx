@@ -6,36 +6,31 @@ import { useSelector, useDispatch } from "react-redux";
 import { createClient } from "../../../../lib/supabase/client";
 import { toast } from "sonner";
 import { updateInfo, updateProfilePicture } from "../../../../store/stateSlice";
-import { UserRoundPen, X } from "lucide-react";
+import { UserRoundPen, X, Loader2 } from "lucide-react";
 
 interface ProfileFormProps {
- setActiveModal: (value: string) => void
- activeModal: string;
+  setActiveModal: (value: string) => void;
+  activeModal: string;
 }
 
 const ProfileForm: React.FC<ProfileFormProps> = ({
- setActiveModal,
- activeModal,
+  setActiveModal,
+  activeModal,
 }) => {
   const { info, userId, profilePicture } = useSelector(
     (state: RootState) => state.app
   );
   const { name, phone, email } = info[0];
-   const supabase = createClient()
+  const supabase = createClient();
 
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
 
-  // FORM DATA
   const [formData, setFormData] = useState({ name, phone, email });
 
-  // IMAGE PREVIEW AND SELECTION (DELAYED UPLOAD)
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [previewURL, setPreviewURL] = useState<string | null>(null);
 
-  // ---------------------------
-  // HANDLE IMAGE SELECTION (ONLY PREVIEW)
-  // ---------------------------
   const handleImageSelect = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.length) return;
     const file = e.target.files[0];
@@ -43,57 +38,70 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
     setPreviewURL(URL.createObjectURL(file));
   };
 
-  // ---------------------------
-  // HANDLE FORM SUBMIT / PROCEED
-  // ---------------------------
+  const handleClose = () => {
+    if (!loading) {
+      setActiveModal("");
+      setSelectedImage(null);
+      setPreviewURL(null);
+      setFormData({ name, phone, email });
+    }
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement> | undefined) => {
     if (e) e.preventDefault();
     setLoading(true);
 
-    // 1️⃣ Update Name
-    if (formData.name !== name) {
-      const { error } = await supabase
-        .from("users")
-        .update({ name: formData.name })
-        .eq("userId", userId);
+    try {
+      // Update Name
+      if (formData.name !== name) {
+        const { error } = await supabase
+          .from("users")
+          .update({ name: formData.name })
+          .eq("userId", userId);
 
-      if (error) {
-        toast.error("Failed to update name");
-        setLoading(false);
-        return;
+        if (error) {
+          toast.error("Failed to update name");
+          return;
+        }
+
+        dispatch(updateInfo([{ ...info[0], name: formData.name }]));
       }
 
-      dispatch(updateInfo([{ ...info[0], name: formData.name }]));
+      // Upload New Profile Picture
+      if (selectedImage) {
+        const bucket = "profile-picture";
+        const newFileName = `${Date.now()}-${selectedImage.name}`;
+        const filePath = `${userId}/${newFileName}`;
+
+        // Delete old file
+        if (profilePicture) {
+          await supabase.storage
+            .from(bucket)
+            .remove([`${userId}/${profilePicture}`]);
+        }
+
+        // Upload new picture
+        const { error: uploadError } = await supabase.storage
+          .from(bucket)
+          .upload(filePath, selectedImage);
+
+        if (uploadError) {
+          toast.error("Failed to upload profile picture");
+          return;
+        }
+
+        dispatch(updateProfilePicture(newFileName));
+      }
+
+      toast.success("Profile updated!");
+      setActiveModal("");
+      setSelectedImage(null);
+      setPreviewURL(null);
+    } catch (error) {
+      toast.error("An error occurred, please try again");
+    } finally {
+      setLoading(false);
     }
-
-    // 2️⃣ Upload New Profile Picture (only on submit)
-    if (selectedImage) {
-      const bucket = "profile-picture";
-      const newFileName = `${Date.now()}-${selectedImage.name}`;
-      const filePath = `${userId}/${newFileName}`;
-
-      // Delete old file
-      if (profilePicture) {
-        await supabase.storage.from(bucket).remove([`${userId}/${profilePicture}`]);
-      }
-
-      // Upload new picture
-      const { error: uploadError } = await supabase.storage
-        .from(bucket)
-        .upload(filePath, selectedImage);
-
-      if (uploadError) {
-        toast.error("Failed to upload profile picture");
-        setLoading(false);
-        return;
-      }
-
-      dispatch(updateProfilePicture(newFileName));
-    }
-
-    toast.success("Profile updated!");
-    setLoading(false);
-  setActiveModal("")
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -103,24 +111,27 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
   const CDNURL =
     "https://opshqmqagtfidynwftzk.supabase.co/storage/v1/object/public/profile-picture/";
 
+  if (activeModal !== "profile") return null;
+
   return (
     <div
-      className={`${
-       activeModal === 'profile' ? "w-full" : "w-0"
-      } fixed right-0 bg-none z-[4] h-[100dvh]`}
+      className="fixed inset-0 bg-black bg-opacity-50 flex justify-end z-[100] transition-opacity duration-300"
+      onClick={handleClose}
     >
       <div
+        onClick={(e) => e.stopPropagation()}
         className={`${
-         activeModal === 'profile'? "right-0 ss:w-[450px]" : "-right-[450px] ss:w-[450px]"
-        } transition-all duration-300 absolute w-full bg-white h-full z-[4]`}
+          activeModal === "profile" ? "translate-x-0" : "translate-x-full"
+        } transition-transform duration-300 w-full ss:w-[450px] bg-white h-full`}
       >
         <div className="h-full flex flex-col w-full justify-between gap-8 p-8 pt-0 overflow-y-scroll bg-white">
           <div>
             <div className="w-full flex justify-end mb-10">
               <button
-                onClick={() =>setActiveModal("")}
+                onClick={handleClose}
+                disabled={loading}
                 id="top-profile"
-                className="cursor-pointer pt-8"
+                className="cursor-pointer pt-8 hover:opacity-70 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <X className="size-6 text-gray-600" />
               </button>
@@ -141,7 +152,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                 <div className="flex items-center h-full gap-4">
                   <label
                     htmlFor="avatarInput"
-                    className="cursor-pointer flex gap-2 items-center"
+                    className={`cursor-pointer flex gap-2 items-center ${
+                      loading ? "opacity-50 pointer-events-none" : ""
+                    }`}
                   >
                     <input
                       type="file"
@@ -149,6 +162,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                       accept="image/*"
                       style={{ display: "none" }}
                       onChange={handleImageSelect}
+                      disabled={loading}
                     />
                     <div className="size-20 rounded-full overflow-hidden flex justify-center items-center">
                       {previewURL ? (
@@ -169,7 +183,10 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                           className="w-[100px] h-[100px] object-cover"
                         />
                       ) : (
-                        <UserRoundPen className="size-full text-navyBlue" strokeWidth={1} />
+                        <UserRoundPen
+                          className="size-full text-navyBlue"
+                          strokeWidth={1}
+                        />
                       )}
                     </div>
                     <p>Tap to change</p>
@@ -193,6 +210,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                     value={formData.name}
                     required
                     onChange={handleInputChange}
+                    disabled={loading}
                     className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4 capitalize h-[56px]"
                     placeholder="Enter your Full Name"
                   />
@@ -209,7 +227,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
               >
                 {loading ? (
                   <div className="h-14 flex items-center">
-                    <div className="loaderInfinity" />
+                    <Loader2 className="size-5 animate-spin" />
                   </div>
                 ) : (
                   "PROCEED"

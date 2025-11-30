@@ -93,8 +93,6 @@ const Page = () => {
     return <Loader />;
   }
 
-  console.log(activeModal)
-
   return (
     <Suspense fallback={<Loader />}>
       <Head>
@@ -131,9 +129,10 @@ const Page = () => {
           activeModal={activeModal}
           setActiveModal={setActiveModal}
         />
-
-        <div className="fixed w-full h-[64px] bg-white shadow bottom-0 flex justify-between items-center md:hidden px-4 ss:px-8 ss:pr-12">
-          <MobileSidebar active={active} />
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 md:hidden z-50 w-[90%] max-w-[450px] px-4">
+          <div className="w-full h-[64px] bg-white border border-gray-200 flex justify-between items-center px-4 ss:px-8 ss:pr-12 rounded-full shadow-lg">
+            <MobileSidebar active={active} />
+          </div>
         </div>
       </section>
     </Suspense>

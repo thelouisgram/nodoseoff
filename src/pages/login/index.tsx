@@ -6,6 +6,7 @@ import { ChangeEvent, FormEvent, useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { updateIsAuthenticated, updateUserId } from "../../../store/stateSlice";
 import { useAuth } from "../../../contexts/AuthContext"; // Import the new hook
+import { Eye, EyeOff } from "lucide-react";
 
 const SignIn = () => {
   const router = useRouter();
@@ -77,8 +78,6 @@ const SignIn = () => {
       <Head>
         <title>NoDoseOff | Login</title>
       </Head>
-      
-      {/* ... rest of your existing JSX UI remains the same ... */}
       <div className="relative min-h-screen w-full flex flex-col justify-center items-center
        bg-navyBlue font-karla text-grey overflow-hidden py-7 px-3">
         {/* Your SVG background and Logo link */}
@@ -175,15 +174,10 @@ const SignIn = () => {
               />
               <button
                 type="button"
-                className="text-gray-500 focus:outline-none"
+                className="text-gray-500 focus:outline-none size-5"
                 onClick={() => setShowPassword(!showPassword)}
               >
-                <Image
-                  src={showPassword ? "/assets/hide.png" : "/assets/show.png"}
-                  width={20}
-                  height={20}
-                  alt="show password"
-                />
+                {showPassword ? <EyeOff strokeWidth={1.5}/> : <Eye strokeWidth={1.5} />}
               </button>
             </div>
           </div>

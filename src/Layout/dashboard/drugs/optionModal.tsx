@@ -102,7 +102,7 @@ const OptionModal: React.FC<OptionModal> = ({
         className="size-8 flex items-center justify-center rounded-full text-gray-600 hover:bg-gray-200 transition-colors"
         aria-label="Drug options"
       >
-        <MoreVertical className="size-4 ss:size-6" />
+        <MoreVertical className="size-6" />
       </button>
 
       {/* Dropdown Menu */}

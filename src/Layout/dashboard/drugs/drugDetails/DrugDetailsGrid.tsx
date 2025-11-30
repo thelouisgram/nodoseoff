@@ -1,6 +1,13 @@
 // components/DrugDetailsGrid.tsx
-import React from 'react';
-import { Clock, Calendar, Repeat, Droplet, Users, Target } from 'lucide-react';
+import React from "react";
+import {
+  Clock,
+  Calendar,
+  Repeat,
+  Droplet,
+  Target,
+  Info,
+} from "lucide-react";
 
 interface Detail {
   name: string;
@@ -11,57 +18,59 @@ interface DrugDetailsGridProps {
   details: Detail[];
 }
 
-// Map detail names to appropriate colors and icons
-const getIcon = (name: string) => {
+const iconMap = (name: string) => {
   switch (name.toLowerCase()) {
-    case 'frequency':
-      return <Repeat className="w-6 h-6 text-indigo-600" />; // primary
-    case 'time':
-      return <Clock className="w-6 h-6 text-green-600" />; // ongoing/active
-    case 'duration':
-      return <Calendar className="w-6 h-6 text-orange-500" />; // warning
-    case 'reminder':
-      return <Target className="w-6 h-6 text-teal-500" />; // info
-    case 'start date':
-      return <Calendar className="w-6 h-6 text-green-400" />; // neutral
-
-    case 'end date':
-      return <Calendar className="w-6 h-6 text-red-400" />; // neutral
-    case 'total doses':
-      return <Droplet className="w-6 h-6 text-blue-600" />; // info
-    case 'completed doses':
-      return <Droplet className="w-6 h-6 text-green-600" />; // success
-    case 'missed doses':
-      return <Droplet className="w-6 h-6 text-red-600" />; // danger
-    case 'remaining doses':
-      return <Droplet className="w-6 h-6 text-yellow-600" />; // warning
+    case "frequency":
+      return { Icon: Repeat, color: "text-indigo-600" };
+    case "time":
+      return { Icon: Clock, color: "text-green-600" };
+    case "duration":
+      return { Icon: Calendar, color: "text-orange-500" };
+    case "reminder":
+      return { Icon: Target, color: "text-teal-600" };
+    case "start date":
+      return { Icon: Calendar, color: "text-green-500" };
+    case "end date":
+      return { Icon: Calendar, color: "text-red-500" };
+    case "total doses":
+      return { Icon: Droplet, color: "text-blue-600" };
+    case "completed doses":
+      return { Icon: Droplet, color: "text-green-600" };
+    case "missed doses":
+      return { Icon: Droplet, color: "text-red-600" };
+    case "remaining doses":
+      return { Icon: Droplet, color: "text-yellow-600" };
     default:
-      return <Users className="w-6 h-6 text-gray-400" />; // fallback
+      return { Icon: Info, color: "text-gray-400" };
   }
 };
 
 const DrugDetailsGrid: React.FC<DrugDetailsGridProps> = ({ details }) => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-10 pb-32 md:pb-20">
-      {details.map((detail, index) => (
-        <div
-          key={index}
-          className="bg-white rounded-3xl shadow-sm border border-gray-200 overflow-hidden transition-all duration-300  hover:border-gray-300"
-        >
-          {/* Header with icon and label */}
-          <div className="flex items-center gap-4 px-6 py-5 border-b border-gray-100">
-            <div className="p-2 rounded-full bg-gray-100">{getIcon(detail.name)}</div>
-            <span className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
-              {detail.name}
-            </span>
-          </div>
+    <div className="grid ss:grid-cols-2 md:grid-cols-3 gap-3 mt-6 pb-24">
+      {details.map((detail, index) => {
+        const { Icon, color } = iconMap(detail.name);
 
-          {/* Content */}
-          <div className="px-6 py-6">
-            <span className="text-xl font-bold text-gray-900 capitalize">{detail.details}</span>
+        return (
+          <div
+            key={index}
+            className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-4"
+          >
+            <div className={`flex items-center justify-center ${color}`}>
+              <Icon className="size-5" />
+            </div>
+
+            <div className="flex flex-col min-w-0">
+              <span className="text-[11px] text-gray-400 uppercase tracking-wide">
+                {detail.name}
+              </span>
+              <span className="text-sm font-semibold text-gray-900 truncate capitalize">
+                {detail.details || "—"}
+              </span>
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };

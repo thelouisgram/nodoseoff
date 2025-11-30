@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Activity, Beaker, CheckCircle, Clock, LucideIcon } from 'lucide-react';
+import React from "react";
+import { Activity, Beaker, CheckCircle, Clock, LucideIcon } from "lucide-react";
 
 interface DrugSummaryCardProps {
   drug: string;
@@ -9,128 +9,98 @@ interface DrugSummaryCardProps {
 }
 
 interface StatusConfig {
-  color: string;
+  label: string;
+  text: string;
   bg: string;
   Icon: LucideIcon;
-  name: string;
 }
 
-type StatusMap = Record<string, StatusConfig>;
+const statusMap: Record<string, StatusConfig> = {
+  Ongoing: {
+    label: "Active",
+    text: "text-green-600",
+    bg: "bg-green-50",
+    Icon: Activity,
+  },
+  Completed: {
+    label: "Completed",
+    text: "text-blue-600",
+    bg: "bg-blue-50",
+    Icon: CheckCircle,
+  },
+  Allergies: {
+    label: "Allergy",
+    text: "text-red-600",
+    bg: "bg-red-50",
+    Icon: Beaker,
+  },
+};
 
-const DrugSummaryCard: React.FC<DrugSummaryCardProps> = ({ drug, tab, route, compliance }) => {
-  const defaultStatus: StatusConfig = {
-    color: 'text-gray-500',
-    bg: 'bg-white',
+const DrugSummaryCard: React.FC<DrugSummaryCardProps> = ({
+  drug,
+  tab,
+  route,
+  compliance,
+}) => {
+  const status = statusMap[tab] || {
+    label: tab,
+    text: "text-gray-600",
+    bg: "bg-gray-50",
     Icon: Clock,
-    name: tab
   };
 
-  const statusMap: StatusMap = {
-    Ongoing: {
-      color: 'text-green-600',
-      bg: 'bg-green-50',
-      Icon: Activity,
-      name: 'Active'
-    },
-    Completed: {
-      color: 'text-blue-600',
-      bg: 'bg-blue-50',
-      Icon: CheckCircle,
-      name: 'Complete'
-    },
-    Allergies: {
-      color: 'text-red-600',
-      bg: 'bg-red-50',
-      Icon: Beaker,
-      name: 'Allergy'
-    }
-  };
-
-  const statusConfig: StatusConfig = statusMap[tab] || defaultStatus;
-
-  // Animate compliance number
-  const [displayCompliance, setDisplayCompliance] = useState(0);
-  useEffect(() => {
-    let start = 0;
-    const duration = 800;
-    const stepTime = Math.abs(Math.floor(duration / compliance));
-    const interval = setInterval(() => {
-      start += 1;
-      if (start >= compliance) {
-        start = compliance;
-        clearInterval(interval);
-      }
-      setDisplayCompliance(start);
-    }, stepTime);
-    return () => clearInterval(interval);
-  }, [compliance]);
+  const complianceColor =
+    compliance >= 80
+      ? "text-green-600"
+      : compliance >= 60
+      ? "text-yellow-600"
+      : "text-red-600";
 
   return (
-    <div
-      className={`w-full ss:w-[500px] rounded-3xl border border-gray-200 shadow-sm overflow-hidden mb-8 font-Inter transition-all duration-300`}
-    >
-      {/* Header with Status Badge */}
-     <div className={`px-8 py-6 border-b border-gray-100 flex justify-between items-center ${statusConfig.bg}`}>
-  <div className="flex items-center gap-3">
-    {/* Universal pill badge for any tab */}
-    <span
-      className={`px-3 py-1 text-xs font-semibold rounded-full uppercase
-        ${tab === 'ongoing' ? 'text-green-600 bg-green-200' : ''}
-        ${tab === 'completed' ? 'text-blue-700 bg-blue-200' : ''}
-        ${tab === 'allergies' ? 'text-red-700 bg-red-200' : ''}
-        ${tab !== 'ongoing' && tab !== 'completed' && tab !== 'allergies' ? 'text-gray-700 bg-gray-200' : ''}
-      `}
-    >
-      {statusConfig.name}
-    </span>
+    <div className="w-full ss:w-1/2 rounded-xl border border-gray-200 bg-white p-4 space-y-4">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h3 className="text-[15px] font-semibold text-navyBlue truncate">
+          {drug}
+        </h3>
 
-    {/* Small pulse dot next to badge for extra visual flair */}
-    <div className={`w-3 h-3 rounded-full ${statusConfig.color.replace('text-', 'bg-')} animate-pulse`}></div>
-  </div>
-</div>
+        <span
+          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium ${status.bg} ${status.text}`}
+        >
+          <status.Icon className="size-3.5" />
+          {status.label}
+        </span>
+      </div>
 
-      {/* Content Grid */}
-      <div className="grid grid-cols-2 gap-px bg-gray-100">
-        {/* Route */}
-        <div className="bg-white px-8 py-6 transition-all hover:bg-gray-50">
-          <div className="flex flex-col gap-2">
-            <span className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Route</span>
-            <span className="text-xl font-bold text-gray-900 capitalize">{route || 'N/A'}</span>
-          </div>
+      {/* Info Row */}
+      <div className="flex items-center justify-between text-sm">
+        <div>
+          <p className="text-gray-400 text-xs">Route</p>
+          <p className="font-medium text-gray-800 capitalize">
+            {route || "N/A"}
+          </p>
         </div>
 
-        {/* Compliance */}
-        <div className="bg-white px-8 py-6 transition-all hover:bg-gray-50">
-          <div className="flex flex-col gap-2">
-            <span className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Compliance</span>
-            <div className="flex items-baseline gap-2">
-              <span
-                className={`text-3xl font-black ${
-                  displayCompliance >= 80
-                    ? 'text-green-600'
-                    : displayCompliance >= 60
-                    ? 'text-yellow-600'
-                    : 'text-red-600'
-                } transition-colors duration-500`}
-              >
-                {displayCompliance.toFixed(0)}
-              </span>
-              <span className="text-lg font-bold text-gray-500">%</span>
-            </div>
-            <div className="w-full h-2 rounded-full bg-gray-200 mt-2 overflow-hidden">
-              <div
-                className={`h-full rounded-full ${
-                  displayCompliance >= 80
-                    ? 'bg-green-500'
-                    : displayCompliance >= 60
-                    ? 'bg-yellow-400'
-                    : 'bg-red-500'
-                } transition-all duration-500`}
-                style={{ width: `${displayCompliance}%` }}
-              ></div>
-            </div>
-          </div>
+        <div className="text-right">
+          <p className="text-gray-400 text-xs">Compliance</p>
+          <p className={`font-semibold ${complianceColor}`}>
+            {compliance}%
+          </p>
         </div>
+      </div>
+
+      {/* Progress bar (flat) */}
+      <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
+        <div
+          className={`h-full rounded-full ${
+            compliance >= 80
+              ? "bg-green-500"
+              : compliance >= 60
+              ? "bg-yellow-400"
+              : "bg-red-500"
+          }`}
+          style={{ width: `${compliance}%` }}
+        />
       </div>
     </div>
   );

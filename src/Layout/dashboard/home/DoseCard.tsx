@@ -12,35 +12,65 @@ const formatTime = (time: string): string => {
   const hour = parseInt(hourString);
   const period = hour < 12 ? "AM" : "PM";
   const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
-  return `${displayHour}:${minutes}${period}`;
+  return `${displayHour}:${minutes} ${period}`;
 };
 
 const DoseCard: React.FC<DoseCardProps> = ({ item, onUpdateCompleted }) => {
   return (
     <div
-      className="p-5 md:p-4 border border-gray-100 rounded-[10px] flex justify-between items-center
-          bg-white w-full font-Inter text-[14px] text-slate-800 shadow-sm"
+      className="
+        w-full border border-gray-200 rounded-lg
+        px-4 py-3
+        flex justify-between items-center
+        bg-white font-Inter text-sm
+      "
     >
-      <div className="flex gap-3 items-center">
-        <span className={`p-2 rounded-md ${!item.completed ? "bg-gray-200" : "bg-blue-100"}`}>
-          <Pill className={`stroke-1.5 ${!item.completed ? "text-gray-400" : "text-blue-600"}`} />
-        </span>
-        <div className="flex flex-col gap-0 items-start">
-          <p className="capitalize font-semibold w-[125px] ss:w-auto">{item.drug}</p>
-          <p>{formatTime(item.time)}</p>
+      {/* Left */}
+      <div className="flex items-center gap-3 min-w-0">
+        <div
+          className={`
+            p-2 rounded-md
+            ${item.completed ? "bg-green-50" : "bg-gray-100"}
+          `}
+        >
+          <Pill
+            className={`
+              size-4
+              ${item.completed ? "text-green-600" : "text-gray-400"}
+            `}
+            strokeWidth={1.5}
+          />
+        </div>
+
+        <div className="flex flex-col min-w-0">
+          <p className="font-medium capitalize truncate">
+            {item.drug}
+          </p>
+          <span className="text-xs text-gray-500">
+            {formatTime(item.time)}
+          </span>
         </div>
       </div>
-      <div className="flex gap-2 items-center">
-        <button
-          className={`p-2 rounded-full text-white transition-colors duration-200 ${
-            item.completed ? "bg-blue-600" : "bg-gray-400"
-          }`}
-          onClick={() => onUpdateCompleted(item)}
-          aria-label={`Mark ${item.drug} as ${item.completed ? "not taken" : "taken"}`}
-        >
-          <Check className="w-4 h-4" strokeWidth={1.5} />
-        </button>
-      </div>
+
+      {/* Action */}
+      <button
+        onClick={() => onUpdateCompleted(item)}
+        className={`
+          flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium
+          border transition-colors
+          ${
+            item.completed
+              ? "border-green-300 text-green-700 bg-green-50 hover:bg-green-100"
+              : "border-gray-200 text-gray-500 hover:bg-gray-50"
+          }
+        `}
+        aria-label={`Mark ${item.drug} as ${
+          item.completed ? "not taken" : "taken"
+        }`}
+      >
+        <Check className="size-3.5" strokeWidth={2} />
+        {item.completed ? "Taken" : "Mark"}
+      </button>
     </div>
   );
 };

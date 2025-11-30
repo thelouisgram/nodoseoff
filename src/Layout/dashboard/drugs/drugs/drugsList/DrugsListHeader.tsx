@@ -7,6 +7,7 @@ interface DrugsListHeaderProps {
   searched: string;
   setSearched: (value: string) => void;
   setCurrentPage: (value: number) => void;
+  total: number
 }
 
 const DrugsListHeader: React.FC<DrugsListHeaderProps> = ({
@@ -14,6 +15,7 @@ const DrugsListHeader: React.FC<DrugsListHeaderProps> = ({
   searched,
   setSearched,
   setCurrentPage,
+  total,
 }) => {
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
@@ -23,7 +25,7 @@ const DrugsListHeader: React.FC<DrugsListHeaderProps> = ({
   return (
     <div className="w-full flex justify-between items-center p-4 sm:p-6 bg-white border-b border-gray-200 rounded-t-lg">
       <h2 className="text-xl sm:text-2xl font-sans text-gray-800 font-semibold capitalize">
-        {tab} List
+        {tab} List ({total})
       </h2>
       <div
         className="flex w-40 sm:w-64 items-center p-2 border border-gray-200 

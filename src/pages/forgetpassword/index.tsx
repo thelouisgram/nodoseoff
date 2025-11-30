@@ -120,7 +120,7 @@ const ForgotPassword = () => {
           onSubmit={handleSubmit}
         >
           <div className="mb-10 w-full items-center flex flex-col">
-            <legend className="text-[24px] font-bold text-blue-700 text-center font-Inter">
+            <legend className="text-[24px] font-bold text-blue-600 text-center font-Inter">
               Forgot Password
             </legend>
             <p className="text-center text-[14px]">
@@ -172,7 +172,7 @@ const ForgotPassword = () => {
             type="submit"
             disabled={loading}
             className={`font-semibold text-white rounded-[10px] h-[56px] w-full items-center justify-center flex transition duration-300 ${
-              loading ? "bg-navyBlue opacity-85" : "bg-blue-700"
+              loading ? "bg-navyBlue opacity-85" : "bg-blue-600"
             }`}
           >
             {loading ? (

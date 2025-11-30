@@ -7,7 +7,7 @@ import { Suspense, useEffect, useState, useRef } from "react"; // Added useRef
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import { RootState } from "../../../store";
-import { updateActive, updateUserId } from "../../../store/stateSlice";
+import { updateActive, updateIsAuthenticated, updateUserId } from "../../../store/stateSlice";
 import { fetchData } from "../../../utils/fetchData";
 import { useAuth } from "../../../contexts/AuthContext";
 import SideBar from "@/Layout/dashboard/shared/SideBar";
@@ -83,6 +83,9 @@ const Page = () => {
       await signOut();
       dispatch(updateActive("Home"));
       router.push("/login");
+      dispatch(updateUserId(''));
+      dispatch(updateIsAuthenticated(false));
+
     } catch (error) {
       console.error("Error signing out:", error);
       toast.error("Failed to log out.");

@@ -1,6 +1,4 @@
 import React, {
-  useRef,
-  useEffect,
   useState,
   FormEvent,
   ChangeEvent,
@@ -9,42 +7,30 @@ import { RootState } from "../../../../store";
 import { useSelector, useDispatch } from "react-redux";
 import { createClient } from "../../../../lib/supabase/client";
 import { toast } from "sonner";
-import { updateHerbs, updateInfo, updateOtcDrugs } from "../../../../store/stateSlice";
-import { X } from "lucide-react";
+import { updateHerbs, updateOtcDrugs } from "../../../../store/stateSlice";
+import { X, Loader2 } from "lucide-react";
 
 interface DrugHxFormProps {
- setActiveModal: (value: string) => void
- activeModal: string;
+  setActiveModal: (value: string) => void;
+  activeModal: string;
 }
 
 const DrugHxForm: React.FC<DrugHxFormProps> = ({
- activeModal,
- setActiveModal,
+  activeModal,
+  setActiveModal,
 }) => {
-  const { info, userId, otcDrugs, herbs } = useSelector((state: RootState) => state.app);
+  const { userId, otcDrugs, herbs } = useSelector(
+    (state: RootState) => state.app
+  );
   const dispatch = useDispatch();
 
   const [formData, setFormData] = useState({
-  otcDrugs: typeof otcDrugs === "string" ? otcDrugs : "",
-  herbs: typeof herbs === "string" ? herbs : "",
-});
+    otcDrugs: typeof otcDrugs === "string" ? otcDrugs : "",
+    herbs: typeof herbs === "string" ? herbs : "",
+  });
 
- const supabase = createClient()
+  const supabase = createClient();
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const formElement = document.getElementById("top-drugHx");
-    if (formElement) {
-      formElement.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, [activeModal]);
-
-  const handleClick = () => {
-    const syntheticEvent = new Event(
-      "submit"
-    ) as unknown as FormEvent<HTMLFormElement>;
-    handleSubmit(syntheticEvent);
-  };
 
   const handleSelectChange =
     (fieldName: string) => (e: ChangeEvent<HTMLSelectElement>) => {
@@ -52,9 +38,20 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
       setFormData({ ...formData, [fieldName]: value });
     };
 
+  const handleClose = () => {
+    if (!loading) {
+      setActiveModal("");
+      setFormData({
+        otcDrugs: typeof otcDrugs === "string" ? otcDrugs : "",
+        herbs: typeof herbs === "string" ? herbs : "",
+      });
+    }
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
+
     try {
       const { error } = await supabase
         .from("drugHistory")
@@ -68,50 +65,58 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
         toast.error(
           "Failed to update profile, Check Internet Connection and Try again!"
         );
-        setLoading(false);
         return;
       }
 
       dispatch(updateHerbs(formData.herbs));
       dispatch(updateOtcDrugs(formData.otcDrugs));
-     setActiveModal("")
-      setLoading(false);
+      setActiveModal("");
       toast.success("Profile updated successfully");
     } catch (error) {
       toast.error(
         "Failed to update profile, Check Internet Connection and Try again!"
       );
+    } finally {
       setLoading(false);
     }
   };
 
+  const handleClick = () => {
+    const syntheticEvent = new Event(
+      "submit"
+    ) as unknown as FormEvent<HTMLFormElement>;
+    handleSubmit(syntheticEvent);
+  };
+
+  if (activeModal !== "drugHx") return null;
+
   return (
     <div
-      className={`${
-       activeModal === 'drugHx' ? "w-full " : "w-0"
-      } right-0 bg-none fixed z-[4] h-[100dvh]`}
+      className="fixed inset-0 bg-black bg-opacity-50 flex justify-end z-[100] transition-opacity duration-300"
+      onClick={handleClose}
     >
       <div
+        onClick={(e) => e.stopPropagation()}
         className={`${
-         activeModal === 'drugHx' ? "right-0 ss:w-[450px]" : "-right-[450px] ss:w-[450px]"
-        } transition-all duration-300 absolute w-full bg-white h-full z-[4]`}
+          activeModal === "drugHx" ? "translate-x-0" : "translate-x-full"
+        } transition-transform duration-300 w-full ss:w-[450px] bg-white h-full`}
       >
         <div
           className={`h-full flex flex-col w-full justify-between gap-8 p-8 pt-0 overflow-y-scroll bg-white`}
         >
           <div className="w-full">
             <div className="w-full flex justify-end mb-10">
-
               <button
-                onClick={() =>setActiveModal("")}
+                onClick={handleClose}
+                disabled={loading}
                 id="top-drugHx"
-                className="cursor-pointer pt-8"
+                className="cursor-pointer pt-8 hover:opacity-70 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <X className="size-6 text-gray-800" />
               </button>
             </div>
             <div className="mb-10">
-              <h1 className="text-[24px] text-blue-700 font-bold">
+              <h1 className="text-[24px] text-blue-600 font-bold">
                 Drug History
               </h1>
             </div>
@@ -122,7 +127,7 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
               <div className="w-full">
                 <div className="flex flex-col mb-8">
                   <label
-                    htmlFor="name"
+                    htmlFor="otcDrugs"
                     className="text-[14px] mb-1 font-semibold text-navyBlue"
                   >
                     Over the Counter Drugs
@@ -132,7 +137,8 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
                     name="otcDrugs"
                     value={formData.otcDrugs !== null ? formData.otcDrugs : ""}
                     onChange={handleSelectChange("otcDrugs")}
-                    className=" bg-[#EDF2F7] border-none w-full outline-none p-4 cursor-pointer h-[56px] rounded-[10px]"
+                    disabled={loading}
+                    className="bg-[#EDF2F7] border-none w-full outline-none p-4 cursor-pointer h-[56px] rounded-[10px] disabled:opacity-50"
                   >
                     <option value="">--</option>
                     <option value="yes">Yes</option>
@@ -143,7 +149,7 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
               <div className="w-full">
                 <div className="flex flex-col mb-8">
                   <label
-                    htmlFor="name"
+                    htmlFor="herbs"
                     className="text-[14px] mb-1 font-semibold text-navyBlue"
                   >
                     Herbs and Concoctions
@@ -153,7 +159,8 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
                     name="herbs"
                     value={formData.herbs !== null ? formData.herbs : ""}
                     onChange={handleSelectChange("herbs")}
-                    className="bg-[#EDF2F7] border-none w-full outline-none p-4 cursor-pointer h-[56px] rounded-[10px]"
+                    disabled={loading}
+                    className="bg-[#EDF2F7] border-none w-full outline-none p-4 cursor-pointer h-[56px] rounded-[10px] disabled:opacity-50"
                   >
                     <option value="">--</option>
                     <option value="yes">Yes</option>
@@ -168,12 +175,12 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
             disabled={loading}
             className={`font-semibold text-white rounded-[10px] w-full items-center 
               justify-center flex transition duration-300 ${
-                loading ? "bg-navyBlue opacity-85" : "bg-blue-700 h-14"
+                loading ? "bg-navyBlue opacity-85" : "bg-blue-600 h-14"
               }`}
           >
             {loading ? (
-              <div className=" h-14 flex items-center">
-                <div className="loaderInfinity" />
+              <div className="h-14 flex items-center">
+                <Loader2 className="size-5 animate-spin" />
               </div>
             ) : (
               <div className="h-14 flex items-center">UPDATE PROFILE</div>

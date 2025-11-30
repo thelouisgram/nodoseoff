@@ -191,3 +191,14 @@
   display: inline-block;
   animation: 35s slide infinite linear;
 }
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .print-only,
+  .print-only * {
+    visibility: visible;
+  }
+}

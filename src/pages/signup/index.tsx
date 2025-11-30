@@ -192,7 +192,7 @@ const CreateAccount = () => {
           onSubmit={handleSubmit}
         >
           <div className="mb-10 w-full items-center flex flex-col">
-            <legend className="text-[24px] font-bold text-blue-700 font-Inter">
+            <legend className="text-[24px] font-bold text-blue-600 font-Inter">
               Create an Account
             </legend>
             <p className="text-[14px] text-center">
@@ -300,7 +300,7 @@ const CreateAccount = () => {
             type="submit"
             disabled={loading}
             className={`text-white rounded-[10px] h-[56px] w-full items-center justify-center flex transition duration-300 font-semibold ${
-              loading ? "bg-navyBlue" : "bg-blue-700"
+              loading ? "bg-navyBlue" : "bg-blue-600"
             }`}
           >
             {loading ? <div className="loaderInfinity"></div> : "CREATE AN ACCOUNT"}

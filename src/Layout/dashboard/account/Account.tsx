@@ -9,6 +9,7 @@ import {
   updateIsAuthenticated,
   updateUserId,
   updateSchedule,
+  updateActive,
 } from "../../../../store/stateSlice";
 import { useRouter } from "next/router";
 import Report from "./Report";
@@ -44,11 +45,11 @@ const Account: React.FC<AccountProps> = ({ setActiveModal }) => {
 
   const logOut = async () => {
     try {
-      signOut();
+      await signOut();
+      dispatch(updateActive("Home"));
+      router.push("/login");
       dispatch(updateUserId(""));
       dispatch(updateIsAuthenticated(false));
-      dispatch(updateSchedule([]));
-      router.push("/login");
     } catch (error) {
       toast.error("Error signing out");
     }
@@ -156,7 +157,6 @@ const Account: React.FC<AccountProps> = ({ setActiveModal }) => {
 
 export default Account;
 
-/* ===== Reusable Row ===== */
 interface RowProps {
   icon: React.ReactNode;
   label: string;

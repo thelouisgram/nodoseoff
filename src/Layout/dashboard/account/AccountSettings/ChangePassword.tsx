@@ -96,7 +96,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
           <button
             onClick={() => setActiveModal("accountSettings")}
             disabled={loading}
-            className="flex gap-2 items-center text-navyBlue font-Inter text-[14px] font-medium hover:text-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex gap-2 items-center text-navyBlue font-Inter text-[14px] font-medium hover:text-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ChevronLeft className="size-5" strokeWidth={2} />
             Back
@@ -113,7 +113,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
         {/* Form */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
-            <h1 className="text-[24px] font-bold text-blue-700 flex items-center gap-3">
+            <h1 className="text-[24px] font-bold text-blue-600 flex items-center gap-3">
               <Lock className="size-6" strokeWidth={2} />
               Reset Password
             </h1>
@@ -173,8 +173,8 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
             disabled={loading}
             className={`w-full h-[56px] rounded-[10px] text-white font-Inter font-semibold text-[16px] flex items-center justify-center transition-all ${
               loading
-                ? "bg-blue-700 opacity-75 cursor-not-allowed"
-                : "bg-blue-700 hover:bg-blue-800"
+                ? "bg-blue-600 opacity-75 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-800"
             }`}
           >
             {loading ? (

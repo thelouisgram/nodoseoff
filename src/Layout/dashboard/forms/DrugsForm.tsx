@@ -11,8 +11,8 @@ import { createClient } from "../../../../lib/supabase/client";
 import { generateDrugId } from "../../../../utils/drugs";
 import { sendMail } from "../../../../utils/sendEmail";
 import { generateDrugAddedEmail } from "../../../../emails/newDrug";
-import { X } from "lucide-react";
-import dayjs from "dayjs"; // Import dayjs for date comparison
+import { X, Loader2 } from "lucide-react";
+import dayjs from "dayjs";
 
 interface DrugFormProps {
   setActiveModal: (value: string) => void;
@@ -31,10 +31,9 @@ const DrugsForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => 
   );
 
   const supabase = createClient();
+  const dispatch = useDispatch();
 
   const [loading, setLoading] = useState(false);
-
-  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     drug: "",
     frequency: "",
@@ -69,13 +68,6 @@ const DrugsForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => 
       });
     }
   }, [formData.frequency]);
-
-  useEffect(() => {
-    const formElement = document.getElementById("top-drug");
-    if (formElement) {
-      formElement.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, [activeModal]);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
@@ -129,7 +121,8 @@ const DrugsForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => 
           name={`time-${index}`}
           value={formData.time[index]}
           onChange={handleInputChange}
-          className=" border-none bg-[#EDF2F7] outline-none text-grey p-4 w-full rounded-[10px] h-[56px]"
+          disabled={loading}
+          className="border-none bg-[#EDF2F7] outline-none text-grey p-4 w-full rounded-[10px] h-[56px]"
         />
       </div>
     );
@@ -140,6 +133,14 @@ const DrugsForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => 
       const { value } = e.target;
       setFormData({ ...formData, [fieldName]: value });
     };
+
+  const handleClose = () => {
+    if (!loading) {
+      setActiveModal("");
+      resetFormData();
+      resetFormErrors();
+    }
+  };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -198,7 +199,6 @@ const DrugsForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => 
   const addDrug = async () => {
     setLoading(true);
 
-    // Generate drugId
     const drugId = generateDrugId(formData.drug, formData.start, formData.time);
 
     try {
@@ -211,18 +211,16 @@ const DrugsForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => 
         end: formData.end,
         time: formData.time,
         reminder: formData.reminder,
-        drugId: drugId, // Add drugId to the database
+        drugId: drugId,
       });
 
       if (error) {
         toast.error(
           "Error adding drug, Check Internet Connection and Try again!"
         );
-        setLoading(false);
         return;
       }
 
-      // Update formData state with drugId
       formData.drugId = drugId;
 
       const { html, subject } = generateDrugAddedEmail(
@@ -238,7 +236,6 @@ const DrugsForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => 
       dispatch(setDrugs([...drugs, formData]));
       toast.success(`${formData.drug.toUpperCase()} added successfully!`);
       setActiveModal("");
-      setLoading(false);
 
       const data = generateSchedule(formData);
       const updatedSchedule = [...schedule, ...data];
@@ -252,7 +249,6 @@ const DrugsForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => 
       toast.error(
         "Error adding drug, Check Internet Connection and Try again!"
       );
-      setLoading(false);
     } finally {
       resetFormData();
       resetFormErrors();
@@ -291,18 +287,18 @@ const DrugsForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => 
     handleSubmit(syntheticEvent);
   };
 
+  if (activeModal !== "drugs") return null;
+
   return (
     <div
-      className={` ${
-        activeModal === "drugs" ? "w-full " : "w-0"
-      } left-0 bg-none fixed z-[4] h-[100dvh]`}
+      className="fixed inset-0 bg-black bg-opacity-50 flex justify-start z-[100] transition-opacity duration-300"
+      onClick={handleClose}
     >
       <div
-        className={` ${
-          activeModal === "drugs"
-            ? "left-0 ss:w-[450px]"
-            : "-left-[450px] ss:w-[450px] "
-        } transition-all duration-300 absolute w-full bg-white h-full z-[4] `}
+        onClick={(e) => e.stopPropagation()}
+        className={`${
+          activeModal === "drugs" ? "translate-x-0" : "-translate-x-full"
+        } transition-transform duration-300 w-full ss:w-[450px] bg-white h-full`}
       >
         <div
           className={`h-full flex flex-col w-full justify-between gap-8 p-8 pt-0 overflow-y-scroll bg-white`}
@@ -310,11 +306,9 @@ const DrugsForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => 
           <div className="w-full bg-white">
             <div className="w-full flex justify-end mb-10">
               <button
-                onClick={() => {
-                  setActiveModal("");
-                }}
-                id="top-drug"
-                className="cursor-pointer pt-8"
+                onClick={handleClose}
+                disabled={loading}
+                className="cursor-pointer pt-8 hover:opacity-70 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <X className="size-6 text-gray-800" />
               </button>
@@ -342,6 +336,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => 
                   name="drug"
                   value={formData.drug}
                   onChange={handleInputChange}
+                  disabled={loading}
                   className=" bg-[#EDF2F7] w-full border-none text-grey outline-none rounded-[10px] p-4 mb-4 capitalize h-[56px] "
                   placeholder="Name of Drug"
                 />
@@ -358,6 +353,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => 
                   name="route"
                   value={formData.route}
                   onChange={handleSelectChange("route")}
+                  disabled={loading}
                   className=" bg-[#EDF2F7] border-none py-4 outline-none rounded-[10px] w-full px-4 mb-4 text-grey cursor-pointer h-[56px]"
                 >
                   <option value="">Select Route</option>
@@ -382,6 +378,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => 
                   name="frequency"
                   value={formData.frequency}
                   onChange={handleSelectChange("frequency")}
+                  disabled={loading}
                   className=" bg-[#EDF2F7] border-none rounded-[10px] w-full outline-none p-4 mb-4 text-grey cursor-pointer h-[56px]"
                 >
                   <option value="">Select Frequency</option>
@@ -422,6 +419,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => 
                     name="start"
                     value={formData.start}
                     onChange={handleInputChange}
+                    disabled={loading}
                     className="bg-[#EDF2F7] border-none outline-none w-full text-grey rounded-[10px] p-4 h-[56px]"
                   />
                 </div>
@@ -439,6 +437,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => 
                       name="end"
                       value={formData.end}
                       onChange={handleInputChange}
+                      disabled={loading}
                       className=" bg-[#EDF2F7] border-none outline-none w-full text-grey rounded-[10px] p-4 h-[56px]"
                     />
                   </div>
@@ -451,6 +450,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => 
                   name="reminder"
                   checked={formData.reminder}
                   onChange={handleInputChange}
+                  disabled={loading}
                   className="w-5 h-5 outline-none"
                   placeholder="Select End Date"
                 />
@@ -473,7 +473,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => 
           >
             {loading ? (
               <div className=" h-14 flex items-center">
-                <div className="loaderInfinity" />
+                <Loader2 className="size-5 animate-spin" />
               </div>
             ) : (
               <div className="h-14 flex items-center">PROCEED</div>

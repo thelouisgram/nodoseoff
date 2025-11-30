@@ -66,8 +66,8 @@ const Reports: React.FC<ReportsProps> = ({ today, selectDate, isMobile }) => {
       </h2>
       <div className="h-full flex gap-4 flex-col leading-tight">
         {/* Medications Card */}
-        <div className="flex gap-3 items-center border border-[#7E1CE6] rounded-[10px] p-4 bg-purple-50/50">
-          <Pill className="size-6 text-[#7E1CE6]" strokeWidth={1.5} />
+        <div className="flex gap-3 items-center border border-purple-600 rounded-[10px] p-4 bg-purple-50/20">
+          <Pill className="size-6 text-purple-600" strokeWidth={1.5} />
           <div>
             <h2 className="font-semibold text-[16px] text-[#7E1CE6] ">
               Medications:
@@ -77,10 +77,10 @@ const Reports: React.FC<ReportsProps> = ({ today, selectDate, isMobile }) => {
         </div>
 
         {/* Dose Status Card */}
-        <div className="flex gap-3 items-center border border-[#D4389B] rounded-[10px] p-4 bg-pink-50/50">
-          <ListCheck className="size-6 text-[#D4389B]" strokeWidth={1.5} />
+        <div className="flex gap-3 items-center border border-pink-600 rounded-[10px] p-4 bg-pink-50/20">
+          <ListCheck className="size-6 text-pink-600" strokeWidth={1.5} />
           <div className="flex flex-col">
-            <h2 className="font-semibold text-[16px] text-[#D4389B]">
+            <h2 className="font-semibold text-[16px] text-pink-600">
               Dose Status:
             </h2>
             <p className="text-navyBlue">{displayValue}</p>

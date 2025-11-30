@@ -52,7 +52,7 @@ const DrugDetailsHeader: React.FC<Props> = ({
 
       {/* Title and Options */}
       <div className="w-full flex justify-between items-center">
-        <h1 className="text-3xl ss:text-4xl font-extrabold capitalize text-slate-800 border-b-4 border-blue-500 pb-1">
+        <h1 className="text-3xl ss:text-4xl font-extrabold capitalize text-slate-800 pb-1">
           {drug}
         </h1>
         <OptionModal

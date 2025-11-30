@@ -11,6 +11,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import { sendMail } from "../../../utils/sendEmail";
 import { generateWelcomeEmail } from "../../../emails/welcomeMail";
 import { useAuth } from "../../../contexts/AuthContext"; // Import useAuth
+import { EyeOff, Eye } from "lucide-react";
 
 const CreateAccount = () => {
   const supabase = createClient()
@@ -256,13 +257,7 @@ const CreateAccount = () => {
                 className="text-gray-500 focus:outline-none"
                 onClick={() => setShowPassword(!showPassword)}
               >
-                <Image
-                  src={showPassword ? "/assets/hide.png" : "/assets/show.png"}
-                  width={512}
-                  height={512}
-                  className="h-5 w-5"
-                  alt="show password"
-                />
+              {showPassword ? <EyeOff strokeWidth={1.5}/> : <Eye strokeWidth={1.5} />}
               </button>
             </div>
           </div>
@@ -283,13 +278,7 @@ const CreateAccount = () => {
                 className="text-gray-500 focus:outline-none"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               >
-                <Image
-                  src={showConfirmPassword ? "/assets/hide.png" : "/assets/show.png"}
-                  width={512}
-                  height={512}
-                  className="h-5 w-5"
-                  alt="show password"
-                />
+                {showConfirmPassword ? <EyeOff strokeWidth={1.5}/> : <Eye strokeWidth={1.5} />}
               </button>
             </div>
           </div>

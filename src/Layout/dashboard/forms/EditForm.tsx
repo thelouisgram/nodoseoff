@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use-client";
-import Image from "next/image";
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
@@ -12,8 +11,8 @@ import {
   uploadScheduleToServer,
 } from "../../../../utils/dashboard/schedule";
 import { createClient } from "../../../../lib/supabase/client";
-import { X } from "lucide-react";
-import dayjs from "dayjs"; // Import dayjs for date comparison
+import { X, Loader2 } from "lucide-react";
+import dayjs from "dayjs";
 
 interface DrugFormProps {
   setActiveModal: (value: string) => void;
@@ -39,7 +38,7 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
   const currentDrug = drugs.find((drug) => drug.drug === activeDrug);
   const [loading, setLoading] = useState(false);
 
-   const supabase = createClient()
+  const supabase = createClient();
 
   const [formData, setFormData] = useState({
     drug: "",
@@ -61,14 +60,12 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
     time: "",
   });
 
-  // Function to get today's date in the format "YYYY-MM-DD"
   function getCurrentDate(): string {
     const today: Date = new Date();
     const year: number = today.getFullYear();
     let month: string | number = today.getMonth() + 1;
     let day: string | number = today.getDate();
 
-    // Pad single digit month and day with leading zero
     if (month < 10) {
       month = `0${month}`;
     }
@@ -93,13 +90,6 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
       });
     }
   }, [currentDrug]);
-
-  useEffect(() => {
-    const formElement = document.getElementById("top-edit");
-    if (formElement) {
-      formElement.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, [activeModal]);
 
   useEffect(() => {
     let defaultTimeValues: string[] = [];
@@ -159,12 +149,12 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
     return (
       <div key={index} className="bg-[#EDF2F7] rounded-[10px] h-[56px] w-full">
         <input
-          key={index}
           type="time"
           id={`time-${index}`}
           name={`time-${index}`}
           value={formData.time[index]}
           onChange={handleInputChange}
+          disabled={loading}
           className="border bg-[#EDF2F7] border-none outline-none text-grey rounded-[10px] p-4 w-full h-[56px]"
         />
       </div>
@@ -177,9 +167,22 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
       setFormData({ ...formData, [fieldName]: value });
     };
 
+  const handleClose = () => {
+    if (!loading) {
+      setActiveModal("");
+      setFormErrors({
+        drug: "",
+        frequency: "",
+        route: "",
+        start: "",
+        end: "",
+        time: "",
+      });
+    }
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
 
     const errors: FormErrors = {
       name: formData.drug ? "" : "Please fill in the Name of drug field.",
@@ -188,21 +191,16 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
       start: formData.start ? "" : "Please select a Start Date.",
       end: formData.end ? "" : "Please select an End Date.",
     };
-    
-    // --- NEW DATE VALIDATION LOGIC ---
-    // Start date is set to getCurrentDate(), so we compare end date against today
+
     const todayDate = dayjs(getCurrentDate());
-    
+
     if (formData.end) {
       const endDate = dayjs(formData.end);
 
-      // Check if End Date is strictly before today's Date
-      if (endDate.isBefore(todayDate, 'day')) {
+      if (endDate.isBefore(todayDate, "day")) {
         errors.end = "The End Date cannot be before today's Start Date.";
       }
     }
-    // --- END NEW DATE VALIDATION LOGIC ---
-
 
     const errorValues = Object.values(errors);
 
@@ -212,12 +210,12 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
           toast.error(errors[field]);
         }
       });
-      setLoading(false); // Stop loading on error
       return;
     }
 
+    setLoading(true);
+
     try {
-      // Update the drug data
       const updatedDrugs = drugs.map((drug) => {
         if (drug.drug === activeDrug) {
           return {
@@ -236,32 +234,27 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
 
       dispatch(setDrugs(updatedDrugs));
 
-      // Remove active drug from schedule
       const strippedSchedule = removePastDoses({
         activeDrugId,
         schedule,
       });
-      // Generate schedule with current date as startDate
+
       const data = generateSchedule({
         ...formData,
-        start: getCurrentDate(), // Use current date as startDate
+        start: getCurrentDate(),
       });
       const updatedSchedule = [...strippedSchedule, ...data];
 
-      // Update Redux state with the new schedule
       dispatch(updateSchedule([...updatedSchedule]));
 
-      // Upload the updated schedule to the server
       await uploadScheduleToServer({
         userId: userId,
         schedule: updatedSchedule,
       });
 
-      // Update drug information on the server
       const { error: drugUpdateError } = await supabase
         .from("drugs")
         .update({
-          // Update drug information here
           userId: userId,
           drug: formData.drug,
           frequency: formData.frequency,
@@ -277,14 +270,11 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
         toast.error(
           "An error occurred, Check Internet Connection and Try again"
         );
-        setLoading(false);
         return;
       }
 
-      // Hide loading toast and show success toast
-      toast.success(`${formData.drug.toUpperCase()}  updated successfully`);
-      setLoading(false);
-      setActiveModal('');
+      toast.success(`${formData.drug.toUpperCase()} updated successfully`);
+      setActiveModal("");
       setFormErrors({
         drug: "",
         frequency: "",
@@ -295,20 +285,23 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
       });
     } catch (error) {
       toast.error("An error occurred, Check Internet Connection and Try again");
+    } finally {
       setLoading(false);
     }
   };
 
+  if (activeModal !== "edit") return null;
+
   return (
     <div
-      className={` ${
-        activeModal === 'edit' ? "w-full" : "w-0"
-      } left-0 bg-none fixed z-[4]  h-[100dvh]`}
+      className="fixed inset-0 bg-black bg-opacity-50 flex justify-start z-[100] transition-opacity duration-300"
+      onClick={handleClose}
     >
       <div
-        className={` ${
-          activeModal === 'edit' ? "left-0 ss:w-[450px]" : "-left-[450px] ss:w-[450px] "
-        } transition-all duration-300 absolute w-full bg-white h-full z-[4] `}
+        onClick={(e) => e.stopPropagation()}
+        className={`${
+          activeModal === "edit" ? "translate-x-0" : "-translate-x-full"
+        } transition-transform duration-300 w-full ss:w-[450px] bg-white h-full`}
       >
         <div
           className={`h-full flex flex-col w-full justify-between gap-8 p-8 pt-0 overflow-y-scroll bg-white`}
@@ -316,13 +309,11 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
           <div className="w-full bg-white">
             <div className="w-full flex justify-end mb-10">
               <button
-                onClick={() => {
-                  setActiveModal('');
-                }}
-                id="top-edit"
-                className="cursor-pointer pt-8"
+                onClick={handleClose}
+                disabled={loading}
+                className="cursor-pointer pt-8 hover:opacity-70 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <X className="size-6 text-gray-800"/>
+                <X className="size-6 text-gray-800" />
               </button>
             </div>
             <h1 className="text-[24px] text-blue-700 font-bold">Edit Drug</h1>
@@ -364,6 +355,7 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                 name="route"
                 value={formData.route}
                 onChange={handleSelectChange("route")}
+                disabled={loading}
                 className=" bg-[#EDF2F7] border-none rounded-[10px] w-full outline-none p-4 text-grey cursor-pointer h-[56px] mb-4"
               >
                 <option value="">Select Route</option>
@@ -388,6 +380,7 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                 name="frequency"
                 value={formData.frequency}
                 onChange={handleSelectChange("frequency")}
+                disabled={loading}
                 className=" bg-[#EDF2F7] border-none w-full rounded-[10px] outline-none p-4 text-grey cursor-pointer h-[56px]"
               >
                 <option value="">Select Frequency</option>
@@ -446,6 +439,7 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                     name="end"
                     value={formData.end}
                     onChange={handleInputChange}
+                    disabled={loading}
                     className="border bg-[#EDF2F7] border-none outline-none w-full text-grey rounded-[10px] p-4  h-[56px]"
                   />
                 </div>
@@ -458,6 +452,7 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                 name="reminder"
                 checked={formData.reminder}
                 onChange={handleInputChange}
+                disabled={loading}
                 className="w-5 h-5 outline-none"
               />
               <label
@@ -477,7 +472,7 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
             >
               {loading ? (
                 <div className=" h-14 flex items-center">
-                  <div className="loaderInfinity" />
+                  <Loader2 className="size-5 animate-spin" />
                 </div>
               ) : (
                 <div className="h-14 flex items-center">PROCEED</div>

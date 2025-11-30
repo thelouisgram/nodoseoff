@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, FormEvent, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import { RootState } from "../../../../store";
@@ -6,7 +6,7 @@ import { updateAllergies } from "../../../../store/stateSlice";
 import { createClient } from "../../../../lib/supabase/client";
 import { generateDrugAllergyEmail } from "../../../../emails/drugAllergy";
 import { sendMail } from "../../../../utils/sendEmail";
-import { X } from "lucide-react";
+import { X, Loader2, ShieldOff } from "lucide-react";
 
 interface AllergiesFormProps {
   setActiveModal: (value: string) => void;
@@ -18,12 +18,15 @@ interface FormErrors {
 }
 
 const AllergiesForm: React.FC<AllergiesFormProps> = ({
-  activeModal, setActiveModal 
+  activeModal,
+  setActiveModal,
 }) => {
-  // Getting data from Global State
-  const { allergies, userId, info } = useSelector((state: RootState) => state.app);
+  const { allergies, userId, info } = useSelector(
+    (state: RootState) => state.app
+  );
   const dispatch = useDispatch();
-  // Allergic Drug form
+  const supabase = createClient();
+
   const [formData, setFormData] = useState({
     drug: "",
     frequency: "",
@@ -35,22 +38,8 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
     drugId: "",
   });
 
-  // Ensure top of form in frame on opening
-  useEffect(() => {
-    const formElement = document.getElementById("top-allergies");
-    if (formElement) {
-      formElement.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, [activeModal]);
+  const [loading, setLoading] = useState(false);
 
-   const supabase = createClient()
-
-  // Error State
-  const [formErrors, setFormErrors] = useState({
-    drug: "",
-  });
-
-  // Handle Form Input
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({
@@ -59,7 +48,6 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
     });
   };
 
-  // Empty Form after success/failure
   const resetFormData = () => {
     setFormData({
       drug: "",
@@ -73,17 +61,21 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
     });
   };
 
-  // Loading state
-  const [loading, setLoading] = useState(false);
+  const handleClose = () => {
+    if (!loading) {
+      setActiveModal("");
+      resetFormData();
+    }
+  };
 
-  // Submit Form Function
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const errors: FormErrors = {
-      allergy: formData.drug ? "" : "Please fill in the Drug field.",
-    };
 
-    // Preventing adding an already existing allergy
+    if (!formData.drug) {
+      toast.error("Please fill in the Drug field.");
+      return;
+    }
+
     const drugAlreadyExists = allergies.some(
       (item) => item.drug.toLowerCase() === formData.drug.toLowerCase()
     );
@@ -94,17 +86,6 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
       return;
     }
 
-    const errorValues = Object.values(errors);
-
-    if (errorValues.some((err) => err !== "")) {
-      Object.keys(errors).forEach((field) => {
-        if (errors[field]) {
-          toast.error(errors[field]);
-        }
-      });
-      return;
-    }
-    // Show loading toast while uploading the schedule
     setLoading(true);
     try {
       const { error } = await supabase.from("allergies").insert({
@@ -122,120 +103,115 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
         toast.error(
           "Failed to add allergy, Check Internet Connection and Try again!"
         );
-        setLoading(false);
         return;
       }
 
-      // Update Global State of New Drug
       dispatch(updateAllergies([...allergies, formData]));
-      // Success Notification
-      toast.success(`${formData.drug.toUpperCase()}  added successfully!`);
+      toast.success(`${formData.drug.toUpperCase()} added successfully!`);
 
-      // Send Drug Allergy Email Function
       const { html, subject } = generateDrugAllergyEmail(
-              info[0].name,
-              formData.drug,
-            );
+        info[0].name,
+        formData.drug
+      );
       await sendMail(info[0].email, html, subject);
-           
-      // Reset Form
-      resetFormData;
 
-      // Reset Error State
-      setFormErrors({ drug: "" });
-      // Close Allergies Form
-      setActiveModal('');
-      // Stop loading
-      setLoading(false);
+      resetFormData();
+      setActiveModal("");
     } catch (error) {
       toast.error(
         "Failed to add allergy, Check Internet Connection and Try again!"
       );
+    } finally {
       setLoading(false);
     }
   };
 
-  // Submit Function
-  const handleClick = () => {
-    const syntheticEvent = new Event(
-      "submit"
-    ) as unknown as FormEvent<HTMLFormElement>;
-    handleSubmit(syntheticEvent);
-  };
+  if (activeModal !== "allergies") return null;
 
   return (
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex justify-start z-[100] transition-opacity duration-300"
+      onClick={handleClose}
+    >
+      {/* Sliding panel */}
       <div
+        onClick={(e) => e.stopPropagation()}
         className={`${
-          activeModal === 'allergies' ? "left-0 ss:w-[450px]" : "-left-[450px] ss:w-[450px] "
-        } duration-300 absolute w-full bg-white h-full z-[4] transition-all`}
+          activeModal === "allergies" ? "translate-x-0" : "-translate-x-full"
+        } transition-transform duration-300 w-full ss:w-[450px] bg-white h-full`}
       >
-        <div
-          className={`h-full flex flex-col w-full justify-between gap-8 p-8 pt-0 overflow-y-scroll bg-white
-            `}
-        >
+        <div className="h-full flex flex-col w-full justify-between gap-8 p-8 pt-0 overflow-y-scroll bg-white">
           <div className="w-full">
+            {/* Header */}
             <div className="w-full flex justify-end mb-10">
               <button
-                onClick={() => {
-                  setActiveModal('');
-                }}
-                id="top-allergies"
-                className="cursor-pointer pt-8"
+                onClick={handleClose}
+                disabled={loading}
+                className="cursor-pointer pt-8 hover:opacity-70 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <X className="size-6 text-gray-800"/>
+                <X className="size-6 text-gray-800" />
               </button>
             </div>
+
+            {/* Title */}
             <div className="mb-10">
-              <h1 className="text-[24px] text-blue-700 font-bold">
+              <h1 className="text-[24px] text-blue-700 font-bold flex items-center gap-2">
                 Add Drug Allergies
               </h1>
-              <p className="text-[14px] text-grey">
+              <p className="text-[14px] text-grey font-Inter">
                 To ensure adequate monitoring of Allergies.
               </p>
             </div>
-            <div>
-              <form
-                onSubmit={handleSubmit}
-                className="h-auto md:h-full relative flex flex-col justify-between w-auto "
-              >
-                <div className="flex flex-col mb-4">
-                  <label
-                    htmlFor="drugAllergy"
-                    className="text-[14px] mb-1 font-semibold text-navyBlue"
-                  >
-                    Drug
-                  </label>
-                  <input
-                    type="text"
-                    id="drugAllergy"
-                    name="drug"
-                    value={formData.drug}
-                    onChange={handleInputChange}
-                    className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4 capitalize h-[56px]"
-                    placeholder="Drug Allergy"
-                  />
-                </div>
-              </form>
-            </div>
+
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="h-auto relative flex flex-col">
+              <div className="flex flex-col mb-4">
+                <label
+                  htmlFor="drugAllergy"
+                  className="text-[14px] mb-2 font-semibold text-navyBlue font-Inter"
+                >
+                  Drug Name
+                </label>
+                <input
+                  type="text"
+                  id="drugAllergy"
+                  name="drug"
+                  value={formData.drug}
+                  onChange={handleInputChange}
+                  className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 capitalize h-[56px] font-Inter text-[14px] focus:ring-2 focus:ring-blue-700"
+                  placeholder="Enter drug name"
+                  disabled={loading}
+                  required
+                />
+              </div>
+            </form>
           </div>
+
+          {/* Submit Button */}
           <button
-            onClick={handleClick}
+            onClick={(e) => {
+              e.preventDefault();
+              const syntheticEvent = new Event("submit") as unknown as FormEvent<HTMLFormElement>;
+              handleSubmit(syntheticEvent);
+            }}
             disabled={loading}
-            className={`font-semibold text-white rounded-[10px] w-full items-center 
-              justify-center flex transition duration-300 ${
-                loading ? "bg-navyBlue opacity-85" : "bg-blue-700 h-14"
-              }`}
+            className={`font-semibold text-white rounded-[10px] w-full h-14 flex items-center justify-center transition-all ${
+              loading
+                ? "bg-blue-700 opacity-75 cursor-not-allowed"
+                : "bg-blue-700 hover:bg-blue-800"
+            }`}
           >
             {loading ? (
-              <div className=" h-14 flex items-center">
-                <div className="loaderInfinity" /> 
-              </div>
+              <>
+                <Loader2 className="size-5 mr-2 animate-spin" />
+              </>
             ) : (
-              <div className="h-14 flex items-center">PROCEED</div>
+              "Add Allergy"
             )}
           </button>
         </div>
       </div>
+    </div>
   );
 };
 

@@ -1,7 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useRef, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../store";
 import CopyableContent from "./CopyContent";
 import { X } from "lucide-react";
 
@@ -10,31 +8,8 @@ interface ContactProps {
   activeModal: string;
 }
 
-type RefObject<T> = React.RefObject<T>;
-
 const Contact: React.FC<ContactProps> = ({ activeModal, setActiveModal }) => {
-  const dropdownRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
-
-  const handleClickOutside = (event: MouseEvent): void => {
-    if (
-      dropdownRef.current &&
-      !dropdownRef.current.contains(event.target as Node)
-    ) {
-      setActiveModal("");
-    }
-  };
-
-  useEffect(() => {
-    const handleOutsideClick = (event: MouseEvent): void => {
-      handleClickOutside(event);
-    };
-
-    document.addEventListener("mousedown", handleOutsideClick);
-
-    return () => {
-      document.removeEventListener("mousedown", handleOutsideClick);
-    };
-  }, []);
+  
 
   const contactInfo = [{ label: "Email:", content: "nodoseoff@gmail.com" }];
 
@@ -47,7 +22,6 @@ const Contact: React.FC<ContactProps> = ({ activeModal, setActiveModal }) => {
       } right-0 bg-none fixed z-[32] font-Inter`}
     >
       <div
-        ref={dropdownRef}
         className={`${
           activeModal === "contact"
             ? "right-0 ss:w-[450px] h-full"

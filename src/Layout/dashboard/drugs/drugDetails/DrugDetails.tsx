@@ -30,21 +30,6 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
   const { schedule, drugs, completedDrugs, activeDrug, activeDrugId } =
     useSelector((state: RootState) => state.app);
 
-  const dropdownRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleOutsideClick = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setOptions(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleOutsideClick);
-    return () => document.removeEventListener("mousedown", handleOutsideClick);
-  }, []);
   const drugsArray = tab === "ongoing" ? drugs : completedDrugs;
 
   const drugDetailsData = drugsArray?.find((item) => item.drug === activeDrug);

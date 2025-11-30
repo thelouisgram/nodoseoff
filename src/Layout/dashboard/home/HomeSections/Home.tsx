@@ -22,7 +22,7 @@ import Header from "./Header";
 
 interface HomeProps {
   isLoading: boolean;
-  setActiveModal: (modalName: string) => void;
+  setActiveModal: (string: string) => void;
   setTracker: (value: string) => void;
   tracker: string;
 }
@@ -131,7 +131,7 @@ const Home: React.FC<HomeProps> = ({
   }, [tracker, todaysDose, yesterdaysDose, updateCompleted]);
 
   return (
-    <div className="w-full h-[100dvh] overflow-y-scroll md:py-16 md:px-12 pt-10 pb-24 ss:py-10 text-navyBlue font-karla relative">
+    <div className="w-full h-[100dvh] overflow-y-scroll md:py-16 md:px-12 pt-10 pb-24 md:pb-20 text-navyBlue font-karla relative">
       {/* Header */}
       <Header />
       {/* Summary Cards */}
@@ -139,7 +139,6 @@ const Home: React.FC<HomeProps> = ({
       {/* Tracker  */}
       <Tracker
         tracker={tracker}
-        setActiveModal={setActiveModal}
         dosesToDisplay={allDosesToRender}
         totalDoses={allDosesToRender.length}
         setTracker={setTracker}

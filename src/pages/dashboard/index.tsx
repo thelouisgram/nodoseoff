@@ -28,7 +28,7 @@ const Page = () => {
   const [tracker, setTracker] = useState("Today");
   const [add, setAdd] = useState(false);
   const [activeAction, setActiveAction] = useState("");
-  const [nav, setNav] = useState(true);
+  const [nav, setNav] = useState(false);
   const [activeModal, setActiveModal] = useState("");
 
   // Loading state starts true to cover the initial auth check

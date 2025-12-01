@@ -19,18 +19,49 @@ const MobileTabs: React.FC<TabsProps> = ({ item, active, nav }) => {
   const Icon = item.icon;
   const isActive = active === item.name;
 
+
+  // Manual color mapping for each tab
+  const getColors = (name: string) => {
+    switch (name) {
+      case "Home":
+        return {
+          bg: "bg-blue-50",
+          border: "border-blue-500",
+          icon: "text-blue-600",
+          text: "text-blue-600",
+        };
+      case "Drugs":
+        return {
+          bg: "bg-emerald-50",
+          border: "border-emerald-500",
+          icon: "text-emerald-600",
+          text: "text-emerald-600",
+        };
+      default:
+        return {
+          bg: "bg-purple-50",
+          border: "border-purple-500",
+          icon: "text-purple-600",
+          text: "text-purple-600",
+        };
+    }
+  };
+
+  const colors = getColors(item.name);
+
+
   return (
     <button
       onClick={() => dispatch(updateActive(item.name))}
       className={`
         relative flex flex-col items-center justify-center
-         p-2 rounded-full transition-all duration-200
-        ${isActive ? "bg-blue-600" : "hover:bg-gray-100"}
+         p-2 rounded-xl transition-all duration-200 border-[1.5px]
+        ${isActive ? `${colors.bg} ${colors.border}`  : "hover:bg-gray-100"}
       `}
     >
       {/* Icon */}
       <Icon
-        className={`w-6 h-6 ${isActive ? "text-white" : "text-gray-600"}`}
+        className={`w-6 h-6 ${isActive ? `${colors.text}` : "text-gray-400 group-hover:text-gray-600"}`}
         strokeWidth={1.5}
       />
 
@@ -44,11 +75,6 @@ const MobileTabs: React.FC<TabsProps> = ({ item, active, nav }) => {
         >
           {item.name}
         </span>
-      )}
-
-      {/* Active indicator dot (optional) */}
-      {isActive && !nav && (
-        <span className="absolute -bottom-2 w-1 h-1 rounded-full bg-blue-600" />
       )}
     </button>
   );

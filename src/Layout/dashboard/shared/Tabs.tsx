@@ -38,10 +38,10 @@ const Tabs: React.FC<TabsProps> = ({ item, active, nav }) => {
         };
       default:
         return {
-          bg: "bg-gray-100",
-          border: "border-gray-500",
-          icon: "text-gray-600",
-          text: "text-gray-600",
+          bg: "bg-purple-100",
+          border: "border-purple-500",
+          icon: "text-purple-600",
+          text: "text-purple-600",
         };
     }
   };
@@ -56,7 +56,7 @@ const Tabs: React.FC<TabsProps> = ({ item, active, nav }) => {
       {/* Icon with border */}
       <div
         className={`
-          rounded-lg p-2 transition-all duration-200 border-2
+          rounded-xl p-2 transition-all duration-200 border-[1.5px]
           ${isActive 
             ? `${colors.bg} ${colors.border}` 
             : "bg-transparent border-transparent group-hover:bg-gray-100"
@@ -68,7 +68,7 @@ const Tabs: React.FC<TabsProps> = ({ item, active, nav }) => {
             size-6 transition-colors duration-200
             ${isActive ? colors.icon : "text-gray-400 group-hover:text-gray-600"}
           `}
-          strokeWidth={2}
+          strokeWidth={1.5}
         />
       </div>
 

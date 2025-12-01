@@ -11,7 +11,6 @@ import {
   ShoppingCart,
   Leaf,
   Loader2,
-  ChevronLeft,
 } from "lucide-react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
@@ -82,18 +81,14 @@ const Report: React.FC<ReportProps> = ({ setTab }) => {
       const pdf = new jsPDF("p", "mm", "a4");
 
       const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      const ratio = Math.min(
-        pageWidth / canvas.width,
-        pageHeight / canvas.height
-      );
+      const ratio = pageWidth / canvas.width;
 
       pdf.addImage(
         imgData,
         "PNG",
-        (pageWidth - canvas.width * ratio) / 2,
         0,
-        canvas.width * ratio,
+        0,
+        pageWidth,
         canvas.height * ratio
       );
 
@@ -136,25 +131,21 @@ const Report: React.FC<ReportProps> = ({ setTab }) => {
   );
 
   return (
-    <div className="h-[100dvh] overflow-y-scroll w-full md:px-12 md:py-16 px-8 pt-10 pb-24 font-Inter">
-      {/* Back */}
-     <nav className="text-sm text-gray-500 flex items-center gap-1 mb-6 font-medium">
-  <button
-    onClick={() => setTab("Account")}
-    className="hover:text-blue-600 transition-colors"
-  >
-    Settings
-  </button>
-
-  <span className="mx-1">/</span>
-
-  <span className="text-gray-800 font-semibold">
-    Report
-  </span>
-</nav>
+    <div className="h-[100dvh] overflow-y-scroll w-full px-6 ss:px-8 pt-10 pb-24 font-Inter">
+      {/* Breadcrumb */}
+      <nav className="text-sm text-gray-500 flex items-center gap-1 mb-6 font-karla">
+        <button
+          onClick={() => setTab("Account")}
+          className="hover:text-blue-600 transition-colors"
+        >
+          Settings
+        </button>
+        <span>/</span>
+        <span className="text-gray-800 font-semibold">Report</span>
+      </nav>
 
       {/* Header */}
-      <div className="flex flex-col ss:flex-row justify-between gap-6 mb-6">
+      <div className="flex flex-col ss:flex-row justify-between gap-6 mb-8">
         <div>
           <h1 className="text-2xl ss:text-3xl font-semibold">Drug Report</h1>
           <p className="text-sm text-gray-500">
@@ -165,7 +156,7 @@ const Report: React.FC<ReportProps> = ({ setTab }) => {
         <button
           onClick={handleDownloadPDF}
           disabled={loading}
-          className="h-12 px-4 flex items-center justify-center gap-2 rounded-lg border border-gray-200 text-slate-800 disabled:opacity-70"
+          className="hidden ss:flex h-12 px-4 items-center gap-2 rounded-lg border border-gray-200 text-slate-800 disabled:opacity-70"
         >
           {loading ? (
             <>
@@ -181,22 +172,47 @@ const Report: React.FC<ReportProps> = ({ setTab }) => {
         </button>
       </div>
 
-      {/* A4 Preview */}
-      <div className="flex justify-center">
+      {/* ✅ MOBILE (< ss): Download Card */}
+      <div className="ss:hidden flex justify-center mt-12">
+        <button
+          onClick={handleDownloadPDF}
+          disabled={loading}
+          className="w-full max-w-sm h-44 flex flex-col items-center justify-center gap-4 rounded-2xl border border-gray-200 bg-white shadow-sm disabled:opacity-60"
+        >
+          {loading ? (
+            <>
+              <Loader2 className="size-10 animate-spin text-gray-600" />
+              <p className="text-sm text-gray-500">Generating PDF…</p>
+            </>
+          ) : (
+            <>
+              <div className="h-16 w-16 flex items-center justify-center rounded-full bg-slate-100">
+                <Download className="size-8 text-slate-800" />
+              </div>
+              <div className="text-center">
+                <p className="font-semibold">Download Drug Report</p>
+                <p className="text-xs text-gray-500">PDF • A4 document</p>
+              </div>
+            </>
+          )}
+        </button>
+      </div>
+
+      {/* ✅ PREVIEW (>= ss only) */}
+      <div className="hidden ss:flex justify-center">
         <div className="w-full max-w-[794px]">
           <div
             ref={reportRef}
-            className="bg-white border border-gray-200 shadow-sm p-6 ss:p-8 flex flex-col min-h-[1123px]"
+            className="bg-white border border-gray-200 shadow-sm p-8 flex flex-col min-h-[1123px]"
           >
             {/* Header */}
-            <div className="flex justify-between items-start pb-4 border-b">
+            <div className="flex justify-between items-center pb-4 border-b">
               <div className="relative w-[120px] h-[24px]">
                 <Image
                   src="/assets/logo/logo-with-name-blue.png"
                   alt="NoDoseOff"
                   fill
                   className="object-contain"
-                  priority
                 />
               </div>
               <div className="text-right text-sm">
@@ -208,7 +224,7 @@ const Report: React.FC<ReportProps> = ({ setTab }) => {
 
             {/* Content */}
             <div className="py-6 space-y-6 flex-1">
-              {/* Compliance */}
+              <h1 className="text-xl text-slate-800 font-bold font-Poppins text-center">Medication History Report</h1>
               <div>
                 <p className="text-sm font-medium mb-2">Drug Compliance</p>
                 <div className="h-2 bg-gray-200 rounded-full">
@@ -222,7 +238,6 @@ const Report: React.FC<ReportProps> = ({ setTab }) => {
                 </p>
               </div>
 
-              {/* Sections */}
               <SummarySection
                 title="Ongoing Drugs"
                 data={currentDrugs}
@@ -242,9 +257,9 @@ const Report: React.FC<ReportProps> = ({ setTab }) => {
                 chip="text-red-600 bg-red-50"
               />
 
-              <div className="grid ss:grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <SummarySection
-                  title="Over the Counter Drugs"
+                  title="OTC Drugs"
                   data={otcDrugs || "—"}
                   icon={ShoppingCart}
                   chip="text-blue-600 bg-blue-50"
@@ -258,9 +273,9 @@ const Report: React.FC<ReportProps> = ({ setTab }) => {
               </div>
             </div>
 
-            {/* Footer */}
             <div className="pt-4 border-t text-xs text-gray-400 text-center">
-              Report generated via NoDoseOff • {new Date().toLocaleDateString()}
+              Report generated via NoDoseOff •{" "}
+              {new Date().toLocaleDateString()}
             </div>
           </div>
         </div>

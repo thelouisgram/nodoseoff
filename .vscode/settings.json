@@ -11,6 +11,7 @@
         "reduxjs",
         "Signin",
         "supabase",
+        "telemedicine",
         "thon",
         "upsert"
     ]

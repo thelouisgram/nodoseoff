@@ -6,9 +6,10 @@ const poppins = Poppins({
   subsets: ["latin"],
 });
 
-export default function Example() {
+export default function Page() {
   return (
-    <div id='about' className={`${poppins.className} max-w-5xl ss:mt-16 mx-auto py-16 px-4 flex flex-col items-center gap-10 bg-gray-900 ss:rounded-xl`}>
+    <div id='about' className={`${poppins.className} max-w-5xl ss:mt-16 mx-auto py-16 px-4 md:px-8 flex flex-col items-center
+     gap-10 bg-gray-900`}>
       
       {/* Heading */}
       <div className="text-center">

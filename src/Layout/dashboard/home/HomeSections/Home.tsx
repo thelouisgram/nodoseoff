@@ -1,11 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import Image from "next/image";
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../../../store";
-import { updateActive, updateSchedule } from "../../../../../store/stateSlice";
+import { updateSchedule } from "../../../../../store/stateSlice";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
@@ -16,7 +15,6 @@ import { uploadScheduleToServer } from "../../../../../utils/dashboard/schedule"
 import { calculateClosestDoseCountdown } from "../../../../../utils/dashboard/dashboard";
 
 import { ScheduleItem } from "../../../../../types/dashboard/dashboard";
-import { UserRound, Clock, Pill, Shield } from "lucide-react";
 import SummaryCards from "./SummaryCards";
 import Header from "./Header";
 
@@ -34,7 +32,7 @@ const Home: React.FC<HomeProps> = ({
   setTracker,
   tracker,
 }) => {
-  const { drugs, info, schedule, userId, profilePicture } = useSelector(
+  const { drugs, info, schedule, userId } = useSelector(
     (state: RootState) => state.app
   );
   const dispatch = useDispatch();

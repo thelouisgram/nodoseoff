@@ -16,7 +16,7 @@ interface AuthContextType {
   session: Session | null
   loading: boolean
   signIn: (email: string, password: string) => Promise<void>
-  signUp: (email: string, password: string) => Promise<SignUpResult> // <--- CORRECTED INTERFACE
+  signUp: (email: string, password: string) => Promise<SignUpResult>
   signOut: () => Promise<void>
 }
 

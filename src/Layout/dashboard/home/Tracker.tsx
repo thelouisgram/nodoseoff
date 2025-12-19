@@ -66,10 +66,13 @@ const Tracker: React.FC<TrackerProps> = ({
         {visibleDoses.length > 0 ? (
           visibleDoses
         ) : (
-          <div className="col-span-2 text-center py-12 bg-white rounded-[10px] border border-gray-200">
+          <div className="">
+          <div className="col-span-2 text-center py-8 bg-white rounded-[10px] border border-gray-200 w-full">
             <p className="text-grey text-sm">
               No doses scheduled for {tracker.toLowerCase()}
             </p>
+          </div>
+          <div className=""></div>
           </div>
         )}
       </div>
@@ -103,13 +106,8 @@ const Tracker: React.FC<TrackerProps> = ({
             }
             disabled={currentPage === totalPages}
             className="
-              px-4 py-2 rounded-[8px]
-              text-sm font-medium
-              border border-gray-300
-              text-grey
-              disabled:opacity-40
-              disabled:cursor-not-allowed
-              hover:bg-gray-50
+              px-4 py-2 rounded-[8px] text-sm font-medium border border-gray-300
+               text-grey disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50
             "
           >
             Next

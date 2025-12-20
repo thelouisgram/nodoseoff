@@ -8,11 +8,10 @@ import { useAuth } from "../../../../contexts/AuthContext";
 import {
   updateIsAuthenticated,
   updateUserId,
-  updateSchedule,
-  updateActive,
 } from "../../../../store/stateSlice";
 import { useRouter } from "next/router";
 import Report from "./Report";
+import { useAppStore } from "../../../../store/useAppStore";
 
 import {
   ChevronRight,
@@ -36,6 +35,8 @@ const Account: React.FC<AccountProps> = ({ setActiveModal }) => {
     (state: RootState) => state.app
   );
 
+  const {setActiveTab} = useAppStore((state) => state);
+
   const { name, phone, email } = info[0];
   const [tab, setTab] = useState<"Account" | "Report">("Account");
 
@@ -46,7 +47,7 @@ const Account: React.FC<AccountProps> = ({ setActiveModal }) => {
   const logOut = async () => {
     try {
       await signOut();
-      dispatch(updateActive("Home"));
+      setActiveTab("Home");
       router.push("/login");
       dispatch(updateUserId(""));
       dispatch(updateIsAuthenticated(false));

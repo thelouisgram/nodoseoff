@@ -4,22 +4,22 @@ import Loader from "@/Layout/dashboard/shared/Loader";
 import Head from "next/head";
 import { useRouter } from "next/navigation";
 import { Suspense, useEffect, useState, useRef } from "react"; // Added useRef
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { toast } from "sonner";
-import { RootState } from "../../../store";
-import { updateActive, updateIsAuthenticated, updateUserId } from "../../../store/stateSlice";
+import { updateIsAuthenticated, updateUserId } from "../../../store/stateSlice";
 import { fetchData } from "../../../utils/fetchData";
 import { useAuth } from "../../../contexts/AuthContext";
 import SideBar from "@/Layout/dashboard/shared/SideBar";
 import MobileSidebar from "@/Layout/dashboard/shared/MobileSideBar";
 import MainDashboard from "@/Layout/dashboard/MainDashboard";
 import FormsContainer from "@/Layout/dashboard/shared/FormsContainer";
+import { useAppStore } from "../../../store/useAppStore";
 
 const Page = () => {
   // Use useAuth to get the true user state
   const { user, loading: authLoading, signOut } = useAuth();
 
-  const { active } = useSelector((state: RootState) => state.app);
+  const {activeTab, setActiveTab} = useAppStore((state) => state);
 
   const dispatch = useDispatch();
   const router = useRouter();
@@ -81,7 +81,7 @@ const Page = () => {
   const handleSignOut = async () => {
     try {
       await signOut();
-      dispatch(updateActive("Home"));
+      setActiveTab("Home");
       router.push("/login");
       dispatch(updateUserId(''));
       dispatch(updateIsAuthenticated(false));
@@ -109,7 +109,7 @@ const Page = () => {
             border-r border-gray-200 ${nav ? "md:w-[84px] lg:w-[300px]" : "w-[86px]"}`}
         >
           <SideBar
-            active={active}
+            activeTab={activeTab}
             handleSignOut={handleSignOut}
             nav={nav}
             setNav={setNav}
@@ -117,10 +117,10 @@ const Page = () => {
         </div>
         {/* Main Dashboard */}
         <MainDashboard
-          active={active}
+          activeTab={activeTab}
           isLoading={isLoading}
-          setActiveModal={setActiveModal} // single state controlling all forms/modals
-          activeModal={activeModal} // current active modal
+          setActiveModal={setActiveModal} 
+          activeModal={activeModal} 
           tracker={tracker}
           setTracker={setTracker}
           add={add}
@@ -134,7 +134,7 @@ const Page = () => {
         />
         <div className="fixed bottom-4 left-1/2 -translate-x-1/2 md:hidden z-50 w-[90%] max-w-[450px] px-4">
           <div className="w-full h-[64px] bg-white border border-gray-200 flex justify-between items-center px-4 ss:px-8 ss:pr-12 rounded-xl shadow-lg">
-            <MobileSidebar active={active} />
+            <MobileSidebar activeTab={activeTab} />
           </div>
         </div>
       </section>

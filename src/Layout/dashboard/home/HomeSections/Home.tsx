@@ -14,7 +14,7 @@ import DoseCard from "../DoseCard";
 import { uploadScheduleToServer } from "../../../../../utils/dashboard/schedule";
 import { calculateClosestDoseCountdown } from "../../../../../utils/dashboard/dashboard";
 
-import { ScheduleItem } from "../../../../../types/dashboard/dashboard";
+import { ScheduleItem } from "../../../../../types/dashboard";
 import SummaryCards from "./SummaryCards";
 import Header from "./Header";
 

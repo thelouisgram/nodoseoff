@@ -1,16 +1,15 @@
 import React from 'react'
 import Image from 'next/image'
-import { useDispatch } from 'react-redux'
 import { useSelector } from 'react-redux'
-import { updateActive } from '../../../../../store/stateSlice'
 import { RootState } from '../../../../../store'
 import { UserRound } from 'lucide-react'
+import { useAppStore } from '../../../../../store/useAppStore'
 
 const Header = () => {
     const CDNURL =
       "https://opshqmqagtfidynwftzk.supabase.co/storage/v1/object/public/profile-picture/";
+      const {setActiveTab} = useAppStore((state) => state);
     
-    const dispatch = useDispatch()
     const {profilePicture,info, userId } = useSelector((state: RootState) => state.app)
   return (
     <div className="mb-7 px-4 ss:px-8 md:px-0 w-full flex justify-between items-center">
@@ -21,8 +20,9 @@ const Header = () => {
           <p className="text-base text-gray-500">Your health matters!</p>
         </div>
         <button
-          onClick={() => dispatch(updateActive("Account"))}
-          className="w-[60px] h-[60px] rounded-full overflow-hidden cursor-pointer ring-1 ring-gray-400 p-0.5"
+          onClick={() => setActiveTab("Account")}
+          className="w-[60px] h-[60px] flex justify-center items-center rounded-full overflow-hidden cursor-pointer 
+          ring-1 ring-gray-400 p-0.5"
           aria-label="View account"
         >
           {profilePicture ? (
@@ -38,7 +38,7 @@ const Header = () => {
             />
           ) : (
             <UserRound
-              className="w-full h-full text-navyBlue"
+              className="size-9 text-gray-400"
               strokeWidth={1.5}
             />
           )}

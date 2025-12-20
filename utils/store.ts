@@ -1,4 +1,4 @@
-import { DrugProps, ScheduleItem } from "../types/dashboard/dashboard";
+import { DrugProps, ScheduleItem } from "../types/dashboard";
 
 export interface AppType {
   info: Info[];
@@ -7,14 +7,10 @@ export interface AppType {
   drugs: DrugProps[];
   completedDrugs: DrugProps[];
   schedule: ScheduleItem[];
-  activeDrug: string;
   allergies: DrugProps[];
   drugDetails: DrugProps[];
-  searchedWord: string;
   activeAllergy: string;
-  active: string;
   profilePicture: string;
-  activeDrugId: string;
   otcDrugs: string;
   herbs: string
 }

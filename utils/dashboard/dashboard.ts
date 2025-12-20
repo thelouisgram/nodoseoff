@@ -1,4 +1,4 @@
-import { DrugProps, ScheduleItem } from "../../types/dashboard/dashboard";
+import { DrugProps, ScheduleItem } from "../../types/dashboard";
 import { Home, Pill, User } from "lucide-react";
 import { LucideIcon } from "lucide-react";
 

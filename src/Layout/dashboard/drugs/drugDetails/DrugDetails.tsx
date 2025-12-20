@@ -2,7 +2,7 @@
 import React, { useEffect, useMemo, useRef } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../store";
-import { DrugDetailsProps } from "../../../../../types/dashboard/drug";
+import { DrugDetailsProps } from "../../../../../types/drug";
 
 import DrugDetailsHeader from "../drugDetails/DrugDetailsHeader";
 import DrugSummaryCard from "../drugDetails/DrugSummaryCard";
@@ -10,13 +10,13 @@ import DrugDetailsGrid from "../drugDetails/DrugDetailsGrid";
 import { calculateCompliance } from "../../../../../utils/dashboard/drugs";
 import { frequencyToPlaceholder } from "../../../../../utils/dashboard/dashboard";
 import { formatDate } from "../../../../../utils/dashboard/dashboard";
-import { Detail } from "../../../../../types/dashboard/drug";
+import { Detail } from "../../../../../types/drug";
 import {
   convertedTimes,
   calculateTimePeriod,
 } from "../../../../../utils/drugs";
+import { useAppStore } from "../../../../../store/useAppStore";
 
-type RefObject<T> = React.RefObject<T>;
 
 const DrugDetails: React.FC<DrugDetailsProps> = ({
   activeView,
@@ -27,8 +27,10 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
   options,
   setOptions,
 }) => {
-  const { schedule, drugs, completedDrugs, activeDrug, activeDrugId } =
+  const { schedule, drugs, completedDrugs } =
     useSelector((state: RootState) => state.app);
+
+    const { activeDrug } = useAppStore((state) => state);
 
   const drugsArray = tab === "ongoing" ? drugs : completedDrugs;
 

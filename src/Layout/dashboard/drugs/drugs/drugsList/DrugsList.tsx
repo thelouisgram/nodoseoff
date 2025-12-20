@@ -1,11 +1,9 @@
 import React, { SetStateAction } from "react";
-import { DrugProps } from "../../../../../../types/dashboard/dashboard";
+import { DrugProps } from "../../../../../../types/dashboard";
 import { calculateTimePeriod } from "../../../../../../utils/drugs";
 import OptionModal from "../../optionModal";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../../../store";
-import { updateActiveDrug } from "../../../../../../store/stateSlice";
 import { useDispatch } from "react-redux";
+import { useAppStore } from "../../../../../../store/useAppStore";
 
 interface AllergyProps {
   drug: string;
@@ -32,7 +30,7 @@ const DrugsList: React.FC<DrugsListProps> = ({
   setActiveView,
   activeView,
 }) => {
-  const { activeDrug } = useSelector((state: RootState) => state.app);
+   const { activeDrug, setActiveDrug } = useAppStore((state) => state);
 
   const dispatch = useDispatch()
 
@@ -65,7 +63,7 @@ const DrugsList: React.FC<DrugsListProps> = ({
             key={index}
             onClick={() => {
               if(tab !== 'allergies')
-                {dispatch(updateActiveDrug(data.drug)),
+                {setActiveDrug(data.drug),
                 setActiveView("details");}
             }}
             className={`

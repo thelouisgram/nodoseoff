@@ -12,17 +12,17 @@ interface tabsProps {
 }
 
 interface SideBarProps {
-  active: string;
+  activeTab: string;
   handleSignOut: () => void;
   nav: boolean
   setNav: (value:boolean) => void
 }
 
-const SideBar: React.FC<SideBarProps> = ({ active, handleSignOut, nav, setNav}) => {
+const SideBar: React.FC<SideBarProps> = ({ activeTab, handleSignOut, nav, setNav}) => {
 
   const renderedTabs = tabs.map((item: tabsProps, index: number) => (
     <div key={index}>
-      <Tabs item={item} active={active} nav={nav} />
+      <Tabs item={item} activeTab={activeTab} nav={nav} />
     </div>
   ));
 

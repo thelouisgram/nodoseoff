@@ -1,8 +1,8 @@
 import React from 'react';
 import { Trash2, MoreVertical, Pencil, ShieldOff, Eye, LucideIcon } from 'lucide-react';
 import { useDispatch } from 'react-redux';
-import { updateActiveDrug } from '../../../../store/stateSlice';
 import { SetStateAction } from 'react';
+import { useAppStore } from '../../../../store/useAppStore';
 
 interface OptionModal {
   options: boolean;
@@ -35,9 +35,11 @@ const OptionModal: React.FC<OptionModal> = ({
 }) => {
   const dispatch = useDispatch();
 
+  const { setActiveDrug } = useAppStore((state) => state);
+
   // Helper function to handle actions
   const handleAction = (action: string) => {
-    dispatch(updateActiveDrug(drug));
+    setActiveDrug(drug);    
     setActiveAction(action);
     setOptions(false);
     
@@ -96,7 +98,7 @@ const OptionModal: React.FC<OptionModal> = ({
       <button
         onClick={(e) => {
           setOptions((prev) => !prev);
-          dispatch(updateActiveDrug(drug));
+          setActiveDrug(drug);
           e.stopPropagation()
         }}
         className="size-8 flex items-center justify-center rounded-full text-gray-600 hover:bg-gray-200 transition-colors"

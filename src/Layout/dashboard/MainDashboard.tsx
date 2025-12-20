@@ -5,7 +5,7 @@ import Drugs from "./drugs/drugs/Drugs";
 import Account from "./account/Account";
 
 interface MainDashboardProps {
-  active: string;
+  activeTab: string;
   isLoading: boolean;
   setActiveModal: Dispatch<SetStateAction<string>>;
   tracker: string;
@@ -18,7 +18,7 @@ interface MainDashboardProps {
 }
 
 const MainDashboard: React.FC<MainDashboardProps> = ({
-  active,
+  activeTab,
   isLoading,
   tracker,
   setTracker,
@@ -31,14 +31,14 @@ const MainDashboard: React.FC<MainDashboardProps> = ({
 }) => {
   return (
     <div className="w-full">
-      {active === "Home" ? (
+      {activeTab === "Home" ? (
         <Home
           isLoading={isLoading}
           setActiveModal={setActiveModal}
           tracker={tracker}
           setTracker={setTracker}
         />
-      ) : active === "Drugs" ? (
+      ) : activeTab === "Drugs" ? (
         <Drugs
           setActiveModal={setActiveModal}
           activeModal={activeModal}

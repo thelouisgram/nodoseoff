@@ -1,4 +1,4 @@
-import { ScheduleItem } from "../../types/dashboard/dashboard";
+import { ScheduleItem } from "../../types/dashboard";
 
 export interface calculateComplianceProps {
   totalDoses: number;
@@ -83,7 +83,7 @@ export function calculateCompliance(
 
   // utils/dashboard/drugDetailsConfig.ts
 
-import { Detail } from "../../types/dashboard/drug";
+import { Detail } from "../../types/drug";
 import { formatDate, frequencyToPlaceholder } from "./dashboard";
 import { calculateTimePeriod, convertedTimes } from "../drugs";
 

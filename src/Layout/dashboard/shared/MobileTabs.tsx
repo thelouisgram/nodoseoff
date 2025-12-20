@@ -1,7 +1,6 @@
 import React from "react";
-import { useDispatch } from "react-redux";
-import { updateActive } from "../../../../store/stateSlice";
 import { LucideIcon } from "lucide-react";
+import { useAppStore } from "../../../../store/useAppStore";
 
 interface TabItem {
   name: string;
@@ -10,14 +9,14 @@ interface TabItem {
 
 interface TabsProps {
   item: TabItem;
-  active: string;
+  activeTab: string;
   nav?: boolean; // optional label
 }
 
-const MobileTabs: React.FC<TabsProps> = ({ item, active, nav }) => {
-  const dispatch = useDispatch();
+const MobileTabs: React.FC<TabsProps> = ({ item, activeTab, nav }) => {
+  const { setActiveTab } = useAppStore((state) => state);
   const Icon = item.icon;
-  const isActive = active === item.name;
+  const isActive = activeTab === item.name;
 
 
   // Manual color mapping for each tab
@@ -52,7 +51,7 @@ const MobileTabs: React.FC<TabsProps> = ({ item, active, nav }) => {
 
   return (
     <button
-      onClick={() => dispatch(updateActive(item.name))}
+      onClick={() => setActiveTab(item.name)}
       className={`
         relative flex flex-col items-center justify-center
          p-2 rounded-xl transition-all duration-200 border-[1.5px]

@@ -13,6 +13,7 @@ import {
 import { createClient } from "../../../../lib/supabase/client";
 import { X, Loader2 } from "lucide-react";
 import dayjs from "dayjs";
+import { useAppStore } from "../../../../store/useAppStore";
 
 interface DrugFormProps {
   setActiveModal: (value: string) => void;
@@ -30,10 +31,12 @@ interface FormErrors {
 }
 
 const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
-  const { drugs, activeDrug, schedule, userId, activeDrugId } = useSelector(
+  const { drugs, schedule, userId } = useSelector(
     (state: RootState) => state.app
   );
   const dispatch = useDispatch();
+
+  const { activeDrug, activeDrugId } = useAppStore((state) => state);
 
   const currentDrug = drugs.find((drug) => drug.drug === activeDrug);
   const [loading, setLoading] = useState(false);

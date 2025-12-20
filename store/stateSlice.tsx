@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { DrugProps, ScheduleItem } from "../types/dashboard/dashboard";
+import { DrugProps, ScheduleItem } from "../types/dashboard";
 import { AppType, Info } from "../utils/store";
 
 const initialState: AppType = {
@@ -8,15 +8,11 @@ const initialState: AppType = {
   userId: "",
   drugs: [],
   schedule: [],
-  activeDrug: "",
   allergies: [],
-  searchedWord: "",
   drugDetails: [],
   activeAllergy: "",
-  active: "Home",
   completedDrugs: [],
   profilePicture: '',
-  activeDrugId: '', 
   otcDrugs: '',
   herbs: ''
 };
@@ -28,12 +24,6 @@ const stateSlice = createSlice({
     setDrugs: (state, action: PayloadAction<DrugProps[]>) => {
       state.drugs = action.payload;
     },
-    updateActiveDrug: (state, action: PayloadAction<string>) => {
-      state.activeDrug = action.payload;
-    },
-    updateActiveDrugId: (state, action: PayloadAction<string>) => {
-      state.activeDrugId = action.payload;
-    },
     updateSchedule: (state, action: PayloadAction<ScheduleItem[]>) => {
       state.schedule = action.payload;
     },
@@ -43,17 +33,11 @@ const stateSlice = createSlice({
     updateUserId: (state, action: PayloadAction<string>) => {
       state.userId = action.payload;
     },
-    updateActive: (state, action: PayloadAction<string>) => {
-      state.active = action.payload;
-    },
      updateOtcDrugs: (state, action: PayloadAction<string>) => {
       state.otcDrugs = action.payload;
     },
      updateHerbs: (state, action: PayloadAction<string>) => {
       state.herbs = action.payload;
-    },
-    updateSearchedWord: (state, action: PayloadAction<string>) => {
-      state.searchedWord = action.payload;
     },
     updateActiveAllergy: (state, action: PayloadAction<string>) => {
       state.activeAllergy = action.payload;
@@ -79,19 +63,15 @@ const stateSlice = createSlice({
 export default stateSlice.reducer;
 export const {
   setDrugs,
-  updateActiveDrug,
   updateSchedule,
   updateIsAuthenticated,
   updateUserId,
   updateInfo,
   updateAllergies,
-  updateSearchedWord,
   updateDrugDetails,
   updateActiveAllergy,
-  updateActive,
   updateCompletedDrugs,
   updateProfilePicture,
-  updateActiveDrugId,
   updateHerbs,
   updateOtcDrugs
 } = stateSlice.actions;

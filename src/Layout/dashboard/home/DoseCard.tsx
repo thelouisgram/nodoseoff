@@ -1,6 +1,6 @@
 import React from "react";
 import { Check, Pill } from "lucide-react";
-import { ScheduleItem } from "../../../../types/dashboard/dashboard";
+import { ScheduleItem } from "../../../../types/dashboard";
 
 interface DoseCardProps {
   item: ScheduleItem;

@@ -8,10 +8,10 @@ interface tabsProps {
   icon: LucideIcon;
 }
 
-const MobileSideBar = ({ active }: { active: string }) => {
+const MobileSideBar = ({ activeTab }: { activeTab: string }) => {
   const renderedTabs = tabs.map((item: tabsProps, index: number) => (
     <div key={index}>
-      <MobileTabs item={item} active={active} />
+      <MobileTabs item={item} activeTab={activeTab} />
     </div>
   ));
   return <div className="flex justify-between w-full h-full px-3 items-center">{renderedTabs}</div>;

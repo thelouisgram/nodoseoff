@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 import { createClient } from "../../lib/supabase/client";
-import { ScheduleItem } from "../../types/dashboard/dashboard";
+import { ScheduleItem } from "../../types/dashboard";
 
 
 

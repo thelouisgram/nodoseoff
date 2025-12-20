@@ -6,7 +6,7 @@ import DrugsListHeader from "./drugsList/DrugsListHeader";
 import DrugsListTitle from "./drugsList/DrugsListTitle";
 import DrugsList from "./drugsList/DrugsList";
 import DrugsListPagination from "./drugsList/DrugsListPagination";
-import { DrugProps } from "../../../../../types/dashboard/dashboard";
+import { DrugProps } from "../../../../../types/dashboard";
 
 interface AllergyProps {
   drug: string;

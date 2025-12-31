@@ -1,14 +1,11 @@
-import React, {
-  useState,
-  FormEvent,
-  ChangeEvent,
-} from "react";
+import React, { useState, FormEvent, ChangeEvent } from "react";
 import { RootState } from "../../../../store";
 import { useSelector, useDispatch } from "react-redux";
 import { createClient } from "../../../../lib/supabase/client";
 import { toast } from "sonner";
 import { updateHerbs, updateOtcDrugs } from "../../../../store/stateSlice";
 import { X, Loader2 } from "lucide-react";
+import { useAppStore } from "../../../../store/useAppStore";
 
 interface DrugHxFormProps {
   setActiveModal: (value: string) => void;
@@ -19,10 +16,10 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
   activeModal,
   setActiveModal,
 }) => {
-  const { userId, otcDrugs, herbs } = useSelector(
-    (state: RootState) => state.app
-  );
+  const { otcDrugs, herbs } = useSelector((state: RootState) => state.app);
   const dispatch = useDispatch();
+
+  const { userId } = useAppStore((state) => state);
 
   const [formData, setFormData] = useState({
     otcDrugs: typeof otcDrugs === "string" ? otcDrugs : "",
@@ -92,98 +89,96 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex justify-end z-[100] transition-opacity duration-300"
       onClick={handleClose}
+      className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
     >
+      {/* Modal Card */}
       <div
         onClick={(e) => e.stopPropagation()}
         className={`${
-          activeModal === "drugHx" ? "translate-x-0" : "translate-x-full"
-        } transition-transform duration-300 w-full ss:w-[450px] bg-white h-full`}
+          activeModal === "drugHx"
+            ? "scale-100 opacity-100"
+            : "scale-95 opacity-0"
+        } transition-all duration-200 w-full max-w-md bg-white rounded-2xl shadow-2xl`}
       >
-        <div
-          className={`h-full flex flex-col w-full justify-between gap-8 p-8 pt-0 overflow-y-scroll bg-white`}
-        >
-          <div className="w-full">
-            <div className="w-full flex justify-end mb-10">
-              <button
-                onClick={handleClose}
-                disabled={loading}
-                id="top-drugHx"
-                className="cursor-pointer pt-8 hover:opacity-70 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <X className="size-6 text-gray-800" />
-              </button>
-            </div>
-            <div className="mb-10">
-              <h1 className="text-[24px] text-blue-600 font-bold">
-                Drug History
-              </h1>
-            </div>
-            <form
-              onSubmit={handleSubmit}
-              className="h-auto flex flex-col justify-between w-full"
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
+          <h2 className="text-xl font-semibold text-gray-900">Drug History</h2>
+          <button
+            onClick={handleClose}
+            disabled={loading}
+            className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Close"
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="p-6 space-y-5">
+          {/* Over the Counter Drugs */}
+          <div>
+            <label
+              htmlFor="otcDrugs"
+              className="block text-sm font-medium text-gray-700 mb-2"
             >
-              <div className="w-full">
-                <div className="flex flex-col mb-8">
-                  <label
-                    htmlFor="otcDrugs"
-                    className="text-[14px] mb-1 font-semibold text-navyBlue"
-                  >
-                    Over the Counter Drugs
-                  </label>
-                  <select
-                    id="otcDrugs"
-                    name="otcDrugs"
-                    value={formData.otcDrugs !== null ? formData.otcDrugs : ""}
-                    onChange={handleSelectChange("otcDrugs")}
-                    disabled={loading}
-                    className="bg-[#EDF2F7] border-none w-full outline-none p-4 cursor-pointer h-[56px] rounded-[10px] disabled:opacity-50"
-                  >
-                    <option value="">--</option>
-                    <option value="yes">Yes</option>
-                    <option value="no">No</option>
-                  </select>
-                </div>
-              </div>
-              <div className="w-full">
-                <div className="flex flex-col mb-8">
-                  <label
-                    htmlFor="herbs"
-                    className="text-[14px] mb-1 font-semibold text-navyBlue"
-                  >
-                    Herbs and Concoctions
-                  </label>
-                  <select
-                    id="herbs"
-                    name="herbs"
-                    value={formData.herbs !== null ? formData.herbs : ""}
-                    onChange={handleSelectChange("herbs")}
-                    disabled={loading}
-                    className="bg-[#EDF2F7] border-none w-full outline-none p-4 cursor-pointer h-[56px] rounded-[10px] disabled:opacity-50"
-                  >
-                    <option value="">--</option>
-                    <option value="yes">Yes</option>
-                    <option value="no">No</option>
-                  </select>
-                </div>
-              </div>
-            </form>
+              Over the Counter Drugs
+            </label>
+            <select
+              id="otcDrugs"
+              name="otcDrugs"
+              value={formData.otcDrugs !== null ? formData.otcDrugs : ""}
+              onChange={handleSelectChange("otcDrugs")}
+              disabled={loading}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 disabled:cursor-not-allowed text-gray-900 cursor-pointer"
+            >
+              <option value="">Select option</option>
+              <option value="yes">Yes</option>
+              <option value="no">No</option>
+            </select>
           </div>
+
+          {/* Herbs and Concoctions */}
+          <div>
+            <label
+              htmlFor="herbs"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Herbs and Concoctions
+            </label>
+            <select
+              id="herbs"
+              name="herbs"
+              value={formData.herbs !== null ? formData.herbs : ""}
+              onChange={handleSelectChange("herbs")}
+              disabled={loading}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 disabled:cursor-not-allowed text-gray-900 cursor-pointer"
+            >
+              <option value="">Select option</option>
+              <option value="yes">Yes</option>
+              <option value="no">No</option>
+            </select>
+          </div>
+        </form>
+
+        {/* Footer with Submit Button */}
+        <div className="px-6 py-4 border-t border-gray-100">
           <button
             onClick={handleClick}
             disabled={loading}
-            className={`font-semibold text-white rounded-[10px] w-full items-center 
-              justify-center flex transition duration-300 ${
-                loading ? "bg-navyBlue opacity-85" : "bg-blue-600 h-14"
-              }`}
+            className={`w-full py-3 px-4 rounded-lg font-medium text-white transition-all flex items-center justify-center gap-2 ${
+              loading
+                ? "bg-blue-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700 active:scale-[0.98]"
+            }`}
           >
             {loading ? (
-              <div className="h-14 flex items-center">
-                <Loader2 className="size-5 animate-spin" />
-              </div>
+              <>
+                <Loader2 size={18} className="animate-spin" />
+                <span>Updating...</span>
+              </>
             ) : (
-              <div className="h-14 flex items-center">UPDATE PROFILE</div>
+              "Update Profile"
             )}
           </button>
         </div>

@@ -2,7 +2,7 @@
 import React, { ChangeEvent, FormEvent, useState } from "react";
 import { toast } from "sonner";
 import { createClient } from "../../../../../lib/supabase/client";
-import { ChevronLeft, X, Lock, Loader2 } from "lucide-react";
+import { ChevronLeft, X, Loader2 } from "lucide-react";
 
 interface ChangePasswordProps {
   setActiveModal: (value: string) => void;
@@ -22,10 +22,12 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
 
   const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
+    if (errorMessage) setErrorMessage("");
   };
 
   const handleConfirmPasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
     setConfirmPassword(e.target.value);
+    if (errorMessage) setErrorMessage("");
   };
 
   const handleClose = () => {
@@ -81,51 +83,55 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex justify-end z-[100] transition-opacity duration-300"
       onClick={handleClose}
+      className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
     >
-      {/* Sliding panel */}
+      {/* Modal Card */}
       <div
         onClick={(e) => e.stopPropagation()}
         className={`${
-          activeModal === "changePassword" ? "translate-x-0" : "translate-x-full"
-        } transition-transform duration-300 w-full ss:w-[450px] bg-white h-full p-8 pt-0 overflow-y-scroll flex flex-col`}
+          activeModal === "changePassword"
+            ? "scale-100 opacity-100"
+            : "scale-95 opacity-0"
+        } transition-all duration-200 w-full max-w-md bg-white rounded-2xl shadow-2xl`}
       >
         {/* Header */}
-        <div className="w-full flex justify-between items-center mb-10 pt-8">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
           <button
             onClick={() => setActiveModal("accountSettings")}
             disabled={loading}
-            className="flex gap-2 items-center text-navyBlue font-Inter text-[14px] font-medium hover:text-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <ChevronLeft className="size-5" strokeWidth={2} />
-            Back
+            <ChevronLeft size={18} />
+            <span>Back</span>
           </button>
           <button
             onClick={handleClose}
             disabled={loading}
-            className="cursor-pointer hover:opacity-70 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Close"
           >
-            <X className="size-6 text-gray-800" />
+            <X size={20} />
           </button>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-          <div className="flex flex-col gap-2">
-            <h1 className="text-[24px] font-bold text-blue-600 flex items-center gap-3">
-              <Lock className="size-6" strokeWidth={2} />
-              Reset Password
-            </h1>
-            <p className="text-[14px] text-grey font-Inter">
-              Please enter your new password
+        <form onSubmit={handleSubmit} className="p-6 space-y-5">
+          {/* Title */}
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900 mb-1">
+              Change Password
+            </h2>
+            <p className="text-sm text-gray-500">
+              Enter your new password below
             </p>
           </div>
 
-          <div className="flex flex-col gap-2">
+          {/* New Password */}
+          <div>
             <label
               htmlFor="password"
-              className="text-[14px] font-Inter font-medium text-navyBlue"
+              className="block text-sm font-medium text-gray-700 mb-2"
             >
               New Password
             </label>
@@ -136,15 +142,16 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
               onChange={handlePasswordChange}
               placeholder="Enter new password"
               disabled={loading}
-              className="p-4 rounded-[10px] bg-[#EDF2F7] border-none outline-none font-Inter text-[14px] focus:ring-2 focus:ring-blue-700 disabled:opacity-50"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 disabled:cursor-not-allowed text-gray-900 placeholder-gray-400"
               required
             />
           </div>
 
-          <div className="flex flex-col gap-2">
+          {/* Confirm Password */}
+          <div>
             <label
               htmlFor="confirmPassword"
-              className="text-[14px] font-Inter font-medium text-navyBlue"
+              className="block text-sm font-medium text-gray-700 mb-2"
             >
               Confirm Password
             </label>
@@ -155,32 +162,32 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
               onChange={handleConfirmPasswordChange}
               placeholder="Confirm new password"
               disabled={loading}
-              className="p-4 rounded-[10px] bg-[#EDF2F7] border-none outline-none font-Inter text-[14px] focus:ring-2 focus:ring-blue-700 disabled:opacity-50"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 disabled:cursor-not-allowed text-gray-900 placeholder-gray-400"
               required
             />
           </div>
 
+          {/* Error Message */}
           {errorMessage && (
-            <div className="p-4 bg-red-50 border border-red-200 rounded-[10px]">
-              <p className="text-red-600 font-Inter font-medium text-[14px]">
-                {errorMessage}
-              </p>
+            <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-sm text-red-600">{errorMessage}</p>
             </div>
           )}
 
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
-            className={`w-full h-[56px] rounded-[10px] text-white font-Inter font-semibold text-[16px] flex items-center justify-center transition-all ${
+            className={`w-full py-3 px-4 rounded-lg font-medium text-white transition-all flex items-center justify-center gap-2 ${
               loading
-                ? "bg-blue-600 opacity-75 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-800"
+                ? "bg-blue-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700 active:scale-[0.98]"
             }`}
           >
             {loading ? (
               <>
-                <Loader2 className="size-5 mr-2 animate-spin" />
-                Updating...
+                <Loader2 size={18} className="animate-spin" />
+                <span>Updating...</span>
               </>
             ) : (
               "Change Password"

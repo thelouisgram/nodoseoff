@@ -31,10 +31,9 @@ interface FormErrors {
 }
 
 const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
-  const { drugs, schedule, userId } = useSelector(
-    (state: RootState) => state.app
-  );
+  const { drugs, schedule } = useSelector((state: RootState) => state.app);
   const dispatch = useDispatch();
+  const { userId } = useAppStore((state) => state);
 
   const { activeDrug, activeDrugId } = useAppStore((state) => state);
 
@@ -150,17 +149,16 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
 
   const timeInput = formData.time.map((item: string, index: number) => {
     return (
-      <div key={index} className="bg-[#EDF2F7] rounded-[10px] h-[56px] w-full">
-        <input
-          type="time"
-          id={`time-${index}`}
-          name={`time-${index}`}
-          value={formData.time[index]}
-          onChange={handleInputChange}
-          disabled={loading}
-          className="border bg-[#EDF2F7] border-none outline-none text-grey rounded-[10px] p-4 w-full h-[56px]"
-        />
-      </div>
+      <input
+        key={index}
+        type="time"
+        id={`time-${index}`}
+        name={`time-${index}`}
+        value={formData.time[index]}
+        onChange={handleInputChange}
+        disabled={loading}
+        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 disabled:cursor-not-allowed text-gray-900"
+      />
     );
   });
 
@@ -297,43 +295,41 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex justify-start z-[100] transition-opacity duration-300"
       onClick={handleClose}
+      className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
     >
+      {/* Modal Card */}
       <div
         onClick={(e) => e.stopPropagation()}
         className={`${
-          activeModal === "edit" ? "translate-x-0" : "-translate-x-full"
-        } transition-transform duration-300 w-full ss:w-[450px] bg-white h-full`}
+          activeModal === "edit"
+            ? "scale-100 opacity-100"
+            : "scale-95 opacity-0"
+        } transition-all duration-200 w-full max-w-lg bg-white rounded-2xl shadow-2xl max-h-[90vh] flex flex-col`}
       >
-        <div
-          className={`h-full flex flex-col w-full justify-between gap-8 p-8 pt-0 overflow-y-scroll bg-white`}
-        >
-          <div className="w-full bg-white">
-            <div className="w-full flex justify-end mb-10">
-              <button
-                onClick={handleClose}
-                disabled={loading}
-                className="cursor-pointer pt-8 hover:opacity-70 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <X className="size-6 text-gray-800" />
-              </button>
-            </div>
-            <h1 className="text-[24px] text-blue-600 font-bold">Edit Drug</h1>
-            <p className="text-[14px] text-grey">
-              To ensure adequate tracking of drug compliance.
-            </p>
-          </div>
-          <form
-            onSubmit={handleSubmit}
-            className="h-auto flex flex-col justify-between"
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 flex-shrink-0">
+          <h2 className="text-xl font-semibold text-gray-900">Edit Drug</h2>
+          <button
+            onClick={handleClose}
+            disabled={loading}
+            className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Close"
           >
-            <div className="flex flex-col mb-8">
+            <X size={20} />
+          </button>
+        </div>
+
+        {/* Form - Scrollable */}
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto">
+          <div className="p-6 space-y-5">
+            {/* Drug Name - Disabled */}
+            <div>
               <label
                 htmlFor="drugEdit"
-                className="text-[14px] mb-1 font-semibold text-navyBlue"
+                className="block text-sm font-medium text-gray-700 mb-2"
               >
-                Name of drug (e.g Rifampicin)
+                Drug Name
               </label>
               <input
                 disabled={true}
@@ -342,16 +338,18 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                 name="drug"
                 value={formData.drug}
                 onChange={handleInputChange}
-                className="border bg-[#EDF2F7] border-none outline-none text-grey rounded-[10px] p-4 capitalize h-[56px]"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 capitalize cursor-not-allowed"
                 placeholder="Name of Drug"
               />
             </div>
-            <div className="flex flex-col mb-4">
+
+            {/* Route */}
+            <div>
               <label
-                htmlFor="frequency"
-                className="text-[14px] mb-1 font-semibold text-navyBlue"
+                htmlFor="routeEdit"
+                className="block text-sm font-medium text-gray-700 mb-2"
               >
-                Routes of Administration
+                Route of Administration
               </label>
               <select
                 id="routeEdit"
@@ -359,22 +357,24 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                 value={formData.route}
                 onChange={handleSelectChange("route")}
                 disabled={loading}
-                className=" bg-[#EDF2F7] border-none rounded-[10px] w-full outline-none p-4 text-grey cursor-pointer h-[56px] mb-4"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 disabled:cursor-not-allowed text-gray-900 cursor-pointer"
               >
                 <option value="">Select Route</option>
                 <option value="oral">Oral</option>
                 <option value="topical">Topical</option>
-                <option value="intravenous">intravenous</option>
-                <option value="intramuscular">intramuscular</option>
+                <option value="intravenous">Intravenous (IV)</option>
+                <option value="intramuscular">Intramuscular (IM)</option>
                 <option value="inhalation">Inhalation</option>
                 <option value="rectal">Rectal</option>
                 <option value="sublingual">Sublingual</option>
               </select>
             </div>
-            <div className="flex flex-col mb-8">
+
+            {/* Frequency */}
+            <div>
               <label
                 htmlFor="frequencyEdit"
-                className="text-[14px] mb-1 font-semibold text-navyBlue"
+                className="block text-sm font-medium text-gray-700 mb-2"
               >
                 Frequency
               </label>
@@ -384,7 +384,7 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                 value={formData.frequency}
                 onChange={handleSelectChange("frequency")}
                 disabled={loading}
-                className=" bg-[#EDF2F7] border-none w-full rounded-[10px] outline-none p-4 text-grey cursor-pointer h-[56px]"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 disabled:cursor-not-allowed text-gray-900 cursor-pointer"
               >
                 <option value="">Select Frequency</option>
                 <option value="QD">Once Daily</option>
@@ -397,58 +397,57 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                 <option value="M">Monthly</option>
               </select>
             </div>
-            {formData.frequency && (
-              <div className="flex flex-col mb-4">
-                <label
-                  htmlFor="start"
-                  className="text-[14px] mb-1 font-semibold text-navyBlue"
-                >
-                  Select Time
+
+            {/* Time Inputs */}
+            {formData.frequency && formData.time.length > 0 && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Select Time{formData.time.length > 1 ? "s" : ""}
                 </label>
-                <div className="w-full grid grid-cols-2 gap-4 mb-4">
-                  {timeInput}
-                </div>
+                <div className="grid grid-cols-2 gap-3">{timeInput}</div>
               </div>
             )}
-            <div className="flex flex-col w-full">
+
+            {/* Start Date - Disabled */}
+            <div>
               <label
                 htmlFor="startEdit"
-                className="text-[14px] mb-1 font-semibold text-navyBlue"
+                className="block text-sm font-medium text-gray-700 mb-2"
               >
-                Select Start Date
+                Start Date
               </label>
-              <div className="bg-[#EDF2F7] w-full rounded-[10px]  mb-8">
-                <input
-                  type="date"
-                  id="startEdit"
-                  name="start"
-                  disabled={true}
-                  value={getCurrentDate()}
-                  onChange={handleInputChange}
-                  className="border bg-[#EDF2F7] border-none outline-none w-full text-grey rounded-[10px] p-4 h-[56px]"
-                />
-              </div>
-              <div className="flex flex-col mb-8 w-full">
-                <label
-                  htmlFor="end"
-                  className="text-[14px] mb-1 font-semibold text-navyBlue"
-                >
-                  Select End Date
-                </label>
-                <div className="bg-[#EDF2F7] w-full rounded-[10px]">
-                  <input
-                    type="date"
-                    id="endEdit"
-                    name="end"
-                    value={formData.end}
-                    onChange={handleInputChange}
-                    disabled={loading}
-                    className="border bg-[#EDF2F7] border-none outline-none w-full text-grey rounded-[10px] p-4  h-[56px]"
-                  />
-                </div>
-              </div>
+              <input
+                type="date"
+                id="startEdit"
+                name="start"
+                disabled={true}
+                value={getCurrentDate()}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 cursor-not-allowed"
+              />
             </div>
-            <div className="flex gap-2 items-center mb-8">
+
+            {/* End Date */}
+            <div>
+              <label
+                htmlFor="endEdit"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                End Date
+              </label>
+              <input
+                type="date"
+                id="endEdit"
+                name="end"
+                value={formData.end}
+                onChange={handleInputChange}
+                disabled={loading}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 disabled:cursor-not-allowed text-gray-900"
+              />
+            </div>
+
+            {/* Reminder Checkbox */}
+            <div className="flex items-center gap-2">
               <input
                 type="checkbox"
                 id="reminder"
@@ -456,32 +455,45 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                 checked={formData.reminder}
                 onChange={handleInputChange}
                 disabled={loading}
-                className="w-5 h-5 outline-none"
+                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed"
               />
               <label
                 htmlFor="reminder"
-                className="text-[14px] font-semibold text-navyBlue"
+                className="text-sm font-medium text-gray-700"
               >
                 Add Reminder
               </label>
             </div>
-            <button
-              type="submit"
-              disabled={loading}
-              className={`font-semibold text-white rounded-[10px] w-full items-center 
-              justify-center flex transition duration-300 ${
-                loading ? "bg-navyBlue opacity-85" : "bg-blue-600 h-14"
-              }`}
-            >
-              {loading ? (
-                <div className=" h-14 flex items-center">
-                  <Loader2 className="size-5 animate-spin" />
-                </div>
-              ) : (
-                <div className="h-14 flex items-center">PROCEED</div>
-              )}
-            </button>
-          </form>
+          </div>
+        </form>
+
+        {/* Footer with Submit Button */}
+        <div className="px-6 py-4 border-t border-gray-100 flex-shrink-0">
+          <button
+            type="submit"
+            onClick={(e) => {
+              e.preventDefault();
+              const syntheticEvent = new Event(
+                "submit"
+              ) as unknown as FormEvent<HTMLFormElement>;
+              handleSubmit(syntheticEvent);
+            }}
+            disabled={loading}
+            className={`w-full py-3 px-4 rounded-lg font-medium text-white transition-all flex items-center justify-center gap-2 ${
+              loading
+                ? "bg-blue-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700 active:scale-[0.98]"
+            }`}
+          >
+            {loading ? (
+              <>
+                <Loader2 size={18} className="animate-spin" />
+                <span>Updating...</span>
+              </>
+            ) : (
+              "Update Drug"
+            )}
+          </button>
         </div>
       </div>
     </div>

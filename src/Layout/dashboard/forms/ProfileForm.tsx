@@ -7,6 +7,7 @@ import { createClient } from "../../../../lib/supabase/client";
 import { toast } from "sonner";
 import { updateInfo, updateProfilePicture } from "../../../../store/stateSlice";
 import { UserRoundPen, X, Loader2 } from "lucide-react";
+import { useAppStore } from "../../../../store/useAppStore";
 
 interface ProfileFormProps {
   setActiveModal: (value: string) => void;
@@ -17,9 +18,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
   setActiveModal,
   activeModal,
 }) => {
-  const { info, userId, profilePicture } = useSelector(
-    (state: RootState) => state.app
-  );
+  const { info, profilePicture } = useSelector((state: RootState) => state.app);
+  const { userId } = useAppStore((state) => state);
+
   const { name, phone, email } = info[0];
   const supabase = createClient();
 
@@ -115,126 +116,139 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex justify-end z-[100] transition-opacity duration-300"
       onClick={handleClose}
+      className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
     >
+      {/* Modal Card */}
       <div
         onClick={(e) => e.stopPropagation()}
         className={`${
-          activeModal === "profile" ? "translate-x-0" : "translate-x-full"
-        } transition-transform duration-300 w-full ss:w-[450px] bg-white h-full`}
+          activeModal === "profile"
+            ? "scale-100 opacity-100"
+            : "scale-95 opacity-0"
+        } transition-all duration-200 w-full max-w-md bg-white rounded-2xl shadow-2xl max-h-[90vh] flex flex-col`}
       >
-        <div className="h-full flex flex-col w-full justify-between gap-8 p-8 pt-0 overflow-y-scroll bg-white">
-          <div>
-            <div className="w-full flex justify-end mb-10">
-              <button
-                onClick={handleClose}
-                disabled={loading}
-                id="top-profile"
-                className="cursor-pointer pt-8 hover:opacity-70 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <X className="size-6 text-gray-600" />
-              </button>
-            </div>
-            <div className="mb-10">
-              <h1 className="text-[24px] text-blue-600 font-bold">
-                Basic Data
-              </h1>
-            </div>
-            <form
-              onSubmit={handleSubmit}
-              className="h-auto flex flex-col justify-between w-full"
-            >
-              <div className="mb-8 text-navyBlue">
-                <div className="text-[14px] mb-1 font-semibold">
-                  Change your Profile Picture
-                </div>
-                <div className="flex items-center h-full gap-4">
-                  <label
-                    htmlFor="avatarInput"
-                    className={`cursor-pointer flex gap-2 items-center ${
-                      loading ? "opacity-50 pointer-events-none" : ""
-                    }`}
-                  >
-                    <input
-                      type="file"
-                      id="avatarInput"
-                      accept="image/*"
-                      style={{ display: "none" }}
-                      onChange={handleImageSelect}
-                      disabled={loading}
-                    />
-                    <div className="size-20 rounded-full overflow-hidden flex justify-center items-center">
-                      {previewURL ? (
-                        <Image
-                          src={previewURL}
-                          alt="preview"
-                          width={100}
-                          height={100}
-                          className="w-[100px] h-[100px] object-cover"
-                        />
-                      ) : profilePicture ? (
-                        <Image
-                          key={profilePicture}
-                          src={CDNURL + userId + "/" + profilePicture}
-                          width={100}
-                          height={100}
-                          alt="user"
-                          className="w-[100px] h-[100px] object-cover"
-                        />
-                      ) : (
-                        <UserRoundPen
-                          className="size-full text-navyBlue"
-                          strokeWidth={1}
-                        />
-                      )}
-                    </div>
-                    <p>Tap to change</p>
-                  </label>
-                </div>
-              </div>
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 flex-shrink-0">
+          <h2 className="text-xl font-semibold text-gray-900">Edit Profile</h2>
+          <button
+            onClick={handleClose}
+            disabled={loading}
+            className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Close"
+          >
+            <X size={20} />
+          </button>
+        </div>
 
-              {/* NAME INPUT */}
-              <div className="w-full">
-                <div className="flex flex-col mb-4">
-                  <label
-                    htmlFor="name"
-                    className="text-[14px] mb-1 font-semibold text-navyBlue"
-                  >
-                    Full Name
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    required
-                    onChange={handleInputChange}
-                    disabled={loading}
-                    className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4 capitalize h-[56px]"
-                    placeholder="Enter your Full Name"
-                  />
-                </div>
-              </div>
-
-              {/* PROCEED BUTTON */}
-              <button
-                type="submit"
-                disabled={loading}
-                className={`font-semibold text-white rounded-[10px] w-full items-center justify-center flex transition duration-300 ${
-                  loading ? "bg-navyBlue opacity-85" : "bg-blue-600 h-14"
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto">
+          <div className="p-6 space-y-6">
+            {/* Profile Picture */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-3">
+                Profile Picture
+              </label>
+              <label
+                htmlFor="avatarInput"
+                className={`flex items-center gap-4 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-400 transition-colors cursor-pointer ${
+                  loading ? "opacity-50 pointer-events-none" : ""
                 }`}
               >
-                {loading ? (
-                  <div className="h-14 flex items-center">
-                    <Loader2 className="size-5 animate-spin" />
-                  </div>
-                ) : (
-                  "PROCEED"
-                )}
-              </button>
-            </form>
+                <input
+                  type="file"
+                  id="avatarInput"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleImageSelect}
+                  disabled={loading}
+                />
+                <div className="w-20 h-20 rounded-full overflow-hidden flex justify-center items-center bg-gray-100 flex-shrink-0">
+                  {previewURL ? (
+                    <Image
+                      src={previewURL}
+                      alt="preview"
+                      width={80}
+                      height={80}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : profilePicture ? (
+                    <Image
+                      key={profilePicture}
+                      src={CDNURL + userId + "/" + profilePicture}
+                      width={80}
+                      height={80}
+                      alt="user"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <UserRoundPen
+                      className="w-10 h-10 text-gray-400"
+                      strokeWidth={1.5}
+                    />
+                  )}
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-gray-900">
+                    {selectedImage ? selectedImage.name : "Change photo"}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Click to upload a new picture
+                  </p>
+                </div>
+              </label>
+            </div>
+
+            {/* Name Input */}
+            <div>
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Full Name
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                required
+                onChange={handleInputChange}
+                disabled={loading}
+                placeholder="Enter your full name"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 disabled:cursor-not-allowed text-gray-900 placeholder-gray-400 capitalize"
+              />
+            </div>
           </div>
+        </form>
+
+        {/* Footer with Submit Button */}
+        <div className="px-6 py-4 border-t border-gray-100 flex-shrink-0">
+          <button
+            type="submit"
+            onClick={(e) => {
+              e.preventDefault();
+              const syntheticEvent = new Event(
+                "submit"
+              ) as unknown as FormEvent<HTMLFormElement>;
+              handleSubmit(syntheticEvent);
+            }}
+            disabled={loading}
+            className={`w-full py-3 px-4 rounded-lg font-medium text-white transition-all flex items-center justify-center gap-2 ${
+              loading
+                ? "bg-blue-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700 active:scale-[0.98]"
+            }`}
+          >
+            {loading ? (
+              <>
+                <Loader2 size={18} className="animate-spin" />
+                <span>Saving...</span>
+              </>
+            ) : (
+              "Save Changes"
+            )}
+          </button>
         </div>
       </div>
     </div>

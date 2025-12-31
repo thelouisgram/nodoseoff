@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from "react";
 import CopyableContent from "./CopyContent";
-import { X } from "lucide-react";
+import { X, Mail } from "lucide-react";
 
 interface ContactProps {
   setActiveModal: (value: string) => void;
@@ -19,34 +19,49 @@ const Contact: React.FC<ContactProps> = ({ activeModal, setActiveModal }) => {
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex justify-end z-[100] transition-opacity duration-300"
       onClick={handleClose}
+      className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
     >
+      {/* Modal Card */}
       <div
         onClick={(e) => e.stopPropagation()}
         className={`${
-          activeModal === "contact" ? "translate-x-0" : "translate-x-full"
-        } transition-transform duration-300 w-full ss:w-[450px] bg-white h-full`}
+          activeModal === "contact"
+            ? "scale-100 opacity-100"
+            : "scale-95 opacity-0"
+        } transition-all duration-200 w-full max-w-md bg-white rounded-2xl shadow-2xl`}
       >
-        <div className="h-full w-full bg-white p-8 pt-0 overflow-y-scroll text-navyBlue text-[14px]">
-          <div className="w-full flex justify-end mb-10">
-            <button
-              onClick={handleClose}
-              className="cursor-pointer pt-8 hover:opacity-70 transition-opacity"
-            >
-              <X className="size-6 text-gray-800" />
-            </button>
-          </div>
-          <div className="mb-10">
-            <h1 className="text-[24px] text-blue-600 font-bold">Contact Us</h1>
-          </div>
-          <div className="flex flex-col gap-4">
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
+          <h2 className="text-xl font-semibold text-gray-900">Contact Us</h2>
+          <button
+            onClick={handleClose}
+            className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+            aria-label="Close"
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="p-6">
+          <div className="space-y-4">
             {contactInfo.map((item, index) => (
-              <div key={index}>
-                <h2 className="font-semibold mb-1 text-grey">{item.label}</h2>
+              <div key={index} className="space-y-2">
+                <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                  <Mail size={16} className="text-blue-600" />
+                  <span>{item.label}</span>
+                </div>
                 <CopyableContent content={item.content} />
               </div>
             ))}
+          </div>
+
+          {/* Additional Info */}
+          <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+            <p className="text-sm text-gray-700">
+              <span className="font-medium">Need help?</span> We typically respond within 24-48 hours.
+            </p>
           </div>
         </div>
       </div>

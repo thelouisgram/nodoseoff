@@ -25,6 +25,7 @@ import DrugsHeader from "./DrugsHeader";
 import DrugsList from "./DrugsListContainer";
 import DrugsTab from "./DrugsTab";
 import FloatingAddActions from "./FloatingAddActions";
+import { useAppStore } from "../../../../../store/useAppStore";
 
 
 interface DrugsProps {
@@ -44,8 +45,10 @@ const Drugs: React.FC<DrugsProps> = ({
   activeAction,
   setActiveAction,
 }) => {
-  const { drugs, completedDrugs, allergies, schedule, userId, info } =
+  const { drugs, completedDrugs, allergies, schedule, info } =
     useSelector((state: RootState) => state.app);
+
+    const {userId} = useAppStore((state) => state);
 
   const [tab, setTab] = useState<string>("ongoing");
   const [activeView, setActiveView] = useState<"list" | "details">("list");

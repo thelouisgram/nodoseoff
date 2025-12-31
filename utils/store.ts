@@ -2,8 +2,6 @@ import { DrugProps, ScheduleItem } from "../types/dashboard";
 
 export interface AppType {
   info: Info[];
-  isAuthenticated: boolean;
-  userId: string;
   drugs: DrugProps[];
   completedDrugs: DrugProps[];
   schedule: ScheduleItem[];

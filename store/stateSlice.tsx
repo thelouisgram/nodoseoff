@@ -4,8 +4,6 @@ import { AppType, Info } from "../utils/store";
 
 const initialState: AppType = {
   info: [{ name: "", phone: "", email: "" }],
-  isAuthenticated: true,
-  userId: "",
   drugs: [],
   schedule: [],
   allergies: [],
@@ -26,12 +24,6 @@ const stateSlice = createSlice({
     },
     updateSchedule: (state, action: PayloadAction<ScheduleItem[]>) => {
       state.schedule = action.payload;
-    },
-    updateIsAuthenticated: (state, action: PayloadAction<boolean>) => {
-      state.isAuthenticated = action.payload;
-    },
-    updateUserId: (state, action: PayloadAction<string>) => {
-      state.userId = action.payload;
     },
      updateOtcDrugs: (state, action: PayloadAction<string>) => {
       state.otcDrugs = action.payload;
@@ -64,8 +56,6 @@ export default stateSlice.reducer;
 export const {
   setDrugs,
   updateSchedule,
-  updateIsAuthenticated,
-  updateUserId,
   updateInfo,
   updateAllergies,
   updateDrugDetails,

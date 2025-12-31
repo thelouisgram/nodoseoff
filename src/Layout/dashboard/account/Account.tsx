@@ -5,10 +5,6 @@ import { RootState } from "../../../../store";
 import Image from "next/image";
 import { toast } from "sonner";
 import { useAuth } from "../../../../contexts/AuthContext";
-import {
-  updateIsAuthenticated,
-  updateUserId,
-} from "../../../../store/stateSlice";
 import { useRouter } from "next/router";
 import Report from "./Report";
 import { useAppStore } from "../../../../store/useAppStore";
@@ -31,11 +27,11 @@ const CDNURL =
   "https://opshqmqagtfidynwftzk.supabase.co/storage/v1/object/public/profile-picture/";
 
 const Account: React.FC<AccountProps> = ({ setActiveModal }) => {
-  const { info, userId, profilePicture } = useSelector(
+  const { info, profilePicture } = useSelector(
     (state: RootState) => state.app
   );
 
-  const {setActiveTab} = useAppStore((state) => state);
+  const {userId, setActiveTab, setIsAuthenticated, setUserId} = useAppStore((state) => state);
 
   const { name, phone, email } = info[0];
   const [tab, setTab] = useState<"Account" | "Report">("Account");
@@ -49,8 +45,8 @@ const Account: React.FC<AccountProps> = ({ setActiveModal }) => {
       await signOut();
       setActiveTab("Home");
       router.push("/login");
-      dispatch(updateUserId(""));
-      dispatch(updateIsAuthenticated(false));
+      setIsAuthenticated(false);
+      setUserId("");
     } catch (error) {
       toast.error("Error signing out");
     }

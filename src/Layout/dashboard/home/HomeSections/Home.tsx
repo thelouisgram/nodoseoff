@@ -17,6 +17,8 @@ import { calculateClosestDoseCountdown } from "../../../../../utils/dashboard/da
 import { ScheduleItem } from "../../../../../types/dashboard";
 import SummaryCards from "./SummaryCards";
 import Header from "./Header";
+import { useAppStore } from "../../../../../store/useAppStore";
+import { stat } from "fs";
 
 interface HomeProps {
   isLoading: boolean;
@@ -32,9 +34,10 @@ const Home: React.FC<HomeProps> = ({
   setTracker,
   tracker,
 }) => {
-  const { drugs, info, schedule, userId } = useSelector(
+  const { drugs, info, schedule } = useSelector(
     (state: RootState) => state.app
   );
+  const {userId} = useAppStore((state) => state);
   const dispatch = useDispatch();
   const [countDown, setCountDown] = useState("");
 

@@ -5,13 +5,11 @@ import { useRouter } from "next/router";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { createClient } from "../../../lib/supabase/client";
 import Image from "next/image";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../store";
-import { toast } from "sonner";
+import { useAppStore } from "../../../store/useAppStore";
 
 const ResetPassword = () => {
   const router = useRouter();
-  const { userId } = useSelector((state: RootState) => state.app);
+  const { userId } = useAppStore((state) => state);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);

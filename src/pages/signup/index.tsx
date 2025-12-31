@@ -4,7 +4,6 @@ import Link from "next/link";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useRouter } from "next/router";
 import { createClient } from "../../../lib/supabase/client";
-import { updateIsAuthenticated, updateUserId } from "../../../store/stateSlice";
 import { useDispatch } from "react-redux";
 import Head from "next/head";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -12,6 +11,8 @@ import { sendMail } from "../../../utils/sendEmail";
 import { generateWelcomeEmail } from "../../../emails/welcomeMail";
 import { useAuth } from "../../../contexts/AuthContext"; // Import useAuth
 import { EyeOff, Eye } from "lucide-react";
+import { useAppStore } from "../../../store/useAppStore";
+import { set } from "date-fns";
 
 const CreateAccount = () => {
   const supabase = createClient()
@@ -29,6 +30,8 @@ const CreateAccount = () => {
   });
 
   const recaptchaSiteKey: string = process.env.NEXT_PUBLIC_CAPTCHA_SITE_KEY ?? "";
+
+  const {setIsAuthenticated, setUserId} = useAppStore((state) => state);
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -94,8 +97,8 @@ const CreateAccount = () => {
       // 2. Use the user data returned from the context
       const userId = signedUpUser.id;
       if (userId) {
-        dispatch(updateIsAuthenticated(true));
-        dispatch(updateUserId(userId));
+       setUserId(userId);
+       setIsAuthenticated(true);
 
         // 3. Insert user profile data
         const { error: userError } = await supabase.from("users").insert({

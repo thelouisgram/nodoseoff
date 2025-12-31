@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { Suspense, useEffect, useState, useRef } from "react"; // Added useRef
 import { useDispatch } from "react-redux";
 import { toast } from "sonner";
-import { updateIsAuthenticated, updateUserId } from "../../../store/stateSlice";
 import { fetchData } from "../../../utils/fetchData";
 import { useAuth } from "../../../contexts/AuthContext";
 import SideBar from "@/Layout/dashboard/shared/SideBar";
@@ -18,8 +17,9 @@ import { useAppStore } from "../../../store/useAppStore";
 const Page = () => {
   // Use useAuth to get the true user state
   const { user, loading: authLoading, signOut } = useAuth();
+  console.log(user)
 
-  const {activeTab, setActiveTab} = useAppStore((state) => state);
+  const {activeTab, setActiveTab, setIsAuthenticated, setUserId} = useAppStore((state) => state);
 
   const dispatch = useDispatch();
   const router = useRouter();
@@ -54,11 +54,6 @@ const Page = () => {
       const initializeDashboard = async () => {
         setIsLoading(true);
         try {
-          // A. SYNC AUTH TO REDUX IMMEDIATELY
-          // This ensures the ID is available in Redux for other components
-          dispatch(updateUserId(user.id));
-
-          // B. FETCH DATABASE DATA
           // Pass the user.id explicitly to ensure we fetch for the correct user
           await fetchData(dispatch, user.id, setIsLoading);
 
@@ -83,9 +78,8 @@ const Page = () => {
       await signOut();
       setActiveTab("Home");
       router.push("/login");
-      dispatch(updateUserId(''));
-      dispatch(updateIsAuthenticated(false));
-
+      setIsAuthenticated(false);
+      setUserId("");
     } catch (error) {
       console.error("Error signing out:", error);
       toast.error("Failed to log out.");

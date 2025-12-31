@@ -6,24 +6,20 @@ import { updateAllergies } from "../../../../store/stateSlice";
 import { createClient } from "../../../../lib/supabase/client";
 import { generateDrugAllergyEmail } from "../../../../emails/drugAllergy";
 import { sendMail } from "../../../../utils/sendEmail";
-import { X, Loader2, ShieldOff } from "lucide-react";
+import { X, Loader2 } from "lucide-react";
+import { useAppStore } from "../../../../store/useAppStore";
 
 interface AllergiesFormProps {
   setActiveModal: (value: string) => void;
   activeModal: string;
 }
 
-interface FormErrors {
-  [key: string]: string;
-}
-
 const AllergiesForm: React.FC<AllergiesFormProps> = ({
   activeModal,
   setActiveModal,
 }) => {
-  const { allergies, userId, info } = useSelector(
-    (state: RootState) => state.app
-  );
+  const { allergies, info } = useSelector((state: RootState) => state.app);
+  const { userId } = useAppStore((state) => state);
   const dispatch = useDispatch();
   const supabase = createClient();
 
@@ -37,7 +33,6 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
     reminder: true,
     drugId: "",
   });
-
   const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -87,6 +82,7 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
     }
 
     setLoading(true);
+
     try {
       const { error } = await supabase.from("allergies").insert({
         userId: userId,
@@ -130,86 +126,76 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex justify-start z-[100] transition-opacity duration-300"
       onClick={handleClose}
+      className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
     >
-      {/* Sliding panel */}
+      {/* Modal Card */}
       <div
         onClick={(e) => e.stopPropagation()}
         className={`${
-          activeModal === "allergies" ? "translate-x-0" : "-translate-x-full"
-        } transition-transform duration-300 w-full ss:w-[450px] bg-white h-full`}
+          activeModal === "allergies"
+            ? "scale-100 opacity-100"
+            : "scale-95 opacity-0"
+        } transition-all duration-200 w-full max-w-md bg-white rounded-2xl shadow-2xl`}
       >
-        <div className="h-full flex flex-col w-full justify-between gap-8 p-8 pt-0 overflow-y-scroll bg-white">
-          <div className="w-full">
-            {/* Header */}
-            <div className="w-full flex justify-end mb-10">
-              <button
-                onClick={handleClose}
-                disabled={loading}
-                className="cursor-pointer pt-8 hover:opacity-70 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <X className="size-6 text-gray-800" />
-              </button>
-            </div>
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
+          <h2 className="text-xl font-semibold text-gray-900">
+            Add Drug Allergy
+          </h2>
+          <button
+            onClick={handleClose}
+            disabled={loading}
+            className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Close"
+          >
+            <X size={20} />
+          </button>
+        </div>
 
-            {/* Title */}
-            <div className="mb-10">
-              <h1 className="text-[24px] text-blue-600 font-bold flex items-center gap-2">
-                Add Drug Allergies
-              </h1>
-              <p className="text-[14px] text-grey font-Inter">
-                To ensure adequate monitoring of Allergies.
-              </p>
-            </div>
-
-            {/* Form */}
-            <form onSubmit={handleSubmit} className="h-auto relative flex flex-col">
-              <div className="flex flex-col mb-4">
-                <label
-                  htmlFor="drugAllergy"
-                  className="text-[14px] mb-2 font-semibold text-navyBlue font-Inter"
-                >
-                  Drug Name
-                </label>
-                <input
-                  type="text"
-                  id="drugAllergy"
-                  name="drug"
-                  value={formData.drug}
-                  onChange={handleInputChange}
-                  className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 capitalize h-[56px] font-Inter text-[14px] focus:ring-2 focus:ring-blue-700"
-                  placeholder="Enter drug name"
-                  disabled={loading}
-                  required
-                />
-              </div>
-            </form>
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+          {/* Input Field */}
+          <div>
+            <label
+              htmlFor="drug"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Drug Name
+            </label>
+            <input
+              type="text"
+              id="drug"
+              name="drug"
+              placeholder="e.g., Penicillin"
+              value={formData.drug}
+              onChange={handleInputChange}
+              disabled={loading}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 disabled:cursor-not-allowed text-gray-900 placeholder-gray-400"
+              autoComplete="off"
+            />
           </div>
 
           {/* Submit Button */}
           <button
-            onClick={(e) => {
-              e.preventDefault();
-              const syntheticEvent = new Event("submit") as unknown as FormEvent<HTMLFormElement>;
-              handleSubmit(syntheticEvent);
-            }}
+            type="submit"
             disabled={loading}
-            className={`font-semibold text-white rounded-[10px] w-full h-14 flex items-center justify-center transition-all ${
+            className={`w-full py-3 px-4 rounded-lg font-medium text-white transition-all flex items-center justify-center gap-2 ${
               loading
-                ? "bg-blue-600 opacity-75 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-800"
+                ? "bg-blue-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700 active:scale-[0.98]"
             }`}
           >
             {loading ? (
               <>
-                <Loader2 className="size-5 mr-2 animate-spin" />
+                <Loader2 size={18} className="animate-spin" />
+                <span>Adding...</span>
               </>
             ) : (
               "Add Allergy"
             )}
           </button>
-        </div>
+        </form>
       </div>
     </div>
   );

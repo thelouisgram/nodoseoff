@@ -5,7 +5,6 @@ import store from "./../../store/index";
 import { Toaster } from "sonner";
 import Head from "next/head";
 import { useState, useEffect } from "react";
-import { Analytics } from "@vercel/analytics/react";
 import { AuthProvider } from "../../contexts/AuthContext";
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -33,27 +32,14 @@ export default function App({ Component, pageProps }: AppProps) {
     <Provider store={store}>
       <Head>
         {/* Dynamically set favicon links based on the mode */}
-        <link
-          rel="icon"
-          href="/logo.png"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="32x32"
-          href="/logo.png"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="16x16"
-          href="/logo.png" 
-        />
+        <link rel="icon" href="/logo.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/logo.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/logo.png" />
         <title>NoDoseOff - Drug Tracking and Reminder App</title>
       </Head>
       <Toaster position="top-center" richColors={true} closeButton={true} />
       <AuthProvider>
-      <Component {...pageProps} />
+          <Component {...pageProps} />
       </AuthProvider>
     </Provider>
   );

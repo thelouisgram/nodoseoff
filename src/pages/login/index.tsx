@@ -4,15 +4,15 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { updateIsAuthenticated, updateUserId } from "../../../store/stateSlice";
-import { useAuth } from "../../../contexts/AuthContext"; // Import the new hook
+import { useAuth } from "../../../contexts/AuthContext"; 
 import { Eye, EyeOff } from "lucide-react";
+import { useAppStore } from "../../../store/useAppStore";
 
 const SignIn = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const { signIn, user, loading: authLoading } = useAuth(); // Destructure signIn and user/loading state from context
-
+  const { setIsAuthenticated, setUserId } = useAppStore((state) => state);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -34,13 +34,13 @@ const SignIn = () => {
   useEffect(() => {
     // Check if the user is available and not in the initial loading state
     if (!authLoading && user) {
-      dispatch(updateIsAuthenticated(true));
-      dispatch(updateUserId(user.id));
+      setIsAuthenticated(true);
+      setUserId(user.id);
       router.push("/dashboard");
     }
     // Also, if the auth is not loading but there's no user, ensure isAuthenticated is false
     if (!authLoading && !user) {
-        dispatch(updateIsAuthenticated(false));
+        setIsAuthenticated
     }
   }, [user, authLoading, dispatch, router]);
 

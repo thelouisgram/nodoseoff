@@ -1,5 +1,5 @@
 "use client";
-import Image from "next/image";
+
 import Link from "next/link";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useRouter } from "next/router";
@@ -9,18 +9,16 @@ import Head from "next/head";
 import ReCAPTCHA from "react-google-recaptcha";
 import { sendMail } from "../../../utils/sendEmail";
 import { generateWelcomeEmail } from "../../../emails/welcomeMail";
-import { useAuth } from "../../../contexts/AuthContext"; // Import useAuth
-import { EyeOff, Eye } from "lucide-react";
+import { useAuth } from "../../../contexts/AuthContext";
+import { EyeOff, Eye, Pill } from "lucide-react";
 import { useAppStore } from "../../../store/useAppStore";
-import { set } from "date-fns";
+import Image from "next/image";
 
 const CreateAccount = () => {
-  const supabase = createClient()
+  const supabase = createClient();
   const router = useRouter();
   const dispatch = useDispatch();
-  
-  // Destructure the signUp function from the AuthContext
-  const { signUp } = useAuth(); 
+  const { signUp } = useAuth();
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -29,15 +27,15 @@ const CreateAccount = () => {
     password: "",
   });
 
-  const recaptchaSiteKey: string = process.env.NEXT_PUBLIC_CAPTCHA_SITE_KEY ?? "";
-
-  const {setIsAuthenticated, setUserId} = useAppStore((state) => state);
+  const recaptchaSiteKey: string =
+    process.env.NEXT_PUBLIC_CAPTCHA_SITE_KEY ?? "";
+  const { setIsAuthenticated, setUserId } = useAppStore((state) => state);
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState<string | null>("");
+  const [captchaToken, setCaptchaToken] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -52,7 +50,7 @@ const CreateAccount = () => {
     setConfirmPassword(e.target.value);
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     if (formData.password !== confirmPassword) {
@@ -82,39 +80,50 @@ const CreateAccount = () => {
     setErrorMessage("");
 
     try {
-      // 1. Use the context's signUp function and correctly destructure the result
       const { user: signedUpUser, error: signUpError } = await signUp(
         formData.email,
-        formData.password,
+        formData.password
       );
 
       if (signUpError || !signedUpUser) {
-        setErrorMessage("Error signing up: " + (signUpError?.message || "Sign up failed."));
+        setErrorMessage(
+          "Error signing up: " + (signUpError?.message || "Sign up failed.")
+        );
         setLoading(false);
         return;
       }
 
-      // 2. Use the user data returned from the context
       const userId = signedUpUser.id;
-      if (userId) {
-       setUserId(userId);
-       setIsAuthenticated(true);
 
-        // 3. Insert user profile data
+      if (userId) {
+        setUserId(userId);
+        setIsAuthenticated(true);
+
         const { error: userError } = await supabase.from("users").insert({
           name: formData.fullName,
           phone: formData.phoneNumber,
           email: formData.email,
           userId: userId,
         });
+
         if (userError) throw userError;
 
-        // 4. Initialize other necessary tables
-        await supabase.from("schedule").insert({ userId: userId, schedule: [] });
-        await supabase.from("completedDrugs").insert({ userId: userId, completedDrugs: [] });
-        await supabase.from("drugHistory").insert({ userId: userId, otcDrugs: "", herbs: "" });
+        await supabase.from("schedule").insert({
+          userId: userId,
+          schedule: [],
+        });
 
-        // 5. Send welcome email
+        await supabase.from("completedDrugs").insert({
+          userId: userId,
+          completedDrugs: [],
+        });
+
+        await supabase.from("drugHistory").insert({
+          userId: userId,
+          otcDrugs: "",
+          herbs: "",
+        });
+
         const { html, subject } = generateWelcomeEmail();
         await sendMail(formData.email, html, subject);
 
@@ -122,8 +131,9 @@ const CreateAccount = () => {
       }
     } catch (error) {
       console.error("Unexpected error:", error);
-      // Catch errors from Supabase inserts or sendMail
-      setErrorMessage("An unexpected error occurred during profile creation. Please try again.");
+      setErrorMessage(
+        "An unexpected error occurred during profile creation. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -132,187 +142,206 @@ const CreateAccount = () => {
   return (
     <>
       <Head>
-        <title>NoDoseOff | Create Account</title>
+        <title>Create Account - NoDoseOff</title>
       </Head>
 
-      <div className="relative min-h-screen w-full flex flex-col justify-center items-center bg-navyBlue font-karla text-grey overflow-hidden py-8 px-3 ss:py-10">
-        {/* --- Geometric SVG Background --- */}
-        <svg
-          className="absolute inset-0 w-full h-full"
-          viewBox="0 0 1440 720"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            stroke="#9CA3AF"
-            strokeOpacity=".7"
-            d="M-15.227 702.342H1439.7"
-          />
-          <circle
-            cx="711.819"
-            cy="372.562"
-            r="308.334"
-            stroke="#9CA3AF"
-            strokeOpacity=".7"
-          />
-          <circle
-            cx="16.942"
-            cy="20.834"
-            r="308.334"
-            stroke="#9CA3AF"
-            strokeOpacity=".7"
-          />
-          <path
-            stroke="#9CA3AF"
-            strokeOpacity=".7"
-            d="M-15.227 573.66H1439.7M-15.227 164.029H1439.7"
-          />
-          <circle
-            cx="782.595"
-            cy="411.166"
-            r="308.334"
-            stroke="#9CA3AF"
-            strokeOpacity=".7"
-          />
-        </svg>
-
-        {/* --- Logo --- */}
-        <Link href="/">
-          <Image
-            src="/assets/logo/logo-with-name-white.png"
-            width={3916}
-            height={1092}
-            quality={100}
-            alt="logo"
-            className="w-[180px] h-auto mb-10 relative z-10"
-            priority
-          />
-        </Link>
-
-        {/* --- Form --- */}
-        <form
-          className="bg-white rounded-[15px] w-full ss:w-[450px] h-auto p-6 ss:p-10 mb-10 relative z-10"
-          onSubmit={handleSubmit}
-        >
-          <div className="mb-10 w-full items-center flex flex-col">
-            <legend className="text-[24px] font-bold text-blue-600 font-Inter">
-              Create an Account
-            </legend>
-            <p className="text-[14px] text-center">
-              Welcome to the future of Drug Monitoring
-            </p>
-          </div>
-
-          {/* --- Inputs --- */}
-          <div className="flex flex-col mb-4">
-            <label htmlFor="fullName" className="text-[14px] mb-1">Full Name</label>
-            <input
-              type="text"
-              id="fullName"
-              name="fullName"
-              value={formData.fullName}
-              onChange={handleInputChange}
-              className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4"
-              placeholder="Full Name"
-            />
-          </div>
-
-          <div className="flex flex-col mb-4">
-            <label htmlFor="email" className="text-[14px] mb-1">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4"
-              placeholder="Email Address"
-            />
-          </div>
-
-          <div className="flex flex-col mb-4">
-            <label htmlFor="phoneNumber" className="text-[14px] mb-1">Phone Number</label>
-            <input
-              type="text"
-              id="phoneNumber"
-              name="phoneNumber"
-              value={formData.phoneNumber}
-              onChange={handleInputChange}
-              className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4"
-              placeholder="Phone Number"
-            />
-          </div>
-
-          <div className="flex flex-col mb-4">
-            <label htmlFor="password" className="text-[14px] mb-1">Password</label>
-            <div className="w-full bg-[#EDF2F7] rounded-[10px] mb-4 flex p-4">
-              <input
-                type={showPassword ? "text" : "password"}
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleInputChange}
-                className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] w-full"
-                placeholder="Password"
+      <div className="min-h-screen flex">
+        {/* Right Side - Form */}
+        <div className="flex-1 flex items-center justify-center p-8 bg-gray-50">
+          <div className="w-full max-w-md">
+            {/* Mobile Logo */}
+             <Link href="/">
+             <div className="w-full flex justify-center">
+              <Image
+                src="/assets/logo/logo-with-name-blue.png"
+                width={180}
+                height={60}
+                alt="logo"
+                className="mb-10 relative z-10"
               />
-              <button
-                type="button"
-                className="text-gray-500 focus:outline-none"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-              {showPassword ? <EyeOff strokeWidth={1.5}/> : <Eye strokeWidth={1.5} />}
-              </button>
+              </div>
+            </Link>
+
+            <div className="mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                Create Account
+              </h2>
+              <p className="text-gray-600">
+                Start managing your medications today
+              </p>
             </div>
-          </div>
 
-          <div className="flex flex-col mb-4">
-            <label htmlFor="confirmPassword" className="text-[14px] mb-1">Confirm Password</label>
-            <div className="w-full bg-[#EDF2F7] rounded-[10px] mb-4 flex p-4">
-              <input
-                type={showConfirmPassword ? "text" : "password"}
-                id="confirmPassword"
-                value={confirmPassword}
-                onChange={handleConfirmPassword}
-                className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] w-full"
-                placeholder="Confirm Password"
-              />
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div>
+                <label
+                  htmlFor="fullName"
+                  className="block text-sm font-medium text-gray-700 mb-1.5"
+                >
+                  Full Name
+                </label>
+                <input
+                  id="fullName"
+                  name="fullName"
+                  type="text"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition"
+                  placeholder="John Doe"
+                  value={formData.fullName}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700 mb-1.5"
+                >
+                  Email Address
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition"
+                  placeholder="you@example.com"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="phoneNumber"
+                  className="block text-sm font-medium text-gray-700 mb-1.5"
+                >
+                  Phone Number
+                </label>
+                <input
+                  id="phoneNumber"
+                  name="phoneNumber"
+                  type="tel"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition"
+                  placeholder="+1 (555) 123-4567"
+                  value={formData.phoneNumber}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700 mb-1.5"
+                >
+                  Password
+                </label>
+                <div className="relative">
+                  <input
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    className="w-full px-4 py-2.5 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition"
+                    placeholder="••••••••"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-blue-600 transition"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={
+                      showPassword ? "Hide password" : "Show password"
+                    }
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="confirmPassword"
+                  className="block text-sm font-medium text-gray-700 mb-1.5"
+                >
+                  Confirm Password
+                </label>
+                <div className="relative">
+                  <input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    className="w-full px-4 py-2.5 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition"
+                    placeholder="••••••••"
+                    value={confirmPassword}
+                    onChange={handleConfirmPassword}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-blue-600 transition"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    aria-label={
+                      showConfirmPassword ? "Hide password" : "Show password"
+                    }
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff size={20} />
+                    ) : (
+                      <Eye size={20} />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {errorMessage && (
+                <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <svg
+                    className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <circle cx="12" cy="12" r="10" strokeWidth="2" />
+                    <line x1="12" y1="8" x2="12" y2="12" strokeWidth="2" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" strokeWidth="2" />
+                  </svg>
+                  <span className="text-sm text-red-800">{errorMessage}</span>
+                </div>
+              )}
+
+              <div className="flex justify-center">
+                <ReCAPTCHA
+                  sitekey={recaptchaSiteKey}
+                  onChange={(token) => setCaptchaToken(token || "")}
+                />
+              </div>
+
               <button
-                type="button"
-                className="text-gray-500 focus:outline-none"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                type="submit"
+                className="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center"
+                disabled={loading}
               >
-                {showConfirmPassword ? <EyeOff strokeWidth={1.5}/> : <Eye strokeWidth={1.5} />}
+                {loading ? (
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  "Create Account"
+                )}
               </button>
-            </div>
+
+              <p className="text-center text-sm text-gray-600">
+                Already have an account?{" "}
+                <Link
+                  href="/login"
+                  className="text-blue-600 font-semibold hover:text-blue-700 transition"
+                >
+                  Sign in
+                </Link>
+              </p>
+            </form>
           </div>
-
-          {errorMessage && (
-            <p className="mb-4 -mt-4 text-red font-[500] tracking-none leading-none text-[14px]">
-              {errorMessage}
-            </p>
-          )}
-
-          {/* CAPTCHA Verification */}
-          <ReCAPTCHA
-            onChange={setCaptchaToken}
-            sitekey={recaptchaSiteKey}
-            className="mx-auto mb-8"
-          />
-
-          <button
-            type="submit"
-            disabled={loading}
-            className={`text-white rounded-[10px] h-[56px] w-full items-center justify-center flex transition duration-300 font-semibold ${
-              loading ? "bg-navyBlue" : "bg-blue-600"
-            }`}
-          >
-            {loading ? <div className="loaderInfinity"></div> : "CREATE AN ACCOUNT"}
-          </button>
-        </form>
-
-        <Link href="/login" className="text-white hover:underline z-10 relative">
-          Already have an account? Login
-        </Link>
+        </div>
       </div>
     </>
   );

@@ -6,12 +6,15 @@ import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { createClient } from "../../../lib/supabase/client";
 import Image from "next/image";
 import { useAppStore } from "../../../store/useAppStore";
+import { Eye, EyeOff } from "lucide-react";
 
 const ResetPassword = () => {
   const router = useRouter();
   const { userId } = useAppStore((state) => state);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [success, setSuccess] = useState(false);
@@ -22,7 +25,7 @@ const ResetPassword = () => {
     }
   }, []);
 
-   const supabase = createClient()
+  const supabase = createClient();
 
   const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
@@ -43,7 +46,6 @@ const ResetPassword = () => {
       setErrorMessage("");
 
       try {
-        // Update the user's password using the token
         const { error } = await supabase.auth.updateUser({ password });
 
         if (error) {
@@ -62,92 +64,156 @@ const ResetPassword = () => {
   return (
     <>
       <Head>
-        <title>NoDoseOff | Reset Password</title>
+        <title>Reset Password - NoDoseOff</title>
       </Head>
-      <div className="min-h-[100dvh] w-full py-8 px-6 flex  flex-col justify-center items-center ss:py-10 bg-navyBlue font-karla text-grey">
-        <Link href="/">
-          <Image
-            src="/assets/logo/logo-with-name-white.png"
-            width={1062}
-            height={212}
-            alt="logo"
-            className="w-[180px] h-auto mb-10"
-            priority
-          />
-        </Link>
-        {!success ? (
-          <form
-            className="bg-white rounded-[15px] w-full ss:w-[450px] h-auto p-7 ss:p-10 mb-10"
-            onSubmit={handleSubmit}
-          >
-            <div className="mb-10 w-full items-center flex flex-col">
-              <legend className="text-[24px] font-bold text-blue-600 text-center font-Inter">
-                Reset Password
-              </legend>
-              <p className="text-center text-[14px]">
-                Please enter your new password
-              </p>
-            </div>
-            <div className="flex flex-col mb-4">
-              <label htmlFor="password" className="text-[14px] mb-1">
-                New Password
-              </label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={password}
-                onChange={handlePasswordChange}
-                className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4"
-                placeholder="New Password"
+
+      <div className="min-h-screen flex items-center justify-center p-8 bg-gray-50">
+        <div className="w-full max-w-md">
+          {/* Logo */}
+          <Link href="/">
+            <div className="w-full flex justify-center">
+              <Image
+                src="/assets/logo/logo-with-name-blue.png"
+                width={180}
+                height={60}
+                alt="logo"
+                className="mb-10 relative z-10"
               />
             </div>
-            <div className="flex flex-col mb-4">
-              <label htmlFor="confirmPassword" className="text-[14px] mb-1">
-                Confirm Password
-              </label>
-              <input
-                type="password"
-                id="confirmPassword"
-                name="confirmPassword"
-                value={confirmPassword}
-                onChange={handleConfirmPasswordChange}
-                className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4"
-                placeholder="Confirm New Password"
-              />
+          </Link>
+
+          {!success ? (
+            <>
+              <div className="mb-8">
+                <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                  Reset Password
+                </h2>
+                <p className="text-gray-600">
+                  Please enter your new password
+                </p>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div>
+                  <label
+                    htmlFor="password"
+                    className="block text-sm font-medium text-gray-700 mb-1.5"
+                  >
+                    New Password
+                  </label>
+                  <div className="relative">
+                    <input
+                      id="password"
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      className="w-full px-4 py-2.5 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition"
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={handlePasswordChange}
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-blue-600 transition"
+                      onClick={() => setShowPassword(!showPassword)}
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                    >
+                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="confirmPassword"
+                    className="block text-sm font-medium text-gray-700 mb-1.5"
+                  >
+                    Confirm New Password
+                  </label>
+                  <div className="relative">
+                    <input
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      className="w-full px-4 py-2.5 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition"
+                      placeholder="••••••••"
+                      value={confirmPassword}
+                      onChange={handleConfirmPasswordChange}
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-blue-600 transition"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                    >
+                      {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </button>
+                  </div>
+                </div>
+
+                {errorMessage && (
+                  <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
+                    <svg
+                      className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <circle cx="12" cy="12" r="10" strokeWidth="2" />
+                      <line x1="12" y1="8" x2="12" y2="12" strokeWidth="2" />
+                      <line x1="12" y1="16" x2="12.01" y2="16" strokeWidth="2" />
+                    </svg>
+                    <span className="text-sm text-red-800">{errorMessage}</span>
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  className="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    "Change Password"
+                  )}
+                </button>
+              </form>
+            </>
+          ) : (
+            <div className="text-center">
+              <div className="mb-6">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg
+                    className="w-8 h-8 text-green-600"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </div>
+                <h2 className="text-3xl font-bold text-gray-900 mb-2">Success!</h2>
+                <p className="text-gray-600 mb-8">
+                  Your password has been successfully changed
+                </p>
+              </div>
+
+              <Link
+                href="/login"
+                className="inline-block w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition text-center"
+              >
+                Back to Login
+              </Link>
             </div>
-            {errorMessage && (
-              <p className="mb-4 -mt-4 text-red font-[500] tracking-none leading-none text-[14px]">
-                {errorMessage}
-              </p>
-            )}
-            <button
-              type="submit"
-              disabled={loading}
-              className={`font-semibold  rounded-[10px] h-[56px] w-full text-white items-center justify-center flex transition duration-300 ${
-                loading ? "bg-navyBlue opacity-85" : "bg-blue-600"
-              }`}
-            >
-              {loading ? (
-                <div className="loaderInfinity"></div>
-              ) : (
-                "Change Password"
-              )}
-            </button>
-          </form>
-        ) : (
-          <>
-            <div className="w-full ss:w-[450px] h-auto p-7 ss:p-10 mb-10 bg-white rounded-[15px] flex flex-col items-center text-navyBlue">
-              <h2 className=" text-[32px] font-bold text-blue-600 text-center">Success!</h2>
-              <p className="text-center mb-10">
-                Your Password has been successfully changed!
-              </p>
-                <Link href="/login" className=" underline ">
-                  Back to Login
-                </Link>
-            </div>
-          </>
-        )}
+          )}
+        </div>
       </div>
     </>
   );

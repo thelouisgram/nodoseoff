@@ -101,11 +101,9 @@ const Home: React.FC<HomeProps> = ({
           ? { ...dose, completed: !dose.completed }
           : dose
       );
-
-      dispatch(updateSchedule(updatedSchedule));
-
       try {
         await uploadScheduleToServer({ userId, schedule: updatedSchedule });
+      dispatch(updateSchedule(updatedSchedule));
       } catch (error) {
         toast.error(
           "Failed to update dose. Please check your network connection."

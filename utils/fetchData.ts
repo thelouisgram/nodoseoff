@@ -12,6 +12,7 @@ import {
 } from "../store/stateSlice";
 import { toast } from "sonner";
 import type { AppDispatch } from "./../store";
+import { useAppStore } from "../store/useAppStore";
 
 export const fetchData = async (
   dispatch: AppDispatch,

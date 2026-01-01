@@ -11,13 +11,12 @@ import { useAppStore } from "../../../store/useAppStore";
 const SignIn = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { signIn, user, loading: authLoading } = useAuth(); // Destructure signIn and user/loading state from context
+  const { signIn, user, loading: authLoading } = useAuth();
   const { setIsAuthenticated, setUserId } = useAppStore((state) => state);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  // Use a separate loading state for the form submission
   const [formSubmitting, setFormSubmitting] = useState(false); 
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -30,20 +29,16 @@ const SignIn = () => {
     });
   };
 
-  // 1. Redirect if the user is already authenticated (using the context user state)
   useEffect(() => {
-    // Check if the user is available and not in the initial loading state
     if (!authLoading && user) {
       setIsAuthenticated(true);
       setUserId(user.id);
       router.push("/dashboard");
     }
-    // Also, if the auth is not loading but there's no user, ensure isAuthenticated is false
     if (!authLoading && !user) {
-        setIsAuthenticated
+      setIsAuthenticated(false);
     }
-  }, [user, authLoading, dispatch, router]);
-
+  }, [user, authLoading, dispatch, router, setIsAuthenticated, setUserId]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -51,155 +46,143 @@ const SignIn = () => {
       setErrorMessage("Input Email & Password");
       return;
     }
-    setFormSubmitting(true); // Start form submission loading
+    setFormSubmitting(true);
     setErrorMessage("");
     try {
       await signIn(formData.email, formData.password);
     } catch (error: any) {
       const message = error.message || "An unknown error occurred during sign in.";
       setErrorMessage("Error signing in: " + message);
-      setFormSubmitting(false); // Stop loading on failure
-    } finally {
+      setFormSubmitting(false);
     }
   };
 
   return (
     <>
       <Head>
-        <title>NoDoseOff | Login</title>
+        <title>Login - NoDoseOff</title>
       </Head>
-      <div className="relative min-h-screen w-full flex flex-col justify-center items-center
-       bg-navyBlue font-karla text-grey overflow-hidden py-7 px-3">
-        {/* Your SVG background and Logo link */}
-        <svg
-          className="absolute inset-0 w-full h-full"
-          viewBox="0 0 1440 720"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            stroke="#9CA3AF"
-            strokeOpacity=".7"
-            d="M-15.227 702.342H1439.7"
-          />
-          <circle
-            cx="711.819"
-            cy="372.562"
-            r="308.334"
-            stroke="#9CA3AF"
-            strokeOpacity=".7"
-          />
-          <circle
-            cx="16.942"
-            cy="20.834"
-            r="308.334"
-            stroke="#9CA3AF"
-            strokeOpacity=".7"
-          />
-          <path
-            stroke="#9CA3AF"
-            strokeOpacity=".7"
-            d="M-15.227 573.66H1439.7M-15.227 164.029H1439.7"
-          />
-          <circle
-            cx="782.595"
-            cy="411.166"
-            r="308.334"
-            stroke="#9CA3AF"
-            strokeOpacity=".7"
-          />
-        </svg>
 
-        <Link href="/">
-          <Image
-            src="/assets/logo/logo-with-name-white.png"
-            width={180}
-            height={60}
-            alt="logo"
-            className="mb-10 relative z-10"
-          />
-        </Link>
-
-        <form
-          className="bg-white rounded-[15px] w-full ss:w-[450px] p-6 ss:p-10 mb-10 relative z-10"
-          onSubmit={handleSubmit}
-        >
-          <div className="mb-10 w-full items-center flex flex-col">
-            <legend className="text-[24px] font-bold text-blue-600 text-center font-Inter">
-              Login to your account
-            </legend>
-            <p className="text-center text-[14px]">
-              Welcome to the future of Drug Monitoring
-            </p>
-          </div>
-
-          <div className="flex flex-col mb-4">
-            <label htmlFor="email" className="text-[14px] mb-1">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] p-4 mb-4"
-              placeholder="Email Address"
-            />
-          </div>
-
-          <div className="flex flex-col mb-8">
-            <label htmlFor="passwordLogIn" className="text-[14px] mb-1">
-              Password
-            </label>
-            <div className="justify-between w-full bg-[#EDF2F7] rounded-[10px] flex items-center p-4">
-              <input
-                type={showPassword ? "text" : "password"}
-                id="passwordLogIn"
-                name="password"
-                value={formData.password}
-                onChange={handleInputChange}
-                className="border bg-[#EDF2F7] border-none outline-none rounded-[10px] w-full"
-                placeholder="Password"
+      <div className="min-h-screen flex items-center justify-center p-8 bg-gray-50">
+        <div className="w-full max-w-md">
+          {/* Logo */}
+          <Link href="/">
+            <div className="w-full flex justify-center">
+              <Image
+                src="/assets/logo/logo-with-name-blue.png"
+                width={180}
+                height={60}
+                alt="logo"
+                className="mb-10 relative z-10"
               />
-              <button
-                type="button"
-                className="text-gray-500 focus:outline-none size-5"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <EyeOff strokeWidth={1.5}/> : <Eye strokeWidth={1.5} />}
-              </button>
             </div>
+          </Link>
+
+          <div className="mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">
+              Welcome Back
+            </h2>
+            <p className="text-gray-600">
+              Sign in to continue managing your medications
+            </p>
           </div>
 
-          {errorMessage && (
-            <p className="mb-4 -mt-4 text-red-500 font-[500] text-[14px] text-center">
-              {errorMessage}
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700 mb-1.5"
+              >
+                Email Address
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition"
+                placeholder="you@example.com"
+                value={formData.email}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700 mb-1.5"
+              >
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  className="w-full px-4 py-2.5 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition"
+                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  required
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-blue-600 transition"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
+            </div>
+
+            {errorMessage && (
+              <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <svg
+                  className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <circle cx="12" cy="12" r="10" strokeWidth="2" />
+                  <line x1="12" y1="8" x2="12" y2="12" strokeWidth="2" />
+                  <line x1="12" y1="16" x2="12.01" y2="16" strokeWidth="2" />
+                </svg>
+                <span className="text-sm text-red-800">{errorMessage}</span>
+              </div>
+            )}
+
+            <div className="flex items-center justify-end">
+              <Link
+                href="/forgetpassword"
+                className="text-sm text-blue-600 hover:text-blue-700 font-medium transition"
+              >
+                Forgot Password?
+              </Link>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center"
+              disabled={formSubmitting}
+            >
+              {formSubmitting ? (
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                "Sign In"
+              )}
+            </button>
+
+            <p className="text-center text-sm text-gray-600">
+              Don&apos;t have an account?{" "}
+              <Link
+                href="/signup"
+                className="text-blue-600 font-semibold hover:text-blue-700 transition"
+              >
+                Create Account
+              </Link>
             </p>
-          )}
-
-          <button
-            type="submit"
-            // Use the formSubmitting state for the button
-            disabled={formSubmitting}
-            className={`font-semibold text-white rounded-[10px] h-[56px] w-full flex items-center justify-center transition duration-300 ${
-              formSubmitting ? "bg-navyBlue opacity-85" : "bg-blue-600"
-            }`}
-          >
-            {formSubmitting ? <div className="loaderInfinity"></div> : "LOG IN"}
-          </button>
-        </form>
-
-        <div className="w-full flex flex-col items-center relative z-10">
-          <Link href="/signup" className="text-white hover:underline">
-            Don&apos;t have an account? Create Account
-          </Link>
-          <Link
-            href="/forgetpassword"
-            className="text-white text-center mt-8 hover:underline"
-          >
-            Forgot Password?
-          </Link>
+          </form>
         </div>
       </div>
     </>

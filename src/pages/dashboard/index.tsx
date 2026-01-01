@@ -17,7 +17,6 @@ import { useAppStore } from "../../../store/useAppStore";
 const Page = () => {
   // Use useAuth to get the true user state
   const { user, loading: authLoading, signOut } = useAuth();
-  console.log(user)
 
   const {activeTab, setActiveTab, setIsAuthenticated, setUserId} = useAppStore((state) => state);
 
@@ -53,9 +52,13 @@ const Page = () => {
     if (user && !hasFetchedData.current) {
       const initializeDashboard = async () => {
         setIsLoading(true);
+        // Ensure userId after refresh
+        setUserId(user.id); 
         try {
           // Pass the user.id explicitly to ensure we fetch for the correct user
           await fetchData(dispatch, user.id, setIsLoading);
+
+          
 
           // Mark as fetched so we don't loop
           hasFetchedData.current = true;

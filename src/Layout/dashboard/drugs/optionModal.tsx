@@ -9,6 +9,7 @@ interface OptionModal {
   setOptions: React.Dispatch<React.SetStateAction<boolean>>;
   tab: string;
   drug: string;
+  drugId: string;
   activeAction: string;
   setActiveAction: (value: string) => void;
   activeView: string;
@@ -29,17 +30,19 @@ const OptionModal: React.FC<OptionModal> = ({
   setOptions,
   tab,
   drug,
+  drugId,
   setActiveAction,
   activeView,
   setActiveView
 }) => {
   const dispatch = useDispatch();
 
-  const { setActiveDrug } = useAppStore((state) => state);
+  const { setActiveDrug, setActiveDrugId } = useAppStore((state) => state);
 
   // Helper function to handle actions
   const handleAction = (action: string) => {
-    setActiveDrug(drug);    
+    setActiveDrug(drug); 
+    setActiveDrugId(drugId);
     setActiveAction(action);
     setOptions(false);
     
@@ -99,6 +102,7 @@ const OptionModal: React.FC<OptionModal> = ({
         onClick={(e) => {
           setOptions((prev) => !prev);
           setActiveDrug(drug);
+          setActiveDrugId(drugId); // ✅ Added this line to fix the modal not showing
           e.stopPropagation()
         }}
         className="size-8 flex items-center justify-center rounded-full text-gray-600 hover:bg-gray-200 transition-colors"

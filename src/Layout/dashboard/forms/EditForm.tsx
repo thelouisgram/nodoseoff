@@ -199,7 +199,7 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
       const endDate = dayjs(formData.end);
 
       if (endDate.isBefore(todayDate, "day")) {
-        errors.end = "The End Date cannot be before today's Start Date.";
+        errors.end = "The End Date cannot be before Start Date.";
       }
     }
 

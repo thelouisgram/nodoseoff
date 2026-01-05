@@ -27,7 +27,7 @@ const DrugDetailsHeader: React.FC<Props> = ({
   setActiveAction,
 }) => {
   const dispatch = useDispatch();
-  const { setActiveDrug, setActiveDrugId } = useAppStore((state) => state);
+  const { setActiveDrug, setActiveDrugId, activeDrugId} = useAppStore((state) => state);
 
   const handleBreadcrumbClick = (level: "list") => {
     if (level === "list") {
@@ -63,6 +63,7 @@ const DrugDetailsHeader: React.FC<Props> = ({
           setOptions={setOptions}
           tab={tab}
           drug={drug}
+          drugId={activeDrugId}
           activeAction={activeAction}
           setActiveAction={setActiveAction}
         />

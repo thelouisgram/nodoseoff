@@ -8,6 +8,7 @@ import { generateDrugAllergyEmail } from "../../../../emails/drugAllergy";
 import { sendMail } from "../../../../utils/sendEmail";
 import { X, Loader2 } from "lucide-react";
 import { useAppStore } from "../../../../store/useAppStore";
+import { generateDrugId } from "../../../../utils/drugs";
 
 interface AllergiesFormProps {
   setActiveModal: (value: string) => void;
@@ -65,6 +66,7 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const drugId = generateDrugId(formData.drug);
 
     if (!formData.drug) {
       toast.error("Please fill in the Drug field.");
@@ -93,6 +95,7 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
         end: "",
         time: [""],
         reminder: true,
+        drugId: formData.drugId
       });
 
       if (error) {

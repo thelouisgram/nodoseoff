@@ -45,117 +45,79 @@ export const generateSchedule = (drugDetails: DrugProps) => {
   const startDate = new Date(start);
   const endDate = new Date(end);
 
+  // Generate unique drugId for this specific schedule
   const schedule = [];
-  let uniqueIndex = 1; // Unique index counter
+  let uniqueIndex = 1;
 
-  // Calculate the difference in days between start and end dates
-  const differenceInDays: number = Math.floor(
-  (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
-);
+  const differenceInDays = Math.floor(
+    (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
+  );
 
-  // Generate the schedule based on frequency and times
+  // Helper function to create schedule entry
+  const createEntry = (date: Date, timeSlot: string) => ({
+    id: uniqueIndex++,
+    drug,
+    date: date.toISOString().slice(0, 10),
+    time: timeSlot,
+    completed: false,
+    drugId,
+  });
+
+  // Helper function to add date offset
+  const getDate = (offset: number) => {
+    const date = new Date(startDate);
+    date.setDate(date.getDate() + offset);
+    return date;
+  };
+
+  // Generate schedule based on frequency
   for (let i = 0; i <= differenceInDays; i++) {
-    if (
-      frequency === "QD" ||
-      frequency === "BID" ||
-      frequency === "TID" ||
-      frequency === "QID"
-    ) {
-      const dosesPerDay =
-        frequency === "BID"
-          ? 2
-          : frequency === "TID"
-          ? 3
-          : frequency === "QID"
-          ? 4
-          : 1;
+    const currentDate = getDate(i);
 
-      for (let j = 0; j < dosesPerDay; j++) {
-        const currentDate = new Date(startDate);
-        currentDate.setDate(currentDate.getDate() + i);
-        const doseTime = time[j % time.length]; // Get the corresponding time from the array
+    switch (frequency) {
+      case "QD":
+      case "BID":
+      case "TID":
+      case "QID": {
+        const dosesPerDay = {
+          QD: 1,
+          BID: 2,
+          TID: 3,
+          QID: 4,
+        }[frequency];
 
-        const scheduleEntry = {
-          id: uniqueIndex,
-          drug,
-          date: currentDate.toISOString().substr(0, 10),
-          time: doseTime,
-          completed: false, // Set completed as false for each dose
-          drugId
-        };
-
-        schedule.push(scheduleEntry);
-        uniqueIndex++; // Increment unique index for the next entry
+        for (let j = 0; j < dosesPerDay; j++) {
+          schedule.push(createEntry(currentDate, time[j % time.length]));
+        }
+        break;
       }
-    } else if (frequency === "EOD" && i % 2 === 0) {
-      const currentDate = new Date(startDate);
-      currentDate.setDate(currentDate.getDate() + i);
-      const doseTime = time[0]; // Get the corresponding time from the array
 
-      const scheduleEntry = {
-        id: uniqueIndex,
-        drug,
-        date: currentDate.toISOString().substr(0, 10),
-        time: doseTime,
-        completed: false, // Set completed as false for each dose
-        drugId
-      };
+      case "EOD":
+        if (i % 2 === 0) {
+          schedule.push(createEntry(currentDate, time[0]));
+        }
+        break;
 
-      schedule.push(scheduleEntry);
-      uniqueIndex++; // Increment unique index for the next entry
-    } else if (frequency === "W" && i % 7 === 0) {
-      const currentDate = new Date(startDate);
-      currentDate.setDate(currentDate.getDate() + i);
-      const doseTime = time[0]; // Get the corresponding time from the array
+      case "W":
+        if (i % 7 === 0) {
+          schedule.push(createEntry(currentDate, time[0]));
+        }
+        break;
 
-      const scheduleEntry = {
-        id: uniqueIndex,
-        drug,
-        date: currentDate.toISOString().substr(0, 10),
-        time: doseTime,
-        completed: false, // Set completed as false for each dose
-        drugId
-      };
+      case "BW":
+        if (i % 14 === 0) {
+          schedule.push(createEntry(currentDate, time[0]));
+        }
+        break;
 
-      schedule.push(scheduleEntry);
-      uniqueIndex++; // Increment unique index for the next entry
-    } else if (frequency === "BW" && i % 14 === 0) {
-      const currentDate = new Date(startDate);
-      currentDate.setDate(currentDate.getDate() + i);
-      const doseTime = time[0]; // Get the corresponding time from the array
-
-      const scheduleEntry = {
-        id: uniqueIndex,
-        drug,
-        date: currentDate.toISOString().substr(0, 10),
-        time: doseTime,
-        completed: false, // Set completed as false for each dose
-        drugId
-      };
-
-      schedule.push(scheduleEntry);
-      uniqueIndex++; // Increment unique index for the next entry
-    } else if (frequency === "M") {
-      const currentDate = new Date(startDate);
-      currentDate.setDate(currentDate.getDate() + i);
-
-      if (currentDate.getDate() === startDate.getDate()) {
-        const doseTime = time[0]; // Get the corresponding time from the array
-
-        const scheduleEntry = {
-          id: uniqueIndex,
-          drug,
-          date: currentDate.toISOString().substr(0, 10),
-          time: doseTime,
-          completed: false, // Set completed as false for each dose
-          drugId
-        };
-
-        schedule.push(scheduleEntry);
-        uniqueIndex++; // Increment unique index for the next entry
-      }
+      case "M":
+        if (currentDate.getDate() === startDate.getDate()) {
+          schedule.push(createEntry(currentDate, time[0]));
+        }
+        break;
     }
   }
+
   return schedule;
 };
 

@@ -200,7 +200,8 @@ const DrugsForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => 
   const addDrug = async () => {
     setLoading(true);
 
-    const drugId = generateDrugId(formData.drug, formData.start, formData.time);
+    const drugId = generateDrugId(formData.drug);
+    console.log(drugId)
 
     try {
       const { error } = await supabase.from("drugs").insert({

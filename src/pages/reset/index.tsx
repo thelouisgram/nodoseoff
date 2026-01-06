@@ -3,9 +3,9 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import { createClient } from "../../../lib/supabase/client";
+import { createClient } from "../../lib/supabase/client";
 import Image from "next/image";
-import { useAppStore } from "../../../store/useAppStore";
+import { useAppStore } from "../../store/useAppStore";
 import { Eye, EyeOff } from "lucide-react";
 
 const ResetPassword = () => {

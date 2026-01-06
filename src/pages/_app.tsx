@@ -1,13 +1,14 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
-import { Provider } from "react-redux";
-import store from "./../../store/index";
 import { Toaster } from "sonner";
 import Head from "next/head";
 import { useState, useEffect } from "react";
-import { AuthProvider } from "../../contexts/AuthContext";
+import { AuthProvider } from "../contexts/AuthContext";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 export default function App({ Component, pageProps }: AppProps) {
+  const [queryClient] = useState(() => new QueryClient());
   const [mode, setMode] = useState("light");
 
   useEffect(() => {
@@ -29,7 +30,7 @@ export default function App({ Component, pageProps }: AppProps) {
   }, []);
 
   return (
-    <Provider store={store}>
+    <QueryClientProvider client={queryClient}>
       <Head>
         {/* Dynamically set favicon links based on the mode */}
         <link rel="icon" href="/logo.png" />
@@ -39,8 +40,9 @@ export default function App({ Component, pageProps }: AppProps) {
       </Head>
       <Toaster position="top-center" richColors={true} closeButton={true} />
       <AuthProvider>
-          <Component {...pageProps} />
+        <Component {...pageProps} />
       </AuthProvider>
-    </Provider>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   );
 }

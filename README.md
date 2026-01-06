@@ -1,40 +1,237 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 💊 NodoseOff
 
-## Getting Started
+**NodoseOff** is a comprehensive medication management and health tracking application designed to help users stay on top of their medication schedules, track health metrics, and maintain better health outcomes.
 
-First, run the development server:
+## ✨ Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### 🏥 Medication Management
+
+- **Drug Tracking**: Add, edit, and manage your medications with detailed information
+- **Dosage Scheduling**: Set up custom dosage schedules and reminders
+- **Medication History**: View comprehensive logs of your medication intake
+- **Smart Reminders**: Never miss a dose with intelligent notification system
+
+### 📊 Health Dashboard
+
+- **Summary Cards**: Quick overview of your health metrics and medication adherence
+- **Data Visualization**: Interactive charts and graphs to track your progress
+- **Reports Generation**: Create and export detailed health reports (PDF format)
+- **Analytics**: Insights into your medication patterns and health trends
+
+### 👤 User Account Management
+
+- **Profile Management**: Customize your profile and preferences
+- **Account Settings**: Manage your account security and preferences
+- **Dark Mode**: Eye-friendly dark theme for the dashboard
+- **Contact & Support**: Easy access to help and support resources
+
+### 🔒 Security & Privacy
+
+- **Supabase Authentication**: Secure user authentication and authorization
+- **Protected Routes**: Middleware-based route protection
+- **Data Encryption**: Your health data is securely stored and encrypted
+- **reCAPTCHA Integration**: Protection against spam and abuse
+- **Rate Limiting**: Intelligent request throttling to prevent abuse and ensure fair usage
+  - Authentication endpoints: 5 requests per 15 minutes
+  - Email sending: 3 requests per hour
+  - User deletion: 2 requests per hour
+  - General API: 100 requests per minute
+
+## 🛠️ Tech Stack
+
+### Frontend
+
+- **[Next.js 14](https://nextjs.org/)** - React framework with App Router
+- **[React 18](https://react.dev/)** - UI library
+- **[TypeScript](https://www.typescriptlang.org/)** - Type safety
+- **[Tailwind CSS](https://tailwindcss.com/)** - Utility-first styling
+- **[Framer Motion](https://www.framer.com/motion/)** - Smooth animations
+- **[Lucide React](https://lucide.dev/)** - Beautiful icons
+
+### State Management & Data Fetching
+
+- **[TanStack Query](https://tanstack.com/query)** - Powerful data synchronization
+- **[Zustand](https://zustand-demo.pmnd.rs/)** - Lightweight state management
+- **[Axios](https://axios-http.com/)** - HTTP client
+
+### Backend & Database
+
+- **[Supabase](https://supabase.com/)** - Backend as a Service (BaaS)
+  - Authentication & Authorization
+  - PostgreSQL Database
+  - Real-time subscriptions
+  - Row Level Security (RLS)
+
+### Additional Libraries
+
+- **[date-fns](https://date-fns.org/)** & **[Day.js](https://day.js.org/)** - Date manipulation
+- **[jsPDF](https://github.com/parallax/jsPDF)** & **[html2canvas](https://html2canvas.hertzen.com/)** - PDF generation
+- **[React Email](https://react.email/)** - Email templates
+- **[Nodemailer](https://nodemailer.com/)** - Email sending
+- **[Sonner](https://sonner.emilkowal.ski/)** - Toast notifications
+- **[Vercel Analytics](https://vercel.com/analytics)** - Performance monitoring
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- **Node.js** 18.x or higher
+- **npm**, **yarn**, **pnpm**, or **bun**
+- **Supabase Account** (for backend services)
+
+### Installation
+
+1. **Clone the repository**
+
+   ```bash
+   git clone https://github.com/thelouisgram/nodoseoff.git
+   cd nodoseoff
+   ```
+
+2. **Install dependencies**
+
+   ```bash
+   npm install
+   # or
+   yarn install
+   # or
+   pnpm install
+   ```
+
+3. **Set up environment variables**
+
+   Create a `.env.local` file in the root directory and add your environment variables:
+
+   ```env
+   # Supabase
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+
+   # reCAPTCHA
+   NEXT_PUBLIC_RECAPTCHA_SITE_KEY=your_recaptcha_site_key
+   RECAPTCHA_SECRET_KEY=your_recaptcha_secret_key
+
+   # Email (Nodemailer/Resend)
+   EMAIL_USER=your_email
+   EMAIL_PASS=your_email_password
+   RESEND_API_KEY=your_resend_api_key
+
+   # Rate Limiting (Optional - for production with Redis)
+   # UPSTASH_REDIS_REST_URL=your_upstash_redis_url
+   # UPSTASH_REDIS_REST_TOKEN=your_upstash_redis_token
+   ```
+
+   > **Note**: Rate limiting works with in-memory storage by default. For production deployments with multiple serverless instances, configure Upstash Redis or Vercel KV for persistent rate limiting.
+
+4. **Run the development server**
+
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   # or
+   pnpm dev
+   # or
+   bun dev
+   ```
+
+5. **Open your browser**
+
+   Navigate to [http://localhost:3000](http://localhost:3000) to see the application.
+
+### Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+- `npm run email` - Email development mode
+
+## 📁 Project Structure
+
+```
+nodoseoff/
+├── src/
+│   ├── Layout/          # Layout components (Hero, Footer, etc.)
+│   ├── components/      # Reusable UI components
+│   ├── contexts/        # React contexts
+│   ├── emails/          # Email templates
+│   ├── features/        # Feature-specific components
+│   ├── hooks/           # Custom React hooks
+│   ├── lib/             # Library configurations (Supabase, etc.)
+│   ├── pages/           # Next.js pages and API routes
+│   ├── store/           # State management stores
+│   ├── styles/          # Global styles
+│   ├── types/           # TypeScript type definitions
+│   └── utils/           # Utility functions
+├── public/              # Static assets
+├── .env                 # Environment variables
+└── middleware.ts        # Next.js middleware for auth
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🎨 Features in Detail
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+### Dashboard
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+The dashboard provides a comprehensive overview of your medication schedule and health metrics with:
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+- Real-time data synchronization using TanStack Query
+- Dark mode support for comfortable viewing
+- Interactive charts and visualizations
+- Quick access to all key features
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### Medication Forms
 
-## Learn More
+- **Add Medications**: Intuitive forms with validation
+- **Edit Medications**: Update dosages, schedules, and notes
+- **Delete Medications**: Safe deletion with confirmation
+- **Drug Information**: Detailed medication profiles
 
-To learn more about Next.js, take a look at the following resources:
+### Reports
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Generate comprehensive health reports
+- Export to PDF format
+- Include medication history and adherence data
+- Customizable report templates
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## 🔐 Authentication
 
-## Deploy on Vercel
+NodoseOff uses Supabase Authentication with:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Email/Password authentication
+- Protected routes via Next.js middleware
+- Session management
+- Secure password reset flow
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## 🌐 Deployment
+
+### Deploy on Vercel
+
+The easiest way to deploy NodoseOff is using [Vercel](https://vercel.com):
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/thelouisgram/nodoseoff)
+
+1. Push your code to GitHub
+2. Import your repository to Vercel
+3. Add your environment variables
+4. Deploy!
+
+### Environment Variables
+
+Make sure to add all required environment variables in your Vercel project settings.
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📄 License
+
+This project is private and proprietary.
+
+## 📧 Contact
+
+For support or inquiries, please use the contact form within the application or reach out to the development team.
+
+---
+
+**Built with ❤️ using Next.js and Supabase**

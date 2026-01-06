@@ -64,7 +64,7 @@ const SideBar: React.FC<SideBarProps> = ({
             whileTap={{ scale: 0.9 }}
             onClick={() => setNav(!nav)}
           >
-            <Menu className="text-navyBlue dark:text-slate-200 size-6 hidden lg:flex" />
+            <Menu className="text-navyBlue dark:text-slate-200 size-6 -ml-4 hidden lg:flex" />
           </motion.button>
 
           {/* Large screen logo */}
@@ -72,7 +72,7 @@ const SideBar: React.FC<SideBarProps> = ({
             <Link
               href="/"
               className={`overflow-hidden transition-all duration-300 hidden lg:flex ${
-                nav ? "w-[140px] ml-4" : "w-0"
+                nav ? "w-[140px]" : "w-0"
               }`}
             >
               <Image

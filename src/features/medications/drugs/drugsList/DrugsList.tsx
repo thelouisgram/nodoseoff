@@ -140,10 +140,10 @@ const DrugsList: React.FC<DrugsListProps> = ({
                 </span>
               </div>
 
-              {/* Options */}
               <div
                 onClick={(e) => e.stopPropagation()}
-                className="flex-[0.3] justify-end"
+                className="flex-[0.3] justify-end relative"
+                style={{ position: "static" }} // Change positioning context
               >
                 <OptionModal
                   options={options && isActive}

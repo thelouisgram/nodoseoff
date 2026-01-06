@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { tips } from "../../../utils/tips";
+import { tips } from "../../utils/tips";
 
 const Tips = () => {
   return (

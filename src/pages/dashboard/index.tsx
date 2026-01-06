@@ -1,26 +1,25 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import Loader from "@/Layout/dashboard/shared/Loader";
+import Loader from "@/components/dashboard/Loader";
 import Head from "next/head";
-import { useRouter } from "next/navigation";
-import { Suspense, useEffect, useState, useRef } from "react"; // Added useRef
-import { useDispatch } from "react-redux";
+import { useRouter } from "next/router";
+import { Suspense, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { fetchData } from "../../../utils/fetchData";
-import { useAuth } from "../../../contexts/AuthContext";
-import SideBar from "@/Layout/dashboard/shared/SideBar";
-import MobileSidebar from "@/Layout/dashboard/shared/MobileSideBar";
-import MainDashboard from "@/Layout/dashboard/MainDashboard";
-import FormsContainer from "@/Layout/dashboard/shared/FormsContainer";
-import { useAppStore } from "../../../store/useAppStore";
+import { useAuth } from "@/contexts/AuthContext";
+import SideBar from "@/components/dashboard/SideBar";
+import MobileSidebar from "@/components/dashboard/MobileSideBar";
+import MainDashboard from "@/components/dashboard/MainDashboard";
+import FormsContainer from "@/components/dashboard/FormsContainer";
+import { useAppStore } from "@/store/useAppStore";
+import { useDashboardData } from "@/hooks/useDashboardData";
+import { ThemeProvider } from "@/contexts/ThemeContext";
+import { motion } from "framer-motion";
 
 const Page = () => {
   // Use useAuth to get the true user state
   const { user, loading: authLoading, signOut } = useAuth();
-
-  const {activeTab, setActiveTab, setIsAuthenticated, setUserId} = useAppStore((state) => state);
-
-  const dispatch = useDispatch();
+  const { activeTab, setActiveTab, setIsAuthenticated, setUserId } =
+    useAppStore((state) => state);
   const router = useRouter();
 
   // Local UI states
@@ -30,51 +29,27 @@ const Page = () => {
   const [nav, setNav] = useState(false);
   const [activeModal, setActiveModal] = useState("");
 
-  // Loading state starts true to cover the initial auth check
-  const [isLoading, setIsLoading] = useState(true);
-
-  // useRef to prevent double-fetching in React Strict Mode or rapid re-renders
-  // This ensures we fetch exactly once per page load/refresh
-  const hasFetchedData = useRef(false);
+  const { isLoading: dashboardLoading, isError } = useDashboardData(user?.id);
 
   useEffect(() => {
-    // 1. Wait for Auth to Initialize
-    if (authLoading) return;
-
-    // 2. No User? Redirect.
-    if (!user) {
+    if (!authLoading && !user) {
       router.push("/login");
-      return;
     }
+  }, [user, authLoading, router]);
 
-    // 3. User is present. Check if we have already fetched in this session.
-    // On a page refresh, hasFetchedData.current will be false.
-    if (user && !hasFetchedData.current) {
-      const initializeDashboard = async () => {
-        setIsLoading(true);
-        // Ensure userId after refresh
-        setUserId(user.id); 
-        try {
-          // Pass the user.id explicitly to ensure we fetch for the correct user
-          await fetchData(dispatch, user.id, setIsLoading);
-
-          
-
-          // Mark as fetched so we don't loop
-          hasFetchedData.current = true;
-        } catch (error) {
-          console.error("Dashboard initialization failed", error);
-          toast.error("Could not load your data. Please refresh.");
-        } finally {
-          // Stop loading only when everything is done
-          setIsLoading(false);
-        }
-      };
-
-      initializeDashboard();
+  useEffect(() => {
+    if (user?.id) {
+      setUserId(user.id);
     }
-  }, [user, authLoading, dispatch, router]);
-  // ^ Depending on 'user' ensures this runs as soon as useAuth resolves the user object.
+  }, [user, setUserId]);
+
+  useEffect(() => {
+    if (isError) {
+      toast.error("Could not load your data. Please refresh.");
+    }
+  }, [isError]);
+
+  const isLoading = authLoading || (user ? dashboardLoading : true);
 
   const handleSignOut = async () => {
     try {
@@ -94,48 +69,53 @@ const Page = () => {
   }
 
   return (
-    <Suspense fallback={<Loader />}>
-      <Head>
-        <title>NoDoseOff | DashBoard</title>
-      </Head>
-      <section
-        className={`flex relative w-full bg-white opacity-100 h-[100dvh] transition-all`}
-      >
-        <div
-          className={`bg-white py-10 pl-6 hidden md:flex flex-col justify-between relative font-karla transition-all duration-300
-            border-r border-gray-200 ${nav ? "md:w-[84px] lg:w-[300px]" : "w-[86px]"}`}
+    <ThemeProvider>
+      <Suspense fallback={<Loader />}>
+        <Head>
+          <title>NoDoseOff | DashBoard</title>
+        </Head>
+        <motion.section
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className={`flex relative w-full bg-white dark:bg-slate-950 h-[100dvh] transition-colors duration-300 overflow-hidden`}
         >
-          <SideBar
-            activeTab={activeTab}
-            handleSignOut={handleSignOut}
-            nav={nav}
-            setNav={setNav}
-          />
-        </div>
-        {/* Main Dashboard */}
-        <MainDashboard
-          activeTab={activeTab}
-          isLoading={isLoading}
-          setActiveModal={setActiveModal} 
-          activeModal={activeModal} 
-          tracker={tracker}
-          setTracker={setTracker}
-          add={add}
-          setAdd={setAdd}
-          activeAction={activeAction}
-          setActiveAction={setActiveAction}
-        />
-        <FormsContainer
-          activeModal={activeModal}
-          setActiveModal={setActiveModal}
-        />
-        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 md:hidden z-40 w-[90%] max-w-[450px] px-4">
-          <div className="w-full h-[64px] bg-white border border-gray-200 flex justify-between items-center px-4 ss:px-8 ss:pr-12 rounded-xl shadow-lg">
-            <MobileSidebar activeTab={activeTab} />
+          <div
+            className={`bg-white dark:bg-slate-950 py-10 pl-6 hidden md:flex flex-col justify-between relative font-karla transition-all duration-300
+              border-r border-gray-200 dark:border-slate-900 ${nav ? "md:w-[84px] lg:w-[300px]" : "w-[86px]"}`}
+          >
+            <SideBar
+              activeTab={activeTab}
+              handleSignOut={handleSignOut}
+              nav={nav}
+              setNav={setNav}
+            />
           </div>
-        </div>
-      </section>
-    </Suspense>
+          {/* Main Dashboard */}
+          <MainDashboard
+            activeTab={activeTab}
+            isLoading={isLoading}
+            setActiveModal={setActiveModal}
+            activeModal={activeModal}
+            tracker={tracker}
+            setTracker={setTracker}
+            add={add}
+            setAdd={setAdd}
+            activeAction={activeAction}
+            setActiveAction={setActiveAction}
+          />
+          <FormsContainer
+            activeModal={activeModal}
+            setActiveModal={setActiveModal}
+          />
+          <div className="fixed bottom-4 left-1/2 -translate-x-1/2 md:hidden z-40 w-[90%] max-w-[450px] px-4">
+            <div className="w-full h-[64px] bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 flex justify-between items-center px-4 ss:px-8 ss:pr-12 rounded-xl shadow-lg">
+              <MobileSidebar activeTab={activeTab} />
+            </div>
+          </div>
+        </motion.section>
+      </Suspense>
+    </ThemeProvider>
   );
 };
 

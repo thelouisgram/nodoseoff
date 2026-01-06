@@ -100,10 +100,10 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
           activeModal === "drugHx"
             ? "scale-100 opacity-100"
             : "scale-95 opacity-0"
-        } transition-all duration-200 w-full max-w-md bg-white dark:bg-slate-800 rounded-2xl shadow-2xl`}
+        } transition-all duration-200 w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl shadow-2xl`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 dark:border-gray-700">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 dark:border-slate-800">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100">
             Drug History
           </h2>
@@ -133,7 +133,7 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
               value={formData.otcDrugs !== null ? formData.otcDrugs : ""}
               onChange={handleSelectChange("otcDrugs")}
               disabled={loading}
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-slate-900 disabled:cursor-not-allowed text-gray-900 dark:text-gray-100 bg-white dark:bg-slate-900 cursor-pointer"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-slate-900 disabled:cursor-not-allowed text-gray-900 dark:text-gray-100 bg-white dark:bg-slate-900 cursor-pointer"
             >
               <option value="" className="dark:bg-slate-800">
                 Select option
@@ -161,7 +161,7 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
               value={formData.herbs !== null ? formData.herbs : ""}
               onChange={handleSelectChange("herbs")}
               disabled={loading}
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-slate-900 disabled:cursor-not-allowed text-gray-900 dark:text-gray-100 bg-white dark:bg-slate-900 cursor-pointer"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-slate-900 disabled:cursor-not-allowed text-gray-900 dark:text-gray-100 bg-white dark:bg-slate-900 cursor-pointer"
             >
               <option value="" className="dark:bg-slate-800">
                 Select option
@@ -177,7 +177,7 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
         </form>
 
         {/* Footer with Submit Button */}
-        <div className="px-6 py-4 border-t border-gray-100 dark:border-gray-700">
+        <div className="px-6 py-4 border-t border-gray-100 dark:border-slate-800">
           <button
             onClick={handleClick}
             disabled={loading}

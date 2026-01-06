@@ -1,12 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
-// import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
-// import { RootState } from "../../../../store";
 import { useQueryClient } from "@tanstack/react-query";
 import { useDrugs, useSchedule, useUserInfo } from "@/hooks/useDashboardData";
-// import { setDrugs, updateSchedule } from "../../../../store/stateSlice";
 import { dose, generateSchedule } from "@/utils/dashboard/dashboard";
 import {
   removePastDoses,

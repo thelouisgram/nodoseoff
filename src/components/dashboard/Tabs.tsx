@@ -1,5 +1,4 @@
 import React from "react";
-import { useDispatch } from "react-redux";
 import { LucideIcon } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 import { motion } from "framer-motion";

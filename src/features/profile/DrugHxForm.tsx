@@ -1,9 +1,6 @@
 import React, { useState, FormEvent, ChangeEvent } from "react";
-// import { RootState } from "../../../../store";
-// import { useSelector, useDispatch } from "react-redux";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
-// import { updateHerbs, updateOtcDrugs } from "../../../../store/stateSlice";
 import { useQueryClient } from "@tanstack/react-query";
 import { useOtcDrugs, useHerbs } from "@/hooks/useDashboardData";
 import { X, Loader2 } from "lucide-react";

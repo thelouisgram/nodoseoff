@@ -1,7 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useMemo, useRef } from "react";
-// import { useSelector } from "react-redux";
-// import { RootState } from "../../../../../store";
 import {
   useDrugs,
   useSchedule,

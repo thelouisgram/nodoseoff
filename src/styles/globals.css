@@ -1,27 +1,28 @@
-@import url('https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Reem+Kufi+Fun:wght@400..700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Reem+Kufi+Fun:wght@400..700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Reem+Kufi+Fun:wght@400..700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Reem+Kufi+Fun:wght@400..700&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root{
+:root {
   -webkit-tap-highlight-color: transparent;
 }
 
 @keyframes moveUpDown {
-    0%, 100% {
-        transform: translateY(0);
-    }
-    50% {
-        transform: translateY(-30px); 
-    }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-30px);
+  }
 }
 
 .robot {
-    animation: moveUpDown 6s linear infinite; 
+  animation: moveUpDown 6s linear infinite;
 }
 
 /* Hide scrollbar for Firefox */
@@ -39,7 +40,7 @@
   display: none; /* Hide scrollbar thumb */
 }
 
-.shadow{
+.shadow {
   box-shadow: 4px 4px 6px 2px rgba(0, 0, 0, 0.3);
 }
 
@@ -55,7 +56,7 @@
   width: 13px;
   height: 13px;
   border-radius: 50%;
-  background: hsl(218,89%,21%);
+  background: hsl(218, 89%, 21%);
   animation-timing-function: cubic-bezier(0, 1, 1, 0);
 }
 .lds-ellipsis div:nth-child(1) {
@@ -108,24 +109,38 @@
   content: "";
   width: 35px;
   aspect-ratio: 1;
-  box-shadow: 0 0 0 3px inset hsl(218,89%,21%);
+  box-shadow: 0 0 0 3px inset hsl(218, 89%, 21%);
   animation: 2s infinite linear;
-  animation-name: l3-1,l3-2;
-  animation-delay: -1s,0s
+  animation-name: l3-1, l3-2;
+  animation-delay: -1s, 0s;
 }
 .loader:after {
   --s: -1;
 }
 @keyframes l3-1 {
-  0%   {border-radius:50% 0   0   50%}
-  25%  {border-radius:50% 50% 0   0  }
-  50%  {border-radius:0   50% 50% 0  }
-  75%  {border-radius:0   0   50% 50%}
-  100% {border-radius:50% 0   0   50%}
+  0% {
+    border-radius: 50% 0 0 50%;
+  }
+  25% {
+    border-radius: 50% 50% 0 0;
+  }
+  50% {
+    border-radius: 0 50% 50% 0;
+  }
+  75% {
+    border-radius: 0 0 50% 50%;
+  }
+  100% {
+    border-radius: 50% 0 0 50%;
+  }
 }
-@keyframes l3-2{
-  0%   {transform:scaleX(var(--s,1)) rotate(0deg)}
-  100% {transform:scaleX(var(--s,1)) rotate(-360deg)}
+@keyframes l3-2 {
+  0% {
+    transform: scaleX(var(--s, 1)) rotate(0deg);
+  }
+  100% {
+    transform: scaleX(var(--s, 1)) rotate(-360deg);
+  }
 }
 
 .loaderInfinity {
@@ -135,15 +150,35 @@
   animation: l5 1s infinite linear alternate;
 }
 @keyframes l5 {
-    0%  {box-shadow: 20px 0 #000, -20px 0 #0002;background: #000 }
-    33% {box-shadow: 20px 0 #000, -20px 0 #0002;background: #0002}
-    66% {box-shadow: 20px 0 #0002,-20px 0 #000; background: #0002}
-    100%{box-shadow: 20px 0 #0002,-20px 0 #000; background: #000 }
+  0% {
+    box-shadow:
+      20px 0 #000,
+      -20px 0 #0002;
+    background: #000;
+  }
+  33% {
+    box-shadow:
+      20px 0 #000,
+      -20px 0 #0002;
+    background: #0002;
+  }
+  66% {
+    box-shadow:
+      20px 0 #0002,
+      -20px 0 #000;
+    background: #0002;
+  }
+  100% {
+    box-shadow:
+      20px 0 #0002,
+      -20px 0 #000;
+    background: #000;
+  }
 }
 
 .shadow-nav {
-    /* Horizontal offset (positive value moves the shadow to the right) */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Adjust values as needed */
+  /* Horizontal offset (positive value moves the shadow to the right) */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Adjust values as needed */
 }
 
 @keyframes slide {
@@ -201,4 +236,50 @@
   .print-only * {
     visibility: visible;
   }
+}
+
+/* Custom Scrollbar Styles */
+/* Light Mode Scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9; /* slate-100 */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1; /* slate-300 */
+  border-radius: 10px;
+  border: 2px solid #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8; /* slate-400 */
+}
+
+/* Dark Mode Scrollbar */
+.dark ::-webkit-scrollbar-track {
+  background: #0f172a; /* slate-950 */
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155; /* slate-700 */
+  border: 2px solid #0f172a;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569; /* slate-600 */
+}
+
+/* Firefox Scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f1f5f9; /* thumb track */
+}
+
+.dark * {
+  scrollbar-color: #334155 #0f172a; /* thumb track */
 }

@@ -4,14 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ChangeEvent, FormEvent, useState } from "react";
-import { createClient } from "../../../lib/supabase/client";
-import { useDispatch } from "react-redux";
+import { createClient } from "../../lib/supabase/client";
 import { toast } from "sonner";
-import { useAppStore } from "../../../store/useAppStore";
+import { useAppStore } from "../../store/useAppStore";
 
 const ForgotPassword = () => {
   const router = useRouter();
-  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");

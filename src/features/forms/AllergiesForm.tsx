@@ -1,8 +1,5 @@
 import React, { ChangeEvent, FormEvent, useState } from "react";
-// import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
-// import { RootState } from "../../../../store";
-// import { updateAllergies } from "../../../../store/stateSlice";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAllergies, useUserInfo } from "@/hooks/useDashboardData";
 import { createClient } from "@/lib/supabase/client";

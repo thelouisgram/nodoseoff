@@ -7,7 +7,6 @@ import { DrugDetailsProps } from "../../../../../types/drug";
 import DrugDetailsHeader from "../drugDetails/DrugDetailsHeader";
 import DrugSummaryCard from "../drugDetails/DrugSummaryCard";
 import DrugDetailsGrid from "../drugDetails/DrugDetailsGrid";
-import { calculateCompliance } from "../../../../../utils/dashboard/drugs";
 import { frequencyToPlaceholder } from "../../../../../utils/dashboard/dashboard";
 import { formatDate } from "../../../../../utils/dashboard/dashboard";
 import { Detail } from "../../../../../types/drug";
@@ -16,6 +15,7 @@ import {
   calculateTimePeriod,
 } from "../../../../../utils/drugs";
 import { useAppStore } from "../../../../../store/useAppStore";
+import {calculateDrugCompliance} from "../../../../../utils/dashboard/drugs";
 
 
 const DrugDetails: React.FC<DrugDetailsProps> = ({
@@ -30,7 +30,7 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
   const { schedule, drugs, completedDrugs } =
     useSelector((state: RootState) => state.app);
 
-    const { activeDrug } = useAppStore((state) => state);
+    const { activeDrug, activeDrugId } = useAppStore((state) => state);
 
   const drugsArray = tab === "ongoing" ? drugs : completedDrugs;
 
@@ -40,8 +40,7 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
   const complianceData = useMemo(() => {
     if (!drug) return null;
 
-    const allDrugsComplianceData = calculateCompliance(schedule);
-    return allDrugsComplianceData[drug];
+    return calculateDrugCompliance(schedule, activeDrugId);
   }, [schedule, drug]);
 
   if (!drugDetailsData) {
@@ -49,8 +48,12 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
     return null;
   }
 
-  const { frequency, time, start, end, reminder, route} = drugDetailsData;
+
+  const { frequency, time, start, end, reminder, route, drugId} = drugDetailsData;
   const duration = calculateTimePeriod(start, end);
+  console.log(drugId)
+  console.log('active drug', activeDrugId)
+
 
   if (!complianceData) return null;
 
@@ -74,6 +77,8 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
     { name: "Missed Doses", details: `${missedDoses}` },
     { name: "Remaining Doses", details: `${remainingDoses}` },
   ];
+
+  console.log(schedule)
 
   return (
     <div className="h-full w-full  text-gray-800 relative">

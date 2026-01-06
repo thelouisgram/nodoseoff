@@ -1,5 +1,5 @@
 import React from "react";
-import { Check, Pill } from "lucide-react";
+import { Check, Loader2, Pill } from "lucide-react";
 import { ScheduleItem } from "../../../../types/dashboard";
 
 interface DoseCardProps {
@@ -16,6 +16,14 @@ const formatTime = (time: string): string => {
 };
 
 const DoseCard: React.FC<DoseCardProps> = ({ item, onUpdateCompleted }) => {
+  const [loading, setLoading] = React.useState(false);
+
+  const handleDoseClick = async ({ item }: { item: ScheduleItem }) => {
+    setLoading(true);
+    await onUpdateCompleted(item);
+    setLoading(false);
+  };
+
   return (
     <div
       className="
@@ -43,32 +51,33 @@ const DoseCard: React.FC<DoseCardProps> = ({ item, onUpdateCompleted }) => {
         </div>
 
         <div className="flex flex-col min-w-0">
-          <p className="font-medium capitalize truncate">
-            {item.drug}
-          </p>
-          <span className="text-xs text-gray-500">
-            {formatTime(item.time)}
-          </span>
+          <p className="font-medium capitalize truncate">{item.drug}</p>
+          <span className="text-xs text-gray-500">{formatTime(item.time)}</span>
         </div>
       </div>
 
-      {/* Action */}
       <button
-        onClick={() => onUpdateCompleted(item)}
+        onClick={() => handleDoseClick({ item })}
         className={`
-          flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium
-          border transition-colors
-          ${
-            item.completed
-              ? "border-green-300 text-green-700 bg-green-50 hover:bg-green-100"
-              : "border-gray-200 text-gray-500 hover:bg-gray-50"
-          }
-        `}
+    flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium
+    border transition-colors
+    ${loading ? "opacity-50 cursor-not-allowed" : "hover:shadow-sm"}
+    ${
+      item.completed && !loading
+        ? "border-green-300 text-green-700 bg-green-50 hover:bg-green-100"
+        : "border-gray-200 text-gray-500 hover:bg-gray-50"
+    }
+  `}
+        disabled={loading}
         aria-label={`Mark ${item.drug} as ${
           item.completed ? "not taken" : "taken"
         }`}
       >
-        <Check className="size-3.5" strokeWidth={2} />
+        {loading ? (
+          <Loader2 className="size-3.5 animate-spin" strokeWidth={2} />
+        ) : (
+          <Check className="size-3.5" strokeWidth={2} />
+        )}
         {item.completed ? "Taken" : "Mark"}
       </button>
     </div>

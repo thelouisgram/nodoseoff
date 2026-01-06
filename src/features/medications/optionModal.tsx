@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useRef, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   Trash2,
   MoreVertical,
@@ -10,6 +11,7 @@ import {
 import { SetStateAction } from "react";
 import { useAppStore } from "@/store/useAppStore";
 import { AnimatePresence, motion } from "framer-motion";
+
 interface OptionModal {
   options: boolean;
   setOptions: React.Dispatch<React.SetStateAction<boolean>>;
@@ -42,6 +44,60 @@ const OptionModal: React.FC<OptionModal> = ({
   setActiveView,
 }) => {
   const { setActiveDrug, setActiveDrugId } = useAppStore((state) => state);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState({ top: 0, left: 0 });
+  const [openUpward, setOpenUpward] = useState(false);
+
+  // Update position when modal opens or window resizes
+  useEffect(() => {
+    const updatePosition = () => {
+      if (options && buttonRef.current) {
+        const rect = buttonRef.current.getBoundingClientRect();
+        const modalHeight = 250; // Approximate modal height
+        const viewportHeight = window.innerHeight;
+        const spaceBelow = viewportHeight - rect.bottom;
+        const shouldOpenUpward = spaceBelow < modalHeight && rect.top > modalHeight;
+        
+        setOpenUpward(shouldOpenUpward);
+        setPosition({
+          top: shouldOpenUpward ? rect.top - 8 : rect.bottom + 8,
+          left: rect.right - 224, // 224px = w-56 (14rem)
+        });
+      }
+    };
+
+    updatePosition();
+    
+    if (options) {
+      window.addEventListener('scroll', updatePosition, true);
+      window.addEventListener('resize', updatePosition);
+      
+      return () => {
+        window.removeEventListener('scroll', updatePosition, true);
+        window.removeEventListener('resize', updatePosition);
+      };
+    }
+  }, [options]);
+
+  // Close modal when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(event.target as Node) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target as Node)
+      ) {
+        setOptions(false);
+      }
+    };
+
+    if (options) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [options, setOptions]);
 
   // Helper function to handle actions
   const handleAction = (action: string) => {
@@ -100,14 +156,56 @@ const OptionModal: React.FC<OptionModal> = ({
     (button) => button.showCondition !== false
   );
 
+  const modalContent = (
+    <AnimatePresence>
+      {options && (
+        <motion.div
+          ref={modalRef}
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.9 }}
+          transition={{ duration: 0.15, ease: "easeOut" }}
+          className="fixed z-[9999] text-gray-700 dark:text-gray-200 flex flex-col items-start rounded-lg bg-white dark:bg-slate-900 shadow-xl w-56 py-2 border border-gray-200 dark:border-gray-700 divide-y divide-gray-100 dark:divide-gray-800"
+          style={{
+            top: `${position.top}px`,
+            left: `${position.left}px`,
+            maxHeight: openUpward 
+              ? `${position.top - 16}px` 
+              : `calc(100vh - ${position.top + 16}px)`,
+            overflowY: 'auto',
+            transformOrigin: openUpward ? 'bottom right' : 'top right',
+          }}
+        >
+          {/* Automatically render all visible buttons */}
+          {visibleButtons.map((button, index) => {
+            const Icon = button.icon;
+            const finalHoverClass = `${button.hoverBg} dark:hover:bg-slate-800`;
+
+            return (
+              <button
+                key={index}
+                onClick={() => handleAction(button.action)}
+                className={`flex items-center gap-3 w-full px-4 py-2 text-sm ${finalHoverClass} transition-colors text-gray-800 dark:text-gray-200`}
+              >
+                <Icon className={`size-4 ${button.iconColor}`} />
+                {button.label}
+              </button>
+            );
+          })}
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+
   return (
-    <div className="relative">
+    <>
       {/* Options Toggle Button */}
       <button
+        ref={buttonRef}
         onClick={(e) => {
           setOptions((prev) => !prev);
           setActiveDrug(drug);
-          setActiveDrugId(drugId); // ✅ Added this line to fix the modal not showing
+          setActiveDrugId(drugId);
           e.stopPropagation();
         }}
         className="size-8 flex items-center justify-center rounded-full text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-slate-900 transition-colors"
@@ -116,37 +214,9 @@ const OptionModal: React.FC<OptionModal> = ({
         <MoreVertical className="size-6" />
       </button>
 
-      {/* Dropdown Menu */}
-      <AnimatePresence>
-        {options && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, originX: 1, originY: 0 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.15, ease: "easeOut" }}
-            className="absolute right-0 z-[200] top-12 text-gray-700 dark:text-gray-200 flex flex-col items-start rounded-lg bg-white dark:bg-slate-900 shadow-xl w-56 py-2 border border-gray-200 dark:border-gray-700 divide-y divide-gray-100 dark:divide-gray-800"
-          >
-            {/* Automatically render all visible buttons */}
-            {visibleButtons.map((button, index) => {
-              const Icon = button.icon;
-              // Clean hover mapping: if light is bg-X-50, dark should be bg-gray-800/50
-              const finalHoverClass = `${button.hoverBg} dark:hover:bg-slate-800`;
-
-              return (
-                <button
-                  key={index}
-                  onClick={() => handleAction(button.action)}
-                  className={`flex items-center gap-3 w-full px-4 py-2 text-sm ${finalHoverClass} transition-colors text-gray-800 dark:text-gray-200`}
-                >
-                  <Icon className={`size-4 ${button.iconColor}`} />
-                  {button.label}
-                </button>
-              );
-            })}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+      {/* Portal the dropdown to document.body */}
+      {typeof document !== 'undefined' && createPortal(modalContent, document.body)}
+    </>
   );
 };
 

@@ -421,7 +421,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({
                     value={formData.frequency}
                     onChange={handleSelectChange("frequency")}
                     disabled={loading}
-                    className="w-full px-4 py-3  h-[47px] border border-gray-300 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-slate-900/50 disabled:cursor-not-allowed text-gray-900 dark:text-slate-100 bg-white dark:bg-slate-900 cursor-pointer"
+                    className="w-full px-4 py-3 h-[47px] border border-gray-300 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-slate-900/50 disabled:cursor-not-allowed text-gray-900 dark:text-slate-100 bg-white dark:bg-slate-900 cursor-pointer"
                   >
                     <option value="" className="dark:bg-slate-800">
                       Select Frequency
@@ -455,8 +455,8 @@ const DrugsForm: React.FC<DrugFormProps> = ({
 
                 {/* Time Inputs */}
                 {formData.frequency && formData.time.length > 0 && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700   dark:text-slate-300 mb-2">
+                  <div className="w-full mb-5">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                       Select Time{formData.time.length > 1 ? "s" : ""}
                     </label>
                     <div className="grid grid-cols-2 h-[47px] gap-3">{timeInput}</div>
@@ -464,7 +464,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({
                 )}
 
                 {/* Start Date */}
-                <div>
+                <div className="w-full">
                   <label
                     htmlFor="start"
                     className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
@@ -483,7 +483,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({
                 </div>
 
                 {/* End Date */}
-                <div>
+                <div className="w-full">
                   <label
                     htmlFor="end"
                     className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"

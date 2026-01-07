@@ -93,10 +93,10 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
           activeModal === "changePassword"
             ? "scale-100 opacity-100"
             : "scale-95 opacity-0"
-        } transition-all duration-200 w-full max-w-md bg-white dark:bg-slate-800 rounded-2xl shadow-2xl`}
+        } transition-all duration-200 w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl shadow-2xl`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 dark:border-gray-700">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 dark:border-slate-800">
           <button
             onClick={() => setActiveModal("accountSettings")}
             disabled={loading}
@@ -108,7 +108,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
           <button
             onClick={handleClose}
             disabled={loading}
-            className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             aria-label="Close"
           >
             <X size={20} />
@@ -142,7 +142,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
               onChange={handlePasswordChange}
               placeholder="Enter new password"
               disabled={loading}
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-slate-900 disabled:cursor-not-allowed text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 bg-white dark:bg-slate-900"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-slate-900 disabled:cursor-not-allowed text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 bg-white dark:bg-slate-900"
               required
             />
           </div>
@@ -162,7 +162,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
               onChange={handleConfirmPasswordChange}
               placeholder="Confirm new password"
               disabled={loading}
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-slate-900 disabled:cursor-not-allowed text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 bg-white dark:bg-slate-900"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-slate-900 disabled:cursor-not-allowed text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 bg-white dark:bg-slate-900"
               required
             />
           </div>

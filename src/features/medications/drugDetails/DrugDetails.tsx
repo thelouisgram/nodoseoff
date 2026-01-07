@@ -77,8 +77,6 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
     { name: "Remaining Doses", details: `${remainingDoses}` },
   ];
 
-  console.log(schedule);
-
   return (
     <div className="h-full w-full  text-gray-800 relative">
       <DrugDetailsHeader

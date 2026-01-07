@@ -36,7 +36,6 @@ const Home: React.FC<HomeProps> = ({
 
   const { data: drugs = [] } = useDrugs(userId);
   const { data: schedule = [] } = useSchedule(userId);
-  const { data: info = [] } = useUserInfo(userId);
 
   const queryClient = useQueryClient();
   // Removed
@@ -111,8 +110,6 @@ const Home: React.FC<HomeProps> = ({
         toast.error(
           "Failed to update dose. Please check your network connection."
         );
-        // No need to rollback dispatch, just do nothing or refetch
-        // dispatch(updateSchedule(schedule));
       }
     },
     [schedule, userId, queryClient]

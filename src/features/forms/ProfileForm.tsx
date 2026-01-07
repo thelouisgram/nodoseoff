@@ -149,7 +149,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-lg bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]"
+            className="w-full max-w-lg bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]"
           >
             {/* Header */}
             <div className="px-6 py-5 border-b border-gray-100 dark:border-slate-800 flex items-center justify-between bg-white dark:bg-slate-900 flex-shrink-0">
@@ -248,8 +248,8 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                   </div>
                 </div>
               </div>
-
-              {/* Footer */}
+            </form>
+            {/* Footer */}
               <div className="px-6 py-5 border-t border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 flex-shrink-0">
                 <button
                   type="submit"
@@ -270,7 +270,6 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                   )}
                 </button>
               </div>
-            </form>
           </motion.div>
         </motion.div>
       )}

@@ -378,7 +378,7 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                     value={formData.route}
                     onChange={handleSelectChange("route")}
                     disabled={loading}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-gray-900 disabled:cursor-not-allowed text-gray-900 dark:text-gray-100 bg-white dark:bg-slate-900 cursor-pointer"
+                    className="w-full px-4 py-3 h-[47px] border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-gray-900 disabled:cursor-not-allowed text-gray-900 dark:text-gray-100 bg-white dark:bg-slate-900 cursor-pointer"
                   >
                     <option value="">Select Route</option>
                     <option value="oral">Oral</option>
@@ -405,7 +405,7 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                     value={formData.frequency}
                     onChange={handleSelectChange("frequency")}
                     disabled={loading}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-gray-900 disabled:cursor-not-allowed text-gray-900 dark:text-gray-100 bg-white dark:bg-slate-900 cursor-pointer"
+                    className="w-full px-4 h-[47px]  py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-gray-900 disabled:cursor-not-allowed text-gray-900 dark:text-gray-100 bg-white dark:bg-slate-900 cursor-pointer"
                   >
                     <option value="">Select Frequency</option>
                     <option value="QD">Once Daily</option>
@@ -425,7 +425,7 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Select Time{formData.time.length > 1 ? "s" : ""}
                     </label>
-                    <div className="grid grid-cols-2 gap-3">{timeInput}</div>
+                    <div className="grid grid-cols-2 h-[47px] gap-3">{timeInput}</div>
                   </div>
                 )}
 
@@ -444,7 +444,7 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                     disabled={true}
                     value={getCurrentDate()}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 cursor-not-allowed"
+                    className="w-full px-4 py-3 h-[47px] border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 cursor-not-allowed"
                   />
                 </div>
 
@@ -463,7 +463,7 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                     value={formData.end}
                     onChange={handleInputChange}
                     disabled={loading}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-gray-900 disabled:cursor-not-allowed text-gray-900 dark:text-gray-100 bg-white dark:bg-slate-900"
+                    className="w-full px-4 py-3 h-[47px] border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-gray-900 disabled:cursor-not-allowed text-gray-900 dark:text-gray-100 bg-white dark:bg-slate-900"
                   />
                 </div>
 

@@ -51,6 +51,7 @@ const DrugsList: React.FC<DrugsListProps> = ({
     (state) => state
   );
 
+
   /* ---------------- ALLERGIES ---------------- */
   if (tab === "allergies") {
     const allergies = newData as AllergyProps[];
@@ -58,24 +59,47 @@ const DrugsList: React.FC<DrugsListProps> = ({
     return (
       <div className="flex flex-col">
         <AnimatePresence mode="popLayout">
-          {allergies?.map((item, index) => (
-            <motion.div
-              key={item.drug}
-              layout
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.2 }}
-              className="flex items-center px-4 ss:px-6 py-3 border-b border-gray-100 dark:border-slate-800 bg-white dark:bg-transparent text-sm last:border-0"
-            >
-              <span className="w-6 h-6 mr-2 flex items-center justify-center rounded-full bg-gray-100 text-gray-600 dark:text-slate-400 dark:bg-slate-800 text-xs font-bold">
-                {index + 1}
-              </span>
-              <span className="font-semibold text-slate-800 dark:text-slate-100 capitalize">
-                {item.drug}
-              </span>
-            </motion.div>
-          ))}
+          {allergies?.map((item, index) => {
+            const isActive = activeDrugId === item.drug;
+
+            return (
+              <motion.div
+                key={item.drug}
+                layout
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.2 }}
+                className="flex justify-between items-center px-4 ss:px-6 py-3 border-b border-gray-100 dark:border-slate-800 bg-white dark:bg-transparent text-sm last:border-0"
+              >
+                <div className="flex items-center">
+                  <span className="w-6 h-6 mr-2 flex items-center justify-center rounded-full bg-gray-100 text-gray-600 dark:text-slate-400 dark:bg-slate-800 text-xs font-bold">
+                    {index + 1}
+                  </span>
+                  <span className="font-semibold text-slate-800 dark:text-slate-100 capitalize">
+                    {item.drug}
+                  </span>
+                </div>
+                
+                <div
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex justify-end relative"
+                >
+                  <OptionModal
+                    options={options && isActive}
+                    setOptions={setOptions}
+                    tab={tab}
+                    drug={item.drug}
+                    drugId={item.drug}
+                    activeAction={activeAction}
+                    setActiveAction={setActiveAction}
+                    setActiveView={setActiveView}
+                    activeView={activeView}
+                  />
+                </div>
+              </motion.div>
+            );
+          })}
         </AnimatePresence>
       </div>
     );

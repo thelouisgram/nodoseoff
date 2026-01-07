@@ -135,7 +135,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({
         value={formData.time[index]}
         onChange={handleInputChange}
         disabled={loading}
-        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-slate-900 disabled:cursor-not-allowed text-gray-900 dark:text-gray-100 bg-white dark:bg-slate-900"
+        className="w-full h-[47px] px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-slate-900 disabled:cursor-not-allowed text-gray-900 dark:text-gray-100 bg-white dark:bg-slate-900"
       />
     );
   });
@@ -459,7 +459,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({
                     <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                       Select Time{formData.time.length > 1 ? "s" : ""}
                     </label>
-                    <div className="grid grid-cols-2 h-[47px] gap-3">{timeInput}</div>
+                    <div className="grid grid-cols-2 w-full gap-3">{timeInput}</div>
                   </div>
                 )}
 

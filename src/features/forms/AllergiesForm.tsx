@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import React, { FormEvent, useState } from "react";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAllergies, useUserInfo } from "@/hooks/useDashboardData";
@@ -24,7 +24,6 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
   const { data: info = [] } = useUserInfo(userId);
 
   const queryClient = useQueryClient();
-
   const supabase = createClient();
 
   const [drug, setDrug] = useState("");
@@ -43,19 +42,21 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const drugId = generateDrugId(drug);
 
-    if (!drug) {
+    // Trim and validate drug name
+    const trimmedDrug = drug.trim();
+    
+    if (!trimmedDrug) {
       toast.error("Please fill in the Drug field.");
       return;
     }
 
     const drugAlreadyExists = allergies.some(
-      (item) => item.drug.toLowerCase() === drug.toLowerCase()
+      (item) => item.drug.toLowerCase() === trimmedDrug.toLowerCase()
     );
 
     if (drugAlreadyExists) {
-      toast.error(`'${drug}' already exists!`);
+      toast.error(`'${trimmedDrug}' already exists!`);
       resetFormData();
       return;
     }
@@ -63,9 +64,11 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
     setLoading(true);
 
     try {
+      const drugId = generateDrugId(trimmedDrug);
+
       const { error } = await supabase.from("allergies").insert({
         userId: userId,
-        drug: drug,
+        drug: trimmedDrug,
         frequency: "",
         route: "",
         start: "",
@@ -76,25 +79,31 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
       });
 
       if (error) {
-        toast.error(
-          "Failed to add allergy, Check Internet Connection and Try again!"
-        );
+        console.error("Supabase error:", error);
+        toast.error("Failed to add allergy. Please try again!");
         return;
       }
 
-      // dispatch(updateAllergies([...allergies, formData]));
+      // Invalidate queries to refresh data
       queryClient.invalidateQueries({ queryKey: ["dashboardData", userId] });
-      toast.success(`${drug.toUpperCase()} added successfully!`);
+      toast.success(`${trimmedDrug.toUpperCase()} added successfully!`);
 
-      const { html, subject } = generateDrugAllergyEmail(info[0].name, drug);
-      await sendMail(info[0].email, html, subject);
+      // Send email notification
+      if (info.length > 0 && info[0].email && info[0].name) {
+        try {
+          const { html, subject } = generateDrugAllergyEmail(info[0].name, trimmedDrug);
+          await sendMail(info[0].email, html, subject);
+        } catch (emailError) {
+          console.error("Email sending error:", emailError);
+          // Don't show error to user as the allergy was added successfully
+        }
+      }
 
       resetFormData();
       setActiveModal("");
     } catch (error) {
-      toast.error(
-        "Failed to add allergy, Check Internet Connection and Try again!"
-      );
+      console.error("Error adding allergy:", error);
+      toast.error("Failed to add allergy. Please check your connection and try again!");
     } finally {
       setLoading(false);
     }

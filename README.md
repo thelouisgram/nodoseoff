@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/thelouisgram/nodoseoff/master/public/logo.png" alt="NodoseOff Logo" width="200"/>
+  <img src="https://github.com/thelouisgram/nodoseoff/blob/master/public/assets/logo/logo-with-name-white.png?raw=true" alt="NodoseOff Logo" width="200"/>
 </p>
 
 **NodoseOff** is a comprehensive medication management and health tracking application designed to help users stay on top of their medication schedules, track health metrics, and maintain better health outcomes.

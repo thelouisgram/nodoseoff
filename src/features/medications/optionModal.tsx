@@ -165,7 +165,7 @@ const OptionModal: React.FC<OptionModal> = ({
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.9 }}
           transition={{ duration: 0.15, ease: "easeOut" }}
-          className="fixed z-[9999] text-gray-700 dark:text-gray-200 flex flex-col items-start rounded-lg bg-white dark:bg-slate-900 shadow-xl w-56 py-2 border border-gray-200 dark:border-gray-700 divide-y divide-gray-100 dark:divide-gray-800"
+          className="fixed z-[9999] text-gray-700 dark:text-gray-200 flex flex-col items-start rounded-lg bg-white dark:bg-slate-900 shadow-xl w-56 border border-gray-200 dark:border-gray-700 overflow-hidden"
           style={{
             top: `${position.top}px`,
             left: `${position.left}px`,
@@ -179,13 +179,28 @@ const OptionModal: React.FC<OptionModal> = ({
           {/* Automatically render all visible buttons */}
           {visibleButtons.map((button, index) => {
             const Icon = button.icon;
+            const isFirst = index === 0;
+            const isLast = index === visibleButtons.length - 1;
             const finalHoverClass = `${button.hoverBg} dark:hover:bg-slate-800`;
+            
+            // Add rounded corners and proper padding for first/last items
+            const borderRadiusClass = isFirst 
+              ? "rounded-t-lg" 
+              : isLast 
+              ? "rounded-b-lg" 
+              : "";
+            
+            const paddingClass = isFirst 
+              ? "pt-3 pb-2" 
+              : isLast 
+              ? "pt-2 pb-3" 
+              : "py-2";
 
             return (
               <button
                 key={index}
                 onClick={() => handleAction(button.action)}
-                className={`flex items-center gap-3 w-full px-4 py-2 text-sm ${finalHoverClass} transition-colors text-gray-800 dark:text-gray-200`}
+                className={`flex items-center gap-3 w-full px-4 ${paddingClass} text-sm ${finalHoverClass} ${borderRadiusClass} transition-colors text-gray-800 dark:text-gray-200`}
               >
                 <Icon className={`size-4 ${button.iconColor}`} />
                 {button.label}

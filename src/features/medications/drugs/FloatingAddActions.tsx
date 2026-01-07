@@ -15,9 +15,7 @@ const FloatingAddActions: React.FC<FloatingAddActionsProps> = ({
   activeModal,
   setActiveModal,
 }) => {
-  const handleClose = () => {
-    setAdd(false);
-  };
+  const handleClose = () => setAdd(false);
 
   if (activeModal !== "") return null;
 
@@ -36,17 +34,17 @@ const FloatingAddActions: React.FC<FloatingAddActionsProps> = ({
         )}
       </AnimatePresence>
 
-      {/* Floating Actions */}
-      <div className="fixed right-5 ss:right-10 bottom-24 md:bottom-10 z-[144] flex flex-col items-end gap-4">
-        {/* Pop-out actions */}
+      {/* Floating Actions Wrapper */}
+      <div className="fixed right-5 ss:right-10 bottom-24 md:bottom-10 z-[144] flex flex-col items-end">
+        {/* Pop-out Actions */}
         <AnimatePresence>
           {add && (
-            <div className="flex flex-col items-end gap-3 mb-2">
-              {/* Add Drug Action */}
+            <div className="flex flex-col items-end gap-3 mb-4">
+              {/* Add Drug */}
               <motion.div
-                initial={{ opacity: 0, y: 20, scale: 0.8 }}
+                initial={{ opacity: 0, y: 20, scale: 0.85 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 20, scale: 0.8 }}
+                exit={{ opacity: 0, y: 20, scale: 0.85 }}
                 transition={{ type: "spring", stiffness: 260, damping: 20 }}
                 className="flex items-center gap-3"
               >
@@ -58,22 +56,19 @@ const FloatingAddActions: React.FC<FloatingAddActionsProps> = ({
                     setAdd(false);
                     setActiveModal("drugs");
                   }}
-                  className="bg-white dark:bg-slate-800 shadow-lg fixed-relative rounded-full size-12 ss:size-14 
-                    flex justify-center items-center hover:scale-110 hover:shadow-2xl active:scale-95
+                  className="bg-white dark:bg-slate-800 shadow-lg rounded-full size-12 ss:size-14 
+                    flex justify-center items-center hover:scale-110 active:scale-95
                     border border-gray-100 dark:border-slate-700 transition-all duration-200"
                 >
-                  <Pill
-                    className="size-6 ss:size-7 text-blue-600"
-                    strokeWidth={2}
-                  />
+                  <Pill className="size-6 ss:size-7 text-blue-600" strokeWidth={2} />
                 </button>
               </motion.div>
 
-              {/* Add Allergy Action */}
+              {/* Add Allergy */}
               <motion.div
-                initial={{ opacity: 0, y: 20, scale: 0.8 }}
+                initial={{ opacity: 0, y: 20, scale: 0.85 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 20, scale: 0.8 }}
+                exit={{ opacity: 0, y: 20, scale: 0.85 }}
                 transition={{
                   type: "spring",
                   stiffness: 260,
@@ -90,8 +85,8 @@ const FloatingAddActions: React.FC<FloatingAddActionsProps> = ({
                     setAdd(false);
                     setActiveModal("allergies");
                   }}
-                  className="bg-white dark:bg-slate-800 shadow-lg fixed-relative rounded-full size-12 ss:size-14
-                    flex justify-center items-center hover:scale-110 hover:shadow-2xl active:scale-95
+                  className="bg-white dark:bg-slate-800 shadow-lg rounded-full size-12 ss:size-14
+                    flex justify-center items-center hover:scale-110 active:scale-95
                     border border-gray-100 dark:border-slate-700 transition-all duration-200"
                 >
                   <ShieldOff
@@ -104,22 +99,20 @@ const FloatingAddActions: React.FC<FloatingAddActionsProps> = ({
           )}
         </AnimatePresence>
 
-        {/* Main Toggle Button */}
+        {/* Main Floating Button (NO JUMP) */}
         <motion.button
-          layout
-          onClick={() => {
-            setAdd((prev: boolean) => !prev);
-          }}
+          onClick={() => setAdd((prev) => !prev)}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           className={`rounded-full size-14 ss:size-16 flex justify-center items-center 
-            shadow-2xl relative z-[146] 
-            hover:scale-105 active:scale-95 transition-all duration-300 ${
+            shadow-2xl relative z-[146] transition-colors duration-300 ${
               add
                 ? "bg-slate-900 border border-slate-800"
                 : "bg-blue-600 hover:bg-blue-700 shadow-blue-500/20"
             }`}
         >
           <motion.div
-            animate={{ rotate: add ? 45 : 0 }}
+            animate={{ rotate: add ? 0 : 90 }}
             transition={{ type: "spring", stiffness: 260, damping: 20 }}
           >
             {add ? (

@@ -224,20 +224,25 @@ const Report: React.FC<ReportProps> = ({ setTab }) => {
           >
             {/* Header */}
             <div className="flex justify-between items-center pb-4 border-b border-gray-100 dark:border-slate-800">
-              <div className="relative w-[120px] h-[24px]">
+              <div className="relative w-[120px] h-[24px] flex-shrink-0">
                 <Image
                   src="/assets/logo/logo-with-name-blue.png"
                   alt="NoDoseOff"
                   fill
-                  className="object-contain block dark:hidden"
+                  className="block dark:hidden object-contain"
+                  sizes="120px"
+                  priority
                 />
                 <Image
                   src="/assets/logo/logo-with-name-white.png"
                   alt="NoDoseOff"
                   fill
-                  className="object-contain hidden dark:block"
+                  className="hidden dark:block object-contain"
+                  sizes="120px"
+                  priority
                 />
               </div>
+
               <div className="text-right text-sm dark:text-slate-300">
                 <p className="font-medium dark:text-slate-100">{name}</p>
                 <p className="text-gray-500 dark:text-gray-400">{email}</p>

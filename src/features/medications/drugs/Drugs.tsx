@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/no-unescaped-entities */
 "use client";
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useState, useEffect, useRef } from "react";
 
 import { toast } from "sonner";
 import { generateDrugAllergyEmail } from "@/emails/drugAllergy";
@@ -56,8 +56,19 @@ const Drugs: React.FC<DrugsProps> = ({
   const [activeView, setActiveView] = useState<"list" | "details">("list");
   const [options, setOptions] = useState(false);
 
+  const containerRef = useRef<HTMLDivElement>(null);
+
   const queryClient = useQueryClient();
   const supabase = createClient();
+
+  /* ----------------------------------------
+     Scroll to top when activeView changes
+  ----------------------------------------- */
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [activeView]);
 
   const deleteOngoingDrug = async (drug: string): Promise<void> => {
     if (!drug) {
@@ -69,11 +80,9 @@ const Drugs: React.FC<DrugsProps> = ({
       await supabase.from("drugs").delete().eq("drug", drug);
 
       const updatedSchedule = schedule.filter((s) => s.drug !== drug);
-      // dispatch(updateSchedule(updatedSchedule));
       if (userId)
         await uploadScheduleToServer({ userId, schedule: updatedSchedule }); // This might be redundant if the server handles cascade delete, but we keep it for now
 
-      // dispatch(setDrugs(drugs.filter((d) => d.drug !== drug)));
       queryClient.invalidateQueries({ queryKey: ["dashboardData", userId] });
 
       toast.success(`${drug.toUpperCase()} deleted`, { id: "delete-drug" });
@@ -91,8 +100,6 @@ const Drugs: React.FC<DrugsProps> = ({
 
     try {
       const updated = completedDrugs.filter((d) => d.drug !== drug);
-      // dispatch(updateCompletedDrugs(updated));
-
       await supabase
         .from("completedDrugs")
         .update({ completedDrugs: updated })
@@ -130,23 +137,19 @@ const Drugs: React.FC<DrugsProps> = ({
     }
 
     try {
-      // remove from ongoing or completed locally and on server
       if (tab === "ongoing") {
         await supabase
           .from("drugs")
           .delete()
           .eq("drug", drug)
           .eq("userId", userId);
-        // dispatch(setDrugs(drugs.filter(d => d.drug !== drug)));
       } else if (tab === "completed") {
         await supabase
           .from("completedDrugs")
           .delete()
           .eq("drug", drug)
           .eq("userId", userId);
-        // dispatch(updateCompletedDrugs(completedDrugs.filter(d => d.drug !== drug)));
       }
-
       // insert into allergies
       await supabase.from("allergies").insert({
         userId,
@@ -161,13 +164,10 @@ const Drugs: React.FC<DrugsProps> = ({
 
       // update schedule
       const updatedSchedule = schedule.filter((s) => s.drug !== drug);
-      // dispatch(updateSchedule(updatedSchedule));
       if (userId) {
         await uploadScheduleToServer({ userId, schedule: updatedSchedule });
       }
 
-      // update allergies state
-      // dispatch(updateAllergies([...allergies, target]));
       queryClient.invalidateQueries({ queryKey: ["dashboardData", userId] });
 
       toast.success(`${drug.toUpperCase()} marked as allergy`, {
@@ -193,9 +193,7 @@ const Drugs: React.FC<DrugsProps> = ({
 
     try {
       await supabase.from("allergies").delete().eq("drug", drug);
-      // dispatch(updateAllergies(allergies.filter((a) => a.drug !== drug)));
       queryClient.invalidateQueries({ queryKey: ["dashboardData", userId] });
-
       toast.success(`${drug.toUpperCase()} deleted`, { id: "delete-allergy" });
     } catch (err) {
       console.error(err);
@@ -205,6 +203,7 @@ const Drugs: React.FC<DrugsProps> = ({
 
   return (
     <div
+      ref={containerRef}
       onClick={() => {
         setOptions(false);
       }}

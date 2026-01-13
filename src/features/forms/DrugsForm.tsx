@@ -497,7 +497,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({
                     value={formData.end}
                     onChange={handleInputChange}
                     disabled={loading}
-                    className="w-full px-4 py-3 h-[47px] border border-gray-300 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-slate-900/50 disabled:cursor-not-allowed text-gray-900 dark:text-slate-100 bg-white dark:bg-slate-900"
+                    className="py-3 h-[47px] border border-gray-300 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-slate-900/50 disabled:cursor-not-allowed text-gray-900 dark:text-slate-100 bg-white dark:bg-slate-900"
                   />
                 </div>
 

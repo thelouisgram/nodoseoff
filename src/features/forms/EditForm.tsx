@@ -150,7 +150,7 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
         value={formData.time[index]}
         onChange={handleInputChange}
         disabled={loading}
-        className="w-full h-[47px] px-4 py-2 border border-gray-300 dark:border-slate-700 rounded-lg text-sm bg-gray-50/50 dark:bg-slate-900/50 text-gray-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500"
+        className="w-full h-[47px] px-4 py-2 border border-gray-300 dark:border-slate-700 rounded-lg text-sm bg-gray-50/50 dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:[color-scheme:dark]"
       />
     );
   });
@@ -268,7 +268,7 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-lg bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-2xl shadow-2xl max-h-[80vh] flex flex-col"
+            className="w-full ss:max-w-lg bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-2xl shadow-2xl max-h-[80vh] flex flex-col"
           >
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 dark:border-slate-800 flex-shrink-0">
@@ -304,7 +304,7 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                     value={formData.drug}
                     onChange={handleInputChange}
                     disabled={loading}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-gray-900 disabled:cursor-not-allowed text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 bg-white dark:bg-slate-900"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-slate-900 disabled:cursor-not-allowed text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 bg-white dark:bg-slate-900"
                     autoComplete="off"
                   />
                 </div>
@@ -323,7 +323,7 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                     value={formData.route}
                     onChange={handleSelectChange("route")}
                     disabled={loading}
-                    className="w-full px-4 py-3 h-[47px] border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-gray-900 disabled:cursor-not-allowed text-gray-900 dark:text-gray-100 bg-white dark:bg-slate-900 cursor-pointer"
+                    className="w-full px-4 py-3 h-[47px] border border-gray-300 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-slate-900 disabled:cursor-not-allowed text-gray-900 dark:text-white bg-white dark:bg-slate-900 cursor-pointer dark:[color-scheme:dark]"
                   >
                     <option value="">Select Route</option>
                     <option value="oral">Oral</option>
@@ -350,7 +350,7 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                     value={formData.frequency}
                     onChange={handleSelectChange("frequency")}
                     disabled={loading}
-                    className="w-full px-4 h-[47px]  py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-gray-900 disabled:cursor-not-allowed text-gray-900 dark:text-gray-100 bg-white dark:bg-slate-900 cursor-pointer"
+                    className="w-full px-4 h-[47px]  py-3 border border-gray-300 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-slate-900 disabled:cursor-not-allowed text-gray-900 dark:text-white bg-white dark:bg-slate-900 cursor-pointer dark:[color-scheme:dark]"
                   >
                     <option value="">Select Frequency</option>
                     <option value="QD">Once Daily</option>
@@ -370,15 +370,12 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Select Time{formData.time.length > 1 ? "s" : ""}
                     </label>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 w-full gap-3">
+                    <div className="grid grid-cols-2 w-full gap-3">
                       {timeInput}
                     </div>
                   </div>
                 )}
 
-                {/* Start & End Date - Responsive 2 Column Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {/* Start Date - Disabled */}
                   <div>
                     <label
                       htmlFor="startEdit"
@@ -393,7 +390,7 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                       disabled={true}
                       value={getCurrentDate()}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 h-[47px] border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 cursor-not-allowed"
+                      className="w-full px-4 py-3 h-[47px] border border-gray-300 dark:border-slate-800 rounded-lg bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white cursor-not-allowed dark:[color-scheme:dark]"
                     />
                   </div>
 
@@ -412,10 +409,9 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                       value={formData.end}
                       onChange={handleInputChange}
                       disabled={loading}
-                      className="w-full px-4 py-3 h-[47px] border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-gray-900 disabled:cursor-not-allowed text-gray-900 dark:text-gray-100 bg-white dark:bg-slate-900"
+                      className="w-full px-4 py-3 h-[47px] border border-gray-300 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-slate-900 disabled:cursor-not-allowed text-gray-900 dark:text-white bg-white dark:bg-slate-900 dark:[color-scheme:dark]"
                     />
                   </div>
-                </div>
 
                 {/* Reminder Checkbox */}
                 <div className="flex items-center gap-2">
@@ -426,7 +422,7 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                     checked={formData.reminder}
                     onChange={handleInputChange}
                     disabled={loading}
-                    className="w-4 h-4 text-blue-600 border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed bg-white dark:bg-gray-800"
+                    className="w-4 h-4 text-blue-600 border-gray-300 dark:border-slate-800 rounded focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed bg-white dark:bg-slate-800"
                   />
                   <label
                     htmlFor="reminder"

@@ -200,7 +200,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                       name="name"
                       value={formData.name}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-200 dark:border-slate-800 rounded-xl bg-gray-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 border border-gray-200 dark:border-slate-800 rounded-xl bg-gray-50/50 dark:bg-slate-900 text-slate-800 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                       placeholder="Enter your name"
                       required
                       disabled={loading}
@@ -216,7 +216,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                       name="phone"
                       value={formData.phone}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-200 dark:border-slate-800 rounded-xl bg-gray-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 border border-gray-200 dark:border-slate-800 rounded-xl bg-gray-50/50 dark:bg-slate-900 text-slate-800 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                       placeholder="+234 000 000 0000"
                       required
                       disabled={loading}
@@ -230,7 +230,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                     <input
                       type="email"
                       value={info[0]?.email}
-                      className="w-full px-4 py-3 border border-gray-100 dark:border-slate-800 rounded-xl bg-gray-100/50 dark:bg-slate-900/30 text-gray-500 dark:text-gray-500 cursor-not-allowed"
+                      className="w-full px-4 py-3 border border-gray-100 dark:border-slate-800 rounded-xl bg-gray-100/50 dark:bg-slate-900/50 text-gray-500 dark:text-slate-500 cursor-not-allowed"
                       disabled
                     />
                   </div>

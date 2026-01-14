@@ -153,7 +153,7 @@ export default function DailyReports() {
           <div className="flex items-center justify-between mb-4">
             <button
               onClick={() => setViewMonth(viewMonth.subtract(1, "month"))}
-              className="p-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700 dark:text-slate-200 transition"
+              className="p-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700 dark:text-slate-200 transition dark:[color-scheme:dark]"
             >
               <GrFormPrevious />
             </button>

@@ -123,7 +123,7 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
                 value={formData.otcDrugs !== null ? formData.otcDrugs : ""}
                 onChange={handleSelectChange("otcDrugs")}
                 disabled={loading}
-                className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-gray-100 cursor-pointer"
+                className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-gray-100 cursor-pointer dark:[color-scheme:dark]"
               >
                 <option value="" className="dark:bg-slate-800">
                   Select option

@@ -308,7 +308,7 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                       placeholder="e.g., Rifampicin"
                       value={formData.drug}
                       onChange={handleInputChange}
-                      disabled={loading}
+                      disabled={true}
                       className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500"
                       autoComplete="off"
                     />

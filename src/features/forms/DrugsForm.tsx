@@ -2,19 +2,13 @@
 "use client";
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
 import {
   useDrugs,
-  useSchedule,
   useAllergies,
   useUserInfo,
+  useAddDrugMutation,
 } from "@/hooks/useDashboardData";
-import { dose, generateSchedule } from "@/utils/dashboard/dashboard";
-import { uploadScheduleToServer } from "@/utils/dashboard/schedule";
-import { createClient } from "@/lib/supabase/client";
-import { generateDrugId } from "@/utils/drugs";
-import { sendMail } from "@/utils/sendEmail";
-import { generateDrugAddedEmail } from "@/emails/newDrug";
+import { dose } from "@/utils/dashboard/dashboard";
 import dayjs from "dayjs";
 import { useAppStore } from "@/store/useAppStore";
 import { motion, AnimatePresence } from "framer-motion";
@@ -39,12 +33,10 @@ const DrugsForm: React.FC<DrugFormProps> = ({
   const { userId } = useAppStore((state) => state);
 
   const { data: drugs = [] } = useDrugs(userId);
-  const { data: schedule = [] } = useSchedule(userId);
   const { data: allergies = [] } = useAllergies(userId);
   const { data: info = [] } = useUserInfo(userId);
 
-  const supabase = createClient();
-  const queryClient = useQueryClient();
+  const addDrugMutation = useAddDrugMutation();
 
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -177,7 +169,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({
     const hasErrors = Object.values(errors).some((err) => err !== "");
 
     if (hasErrors) {
-      Object.entries(errors).forEach(([field, error]) => {
+      Object.entries(errors).forEach(([, error]) => {
         if (error) {
           toast.error(error);
         }
@@ -211,12 +203,9 @@ const DrugsForm: React.FC<DrugFormProps> = ({
   const addDrug = async () => {
     setLoading(true);
 
-    const drugId = generateDrugId(formData.drug);
-    console.log(drugId);
-
     try {
-      const { error } = await supabase.from("drugs").insert({
-        userId: userId,
+      await addDrugMutation.mutateAsync({
+        userId: userId!,
         drug: formData.drug,
         frequency: formData.frequency,
         route: formData.route,
@@ -224,42 +213,12 @@ const DrugsForm: React.FC<DrugFormProps> = ({
         end: formData.end,
         time: formData.time,
         reminder: formData.reminder,
-        drugId: drugId,
+        userInfo: {
+          name: info[0]?.name || "",
+          email: info[0]?.email || "",
+        },
       });
 
-      if (error) {
-        toast.error(
-          "Error adding drug, Check Internet Connection and Try again!"
-        );
-        return;
-      }
-
-      formData.drugId = drugId;
-
-      const { html, subject } = generateDrugAddedEmail(
-        info[0].name,
-        formData.drug,
-        formData.start,
-        formData.end,
-        formData.route,
-        formData.time
-      );
-      await sendMail(info[0].email, html, subject);
-
-      await sendMail(info[0].email, html, subject);
-
-      // dispatch(setDrugs([...drugs, formData]));
-
-      const data = generateSchedule(formData);
-      const updatedSchedule = [...schedule, ...data];
-
-      // dispatch(updateSchedule(updatedSchedule));
-      await uploadScheduleToServer({
-        userId: userId,
-        schedule: updatedSchedule,
-      });
-
-      queryClient.invalidateQueries({ queryKey: ["dashboardData", userId] });
       toast.success(`${formData.drug.toUpperCase()} added successfully!`);
       setActiveModal("");
     } catch (error) {
@@ -459,14 +418,14 @@ const DrugsForm: React.FC<DrugFormProps> = ({
                     <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                       Select Time{formData.time.length > 1 ? "s" : ""}
                     </label>
-                    <div className="grid grid-cols-2 w-full gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 w-full gap-3">
                       {timeInput}
                     </div>
                   </div>
                 )}
 
-                {/* Start & End Date - 2 Column Grid */}
-                <div className="grid grid-cols-2 gap-3">
+                {/* Start & End Date - Responsive 2 Column Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {/* Start Date */}
                   <div className="w-full">
                     <label

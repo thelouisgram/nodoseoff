@@ -60,7 +60,10 @@ const FloatingAddActions: React.FC<FloatingAddActionsProps> = ({
                     flex justify-center items-center hover:scale-110 active:scale-95
                     border border-gray-100 dark:border-slate-700 transition-all duration-200"
                 >
-                  <Pill className="size-6 ss:size-7 text-blue-600" strokeWidth={2} />
+                  <Pill
+                    className="size-6 ss:size-7 text-blue-600"
+                    strokeWidth={2}
+                  />
                 </button>
               </motion.div>
 
@@ -102,8 +105,11 @@ const FloatingAddActions: React.FC<FloatingAddActionsProps> = ({
         {/* Main Floating Button (NO JUMP) */}
         <motion.button
           onClick={() => setAdd((prev) => !prev)}
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 1, scale: 1 }}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
+          transition={{ delay: 0.5 }}
           className={`rounded-full size-14 ss:size-16 flex justify-center items-center 
             shadow-2xl relative z-[146] transition-colors duration-300 ${
               add

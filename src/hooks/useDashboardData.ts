@@ -4,6 +4,12 @@ import { fetchData, cleanUpDatabase } from "../utils/fetchData";
 import { DrugProps, ScheduleItem } from "../types/dashboard";
 import { Info } from "../utils/store";
 import { createClient } from "@/lib/supabase/client";
+import { generateDrugId } from "@/utils/drugs";
+import { generateSchedule } from "../utils/dashboard/dashboard";
+import { uploadScheduleToServer, removePastDoses } from "../utils/dashboard/schedule";
+import { sendMail } from "../utils/sendEmail";
+import { generateDrugAddedEmail } from "@/emails/newDrug";
+import { generateDrugAllergyEmail } from "@/emails/drugAllergy";
 
 // Define the shape of the data returned by fetchData
 interface DashboardData {
@@ -28,8 +34,6 @@ export const useDashboardData = (userId: string | undefined) => {
   });
 
   // DB Cleanup Side Effect
-  // We can keep this here, or move it to a separate effect/component. 
-  // Keeping it here ensures it runs when data is fetched.
   useEffect(() => {
     if (query.data && userId) {
         if (query.data.expiredDrugs.length > 0) {
@@ -123,7 +127,7 @@ export const useCompletedDrugs = (userId: string | undefined) => {
     });
 }
 
-// --- Mutation Hooks with Optimistic Updates ---
+// --- Mutation Hooks with Direct Cache Updates ---
 
 // Helper to update dashboard cache directly
 const useUpdateDashboardCache = () => {
@@ -146,16 +150,20 @@ interface AddDrugParams {
     end: string;
     time: string[];
     reminder: boolean;
-    drugId: string;
+    userInfo: { name: string; email: string };
 }
 
 export const useAddDrugMutation = () => {
     const updateCache = useUpdateDashboardCache();
     const supabase = createClient();
+    const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: async (params: AddDrugParams) => {
-            const { error } = await supabase.from("drugs").insert({
+            const drugId = generateDrugId(params.drug);
+            
+            // 1. Insert drug
+            const { error: drugError } = await supabase.from("drugs").insert({
                 userId: params.userId,
                 drug: params.drug,
                 frequency: params.frequency,
@@ -164,10 +172,35 @@ export const useAddDrugMutation = () => {
                 end: params.end,
                 time: params.time,
                 reminder: params.reminder,
-                drugId: params.drugId,
+                drugId: drugId,
             });
-            if (error) throw error;
-            return params;
+            if (drugError) throw drugError;
+
+            // 2. Generate and upload schedule
+            const currentData = queryClient.getQueryData<DashboardData>(["dashboardData", params.userId]);
+            const currentSchedule = currentData?.schedule || [];
+            const newScheduleItems = generateSchedule({ ...params, drugId });
+            const updatedSchedule = [...currentSchedule, ...newScheduleItems];
+
+            await uploadScheduleToServer({
+                userId: params.userId,
+                schedule: updatedSchedule,
+            });
+
+            // 3. Send email
+            if (params.userInfo.email) {
+                const { html, subject } = generateDrugAddedEmail(
+                    params.userInfo.name,
+                    params.drug,
+                    params.start,
+                    params.end,
+                    params.route,
+                    params.time
+                );
+                await sendMail(params.userInfo.email, html, subject);
+            }
+
+            return { ...params, drugId, updatedSchedule };
         },
         onSuccess: (data) => {
             updateCache(data.userId, (old) => ({
@@ -182,6 +215,7 @@ export const useAddDrugMutation = () => {
                     reminder: data.reminder,
                     drugId: data.drugId,
                 }],
+                schedule: data.updatedSchedule,
             }));
         },
     });
@@ -190,7 +224,8 @@ export const useAddDrugMutation = () => {
 // Update existing drug
 interface UpdateDrugParams {
     userId: string;
-    activeDrug: string;
+    activeDrug: string; // The drug name before update
+    activeDrugId: string;
     drug: string;
     frequency: string;
     route: string;
@@ -198,16 +233,18 @@ interface UpdateDrugParams {
     end: string;
     time: string[];
     reminder: boolean;
-    drugId?: string;
+    todayDate: string; // current date for schedule regeneration
 }
 
 export const useUpdateDrugMutation = () => {
     const updateCache = useUpdateDashboardCache();
     const supabase = createClient();
+    const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: async (params: UpdateDrugParams) => {
-            const { error } = await supabase
+            // 1. Update drug in DB
+            const { error: drugUpdateError } = await supabase
                 .from("drugs")
                 .update({
                     userId: params.userId,
@@ -220,8 +257,30 @@ export const useUpdateDrugMutation = () => {
                     reminder: params.reminder,
                 })
                 .eq("drug", params.activeDrug);
-            if (error) throw error;
-            return params;
+            if (drugUpdateError) throw drugUpdateError;
+
+            // 2. Update schedule
+            const currentData = queryClient.getQueryData<DashboardData>(["dashboardData", params.userId]);
+            const currentSchedule = currentData?.schedule || [];
+            
+            const strippedSchedule = removePastDoses({
+                activeDrugId: params.activeDrugId,
+                schedule: currentSchedule,
+            });
+
+            const newDoses = generateSchedule({
+                ...params,
+                drugId: params.activeDrugId,
+                start: params.todayDate,
+            });
+            const updatedSchedule = [...strippedSchedule, ...newDoses];
+
+            await uploadScheduleToServer({
+                userId: params.userId,
+                schedule: updatedSchedule,
+            });
+
+            return { ...params, updatedSchedule };
         },
         onSuccess: (data) => {
             updateCache(data.userId, (old) => ({
@@ -240,6 +299,7 @@ export const useUpdateDrugMutation = () => {
                         }
                         : drug
                 ),
+                schedule: data.updatedSchedule,
             }));
         },
     });
@@ -251,21 +311,46 @@ interface DeleteDrugParams {
     drug: string;
 }
 
+// Helper to get today's date in YYYY-MM-DD format
+const getTodayDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+};
+
 export const useDeleteDrugMutation = () => {
     const updateCache = useUpdateDashboardCache();
     const supabase = createClient();
+    const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: async (params: DeleteDrugParams) => {
-            const { error } = await supabase.from("drugs").delete().eq("drug", params.drug);
-            if (error) throw error;
-            return params;
+            // 1. Delete from DB
+            const { error: drugError } = await supabase.from("drugs").delete().eq("drug", params.drug);
+            if (drugError) throw drugError;
+
+            // 2. Update schedule
+            const currentData = queryClient.getQueryData<DashboardData>(["dashboardData", params.userId]);
+            const currentSchedule = currentData?.schedule || [];
+            const today = getTodayDate();
+            const updatedSchedule = currentSchedule.filter((s) => 
+                s.drug !== params.drug || s.date < today
+            );
+
+            await uploadScheduleToServer({
+                userId: params.userId,
+                schedule: updatedSchedule,
+            });
+
+            return { ...params, updatedSchedule };
         },
         onSuccess: (data) => {
             updateCache(data.userId, (old) => ({
                 ...old,
                 activeDrugs: old.activeDrugs.filter((drug) => drug.drug !== data.drug),
-                schedule: old.schedule.filter((s) => s.drug !== data.drug),
+                schedule: data.updatedSchedule,
             }));
         },
     });
@@ -304,7 +389,7 @@ export const useDeleteCompletedDrugMutation = () => {
 interface AddAllergyParams {
     userId: string;
     drug: string;
-    drugId: string;
+    userInfo?: { name: string; email: string };
 }
 
 export const useAddAllergyMutation = () => {
@@ -313,6 +398,7 @@ export const useAddAllergyMutation = () => {
 
     return useMutation({
         mutationFn: async (params: AddAllergyParams) => {
+            const drugId = generateDrugId(params.drug);
             const { error } = await supabase.from("allergies").insert({
                 userId: params.userId,
                 drug: params.drug,
@@ -322,10 +408,17 @@ export const useAddAllergyMutation = () => {
                 end: "",
                 time: [""],
                 reminder: true,
-                drugId: params.drugId,
+                drugId: drugId,
             });
             if (error) throw error;
-            return params;
+
+            // Send email notification
+            if (params.userInfo?.email) {
+                const { html, subject } = generateDrugAllergyEmail(params.userInfo.name, params.drug);
+                await sendMail(params.userInfo.email, html, subject);
+            }
+
+            return { ...params, drugId };
         },
         onSuccess: (data) => {
             updateCache(data.userId, (old) => ({
@@ -374,17 +467,19 @@ export const useDeleteAllergyMutation = () => {
 interface MarkAsAllergyParams {
     userId: string;
     drug: string;
-    tab: string;
+    tab: string; // 'ongoing' or 'completed'
     target: DrugProps;
+    userInfo?: { name: string; email: string };
 }
 
 export const useMarkAsAllergyMutation = () => {
     const updateCache = useUpdateDashboardCache();
     const supabase = createClient();
+    const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: async (params: MarkAsAllergyParams) => {
-            // Delete from source table
+            // 1. Delete from source table
             if (params.tab === "ongoing") {
                 await supabase
                     .from("drugs")
@@ -399,8 +494,8 @@ export const useMarkAsAllergyMutation = () => {
                     .eq("userId", params.userId);
             }
             
-            // Insert into allergies
-            const { error } = await supabase.from("allergies").insert({
+            // 2. Insert into allergies
+            const { error: allergyIntoError } = await supabase.from("allergies").insert({
                 userId: params.userId,
                 drug: params.drug,
                 frequency: params.target.frequency || "",
@@ -409,9 +504,33 @@ export const useMarkAsAllergyMutation = () => {
                 end: params.target.end || "",
                 time: params.target.time || [""],
                 reminder: true,
+                drugId: params.target.drugId,
             });
-            if (error) throw error;
-            return params;
+            if (allergyIntoError) throw allergyIntoError;
+
+            // 3. Update schedule if it was an ongoing drug
+            const currentData = queryClient.getQueryData<DashboardData>(["dashboardData", params.userId]);
+            const currentSchedule = currentData?.schedule || [];
+            const today = getTodayDate();
+            let updatedSchedule = currentSchedule;
+
+            if (params.tab === "ongoing") {
+                updatedSchedule = currentSchedule.filter((s) => 
+                    s.drug !== params.drug || s.date < today
+                );
+                await uploadScheduleToServer({
+                    userId: params.userId,
+                    schedule: updatedSchedule,
+                });
+            }
+
+            // 4. Send email
+            if (params.userInfo?.email) {
+                const { html, subject } = generateDrugAllergyEmail(params.userInfo.name, params.drug);
+                await sendMail(params.userInfo.email, html, subject);
+            }
+
+            return { ...params, updatedSchedule };
         },
         onSuccess: (data) => {
             updateCache(data.userId, (old) => {
@@ -430,7 +549,7 @@ export const useMarkAsAllergyMutation = () => {
                     return {
                         ...old,
                         activeDrugs: old.activeDrugs.filter((d) => d.drug !== data.drug),
-                        schedule: old.schedule.filter((s) => s.drug !== data.drug),
+                        schedule: data.updatedSchedule,
                         allergies: [...old.allergies, newAllergyEntry],
                     };
                 } else {
@@ -481,7 +600,6 @@ interface UploadProfilePictureParams {
     userId: string;
     file: File;
     currentPicture: string;
-    newFileName: string;
 }
 
 export const useUploadProfilePictureMutation = () => {
@@ -491,7 +609,8 @@ export const useUploadProfilePictureMutation = () => {
     return useMutation({
         mutationFn: async (params: UploadProfilePictureParams) => {
             const bucket = "profile-picture";
-            const filePath = `${params.userId}/${params.newFileName}`;
+            const newFileName = `${Date.now()}-${params.file.name}`;
+            const filePath = `${params.userId}/${newFileName}`;
 
             // Delete old file
             if (params.currentPicture) {
@@ -506,7 +625,7 @@ export const useUploadProfilePictureMutation = () => {
                 .upload(filePath, params.file);
 
             if (error) throw error;
-            return params;
+            return { ...params, newFileName };
         },
         onSuccess: (data) => {
             updateCache(data.userId, (old) => ({
@@ -561,8 +680,6 @@ export const useUpdateScheduleMutation = () => {
 
     return useMutation({
         mutationFn: async (params: UpdateScheduleParams) => {
-            // Import dynamically to avoid circular dependency
-            const { uploadScheduleToServer } = await import("../utils/dashboard/schedule");
             await uploadScheduleToServer({ userId: params.userId, schedule: params.schedule });
             return params;
         },
@@ -615,3 +732,4 @@ export const useUserTheme = (userId: string | undefined) => {
         select: (data: DashboardData) => data.userInfo[0]?.theme ?? null
     });
 };
+

@@ -2,15 +2,17 @@
 "use client";
 
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { toast } from "sonner";
-import { useDrugs, useSchedule, useUserInfo } from "@/hooks/useDashboardData";
+import {
+  useDrugs,
+  useSchedule,
+  useUpdateScheduleMutation,
+} from "@/hooks/useDashboardData";
 
 import DailyReports from "./DailyReports";
 import Tracker from "../Tracker";
 import DoseCard from "../DoseCard";
-import { uploadScheduleToServer } from "@/utils/dashboard/schedule";
 import { calculateClosestDoseCountdown } from "@/utils/dashboard/dashboard";
 
 import { ScheduleItem } from "@/types/dashboard";
@@ -37,7 +39,7 @@ const Home: React.FC<HomeProps> = ({
   const { data: drugs = [] } = useDrugs(userId);
   const { data: schedule = [] } = useSchedule(userId);
 
-  const queryClient = useQueryClient();
+  const updateScheduleMutation = useUpdateScheduleMutation();
   // Removed
   const [countDown, setCountDown] = useState("");
 
@@ -102,17 +104,17 @@ const Home: React.FC<HomeProps> = ({
           : dose
       );
       try {
-        await uploadScheduleToServer({ userId, schedule: updatedSchedule });
-
-        // Invalidate query to refetch data
-        queryClient.invalidateQueries({ queryKey: ["dashboardData", userId] });
+        await updateScheduleMutation.mutateAsync({
+          userId: userId!,
+          schedule: updatedSchedule,
+        });
       } catch (error) {
         toast.error(
           "Failed to update dose. Please check your network connection."
         );
       }
     },
-    [schedule, userId, queryClient]
+    [schedule, userId, updateScheduleMutation]
   );
 
   /** Doses to render */

@@ -1,14 +1,13 @@
 import React, { FormEvent, useState } from "react";
 import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
-import { useAllergies, useUserInfo } from "@/hooks/useDashboardData";
-import { createClient } from "@/lib/supabase/client";
-import { generateDrugAllergyEmail } from "@/emails/drugAllergy";
-import { sendMail } from "@/utils/sendEmail";
+import {
+  useAllergies,
+  useUserInfo,
+  useAddAllergyMutation,
+} from "@/hooks/useDashboardData";
 import { X, Loader2, AlertCircle } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 import { motion, AnimatePresence } from "framer-motion";
-import { generateDrugId } from "@/utils/drugs";
 
 interface AllergiesFormProps {
   setActiveModal: (value: string) => void;
@@ -23,8 +22,7 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
   const { data: allergies = [] } = useAllergies(userId);
   const { data: info = [] } = useUserInfo(userId);
 
-  const queryClient = useQueryClient();
-  const supabase = createClient();
+  const addAllergyMutation = useAddAllergyMutation();
 
   const [drug, setDrug] = useState("");
   const [loading, setLoading] = useState(false);
@@ -45,7 +43,7 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
 
     // Trim and validate drug name
     const trimmedDrug = drug.trim();
-    
+
     if (!trimmedDrug) {
       toast.error("Please fill in the Drug field.");
       return;
@@ -64,46 +62,23 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
     setLoading(true);
 
     try {
-      const drugId = generateDrugId(trimmedDrug);
-
-      const { error } = await supabase.from("allergies").insert({
-        userId: userId,
+      await addAllergyMutation.mutateAsync({
+        userId: userId!,
         drug: trimmedDrug,
-        frequency: "",
-        route: "",
-        start: "",
-        end: "",
-        time: [""],
-        reminder: true,
-        drugId: drugId,
+        userInfo: {
+          name: info[0]?.name || "",
+          email: info[0]?.email || "",
+        },
       });
 
-      if (error) {
-        console.error("Supabase error:", error);
-        toast.error("Failed to add allergy. Please try again!");
-        return;
-      }
-
-      // Invalidate queries to refresh data
-      queryClient.invalidateQueries({ queryKey: ["dashboardData", userId] });
       toast.success(`${trimmedDrug.toUpperCase()} added successfully!`);
-
-      // Send email notification
-      if (info.length > 0 && info[0].email && info[0].name) {
-        try {
-          const { html, subject } = generateDrugAllergyEmail(info[0].name, trimmedDrug);
-          await sendMail(info[0].email, html, subject);
-        } catch (emailError) {
-          console.error("Email sending error:", emailError);
-          // Don't show error to user as the allergy was added successfully
-        }
-      }
-
       resetFormData();
       setActiveModal("");
     } catch (error) {
       console.error("Error adding allergy:", error);
-      toast.error("Failed to add allergy. Please check your connection and try again!");
+      toast.error(
+        "Failed to add allergy. Please check your connection and try again!"
+      );
     } finally {
       setLoading(false);
     }

@@ -2,11 +2,13 @@
 import React, { useEffect, useState, FormEvent, ChangeEvent } from "react";
 import Image from "next/image";
 
-import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
-// import { updateInfo, updateProfilePicture } from "../../../../store/stateSlice";
-import { useQueryClient } from "@tanstack/react-query";
-import { useUserInfo, useProfilePicture } from "@/hooks/useDashboardData";
+import {
+  useUserInfo,
+  useProfilePicture,
+  useUpdateProfileMutation,
+  useUploadProfilePictureMutation,
+} from "@/hooks/useDashboardData";
 import { X, Loader2, Camera, User } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 import { motion, AnimatePresence } from "framer-motion";
@@ -25,9 +27,8 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
   const { data: profilePicture = "" } = useProfilePicture(userId);
 
   const { name = "", phone = "", email = "" } = info[0] || {};
-  const supabase = createClient();
-
-  const queryClient = useQueryClient();
+  const updateProfileMutation = useUpdateProfileMutation();
+  const uploadPictureMutation = useUploadProfilePictureMutation();
 
   const [loading, setLoading] = useState(false);
 
@@ -71,43 +72,20 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
     try {
       // Update Name and Phone
       if (formData.name !== name || formData.phone !== phone) {
-        const { error } = await supabase
-          .from("users")
-          .update({ name: formData.name, phone: formData.phone })
-          .eq("userId", userId);
-
-        if (error) {
-          toast.error("Failed to update profile information");
-          return;
-        }
-
-        queryClient.invalidateQueries({ queryKey: ["dashboardData", userId] });
+        await updateProfileMutation.mutateAsync({
+          userId: userId!,
+          name: formData.name,
+          phone: formData.phone,
+        });
       }
 
       // Upload New Profile Picture
       if (avatarFile) {
-        const bucket = "profile-picture";
-        const newFileName = `${Date.now()}-${avatarFile.name}`;
-        const filePath = `${userId}/${newFileName}`;
-
-        // Delete old file
-        if (profilePicture) {
-          await supabase.storage
-            .from(bucket)
-            .remove([`${userId}/${profilePicture}`]);
-        }
-
-        // Upload new picture
-        const { error: uploadError } = await supabase.storage
-          .from(bucket)
-          .upload(filePath, avatarFile);
-
-        if (uploadError) {
-          toast.error("Failed to upload profile picture");
-          return;
-        }
-
-        queryClient.invalidateQueries({ queryKey: ["dashboardData", userId] });
+        await uploadPictureMutation.mutateAsync({
+          userId: userId!,
+          file: avatarFile,
+          currentPicture: profilePicture || "",
+        });
       }
 
       toast.success("Profile updated!");
@@ -123,6 +101,13 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleClick = () => {
+    const syntheticEvent = new Event(
+      "submit"
+    ) as unknown as FormEvent<HTMLFormElement>;
+    handleSubmit(syntheticEvent);
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -166,7 +151,10 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
             </div>
 
             {/* Content */}
-            <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto flex flex-col">
+            <form
+              onSubmit={handleSubmit}
+              className="flex-1 overflow-y-auto flex flex-col"
+            >
               <div className="p-6 space-y-8 flex-1">
                 {/* Avatar Section */}
                 <div className="flex flex-col items-center">
@@ -250,26 +238,27 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
               </div>
             </form>
             {/* Footer */}
-              <div className="px-6 py-5 border-t border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 flex-shrink-0">
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className={`w-full py-3.5 px-4 rounded-xl font-bold text-white transition-all flex items-center justify-center gap-2 ${
-                    loading
-                      ? "bg-blue-400 cursor-not-allowed"
-                      : "bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-500/25 active:scale-[0.98]"
-                  }`}
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 size={20} className="animate-spin" />
-                      <span>Updating Profile...</span>
-                    </>
-                  ) : (
-                    "Save Changes"
-                  )}
-                </button>
-              </div>
+            <div className="px-6 py-5 border-t border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 flex-shrink-0">
+              <button
+                type="submit"
+                onClick={handleClick}
+                disabled={loading}
+                className={`w-full py-3.5 px-4 rounded-xl font-bold text-white transition-all flex items-center justify-center gap-2 ${
+                  loading
+                    ? "bg-blue-400 cursor-not-allowed"
+                    : "bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-500/25 active:scale-[0.98]"
+                }`}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 size={20} className="animate-spin" />
+                    <span>Updating Profile...</span>
+                  </>
+                ) : (
+                  "Save Changes"
+                )}
+              </button>
+            </div>
           </motion.div>
         </motion.div>
       )}
@@ -278,4 +267,3 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 };
 
 export default ProfileForm;
-

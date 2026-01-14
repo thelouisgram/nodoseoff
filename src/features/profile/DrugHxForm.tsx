@@ -1,8 +1,10 @@
 import React, { useState, FormEvent, ChangeEvent } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
-import { useOtcDrugs, useHerbs } from "@/hooks/useDashboardData";
+import {
+  useOtcDrugs,
+  useHerbs,
+  useUpdateDrugHistoryMutation,
+} from "@/hooks/useDashboardData";
 import { X, Loader2 } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 
@@ -19,14 +21,13 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
   const { data: otcDrugs = "" } = useOtcDrugs(userId);
   const { data: herbs = "" } = useHerbs(userId);
 
-  const queryClient = useQueryClient();
+  const updateDrugHistoryMutation = useUpdateDrugHistoryMutation();
 
   const [formData, setFormData] = useState({
     otcDrugs: typeof otcDrugs === "string" ? otcDrugs : "",
     herbs: typeof herbs === "string" ? herbs : "",
   });
 
-  const supabase = createClient();
   const [loading, setLoading] = useState(false);
 
   const handleSelectChange =
@@ -50,24 +51,12 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
     setLoading(true);
 
     try {
-      const { error } = await supabase
-        .from("drugHistory")
-        .update({
-          otcDrugs: formData.otcDrugs,
-          herbs: formData.herbs,
-        })
-        .eq("userId", userId);
+      await updateDrugHistoryMutation.mutateAsync({
+        userId: userId!,
+        otcDrugs: formData.otcDrugs,
+        herbs: formData.herbs,
+      });
 
-      if (error) {
-        toast.error(
-          "Failed to update profile, Check Internet Connection and Try again!"
-        );
-        return;
-      }
-
-      // dispatch(updateHerbs(formData.herbs));
-      // dispatch(updateOtcDrugs(formData.otcDrugs));
-      queryClient.invalidateQueries({ queryKey: ["dashboardData", userId] });
       setActiveModal("");
       toast.success("Profile updated successfully");
     } catch (error) {

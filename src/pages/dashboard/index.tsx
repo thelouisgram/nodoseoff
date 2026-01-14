@@ -28,6 +28,7 @@ const Page = () => {
   const [activeAction, setActiveAction] = useState("");
   const [nav, setNav] = useState(false);
   const [activeModal, setActiveModal] = useState("");
+  const [isPageAnimationComplete, setIsPageAnimationComplete] = useState(false);
 
   const { isLoading: dashboardLoading, isError } = useDashboardData(user?.id);
 
@@ -78,6 +79,7 @@ const Page = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
+          onAnimationComplete={() => setIsPageAnimationComplete(true)}
           className={`flex relative w-full bg-white dark:bg-slate-950 h-[100dvh] transition-colors duration-300 overflow-hidden`}
         >
           <div
@@ -103,6 +105,7 @@ const Page = () => {
             setAdd={setAdd}
             activeAction={activeAction}
             setActiveAction={setActiveAction}
+            isPageAnimationComplete={isPageAnimationComplete}
           />
           <FormsContainer
             activeModal={activeModal}

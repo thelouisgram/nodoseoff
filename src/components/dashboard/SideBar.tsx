@@ -35,36 +35,35 @@ const SideBar: React.FC<SideBarProps> = ({
     <>
       {/* Top Section */}
       <div>
-        <div className="flex items-center gap-5 mb-12 h-[60.81px]">
+        <div className="flex mb-12 items-center ">
           {/* Small screen logo */}
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Link href="/" className="flex lg:hidden">
+            <Link href="/" className="flex lg:hidden h-full">
               <Image
                 src="/assets/logo/logo-blue.png"
                 alt="logo"
-                width={1084}
-                height={257}
-                className="w-8 h-auto block dark:hidden"
+                width={205}
+                height={212}
+                className="block dark:hidden h-7 w-auto"
                 quality={100}
               />
               <Image
                 src="/assets/logo/logo-white.png"
                 alt="logo"
-                width={1084}
-                height={257}
-                className="w-8 h-auto hidden dark:block"
+                width={205}
+                height={212}
+                className="hidden dark:block h-7 w-auto "
                 quality={100}
               />
             </Link>
-          </motion.div>
 
           {/* Menu button */}
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={() => setNav(!nav)}
+          className="flex gap-4"
           >
-            <Menu className="text-navyBlue dark:text-slate-200 size-6 -ml-4 hidden lg:flex" />
+            <Menu className="text-navyBlue dark:text-slate-200 size-6 hidden lg:flex" />
           </motion.button>
 
           {/* Large screen logo */}
@@ -72,7 +71,7 @@ const SideBar: React.FC<SideBarProps> = ({
             <Link
               href="/"
               className={`overflow-hidden transition-all duration-300 hidden lg:flex ${
-                nav ? "w-[140px]" : "w-0"
+                nav ? "w-[140px] ml-4" : "w-0 ml-0"
               }`}
             >
               <Image

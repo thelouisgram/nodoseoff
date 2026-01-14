@@ -1,22 +1,26 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/no-unescaped-entities */
 "use client";
-import React, { Dispatch, SetStateAction, useState, useEffect, useRef } from "react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useState,
+  useEffect,
+  useRef,
+} from "react";
 
 import { toast } from "sonner";
-import { generateDrugAllergyEmail } from "@/emails/drugAllergy";
-import { createClient } from "@/lib/supabase/client";
-import { useQueryClient } from "@tanstack/react-query";
-// Redux actions removed from imports as they are no longer needed for dispatching
 import {
   useDrugs,
   useCompletedDrugs,
   useAllergies,
   useSchedule,
   useUserInfo,
+  useDeleteDrugMutation,
+  useDeleteCompletedDrugMutation,
+  useDeleteAllergyMutation,
+  useMarkAsAllergyMutation,
 } from "@/hooks/useDashboardData";
-import { uploadScheduleToServer } from "@/utils/dashboard/schedule";
-import { sendMail } from "@/utils/sendEmail";
 import DrugActionModals from "../DrugActionModals";
 import DrugDetails from "../drugDetails/DrugDetails";
 import DrugsHeader from "./DrugsHeader";
@@ -58,8 +62,10 @@ const Drugs: React.FC<DrugsProps> = ({
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const queryClient = useQueryClient();
-  const supabase = createClient();
+  const deleteDrugMutation = useDeleteDrugMutation();
+  const deleteCompletedDrugMutation = useDeleteCompletedDrugMutation();
+  const deleteAllergyMutation = useDeleteAllergyMutation();
+  const markAsAllergyMutation = useMarkAsAllergyMutation();
 
   /* ----------------------------------------
      Scroll to top when activeView changes
@@ -77,14 +83,7 @@ const Drugs: React.FC<DrugsProps> = ({
     }
 
     try {
-      await supabase.from("drugs").delete().eq("drug", drug);
-
-      const updatedSchedule = schedule.filter((s) => s.drug !== drug);
-      if (userId)
-        await uploadScheduleToServer({ userId, schedule: updatedSchedule }); // This might be redundant if the server handles cascade delete, but we keep it for now
-
-      queryClient.invalidateQueries({ queryKey: ["dashboardData", userId] });
-
+      await deleteDrugMutation.mutateAsync({ userId: userId!, drug });
       toast.success(`${drug.toUpperCase()} deleted`, { id: "delete-drug" });
     } catch (err) {
       console.error(err);
@@ -99,14 +98,7 @@ const Drugs: React.FC<DrugsProps> = ({
     }
 
     try {
-      const updated = completedDrugs.filter((d) => d.drug !== drug);
-      await supabase
-        .from("completedDrugs")
-        .update({ completedDrugs: updated })
-        .eq("userId", userId);
-
-      queryClient.invalidateQueries({ queryKey: ["dashboardData", userId] });
-
+      await deleteCompletedDrugMutation.mutateAsync({ userId: userId!, drug });
       toast.success(`${drug.toUpperCase()} deleted`, {
         id: "delete-completed",
       });
@@ -122,9 +114,7 @@ const Drugs: React.FC<DrugsProps> = ({
       return;
     }
 
-    // choose source list based on tab
     const sourceList = tab === "completed" ? completedDrugs : drugs;
-
     const target = sourceList.find((d) => d.drug === drug);
     if (!target) {
       toast.error("Drug not found");
@@ -137,48 +127,20 @@ const Drugs: React.FC<DrugsProps> = ({
     }
 
     try {
-      if (tab === "ongoing") {
-        await supabase
-          .from("drugs")
-          .delete()
-          .eq("drug", drug)
-          .eq("userId", userId);
-      } else if (tab === "completed") {
-        await supabase
-          .from("completedDrugs")
-          .delete()
-          .eq("drug", drug)
-          .eq("userId", userId);
-      }
-      // insert into allergies
-      await supabase.from("allergies").insert({
-        userId,
+      await markAsAllergyMutation.mutateAsync({
+        userId: userId!,
         drug,
-        frequency: target.frequency || "",
-        route: target.route || "",
-        start: target.start || "",
-        end: target.end || "",
-        time: target.time || [""],
-        reminder: true,
+        tab,
+        target,
+        userInfo: {
+          name: info[0]?.name || "",
+          email: info[0]?.email || "",
+        },
       });
-
-      // update schedule
-      const updatedSchedule = schedule.filter((s) => s.drug !== drug);
-      if (userId) {
-        await uploadScheduleToServer({ userId, schedule: updatedSchedule });
-      }
-
-      queryClient.invalidateQueries({ queryKey: ["dashboardData", userId] });
 
       toast.success(`${drug.toUpperCase()} marked as allergy`, {
         id: "allergy",
       });
-
-      // notify user
-      if (info?.[0]?.email) {
-        const { html, subject } = generateDrugAllergyEmail(info[0].name, drug);
-        sendMail(info[0].email, html, subject).catch(console.error);
-      }
     } catch (err) {
       console.error(err);
       toast.error("Failed", { id: "allergy" });
@@ -192,8 +154,7 @@ const Drugs: React.FC<DrugsProps> = ({
     }
 
     try {
-      await supabase.from("allergies").delete().eq("drug", drug);
-      queryClient.invalidateQueries({ queryKey: ["dashboardData", userId] });
+      await deleteAllergyMutation.mutateAsync({ userId: userId!, drug });
       toast.success(`${drug.toUpperCase()} deleted`, { id: "delete-allergy" });
     } catch (err) {
       console.error(err);

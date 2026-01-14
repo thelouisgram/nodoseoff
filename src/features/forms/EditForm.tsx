@@ -3,13 +3,8 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
-import { useDrugs, useSchedule, useUserInfo } from "@/hooks/useDashboardData";
-import { dose, generateSchedule } from "@/utils/dashboard/dashboard";
-import {
-  removePastDoses,
-  uploadScheduleToServer,
-} from "@/utils/dashboard/schedule";
-import { createClient } from "@/lib/supabase/client";
+import { useDrugs, useUpdateDrugMutation } from "@/hooks/useDashboardData";
+import { dose } from "@/utils/dashboard/dashboard";
 import { X, Loader2, Calendar } from "lucide-react";
 import dayjs from "dayjs";
 import { useAppStore } from "@/store/useAppStore";
@@ -33,16 +28,12 @@ interface FormErrors {
 const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
   const { userId } = useAppStore((state) => state);
   const { data: drugs = [] } = useDrugs(userId);
-  const { data: schedule = [] } = useSchedule(userId);
-
-  const queryClient = useQueryClient();
-
   const { activeDrug, activeDrugId } = useAppStore((state) => state);
 
   const currentDrug = drugs.find((drug) => drug.drug === activeDrug);
   const [loading, setLoading] = useState(false);
 
-  const supabase = createClient();
+  const updateDrugMutation = useUpdateDrugMutation();
 
   const [formData, setFormData] = useState({
     drug: "",
@@ -219,65 +210,19 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
     setLoading(true);
 
     try {
-      const updatedDrugs = drugs.map((drug) => {
-        if (drug.drug === activeDrug) {
-          return {
-            drug: formData.drug,
-            frequency: formData.frequency,
-            route: formData.route,
-            start: formData.start,
-            end: formData.end,
-            time: formData.time,
-            reminder: formData.reminder,
-            drugId: formData.drugId,
-          };
-        }
-        return drug;
+      await updateDrugMutation.mutateAsync({
+        userId: userId!,
+        activeDrug: activeDrug!,
+        activeDrugId: activeDrugId!,
+        drug: formData.drug,
+        frequency: formData.frequency,
+        route: formData.route,
+        start: formData.start,
+        end: formData.end,
+        time: formData.time,
+        reminder: formData.reminder,
+        todayDate: getCurrentDate(),
       });
-
-      /* Redux Dispatch Removal */
-      // dispatch(setDrugs(updatedDrugs));
-
-      const strippedSchedule = removePastDoses({
-        activeDrugId,
-        schedule,
-      });
-
-      const data = generateSchedule({
-        ...formData,
-        start: getCurrentDate(),
-      });
-      const updatedSchedule = [...strippedSchedule, ...data];
-
-      // dispatch(updateSchedule([...updatedSchedule]));
-
-      await uploadScheduleToServer({
-        userId: userId,
-        schedule: updatedSchedule,
-      });
-
-      queryClient.invalidateQueries({ queryKey: ["dashboardData", userId] });
-
-      const { error: drugUpdateError } = await supabase
-        .from("drugs")
-        .update({
-          userId: userId,
-          drug: formData.drug,
-          frequency: formData.frequency,
-          route: formData.route,
-          start: formData.start,
-          end: formData.end,
-          time: formData.time,
-          reminder: formData.reminder,
-        })
-        .eq("drug", activeDrug);
-
-      if (drugUpdateError) {
-        toast.error(
-          "An error occurred, Check Internet Connection and Try again"
-        );
-        return;
-      }
 
       toast.success(`${formData.drug.toUpperCase()} updated successfully`);
       setActiveModal("");
@@ -425,14 +370,14 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Select Time{formData.time.length > 1 ? "s" : ""}
                     </label>
-                    <div className="grid grid-cols-2 w-full gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 w-full gap-3">
                       {timeInput}
                     </div>
                   </div>
                 )}
 
-                {/* Start & End Date - 2 Column Grid */}
-                <div className="grid grid-cols-2 gap-3">
+                {/* Start & End Date - Responsive 2 Column Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {/* Start Date - Disabled */}
                   <div>
                     <label

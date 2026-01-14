@@ -142,9 +142,11 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
 
   const timeInput = formData.time.map((item: string, index: number) => {
     return (
-      <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-700 rounded-lg bg-gray-50/50 dark:bg-slate-900 focus-within:ring-2 focus-within:ring-blue-500 flex items-center">
+      <div
+        key={`time-edit-${index}`}
+        className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-700 rounded-lg bg-gray-50/50 dark:bg-slate-900 focus-within:ring-2 focus-within:ring-blue-500 flex items-center"
+      >
         <input
-          key={index}
           type="time"
           id={`time-${index}`}
           name={`time-${index}`}

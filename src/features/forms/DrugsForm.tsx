@@ -119,9 +119,11 @@ const DrugsForm: React.FC<DrugFormProps> = ({
 
   const timeInput = formData.time.map((item: string, index: number) => {
     return (
-      <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-700 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center">
+      <div
+        key={`time-input-${index}`}
+        className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-700 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center"
+      >
         <input
-          key={index}
           type="time"
           id={`time-${index}`}
           name={`time-${index}`}

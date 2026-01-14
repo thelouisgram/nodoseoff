@@ -459,46 +459,51 @@ const DrugsForm: React.FC<DrugFormProps> = ({
                     <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                       Select Time{formData.time.length > 1 ? "s" : ""}
                     </label>
-                    <div className="grid grid-cols-2 w-full gap-3">{timeInput}</div>
+                    <div className="grid grid-cols-2 w-full gap-3">
+                      {timeInput}
+                    </div>
                   </div>
                 )}
 
-                {/* Start Date */}
-                <div className="w-full">
-                  <label
-                    htmlFor="start"
-                    className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
-                  >
-                    Start Date
-                  </label>
-                  <input
-                    type="date"
-                    id="start"
-                    name="start"
-                    value={formData.start}
-                    onChange={handleInputChange}
-                    disabled={loading}
-                    className="w-full px-4 py-3 h-[47px] border border-gray-300 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-slate-900/50 disabled:cursor-not-allowed text-gray-900 dark:text-slate-100 bg-white dark:bg-slate-900"
-                  />
-                </div>
+                {/* Start & End Date - 2 Column Grid */}
+                <div className="grid grid-cols-2 gap-3">
+                  {/* Start Date */}
+                  <div className="w-full">
+                    <label
+                      htmlFor="start"
+                      className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
+                    >
+                      Start Date
+                    </label>
+                    <input
+                      type="date"
+                      id="start"
+                      name="start"
+                      value={formData.start}
+                      onChange={handleInputChange}
+                      disabled={loading}
+                      className="w-full px-4 py-3 h-[47px] border border-gray-300 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-slate-900/50 disabled:cursor-not-allowed text-gray-900 dark:text-slate-100 bg-white dark:bg-slate-900"
+                    />
+                  </div>
 
-                {/* End Date */}
-                <div className="w-full">
-                  <label
-                    htmlFor="end"
-                    className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
-                  >
-                    End Date
-                  </label>
-                  <input
-                    type="date"
-                    id="end"
-                    name="end"
-                    value={formData.end}
-                    onChange={handleInputChange}
-                    disabled={loading}
-                    className="w-full px-4 py-3 h-[47px] border border-gray-300 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-slate-900/50 disabled:cursor-not-allowed text-gray-900 dark:text-slate-100 bg-white dark:bg-slate-900"
-                  />
+                  {/* End Date */}
+                  <div className="w-full">
+                    <label
+                      htmlFor="end"
+                      className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
+                    >
+                      End Date
+                    </label>
+                    <input
+                      type="date"
+                      id="end"
+                      name="end"
+                      value={formData.end}
+                      onChange={handleInputChange}
+                      disabled={loading}
+                      className="w-full px-4 py-3 h-[47px] border border-gray-300 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-slate-900/50 disabled:cursor-not-allowed text-gray-900 dark:text-slate-100 bg-white dark:bg-slate-900"
+                    />
+                  </div>
                 </div>
 
                 {/* Reminder Checkbox */}

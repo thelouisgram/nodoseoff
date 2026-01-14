@@ -1,37 +1,40 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { useUpdateThemeMutation, useUserTheme } from "@/hooks/useDashboardData";
+import { useAppStore } from "@/store/useAppStore";
 
 type Theme = "light" | "dark";
 
 interface ThemeContextType {
   theme: Theme;
   toggleTheme: () => void;
+  isLoading: boolean;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  // Initialize with system preference to avoid flash
+  const { userId } = useAppStore((state) => state);
+
+  // Get theme from database
+  const { data: savedTheme, isLoading: isLoadingTheme } = useUserTheme(userId);
+  const updateThemeMutation = useUpdateThemeMutation();
+
+  // Initialize with system preference, then override with saved theme
   const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window !== 'undefined') {
-      return window.matchMedia("(prefers-color-scheme: dark)").matches 
-        ? "dark" 
+    if (typeof window !== "undefined") {
+      return window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
         : "light";
     }
     return "light";
   });
 
+  // Sync with saved theme from database when it loads
   useEffect(() => {
-    // Listen for system theme changes
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    
-    const handleChange = (e: MediaQueryListEvent) => {
-      setTheme(e.matches ? "dark" : "light");
-    };
-
-    mediaQuery.addEventListener("change", handleChange);
-    
-    return () => mediaQuery.removeEventListener("change", handleChange);
-  }, []);
+    if (savedTheme) {
+      setTheme(savedTheme);
+    }
+  }, [savedTheme]);
 
   // Apply theme class to document
   useEffect(() => {
@@ -41,11 +44,19 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme(prev => prev === "light" ? "dark" : "light");
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+
+    // Save to database if user is logged in
+    if (userId) {
+      updateThemeMutation.mutate({ userId, theme: newTheme });
+    }
   };
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider
+      value={{ theme, toggleTheme, isLoading: isLoadingTheme }}
+    >
       {children}
     </ThemeContext.Provider>
   );

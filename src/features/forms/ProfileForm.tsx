@@ -195,44 +195,50 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                     <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
                       Full Name
                     </label>
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-200 dark:border-slate-800 rounded-xl bg-gray-50/50 dark:bg-slate-900 text-slate-800 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                      placeholder="Enter your name"
-                      required
-                      disabled={loading}
-                    />
+                    <div className="w-full h-[47px] px-4 border border-gray-200 dark:border-slate-800 rounded-xl bg-gray-50/50 dark:bg-slate-900 focus-within:ring-2 focus-within:ring-blue-500 transition-all flex items-center">
+                      <input
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        className="w-full h-full bg-transparent border-none outline-none p-0 text-slate-800 dark:text-white"
+                        placeholder="Enter your name"
+                        required
+                        disabled={loading}
+                      />
+                    </div>
                   </div>
 
                   <div className="space-y-2">
                     <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
                       Phone Number
                     </label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-200 dark:border-slate-800 rounded-xl bg-gray-50/50 dark:bg-slate-900 text-slate-800 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                      placeholder="+234 000 000 0000"
-                      required
-                      disabled={loading}
-                    />
+                    <div className="w-full h-[47px] px-4 border border-gray-200 dark:border-slate-800 rounded-xl bg-gray-50/50 dark:bg-slate-900 focus-within:ring-2 focus-within:ring-blue-500 transition-all flex items-center">
+                      <input
+                        type="tel"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        className="w-full h-full bg-transparent border-none outline-none p-0 text-slate-800 dark:text-white"
+                        placeholder="+234 000 000 0000"
+                        required
+                        disabled={loading}
+                      />
+                    </div>
                   </div>
 
                   <div className="space-y-2">
                     <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
                       Email Address
                     </label>
-                    <input
-                      type="email"
-                      value={info[0]?.email}
-                      className="w-full px-4 py-3 border border-gray-100 dark:border-slate-800 rounded-xl bg-gray-100/50 dark:bg-slate-900/50 text-gray-500 dark:text-slate-500 cursor-not-allowed"
-                      disabled
-                    />
+                    <div className="w-full h-[47px] px-4 border border-gray-100 dark:border-slate-800 rounded-xl bg-gray-100/50 dark:bg-slate-900/50 flex items-center">
+                      <input
+                        type="email"
+                        value={info[0]?.email}
+                        className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-500 dark:text-slate-500 cursor-not-allowed"
+                        disabled
+                      />
+                    </div>
                   </div>
                 </div>
               </div>

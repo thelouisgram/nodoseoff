@@ -159,36 +159,40 @@ export default function DailyReports() {
             </button>
 
             <div className="flex gap-2">
-              <select
-                value={viewMonth.month()}
-                onChange={(e) =>
-                  setViewMonth(viewMonth.month(Number(e.target.value)))
-                }
-                className="text-sm border border-gray-200 dark:border-gray-600 rounded px-3 py-1 bg-transparent dark:text-gray-200"
-              >
-                {months.map((m, i) => (
-                  <option key={i} value={i} className="dark:bg-dark">
-                    {m}
-                  </option>
-                ))}
-              </select>
+              <div className="h-[38px] px-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-transparent focus-within:ring-2 focus-within:ring-blue-500 transition-all flex items-center">
+                <select
+                  value={viewMonth.month()}
+                  onChange={(e) =>
+                    setViewMonth(viewMonth.month(Number(e.target.value)))
+                  }
+                  className="text-sm bg-transparent border-none outline-none p-0 dark:text-gray-200 cursor-pointer w-full"
+                >
+                  {months.map((m, i) => (
+                    <option key={i} value={i} className="dark:bg-slate-900">
+                      {m}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-              <select
-                value={viewMonth.year()}
-                onChange={(e) =>
-                  setViewMonth(viewMonth.year(Number(e.target.value)))
-                }
-                className="text-sm border border-gray-200 dark:border-gray-600 rounded px-3 py-1 bg-transparent dark:text-gray-200"
-              >
-                {Array.from(
-                  { length: 11 },
-                  (_, i) => todaySystem.year() - 5 + i
-                ).map((y) => (
-                  <option key={y} value={y} className="dark:bg-dark">
-                    {y}
-                  </option>
-                ))}
-              </select>
+              <div className="h-[38px] px-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-transparent focus-within:ring-2 focus-within:ring-blue-500 transition-all flex items-center">
+                <select
+                  value={viewMonth.year()}
+                  onChange={(e) =>
+                    setViewMonth(viewMonth.year(Number(e.target.value)))
+                  }
+                  className="text-sm bg-transparent border-none outline-none p-0 dark:text-gray-200 cursor-pointer w-full"
+                >
+                  {Array.from(
+                    { length: 11 },
+                    (_, i) => todaySystem.year() - 5 + i
+                  ).map((y) => (
+                    <option key={y} value={y} className="dark:bg-slate-900">
+                      {y}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             <button

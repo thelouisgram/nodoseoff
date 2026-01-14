@@ -38,7 +38,8 @@ const Report: React.FC<ReportProps> = ({ setTab }) => {
   const { data: otcDrugs = "" } = useOtcDrugs(userId);
   const { data: herbs = "" } = useHerbs(userId);
 
-  const { name, phone, email } = info[0];
+  const userInfo = info?.[0] || { name: "", phone: "", email: "" };
+  const { name, phone, email } = userInfo;
 
   const currentDrugs = drugs.map((d) => d.drug);
   const allergicDrugs = allergies.map((d) => d?.drug);

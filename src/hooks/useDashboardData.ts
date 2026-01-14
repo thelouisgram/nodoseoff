@@ -365,13 +365,17 @@ interface DeleteCompletedDrugParams {
 export const useDeleteCompletedDrugMutation = () => {
     const updateCache = useUpdateDashboardCache();
     const supabase = createClient();
+    const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: async (params: DeleteCompletedDrugParams) => {
+            const currentData = queryClient.getQueryData<DashboardData>(["dashboardData", params.userId]);
+            const currentCompleted = currentData?.updatedCompletedList || [];
+            const updatedCompleted = currentCompleted.filter((d) => d.drug !== params.drug);
+
             const { error } = await supabase
                 .from("completedDrugs")
-                .delete()
-                .eq("drug", params.drug)
+                .update({ completedDrugs: updatedCompleted })
                 .eq("userId", params.userId);
             if (error) throw error;
             return params;
@@ -487,11 +491,16 @@ export const useMarkAsAllergyMutation = () => {
                     .eq("drug", params.drug)
                     .eq("userId", params.userId);
             } else if (params.tab === "completed") {
-                await supabase
+                const currentData = queryClient.getQueryData<DashboardData>(["dashboardData", params.userId]);
+                const currentCompleted = currentData?.updatedCompletedList || [];
+                const updatedCompleted = currentCompleted.filter((d) => d.drug !== params.drug);
+
+                const { error: completedDeleteError } = await supabase
                     .from("completedDrugs")
-                    .delete()
-                    .eq("drug", params.drug)
+                    .update({ completedDrugs: updatedCompleted })
                     .eq("userId", params.userId);
+                
+                if (completedDeleteError) throw completedDeleteError;
             }
             
             // 2. Insert into allergies

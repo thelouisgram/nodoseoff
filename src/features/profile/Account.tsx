@@ -33,7 +33,8 @@ const Account: React.FC<AccountProps> = ({ setActiveModal }) => {
   const { data: info = [] } = useUserInfo(userId);
   const { data: profilePicture = "" } = useProfilePicture(userId);
 
-  const { name, phone, email } = info[0];
+  const userInfo = info?.[0] || { name: "", phone: "", email: "" };
+  const { name, phone, email } = userInfo;
   const [tab, setTab] = useState<"Account" | "Report">("Account");
 
   const router = useRouter();

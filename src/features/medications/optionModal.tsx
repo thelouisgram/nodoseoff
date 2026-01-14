@@ -57,8 +57,9 @@ const OptionModal: React.FC<OptionModal> = ({
         const modalHeight = 250; // Approximate modal height
         const viewportHeight = window.innerHeight;
         const spaceBelow = viewportHeight - rect.bottom;
-        const shouldOpenUpward = spaceBelow < modalHeight && rect.top > modalHeight;
-        
+        const shouldOpenUpward =
+          spaceBelow < modalHeight && rect.top > modalHeight;
+
         setOpenUpward(shouldOpenUpward);
         setPosition({
           top: shouldOpenUpward ? rect.top - 8 : rect.bottom + 8,
@@ -68,14 +69,14 @@ const OptionModal: React.FC<OptionModal> = ({
     };
 
     updatePosition();
-    
+
     if (options) {
-      window.addEventListener('scroll', updatePosition, true);
-      window.addEventListener('resize', updatePosition);
-      
+      window.addEventListener("scroll", updatePosition, true);
+      window.addEventListener("resize", updatePosition);
+
       return () => {
-        window.removeEventListener('scroll', updatePosition, true);
-        window.removeEventListener('resize', updatePosition);
+        window.removeEventListener("scroll", updatePosition, true);
+        window.removeEventListener("resize", updatePosition);
       };
     }
   }, [options]);
@@ -94,8 +95,9 @@ const OptionModal: React.FC<OptionModal> = ({
     };
 
     if (options) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
     }
   }, [options, setOptions]);
 
@@ -169,11 +171,11 @@ const OptionModal: React.FC<OptionModal> = ({
           style={{
             top: `${position.top}px`,
             left: `${position.left}px`,
-            maxHeight: openUpward 
-              ? `${position.top - 16}px` 
+            maxHeight: openUpward
+              ? `${position.top - 16}px`
               : `calc(100vh - ${position.top + 16}px)`,
-            overflowY: 'auto',
-            transformOrigin: openUpward ? 'bottom right' : 'top right',
+            overflowY: "auto",
+            transformOrigin: openUpward ? "bottom right" : "top right",
           }}
         >
           {/* Automatically render all visible buttons */}
@@ -182,19 +184,11 @@ const OptionModal: React.FC<OptionModal> = ({
             const isFirst = index === 0;
             const isLast = index === visibleButtons.length - 1;
             const finalHoverClass = `${button.hoverBg} dark:hover:bg-slate-800`;
-            
+
             // Add rounded corners and proper padding for first/last items
-            const borderRadiusClass = isFirst 
-              ? "rounded-t-lg" 
-              : isLast 
-              ? "rounded-b-lg" 
-              : "";
-            
-            const paddingClass = isFirst 
-              ? "pt-3 pb-2" 
-              : isLast 
-              ? "pt-2 pb-3" 
-              : "py-2";
+            const borderRadiusClass =
+              `${isFirst ? "rounded-t-lg" : ""} ${isLast ? "rounded-b-lg" : ""}`.trim();
+            const paddingClass = `${isFirst ? "pt-3" : "pt-2"} ${isLast ? "pb-3" : "pb-2"}`;
 
             return (
               <button
@@ -230,7 +224,8 @@ const OptionModal: React.FC<OptionModal> = ({
       </button>
 
       {/* Portal the dropdown to document.body */}
-      {typeof document !== 'undefined' && createPortal(modalContent, document.body)}
+      {typeof document !== "undefined" &&
+        createPortal(modalContent, document.body)}
     </>
   );
 };

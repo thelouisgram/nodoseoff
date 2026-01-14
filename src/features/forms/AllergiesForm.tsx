@@ -133,19 +133,21 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
                   htmlFor="drug"
                   className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
                 >
-                  Drug Name
+                  Drug
                 </label>
-                <input
-                  type="text"
-                  id="drug"
-                  name="drug"
-                  placeholder="e.g., Penicillin"
-                  value={drug}
-                  onChange={(e) => setDrug(e.target.value)}
-                  disabled={loading}
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-slate-900/50 disabled:cursor-not-allowed text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 bg-white dark:bg-slate-900"
-                  autoFocus
-                />
+                <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center">
+                  <input
+                    type="text"
+                    id="drug"
+                    name="drug"
+                    placeholder="e.g., Penicillin"
+                    value={drug}
+                    onChange={(e) => setDrug(e.target.value)}
+                    disabled={loading}
+                    className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500"
+                    autoFocus
+                  />
+                </div>
               </div>
 
               {/* Submit Button */}

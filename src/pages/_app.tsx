@@ -9,25 +9,6 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 export default function App({ Component, pageProps }: AppProps) {
   const [queryClient] = useState(() => new QueryClient());
-  const [mode, setMode] = useState("light");
-
-  useEffect(() => {
-    // Function to get the system's preferred color scheme
-    function getSystemColorScheme() {
-      if (window.matchMedia) {
-        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-          return "dark";
-        } else if (window.matchMedia("(prefers-color-scheme: light)").matches) {
-          return "light";
-        }
-      }
-      return "light";
-    }
-
-    // Set the mode state based on the system's color scheme
-    const systemColorScheme = getSystemColorScheme();
-    setMode(systemColorScheme);
-  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

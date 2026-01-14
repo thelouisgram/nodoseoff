@@ -119,16 +119,18 @@ const DrugsForm: React.FC<DrugFormProps> = ({
 
   const timeInput = formData.time.map((item: string, index: number) => {
     return (
-      <input
-        key={index}
-        type="time"
-        id={`time-${index}`}
-        name={`time-${index}`}
-        value={formData.time[index]}
-        onChange={handleInputChange}
-        disabled={loading}
-        className="w-full h-[47px] px-4 py-3 border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-slate-900 disabled:cursor-not-allowed text-gray-900 dark:text-white bg-white dark:bg-slate-900 dark:[color-scheme:dark]"
-      />
+      <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-700 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center">
+        <input
+          key={index}
+          type="time"
+          id={`time-${index}`}
+          name={`time-${index}`}
+          value={formData.time[index]}
+          onChange={handleInputChange}
+          disabled={loading}
+          className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white dark:[color-scheme:dark] disabled:cursor-not-allowed"
+        />
+      </div>
     );
   });
 
@@ -308,19 +310,21 @@ const DrugsForm: React.FC<DrugFormProps> = ({
                     htmlFor="drug"
                     className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
                   >
-                    Drug Name
+                    Drug
                   </label>
-                  <input
-                    type="text"
-                    id="drug"
-                    name="drug"
-                    placeholder="e.g., Rifampicin"
-                    value={formData.drug}
-                    onChange={handleInputChange}
-                    disabled={loading}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-slate-900/50 disabled:cursor-not-allowed text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 bg-white dark:bg-slate-900"
-                    autoComplete="off"
-                  />
+                  <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center">
+                    <input
+                      type="text"
+                      id="drug"
+                      name="drug"
+                      placeholder="e.g., Rifampicin"
+                      value={formData.drug}
+                      onChange={handleInputChange}
+                      disabled={loading}
+                      className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500"
+                      autoComplete="off"
+                    />
+                  </div>
                 </div>
 
                 {/* Route */}
@@ -331,39 +335,44 @@ const DrugsForm: React.FC<DrugFormProps> = ({
                   >
                     Route of Administration
                   </label>
-                  <select
-                    id="route"
-                    name="route"
-                    value={formData.route}
-                    onChange={handleSelectChange("route")}
-                    disabled={loading}
-                    className="w-full px-4 py-3 h-[47px] border border-gray-300 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-slate-900/50 disabled:cursor-not-allowed text-gray-900 dark:text-white bg-white dark:bg-slate-900 cursor-pointer dark:[color-scheme:dark]"
-                  >
-                    <option value="" className="dark:bg-slate-800">
-                      Select Route
-                    </option>
-                    <option value="oral" className="dark:bg-slate-800">
-                      Oral
-                    </option>
-                    <option value="topical" className="dark:bg-slate-800">
-                      Topical
-                    </option>
-                    <option value="intravenous" className="dark:bg-slate-800">
-                      Intravenous (IV)
-                    </option>
-                    <option value="intramuscular" className="dark:bg-slate-800">
-                      Intramuscular (IM)
-                    </option>
-                    <option value="inhalation" className="dark:bg-slate-800">
-                      Inhalation
-                    </option>
-                    <option value="rectal" className="dark:bg-slate-800">
-                      Rectal
-                    </option>
-                    <option value="sublingual" className="dark:bg-slate-800">
-                      Sublingual
-                    </option>
-                  </select>
+                  <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center">
+                    <select
+                      id="route"
+                      name="route"
+                      value={formData.route}
+                      onChange={handleSelectChange("route")}
+                      disabled={loading}
+                      className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white cursor-pointer dark:[color-scheme:dark]"
+                    >
+                      <option value="" className="dark:bg-slate-800">
+                        Select Route
+                      </option>
+                      <option value="oral" className="dark:bg-slate-800">
+                        Oral
+                      </option>
+                      <option value="topical" className="dark:bg-slate-800">
+                        Topical
+                      </option>
+                      <option value="intravenous" className="dark:bg-slate-800">
+                        Intravenous (IV)
+                      </option>
+                      <option
+                        value="intramuscular"
+                        className="dark:bg-slate-800"
+                      >
+                        Intramuscular (IM)
+                      </option>
+                      <option value="inhalation" className="dark:bg-slate-800">
+                        Inhalation
+                      </option>
+                      <option value="rectal" className="dark:bg-slate-800">
+                        Rectal
+                      </option>
+                      <option value="sublingual" className="dark:bg-slate-800">
+                        Sublingual
+                      </option>
+                    </select>
+                  </div>
                 </div>
 
                 {/* Frequency */}
@@ -374,42 +383,44 @@ const DrugsForm: React.FC<DrugFormProps> = ({
                   >
                     Frequency
                   </label>
-                  <select
-                    id="frequency"
-                    name="frequency"
-                    value={formData.frequency}
-                    onChange={handleSelectChange("frequency")}
-                    disabled={loading}
-                    className="w-full px-4 py-3 h-[47px] border border-gray-300 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-slate-900/50 disabled:cursor-not-allowed text-gray-900 dark:text-white bg-white dark:bg-slate-900 cursor-pointer dark:[color-scheme:dark]"
-                  >
-                    <option value="" className="dark:bg-slate-800">
-                      Select Frequency
-                    </option>
-                    <option value="QD" className="dark:bg-slate-800">
-                      Once Daily
-                    </option>
-                    <option value="BID" className="dark:bg-slate-800">
-                      Twice Daily
-                    </option>
-                    <option value="TID" className="dark:bg-slate-800">
-                      Thrice Daily
-                    </option>
-                    <option value="QID" className="dark:bg-slate-800">
-                      Four Times Daily
-                    </option>
-                    <option value="EOD" className="dark:bg-slate-800">
-                      Every Other Day
-                    </option>
-                    <option value="W" className="dark:bg-slate-800">
-                      Weekly
-                    </option>
-                    <option value="BW" className="dark:bg-slate-800">
-                      Biweekly
-                    </option>
-                    <option value="M" className="dark:bg-slate-800">
-                      Monthly
-                    </option>
-                  </select>
+                  <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center">
+                    <select
+                      id="frequency"
+                      name="frequency"
+                      value={formData.frequency}
+                      onChange={handleSelectChange("frequency")}
+                      disabled={loading}
+                      className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white cursor-pointer dark:[color-scheme:dark]"
+                    >
+                      <option value="" className="dark:bg-slate-800">
+                        Select Frequency
+                      </option>
+                      <option value="QD" className="dark:bg-slate-800">
+                        Once Daily
+                      </option>
+                      <option value="BID" className="dark:bg-slate-800">
+                        Twice Daily
+                      </option>
+                      <option value="TID" className="dark:bg-slate-800">
+                        Thrice Daily
+                      </option>
+                      <option value="QID" className="dark:bg-slate-800">
+                        Four Times Daily
+                      </option>
+                      <option value="EOD" className="dark:bg-slate-800">
+                        Every Other Day
+                      </option>
+                      <option value="W" className="dark:bg-slate-800">
+                        Weekly
+                      </option>
+                      <option value="BW" className="dark:bg-slate-800">
+                        Biweekly
+                      </option>
+                      <option value="M" className="dark:bg-slate-800">
+                        Monthly
+                      </option>
+                    </select>
+                  </div>
                 </div>
 
                 {/* Time Inputs */}
@@ -432,15 +443,17 @@ const DrugsForm: React.FC<DrugFormProps> = ({
                   >
                     Start Date
                   </label>
-                  <input
-                    type="date"
-                    id="start"
-                    name="start"
-                    value={formData.start}
-                    onChange={handleInputChange}
-                    disabled={loading}
-                    className="w-full px-4 py-3 h-[47px] border border-gray-300 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-slate-900/50 disabled:cursor-not-allowed text-gray-900 dark:text-white bg-white dark:bg-slate-900 dark:[color-scheme:dark]"
-                  />
+                  <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center">
+                    <input
+                      type="date"
+                      id="start"
+                      name="start"
+                      value={formData.start}
+                      onChange={handleInputChange}
+                      disabled={loading}
+                      className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white dark:[color-scheme:dark] disabled:cursor-not-allowed"
+                    />
+                  </div>
                 </div>
 
                 {/* End Date */}
@@ -451,15 +464,17 @@ const DrugsForm: React.FC<DrugFormProps> = ({
                   >
                     End Date
                   </label>
-                  <input
-                    type="date"
-                    id="end"
-                    name="end"
-                    value={formData.end}
-                    onChange={handleInputChange}
-                    disabled={loading}
-                    className="w-full px-4 py-3 h-[47px] border border-gray-300 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-slate-900/50 disabled:cursor-not-allowed text-gray-900 dark:text-white bg-white dark:bg-slate-900 dark:[color-scheme:dark]"
-                  />
+                  <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center">
+                    <input
+                      type="date"
+                      id="end"
+                      name="end"
+                      value={formData.end}
+                      onChange={handleInputChange}
+                      disabled={loading}
+                      className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white dark:[color-scheme:dark] disabled:cursor-not-allowed"
+                    />
+                  </div>
                 </div>
 
                 {/* Reminder Checkbox */}

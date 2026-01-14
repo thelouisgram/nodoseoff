@@ -116,24 +116,26 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
             >
               Over the Counter Drugs
             </label>
-            <select
-              id="otcDrugs"
-              name="otcDrugs"
-              value={formData.otcDrugs !== null ? formData.otcDrugs : ""}
-              onChange={handleSelectChange("otcDrugs")}
-              disabled={loading}
-              className="w-full px-4 py-3 h-[47px] border border-gray-300 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-slate-900 disabled:cursor-not-allowed text-gray-900 dark:text-gray-100 bg-white dark:bg-slate-900 cursor-pointer"
-            >
-              <option value="" className="dark:bg-slate-800">
-                Select option
-              </option>
-              <option value="yes" className="dark:bg-slate-800">
-                Yes
-              </option>
-              <option value="no" className="dark:bg-slate-800">
-                No
-              </option>
-            </select>
+            <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center">
+              <select
+                id="otcDrugs"
+                name="otcDrugs"
+                value={formData.otcDrugs !== null ? formData.otcDrugs : ""}
+                onChange={handleSelectChange("otcDrugs")}
+                disabled={loading}
+                className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-gray-100 cursor-pointer"
+              >
+                <option value="" className="dark:bg-slate-800">
+                  Select option
+                </option>
+                <option value="yes" className="dark:bg-slate-800">
+                  Yes
+                </option>
+                <option value="no" className="dark:bg-slate-800">
+                  No
+                </option>
+              </select>
+            </div>
           </div>
 
           {/* Herbs and Concoctions */}
@@ -144,24 +146,26 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
             >
               Herbs and Concoctions
             </label>
-            <select
-              id="herbs"
-              name="herbs"
-              value={formData.herbs !== null ? formData.herbs : ""}
-              onChange={handleSelectChange("herbs")}
-              disabled={loading}
-              className="w-full px-4 py-3 h-[47px] border border-gray-300 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-slate-900 disabled:cursor-not-allowed text-gray-900 dark:text-gray-100 bg-white dark:bg-slate-900 cursor-pointer"
-            >
-              <option value="" className="dark:bg-slate-800">
-                Select option
-              </option>
-              <option value="yes" className="dark:bg-slate-800">
-                Yes
-              </option>
-              <option value="no" className="dark:bg-slate-800">
-                No
-              </option>
-            </select>
+            <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center">
+              <select
+                id="herbs"
+                name="herbs"
+                value={formData.herbs !== null ? formData.herbs : ""}
+                onChange={handleSelectChange("herbs")}
+                disabled={loading}
+                className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-gray-100 cursor-pointer"
+              >
+                <option value="" className="dark:bg-slate-800">
+                  Select option
+                </option>
+                <option value="yes" className="dark:bg-slate-800">
+                  Yes
+                </option>
+                <option value="no" className="dark:bg-slate-800">
+                  No
+                </option>
+              </select>
+            </div>
           </div>
         </form>
 

@@ -142,16 +142,18 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
 
   const timeInput = formData.time.map((item: string, index: number) => {
     return (
-      <input
-        key={index}
-        type="time"
-        id={`time-${index}`}
-        name={`time-${index}`}
-        value={formData.time[index]}
-        onChange={handleInputChange}
-        disabled={loading}
-        className="w-full h-[47px] px-4 py-2 border border-gray-300 dark:border-slate-700 rounded-lg text-sm bg-gray-50/50 dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:[color-scheme:dark]"
-      />
+      <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-700 rounded-lg bg-gray-50/50 dark:bg-slate-900 focus-within:ring-2 focus-within:ring-blue-500 flex items-center">
+        <input
+          key={index}
+          type="time"
+          id={`time-${index}`}
+          name={`time-${index}`}
+          value={formData.time[index]}
+          onChange={handleInputChange}
+          disabled={loading}
+          className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white text-sm dark:[color-scheme:dark] disabled:cursor-not-allowed"
+        />
+      </div>
     );
   });
 
@@ -294,19 +296,21 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                     htmlFor="drugEdit"
                     className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                   >
-                    Drug Name
+                    Drug
                   </label>
-                  <input
-                    type="text"
-                    id="drugEdit"
-                    name="drug"
-                    placeholder="e.g., Rifampicin"
-                    value={formData.drug}
-                    onChange={handleInputChange}
-                    disabled={loading}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-slate-900 disabled:cursor-not-allowed text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 bg-white dark:bg-slate-900"
-                    autoComplete="off"
-                  />
+                  <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center">
+                    <input
+                      type="text"
+                      id="drugEdit"
+                      name="drug"
+                      placeholder="e.g., Rifampicin"
+                      value={formData.drug}
+                      onChange={handleInputChange}
+                      disabled={loading}
+                      className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500"
+                      autoComplete="off"
+                    />
+                  </div>
                 </div>
 
                 {/* Route */}
@@ -317,23 +321,25 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                   >
                     Route of Administration
                   </label>
-                  <select
-                    id="routeEdit"
-                    name="route"
-                    value={formData.route}
-                    onChange={handleSelectChange("route")}
-                    disabled={loading}
-                    className="w-full px-4 py-3 h-[47px] border border-gray-300 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-slate-900 disabled:cursor-not-allowed text-gray-900 dark:text-white bg-white dark:bg-slate-900 cursor-pointer dark:[color-scheme:dark]"
-                  >
-                    <option value="">Select Route</option>
-                    <option value="oral">Oral</option>
-                    <option value="topical">Topical</option>
-                    <option value="intravenous">Intravenous (IV)</option>
-                    <option value="intramuscular">Intramuscular (IM)</option>
-                    <option value="inhalation">Inhalation</option>
-                    <option value="rectal">Rectal</option>
-                    <option value="sublingual">Sublingual</option>
-                  </select>
+                  <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center">
+                    <select
+                      id="routeEdit"
+                      name="route"
+                      value={formData.route}
+                      onChange={handleSelectChange("route")}
+                      disabled={loading}
+                      className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white cursor-pointer dark:[color-scheme:dark]"
+                    >
+                      <option value="">Select Route</option>
+                      <option value="oral">Oral</option>
+                      <option value="topical">Topical</option>
+                      <option value="intravenous">Intravenous (IV)</option>
+                      <option value="intramuscular">Intramuscular (IM)</option>
+                      <option value="inhalation">Inhalation</option>
+                      <option value="rectal">Rectal</option>
+                      <option value="sublingual">Sublingual</option>
+                    </select>
+                  </div>
                 </div>
 
                 {/* Frequency */}
@@ -344,24 +350,26 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                   >
                     Frequency
                   </label>
-                  <select
-                    id="frequencyEdit"
-                    name="frequency"
-                    value={formData.frequency}
-                    onChange={handleSelectChange("frequency")}
-                    disabled={loading}
-                    className="w-full px-4 h-[47px]  py-3 border border-gray-300 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-slate-900 disabled:cursor-not-allowed text-gray-900 dark:text-white bg-white dark:bg-slate-900 cursor-pointer dark:[color-scheme:dark]"
-                  >
-                    <option value="">Select Frequency</option>
-                    <option value="QD">Once Daily</option>
-                    <option value="BID">Twice Daily</option>
-                    <option value="TID">Thrice Daily</option>
-                    <option value="QID">Four Times Daily</option>
-                    <option value="EOD">Every Other Day</option>
-                    <option value="W">Weekly</option>
-                    <option value="BW">Biweekly</option>
-                    <option value="M">Monthly</option>
-                  </select>
+                  <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center">
+                    <select
+                      id="frequencyEdit"
+                      name="frequency"
+                      value={formData.frequency}
+                      onChange={handleSelectChange("frequency")}
+                      disabled={loading}
+                      className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white cursor-pointer dark:[color-scheme:dark]"
+                    >
+                      <option value="">Select Frequency</option>
+                      <option value="QD">Once Daily</option>
+                      <option value="BID">Twice Daily</option>
+                      <option value="TID">Thrice Daily</option>
+                      <option value="QID">Four Times Daily</option>
+                      <option value="EOD">Every Other Day</option>
+                      <option value="W">Weekly</option>
+                      <option value="BW">Biweekly</option>
+                      <option value="M">Monthly</option>
+                    </select>
+                  </div>
                 </div>
 
                 {/* Time Inputs */}
@@ -376,13 +384,14 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                   </div>
                 )}
 
-                  <div>
-                    <label
-                      htmlFor="startEdit"
-                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                    >
-                      Start Date
-                    </label>
+                <div>
+                  <label
+                    htmlFor="startEdit"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    Start Date
+                  </label>
+                  <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg bg-gray-50 dark:bg-slate-900 flex items-center">
                     <input
                       type="date"
                       id="startEdit"
@@ -390,18 +399,20 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                       disabled={true}
                       value={getCurrentDate()}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 h-[47px] border border-gray-300 dark:border-slate-800 rounded-lg bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white cursor-not-allowed dark:[color-scheme:dark]"
+                      className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white cursor-not-allowed dark:[color-scheme:dark]"
                     />
                   </div>
+                </div>
 
-                  {/* End Date */}
-                  <div>
-                    <label
-                      htmlFor="endEdit"
-                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                    >
-                      End Date
-                    </label>
+                {/* End Date */}
+                <div>
+                  <label
+                    htmlFor="endEdit"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    End Date
+                  </label>
+                  <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center">
                     <input
                       type="date"
                       id="endEdit"
@@ -409,9 +420,10 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                       value={formData.end}
                       onChange={handleInputChange}
                       disabled={loading}
-                      className="w-full px-4 py-3 h-[47px] border border-gray-300 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-slate-900 disabled:cursor-not-allowed text-gray-900 dark:text-white bg-white dark:bg-slate-900 dark:[color-scheme:dark]"
+                      className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white dark:[color-scheme:dark] disabled:cursor-not-allowed"
                     />
                   </div>
+                </div>
 
                 {/* Reminder Checkbox */}
                 <div className="flex items-center gap-2">

@@ -109,7 +109,7 @@ const Page = () => {
             setActiveModal={setActiveModal}
           />
           <div className="fixed bottom-4 left-1/2 -translate-x-1/2 md:hidden z-40 w-[90%] max-w-[450px] px-4">
-            <div className="w-full h-[64px] bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 flex justify-between items-center px-4 ss:px-8 ss:pr-12 rounded-xl shadow-lg">
+            <div className="w-full h-[64px] bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border border-white/20 dark:border-slate-800/50 flex justify-between items-center px-4 ss:px-8 ss:pr-12 rounded-2xl shadow-xl shadow-black/5 ring-1 ring-black/5">
               <MobileSidebar activeTab={activeTab} />
             </div>
           </div>

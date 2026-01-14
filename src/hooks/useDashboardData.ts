@@ -574,3 +574,44 @@ export const useUpdateScheduleMutation = () => {
         },
     });
 };
+
+// Update theme preference
+interface UpdateThemeParams {
+    userId: string;
+    theme: "light" | "dark";
+}
+
+export const useUpdateThemeMutation = () => {
+    const updateCache = useUpdateDashboardCache();
+    const supabase = createClient();
+
+    return useMutation({
+        mutationFn: async (params: UpdateThemeParams) => {
+            const { error } = await supabase
+                .from("users")
+                .update({ theme: params.theme })
+                .eq("userId", params.userId);
+            if (error) throw error;
+            return params;
+        },
+        onSuccess: (data) => {
+            updateCache(data.userId, (old) => ({
+                ...old,
+                userInfo: old.userInfo.map((info, index) =>
+                    index === 0 ? { ...info, theme: data.theme } : info
+                ),
+            }));
+        },
+    });
+};
+
+// Hook to get user's theme from dashboard data
+export const useUserTheme = (userId: string | undefined) => {
+    return useQuery({
+        queryKey: ["dashboardData", userId],
+        queryFn: () => fetchData(userId!),
+        enabled: !!userId,
+        staleTime: 5 * 60 * 1000,
+        select: (data: DashboardData) => data.userInfo[0]?.theme ?? null
+    });
+};

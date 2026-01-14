@@ -425,46 +425,51 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Select Time{formData.time.length > 1 ? "s" : ""}
                     </label>
-                    <div className="grid grid-cols-2 w-full gap-3">{timeInput}</div>
+                    <div className="grid grid-cols-2 w-full gap-3">
+                      {timeInput}
+                    </div>
                   </div>
                 )}
 
-                {/* Start Date - Disabled */}
-                <div>
-                  <label
-                    htmlFor="startEdit"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                  >
-                    Start Date
-                  </label>
-                  <input
-                    type="date"
-                    id="startEdit"
-                    name="start"
-                    disabled={true}
-                    value={getCurrentDate()}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 h-[47px] border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 cursor-not-allowed"
-                  />
-                </div>
+                {/* Start & End Date - 2 Column Grid */}
+                <div className="grid grid-cols-2 gap-3">
+                  {/* Start Date - Disabled */}
+                  <div>
+                    <label
+                      htmlFor="startEdit"
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                    >
+                      Start Date
+                    </label>
+                    <input
+                      type="date"
+                      id="startEdit"
+                      name="start"
+                      disabled={true}
+                      value={getCurrentDate()}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 h-[47px] border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 cursor-not-allowed"
+                    />
+                  </div>
 
-                {/* End Date */}
-                <div>
-                  <label
-                    htmlFor="endEdit"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                  >
-                    End Date
-                  </label>
-                  <input
-                    type="date"
-                    id="endEdit"
-                    name="end"
-                    value={formData.end}
-                    onChange={handleInputChange}
-                    disabled={loading}
-                    className="w-full px-4 py-3 h-[47px] border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-gray-900 disabled:cursor-not-allowed text-gray-900 dark:text-gray-100 bg-white dark:bg-slate-900"
-                  />
+                  {/* End Date */}
+                  <div>
+                    <label
+                      htmlFor="endEdit"
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                    >
+                      End Date
+                    </label>
+                    <input
+                      type="date"
+                      id="endEdit"
+                      name="end"
+                      value={formData.end}
+                      onChange={handleInputChange}
+                      disabled={loading}
+                      className="w-full px-4 py-3 h-[47px] border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 dark:disabled:bg-gray-900 disabled:cursor-not-allowed text-gray-900 dark:text-gray-100 bg-white dark:bg-slate-900"
+                    />
+                  </div>
                 </div>
 
                 {/* Reminder Checkbox */}

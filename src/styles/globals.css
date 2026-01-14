@@ -11,6 +11,19 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Default background colors for html/body */
+html,
+body {
+  background-color: #ffffff;
+}
+
+.dark html,
+.dark body,
+html.dark,
+html.dark body {
+  background-color: #020617; /* slate-950 */
+}
+
 @keyframes moveUpDown {
   0%,
   100% {

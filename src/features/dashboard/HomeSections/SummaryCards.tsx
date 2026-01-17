@@ -1,5 +1,6 @@
 import { Pill, Shield, Clock } from "lucide-react";
 import { calculateClosestDoseCountdown } from "@/utils/dashboard/dashboard";
+import { calculateOverallCompliance } from "@/utils/dashboard/drugs";
 import { useDrugs, useSchedule } from "@/hooks/useDashboardData";
 import { useAppStore } from "@/store/useAppStore";
 import { motion } from "framer-motion";
@@ -78,11 +79,7 @@ const SummaryCards = ({}) => {
             Drug Compliance
           </h2>
           <h4 className="font-bold text-[28px] tracking-wider leading-none">
-            {Math.round(
-              (schedule.filter((d) => d.completed).length / schedule.length) *
-                100 || 0
-            )}
-            %
+            {calculateOverallCompliance(schedule)}%
           </h4>
         </div>
       </motion.div>

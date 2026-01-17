@@ -46,6 +46,9 @@ const MainDashboard: React.FC<MainDashboardProps> = ({
               setActiveModal={setActiveModal}
               tracker={tracker}
               setTracker={setTracker}
+              add={add}
+              setAdd={setAdd}
+              activeModal={activeModal}
             />
           </motion.div>
         ) : activeTab === "Drugs" ? (

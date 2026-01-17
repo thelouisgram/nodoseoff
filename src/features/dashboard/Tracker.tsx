@@ -31,7 +31,7 @@ const Tracker: React.FC<TrackerProps> = ({
   );
 
   return (
-    <div className="px-4 ss:px-8 md:px-0 mb-8">
+    <div className="mb-8">
       {/* Tabs */}
       <div className="flex justify-between items-center mb-4">
         <div className="bg-lightGrey dark:bg-slate-800 border border-gray-200 dark:border-gray-700 p-1 rounded-[8px] flex w-full ss:w-[320px] relative">

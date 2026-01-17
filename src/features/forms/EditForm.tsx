@@ -144,7 +144,7 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
     return (
       <div
         key={`time-edit-${index}`}
-        className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-700 rounded-lg bg-gray-50/50 dark:bg-slate-900 focus-within:ring-2 focus-within:ring-blue-500 flex items-center"
+        className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg bg-gray-50/50 dark:bg-slate-900 focus-within:ring-2 focus-within:ring-blue-500 flex items-center"
       >
         <input
           type="time"
@@ -309,7 +309,7 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                       value={formData.drug}
                       onChange={handleInputChange}
                       disabled={true}
-                      className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500"
+                      className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 cursor-not-allowed"
                       autoComplete="off"
                     />
                   </div>
@@ -385,48 +385,46 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                     </div>
                   </div>
                 )}
-
-                <div>
-                  <label
-                    htmlFor="startEdit"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                  >
-                    Start Date
-                  </label>
-                  <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg bg-gray-50 dark:bg-slate-900 flex items-center">
-                    <input
-                      type="date"
-                      id="startEdit"
-                      name="start"
-                      disabled={true}
-                      value={getCurrentDate()}
-                      onChange={handleInputChange}
-                      className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white cursor-not-allowed dark:[color-scheme:dark]"
-                    />
+                  <div className="w-full">
+                    <label
+                      htmlFor="startEdit"
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                    >
+                      Start Date
+                    </label>
+                    <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg bg-gray-50 dark:bg-slate-900 flex items-center">
+                      <input
+                        type="date"
+                        id="startEdit"
+                        name="start"
+                        disabled={true}
+                        value={getCurrentDate()}
+                        onChange={handleInputChange}
+                        className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white cursor-not-allowed dark:[color-scheme:dark] placeholder-gray-400 dark:placeholder-slate-500"
+                      />
+                    </div>
                   </div>
-                </div>
 
-                {/* End Date */}
-                <div>
-                  <label
-                    htmlFor="endEdit"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                  >
-                    End Date
-                  </label>
-                  <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center">
-                    <input
-                      type="date"
-                      id="endEdit"
-                      name="end"
-                      value={formData.end}
-                      onChange={handleInputChange}
-                      disabled={loading}
-                      className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white dark:[color-scheme:dark] disabled:cursor-not-allowed"
-                    />
+                  {/* End Date */}
+                  <div className="w-full">
+                    <label
+                      htmlFor="endEdit"
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                    >
+                      End Date
+                    </label>
+                    <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center">
+                      <input
+                        type="date"
+                        id="endEdit"
+                        name="end"
+                        value={formData.end}
+                        onChange={handleInputChange}
+                        disabled={loading}
+                        className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white dark:[color-scheme:dark] disabled:cursor-not-allowed"
+                      />
+                    </div>
                   </div>
-                </div>
-
                 {/* Reminder Checkbox */}
                 <div className="flex items-center gap-2">
                   <input

@@ -153,7 +153,7 @@ export default function DailyReports() {
           <div className="flex items-center justify-between mb-4">
             <button
               onClick={() => setViewMonth(viewMonth.subtract(1, "month"))}
-              className="p-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700 dark:text-slate-200 transition dark:[color-scheme:dark]"
+              className="p-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700 dark:text-slate-200 transition "
             >
               <GrFormPrevious />
             </button>
@@ -165,7 +165,7 @@ export default function DailyReports() {
                   onChange={(e) =>
                     setViewMonth(viewMonth.month(Number(e.target.value)))
                   }
-                  className="text-sm bg-transparent border-none outline-none p-0 dark:text-gray-200 cursor-pointer w-full"
+                  className="text-sm bg-transparent border-none outline-none p-0 dark:text-gray-200 cursor-pointer w-full dark:[color-scheme:dark]"
                 >
                   {months.map((m, i) => (
                     <option key={i} value={i} className="dark:bg-slate-900">
@@ -181,7 +181,7 @@ export default function DailyReports() {
                   onChange={(e) =>
                     setViewMonth(viewMonth.year(Number(e.target.value)))
                   }
-                  className="text-sm bg-transparent border-none outline-none p-0 dark:text-gray-200 cursor-pointer w-full"
+                  className="text-sm bg-transparent border-none outline-none p-0 dark:text-gray-200 cursor-pointer w-full dark:[color-scheme:dark]"
                 >
                   {Array.from(
                     { length: 11 },

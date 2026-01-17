@@ -11,6 +11,7 @@ import {
 } from "@/hooks/useDashboardData";
 import { toast } from "sonner";
 import { DrugProps } from "@/types/dashboard";
+import { calculateOverallCompliance } from "@/utils/dashboard/drugs";
 import {
   Download,
   Pill,
@@ -56,18 +57,7 @@ const Report: React.FC<ReportProps> = ({ setTab }) => {
 
   const recentDrugs = filterRecentDrugs(completedDrugs);
 
-  const now = new Date();
-  const completed = schedule.filter((dose) => {
-    const t = new Date(`${dose.date}T${dose.time}`);
-    return t <= now && dose.completed;
-  });
-  const total = schedule.filter((dose) => {
-    const t = new Date(`${dose.date}T${dose.time}`);
-    return t <= now;
-  });
-
-  const adherence =
-    total.length > 0 ? Math.round((completed.length / total.length) * 100) : 0;
+  const adherence = calculateOverallCompliance(schedule);
 
   const reportRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);

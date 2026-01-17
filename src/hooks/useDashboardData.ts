@@ -263,6 +263,11 @@ export const useUpdateDrugMutation = () => {
             const currentData = queryClient.getQueryData<DashboardData>(["dashboardData", params.userId]);
             const currentSchedule = currentData?.schedule || [];
             
+            // Capture completed sessions for today for the active drug
+            const completedTimesToday = currentSchedule
+                .filter(s => s.drugId === params.activeDrugId && s.date === params.todayDate && s.completed)
+                .map(s => s.time);
+
             const strippedSchedule = removePastDoses({
                 activeDrugId: params.activeDrugId,
                 schedule: currentSchedule,
@@ -273,7 +278,16 @@ export const useUpdateDrugMutation = () => {
                 drugId: params.activeDrugId,
                 start: params.todayDate,
             });
-            const updatedSchedule = [...strippedSchedule, ...newDoses];
+
+            // Re-apply completion status for today's doses if they were already taken
+            const scheduleWithPreservedStatus = newDoses.map(dose => {
+                if (dose.date === params.todayDate && completedTimesToday.includes(dose.time)) {
+                    return { ...dose, completed: true };
+                }
+                return dose;
+            });
+
+            const updatedSchedule = [...strippedSchedule, ...scheduleWithPreservedStatus];
 
             await uploadScheduleToServer({
                 userId: params.userId,

@@ -121,7 +121,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({
     return (
       <div
         key={`time-input-${index}`}
-        className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-700 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center"
+        className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center"
       >
         <input
           type="time"
@@ -437,45 +437,45 @@ const DrugsForm: React.FC<DrugFormProps> = ({
                   </div>
                 )}
 
-                {/* Start Date */}
-                <div className="w-full">
-                  <label
-                    htmlFor="start"
-                    className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
-                  >
-                    Start Date
-                  </label>
-                  <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center">
-                    <input
-                      type="date"
-                      id="start"
-                      name="start"
-                      value={formData.start}
-                      onChange={handleInputChange}
-                      disabled={loading}
-                      className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white dark:[color-scheme:dark] disabled:cursor-not-allowed"
-                    />
+                  {/* Start Date */}
+                  <div className="w-full">
+                    <label
+                      htmlFor="start"
+                      className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
+                    >
+                      Start Date
+                    </label>
+                    <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center">
+                      <input
+                        type="date"
+                        id="start"
+                        name="start"
+                        value={formData.start}
+                        onChange={handleInputChange}
+                        disabled={loading}
+                        className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white dark:[color-scheme:dark] disabled:cursor-not-allowed"
+                      />
+                    </div>
                   </div>
-                </div>
 
-                {/* End Date */}
-                <div className="w-full">
-                  <label
-                    htmlFor="end"
-                    className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
-                  >
-                    End Date
-                  </label>
-                  <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center">
-                    <input
-                      type="date"
-                      id="end"
-                      name="end"
-                      value={formData.end}
-                      onChange={handleInputChange}
-                      disabled={loading}
-                      className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white dark:[color-scheme:dark] disabled:cursor-not-allowed"
-                    />
+                  {/* End Date */}
+                  <div className="w-full">
+                    <label
+                      htmlFor="end"
+                      className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
+                    >
+                      End Date
+                    </label>
+                    <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center">
+                      <input
+                        type="date"
+                        id="end"
+                        name="end"
+                        value={formData.end}
+                        onChange={handleInputChange}
+                        disabled={loading}
+                        className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white dark:[color-scheme:dark] disabled:cursor-not-allowed"
+                      />
                   </div>
                 </div>
 

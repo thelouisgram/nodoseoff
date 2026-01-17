@@ -1,19 +1,5 @@
+import dayjs from "dayjs";
 import { ScheduleItem } from "../../types/dashboard";
-
-export interface calculateComplianceProps {
-  totalDoses: number;
-  pastDoses: number;
-  remainingDoses: number;
-  completedPastDoses: number;
-  missedPastDoses: number;
-  compliance: number; // percentage of past doses taken
-  scheduledTimestamps: Date[];
-  completedTimestamps: Date[];
-  missedTimestamps: Date[];
-  remainingTimestamps: Date[];
-  missedDoses: number;
-  completedDoses: number;
-}
 
 /**
  * Calculate compliance metrics for a specific drug based on drugId
@@ -35,28 +21,25 @@ export const calculateDrugCompliance = (schedule: any[], drugId: string) => {
     };
   }
 
-  const currentTime = new Date();
+  const now = dayjs();
   const totalDoses = drugDoses.length;
   
-  // Count completed doses (dose.completed === true AND dose time has passed)
-  const completedDoses = drugDoses.filter((dose) => {
-    const doseDateTime = new Date(`${dose.date}T${dose.time}`);
-    return dose.completed === true && doseDateTime < currentTime;
-  }).length;
+  // Count completed doses (all doses where completed === true)
+  const completedDoses = drugDoses.filter((dose) => dose.completed === true).length;
 
-  // Count missed doses (dose.completed === false AND dose time has passed)
+  // Count missed doses (past doses that were not completed)
   const missedDoses = drugDoses.filter((dose) => {
-    const doseDateTime = new Date(`${dose.date}T${dose.time}`);
-    return dose.completed === false && doseDateTime < currentTime;
+    const doseTime = dayjs(`${dose.date}T${dose.time}`);
+    return dose.completed === false && doseTime.isBefore(now);
   }).length;
 
-  // Calculate remaining doses (doses scheduled after current time, regardless of completion status)
+  // Count remaining doses (future doses that are not yet completed)
   const remainingDoses = drugDoses.filter((dose) => {
-    const doseDateTime = new Date(`${dose.date}T${dose.time}`);
-    return doseDateTime >= currentTime;
+    const doseTime = dayjs(`${dose.date}T${dose.time}`);
+    return dose.completed === false && (doseTime.isAfter(now) || doseTime.isSame(now));
   }).length;
 
-  // Calculate compliance percentage
+  // Calculate compliance percentage based on doses that SHOULD have been taken
   const dosesAccountedFor = completedDoses + missedDoses;
   const compliance = dosesAccountedFor > 0 
     ? Math.round((completedDoses / dosesAccountedFor) * 100) 
@@ -69,6 +52,32 @@ export const calculateDrugCompliance = (schedule: any[], drugId: string) => {
     remainingDoses,
     compliance,
   };
+};
+
+/**
+ * Calculate overall lifetime compliance for the entire schedule up to now
+ * @param schedule - Array of all scheduled doses
+ * @returns Overall compliance percentage
+ */
+export const calculateOverallCompliance = (schedule: any[]) => {
+  if (!schedule || schedule.length === 0) return 0;
+
+  const now = dayjs();
+  
+  // Count completed doses (all doses where completed === true)
+  const completedDoses = schedule.filter((dose) => dose.completed === true).length;
+
+  // Count missed doses (past doses that were not completed)
+  const missedDoses = schedule.filter((dose) => {
+    const doseTime = dayjs(`${dose.date}T${dose.time}`);
+    return dose.completed === false && doseTime.isBefore(now);
+  }).length;
+
+  const dosesAccountedFor = completedDoses + missedDoses;
+  
+  return dosesAccountedFor > 0 
+    ? Math.round((completedDoses / dosesAccountedFor) * 100) 
+    : 0;
 };
 
 

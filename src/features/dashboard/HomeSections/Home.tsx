@@ -3,6 +3,7 @@
 
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { format } from "date-fns";
+import dayjs from "dayjs";
 import { toast } from "sonner";
 import {
   useDrugs,
@@ -19,12 +20,16 @@ import { ScheduleItem } from "@/types/dashboard";
 import SummaryCards from "./SummaryCards";
 import Header from "./Header";
 import { useAppStore } from "@/store/useAppStore";
+import FloatingAddActions from "../../medications/drugs/FloatingAddActions";
 
 interface HomeProps {
   isLoading: boolean;
   setActiveModal: (string: string) => void;
   setTracker: (value: string) => void;
   tracker: string;
+  add: boolean;
+  setAdd: React.Dispatch<React.SetStateAction<boolean>>;
+  activeModal: string;
 }
 
 const Home: React.FC<HomeProps> = ({
@@ -32,6 +37,9 @@ const Home: React.FC<HomeProps> = ({
   setActiveModal,
   setTracker,
   tracker,
+  add,
+  setAdd,
+  activeModal,
 }) => {
   /* Redux Replacement with React Query Hooks */
   const { userId } = useAppStore((state) => state);
@@ -66,21 +74,17 @@ const Home: React.FC<HomeProps> = ({
 
   /** Percentage completed */
   const percentageCompleted = useMemo(() => {
-    const currentTime = new Date();
-    const completedBeforeCurrentTime = schedule.filter((dose: ScheduleItem) => {
-      const doseDateTime = new Date(`${dose.date}T${dose.time}`);
-      return doseDateTime <= currentTime && dose.completed;
+    const now = dayjs();
+    const drugItems = schedule.filter((dose: ScheduleItem) => {
+      const doseTime = dayjs(`${dose.date}T${dose.time}`);
+      // Count doses that were either completed or were scheduled in the past
+      return dose.completed || doseTime.isBefore(now);
     });
-    const totalBeforeCurrentTime = schedule.filter((dose: ScheduleItem) => {
-      const doseDateTime = new Date(`${dose.date}T${dose.time}`);
-      return doseDateTime <= currentTime;
-    });
-    return totalBeforeCurrentTime.length > 0
-      ? Math.round(
-          (completedBeforeCurrentTime.length / totalBeforeCurrentTime.length) *
-            100
-        )
-      : 0;
+
+    if (drugItems.length === 0) return 0;
+
+    const completedDoses = drugItems.filter((dose) => dose.completed).length;
+    return Math.round((completedDoses / drugItems.length) * 100);
   }, [schedule]);
 
   /** Filter doses by date */
@@ -99,7 +103,7 @@ const Home: React.FC<HomeProps> = ({
   const updateCompleted = useCallback(
     async (item: ScheduleItem) => {
       const updatedSchedule = schedule.map((dose: ScheduleItem) =>
-        dose.id === item.id && dose.drug === item.drug
+        dose.id === item.id && dose.drugId === item.drugId
           ? { ...dose, completed: !dose.completed }
           : dose
       );
@@ -139,14 +143,24 @@ const Home: React.FC<HomeProps> = ({
       {/* Summary Cards */}
       <SummaryCards />
       {/* Tracker  */}
-      <Tracker
-        tracker={tracker}
-        dosesToDisplay={allDosesToRender}
-        totalDoses={allDosesToRender.length}
-        setTracker={setTracker}
-      />
+      <div className="px-4 ss:px-8 md:px-0">
+        <Tracker
+          tracker={tracker}
+          dosesToDisplay={allDosesToRender}
+          totalDoses={allDosesToRender.length}
+          setTracker={setTracker}
+        />
+      </div>
       {/* Daily Reports */}
       <DailyReports />
+
+      {/* Floating Add Actions */}
+      <FloatingAddActions
+        add={add}
+        setAdd={setAdd}
+        activeModal={activeModal}
+        setActiveModal={setActiveModal}
+      />
     </div>
   );
 };

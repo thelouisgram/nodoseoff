@@ -61,7 +61,7 @@ const DrugDetailsGrid: React.FC<DrugDetailsGridProps> = ({ details }) => {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="grid ss:grid-cols-2 md:grid-cols-3 gap-3 mt-6 pb-24"
+      className="grid ss:grid-cols-2 md:grid-cols-3 gap-3 pb-24"
     >
       {details.map((detail, index) => {
         const { Icon, color } = iconMap(detail.name);

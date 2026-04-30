@@ -27,7 +27,7 @@ import DrugsHeader from "./DrugsHeader";
 import DrugsList from "./DrugsListContainer";
 import DrugsTab from "./DrugsTab";
 import FloatingAddActions from "./FloatingAddActions";
-import { useAppStore } from "@/store/useAppStore";
+import { useAppSelector } from "@/store";
 import { AnimatePresence, motion } from "framer-motion";
 
 interface DrugsProps {
@@ -48,7 +48,7 @@ const Drugs: React.FC<DrugsProps> = ({
   setActiveAction,
 }) => {
   /* Redux Replacement with React Query Hooks */
-  const { userId } = useAppStore((state) => state);
+  const { userId } = useAppSelector((state) => state.app);
 
   const { data: drugs = [] } = useDrugs(userId);
   const { data: completedDrugs = [] } = useCompletedDrugs(userId);

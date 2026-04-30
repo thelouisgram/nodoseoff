@@ -10,7 +10,8 @@ import { sendMail } from "@/utils/sendEmail";
 import { generateWelcomeEmail } from "@/emails/welcomeMail";
 import { useAuth } from "@/contexts/AuthContext";
 import { EyeOff, Eye, Pill } from "lucide-react";
-import { useAppStore } from "@/store/useAppStore";
+import { useAppDispatch } from "@/store";
+import { setIsAuthenticated, setUserId } from "@/store/appSlice";
 import Image from "next/image";
 import { motion } from "framer-motion";
 
@@ -28,7 +29,7 @@ const CreateAccount = () => {
 
   const recaptchaSiteKey: string =
     process.env.NEXT_PUBLIC_CAPTCHA_SITE_KEY ?? "";
-  const { setIsAuthenticated, setUserId } = useAppStore((state) => state);
+  const dispatch = useAppDispatch();
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -95,8 +96,8 @@ const CreateAccount = () => {
       const userId = signedUpUser.id;
 
       if (userId) {
-        setUserId(userId);
-        setIsAuthenticated(true);
+        dispatch(setUserId(userId));
+        dispatch(setIsAuthenticated(true));
 
         const { error: userError } = await supabase.from("users").insert({
           name: formData.fullName,

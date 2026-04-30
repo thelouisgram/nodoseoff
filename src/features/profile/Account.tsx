@@ -7,7 +7,8 @@ import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/router";
 import Report from "./Report";
-import { useAppStore } from "@/store/useAppStore";
+import { useAppSelector, useAppDispatch } from "@/store";
+import { setActiveTab, setIsAuthenticated, setUserId } from "@/store/appSlice";
 
 import {
   ChevronRight,
@@ -27,9 +28,8 @@ const CDNURL =
   "https://opshqmqagtfidynwftzk.supabase.co/storage/v1/object/public/profile-picture/";
 
 const Account: React.FC<AccountProps> = ({ setActiveModal }) => {
-  const { userId, setActiveTab, setIsAuthenticated, setUserId } = useAppStore(
-    (state) => state
-  );
+  const { userId } = useAppSelector((state) => state.app);
+  const dispatch = useAppDispatch();
   const { data: info = [] } = useUserInfo(userId);
   const { data: profilePicture = "" } = useProfilePicture(userId);
 
@@ -44,10 +44,10 @@ const Account: React.FC<AccountProps> = ({ setActiveModal }) => {
   const logOut = async () => {
     try {
       await signOut();
-      setActiveTab("Home");
+      dispatch(setActiveTab("Home"));
       router.push("/login");
-      setIsAuthenticated(false);
-      setUserId("");
+      dispatch(setIsAuthenticated(false));
+      dispatch(setUserId(""));
     } catch (error) {
       toast.error("Error signing out");
     }

@@ -10,7 +10,7 @@ import {
 } from "@/hooks/useDashboardData";
 import { dose } from "@/utils/dashboard/dashboard";
 import dayjs from "dayjs";
-import { useAppStore } from "@/store/useAppStore";
+import { useAppSelector } from "@/store";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Loader2 } from "lucide-react";
 
@@ -30,7 +30,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({
   setActiveModal,
 }) => {
   /* Redux Replacement */
-  const { userId } = useAppStore((state) => state);
+  const { userId } = useAppSelector((state) => state.app);
 
   const { data: drugs = [] } = useDrugs(userId);
   const { data: allergies = [] } = useAllergies(userId);

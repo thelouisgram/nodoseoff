@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { useAppStore } from "@/store/useAppStore";
+import { useAppSelector } from "@/store";
 import {
   useDrugs,
   useSchedule,
@@ -30,7 +30,7 @@ interface ReportProps {
 }
 
 const Report: React.FC<ReportProps> = ({ setTab }) => {
-  const { userId } = useAppStore((state) => state);
+  const { userId } = useAppSelector((state) => state.app);
   const { data: drugs = [] } = useDrugs(userId);
   const { data: schedule = [] } = useSchedule(userId);
   const { data: info = [] } = useUserInfo(userId);

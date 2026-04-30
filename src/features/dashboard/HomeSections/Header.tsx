@@ -3,13 +3,15 @@ import Image from "next/image";
 
 import { useProfilePicture, useUserInfo } from "@/hooks/useDashboardData";
 import { UserRound } from "lucide-react";
-import { useAppStore } from "@/store/useAppStore";
+import { useAppSelector, useAppDispatch } from "@/store";
+import { setActiveTab } from "@/store/appSlice";
 
 const Header = () => {
   const CDNURL =
     "https://opshqmqagtfidynwftzk.supabase.co/storage/v1/object/public/profile-picture/";
 
-  const { setActiveTab, userId } = useAppStore((state) => state);
+  const { userId } = useAppSelector((state) => state.app);
+  const dispatch = useAppDispatch();
 
   const { data: profilePicture = "" } = useProfilePicture(userId);
   const { data: info = [] } = useUserInfo(userId);
@@ -26,7 +28,7 @@ const Header = () => {
       </div>
       <div className="flex items-center gap-4">
         <button
-          onClick={() => setActiveTab("Account")}
+          onClick={() => dispatch(setActiveTab("Account"))}
           className="w-[60px] h-[60px] flex justify-center items-center rounded-full overflow-hidden cursor-pointer 
             ring-1 ring-gray-400 p-0.5"
           aria-label="View account"

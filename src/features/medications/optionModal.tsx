@@ -9,7 +9,8 @@ import {
   LucideIcon,
 } from "lucide-react";
 import { SetStateAction } from "react";
-import { useAppStore } from "@/store/useAppStore";
+import { useAppDispatch } from "@/store";
+import { setActiveDrug, setActiveDrugId } from "@/store/appSlice";
 import { AnimatePresence, motion } from "framer-motion";
 
 interface OptionModal {
@@ -43,7 +44,7 @@ const OptionModal: React.FC<OptionModal> = ({
   activeView,
   setActiveView,
 }) => {
-  const { setActiveDrug, setActiveDrugId } = useAppStore((state) => state);
+  const dispatch = useAppDispatch();
   const buttonRef = useRef<HTMLButtonElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ top: 0, left: 0 });
@@ -103,8 +104,8 @@ const OptionModal: React.FC<OptionModal> = ({
 
   // Helper function to handle actions
   const handleAction = (action: string) => {
-    setActiveDrug(drug);
-    setActiveDrugId(drugId);
+    dispatch(setActiveDrug(drug));
+    dispatch(setActiveDrugId(drugId));
     setActiveAction(action);
     setOptions(false);
 
@@ -213,8 +214,8 @@ const OptionModal: React.FC<OptionModal> = ({
         ref={buttonRef}
         onClick={(e) => {
           setOptions((prev) => !prev);
-          setActiveDrug(drug);
-          setActiveDrugId(drugId);
+          dispatch(setActiveDrug(drug));
+          dispatch(setActiveDrugId(drugId));
           e.stopPropagation();
         }}
         className="size-8 flex items-center justify-center rounded-full text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-slate-900 transition-colors"

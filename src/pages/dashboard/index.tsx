@@ -10,7 +10,8 @@ import SideBar from "@/components/dashboard/SideBar";
 import MobileSidebar from "@/components/dashboard/MobileSideBar";
 import MainDashboard from "@/components/dashboard/MainDashboard";
 import FormsContainer from "@/components/dashboard/FormsContainer";
-import { useAppStore } from "@/store/useAppStore";
+import { useAppSelector, useAppDispatch } from "@/store";
+import { setActiveTab, setIsAuthenticated, setUserId } from "@/store/appSlice";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { motion } from "framer-motion";
@@ -18,8 +19,8 @@ import { motion } from "framer-motion";
 const Page = () => {
   // Use useAuth to get the true user state
   const { user, loading: authLoading, signOut } = useAuth();
-  const { activeTab, setActiveTab, setIsAuthenticated, setUserId } =
-    useAppStore((state) => state);
+  const { activeTab } = useAppSelector((state) => state.app);
+  const dispatch = useAppDispatch();
   const router = useRouter();
 
   // Local UI states
@@ -39,9 +40,9 @@ const Page = () => {
 
   useEffect(() => {
     if (user?.id) {
-      setUserId(user.id);
+      dispatch(setUserId(user.id));
     }
-  }, [user, setUserId]);
+  }, [user, dispatch]);
 
   useEffect(() => {
     if (isError) {
@@ -54,10 +55,10 @@ const Page = () => {
   const handleSignOut = async () => {
     try {
       await signOut();
-      setActiveTab("Home");
+      dispatch(setActiveTab("Home"));
       router.push("/login");
-      setIsAuthenticated(false);
-      setUserId("");
+      dispatch(setIsAuthenticated(false));
+      dispatch(setUserId(""));
     } catch (error) {
       console.error("Error signing out:", error);
       toast.error("Failed to log out.");

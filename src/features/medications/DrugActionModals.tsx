@@ -1,6 +1,7 @@
 import React, { SetStateAction, RefObject, useState } from "react";
 import { ShieldOff, Trash2, Pencil, Loader2, X } from "lucide-react";
-import { useAppStore } from "@/store/useAppStore";
+import { useAppSelector, useAppDispatch } from "@/store";
+import { setActiveDrug, setActiveDrugId } from "@/store/appSlice";
 import { motion, AnimatePresence } from "framer-motion";
 
 type DivRef = RefObject<HTMLDivElement>;
@@ -30,9 +31,8 @@ const DrugActionModals: React.FC<DrugActionModalsProps> = ({
 }) => {
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const { activeDrug, setActiveDrug, setActiveDrugId } = useAppStore(
-    (state) => state
-  );
+  const { activeDrug } = useAppSelector((state) => state.app);
+  const dispatch = useAppDispatch();
 
   // Modal configuration based on activeAction
   const modalConfig = {
@@ -59,8 +59,8 @@ const DrugActionModals: React.FC<DrugActionModalsProps> = ({
           setActiveView("list");
 
           // Clear Redux state
-          setActiveDrug("");
-          setActiveDrugId("");
+          dispatch(setActiveDrug(""));
+          dispatch(setActiveDrugId(""));
         } catch (error) {
           console.error("Error in modal delete operation:", error);
           // Don't close modal on error so user can see what happened
@@ -87,8 +87,8 @@ const DrugActionModals: React.FC<DrugActionModalsProps> = ({
 
           // Redux cleanup
           if (tab !== "allergies") {
-            setActiveDrug("");
-            setActiveDrugId("");
+            dispatch(setActiveDrug(""));
+            dispatch(setActiveDrugId(""));
           }
         } catch (error) {
           console.error("Error in modal allergy operation:", error);

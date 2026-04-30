@@ -6,7 +6,7 @@ import {
   useUpdateDrugHistoryMutation,
 } from "@/hooks/useDashboardData";
 import { X, Loader2 } from "lucide-react";
-import { useAppStore } from "@/store/useAppStore";
+import { useAppSelector } from "@/store";
 
 interface DrugHxFormProps {
   setActiveModal: (value: string) => void;
@@ -17,7 +17,7 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
   activeModal,
   setActiveModal,
 }) => {
-  const { userId } = useAppStore((state) => state);
+  const { userId } = useAppSelector((state) => state.app);
   const { data: otcDrugs = "" } = useOtcDrugs(userId);
   const { data: herbs = "" } = useHerbs(userId);
 

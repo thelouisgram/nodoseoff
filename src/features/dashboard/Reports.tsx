@@ -3,7 +3,7 @@
 import React from "react";
 import { FaExclamationTriangle } from "react-icons/fa";
 
-import { useAppStore } from "@/store/useAppStore";
+import { useAppSelector } from "@/store";
 import { useSchedule } from "@/hooks/useDashboardData";
 import dayjs from "dayjs";
 import { ListCheck, Pill } from "lucide-react";
@@ -23,7 +23,7 @@ interface ReportsProps {
 }
 
 const Reports: React.FC<ReportsProps> = ({ today, selectDate, isMobile }) => {
-  const { userId } = useAppStore((state) => state);
+  const { userId } = useAppSelector((state) => state.app);
   const { data: schedule = [] } = useSchedule(userId);
 
   const currentDate = selectDate ?? today;

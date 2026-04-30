@@ -52,8 +52,7 @@
 
 ### State Management & Data Fetching
 
-- **[TanStack Query](https://tanstack.com/query)** - Powerful data synchronization
-- **[Zustand](https://zustand-demo.pmnd.rs/)** - Lightweight state management
+Lightweight state management
 - **[Axios](https://axios-http.com/)** - HTTP client
 
 ### Backend & Database

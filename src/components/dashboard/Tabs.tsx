@@ -1,6 +1,7 @@
 import React from "react";
 import { LucideIcon } from "lucide-react";
-import { useAppStore } from "@/store/useAppStore";
+import { useAppDispatch } from "@/store";
+import { setActiveTab } from "@/store/appSlice";
 import { motion } from "framer-motion";
 
 interface TabItem {
@@ -15,7 +16,7 @@ interface TabsProps {
 }
 
 const Tabs: React.FC<TabsProps> = ({ item, activeTab, nav }) => {
-  const { setActiveTab } = useAppStore((state) => state);
+  const dispatch = useAppDispatch();
   const Icon = item.icon;
   const isActive = item.name === activeTab;
 
@@ -52,7 +53,7 @@ const Tabs: React.FC<TabsProps> = ({ item, activeTab, nav }) => {
     <motion.button
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
-      onClick={() => setActiveTab(item.name)}
+      onClick={() => dispatch(setActiveTab(item.name))}
       className="flex items-center lg:gap-3 cursor-pointer transition-all font-Inter w-full group"
     >
       {/* Icon with border */}

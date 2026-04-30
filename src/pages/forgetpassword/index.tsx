@@ -6,7 +6,8 @@ import { useRouter } from "next/router";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { createClient } from "../../lib/supabase/client";
 import { toast } from "sonner";
-import { useAppStore } from "../../store/useAppStore";
+import { useAppDispatch } from "@/store";
+import { setIsAuthenticated, setUserId } from "@/store/appSlice";
 
 const ForgotPassword = () => {
   const router = useRouter();
@@ -19,7 +20,7 @@ const ForgotPassword = () => {
 
   const supabase = createClient();
 
-  const { setIsAuthenticated, setUserId } = useAppStore((state) => state);
+  const dispatch = useAppDispatch();
 
   const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -50,8 +51,8 @@ const ForgotPassword = () => {
           const user = await supabase.auth.getUser();
           const userId = user.data.user?.id;
           if (userId) {
-            setUserId(userId);
-            setIsAuthenticated(true);
+            dispatch(setUserId(userId));
+            dispatch(setIsAuthenticated(true));
             router.push("/reset");
           }
         }

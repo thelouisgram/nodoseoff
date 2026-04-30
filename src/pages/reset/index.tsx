@@ -5,12 +5,12 @@ import { useRouter } from "next/router";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { createClient } from "../../lib/supabase/client";
 import Image from "next/image";
-import { useAppStore } from "../../store/useAppStore";
+import { useAppSelector } from "@/store";
 import { Eye, EyeOff } from "lucide-react";
 
 const ResetPassword = () => {
   const router = useRouter();
-  const { userId } = useAppStore((state) => state);
+  const { userId } = useAppSelector((state) => state.app);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);

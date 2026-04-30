@@ -2,12 +2,11 @@
 "use client";
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
 import { useDrugs, useUpdateDrugMutation } from "@/hooks/useDashboardData";
 import { dose } from "@/utils/dashboard/dashboard";
 import { X, Loader2, Calendar } from "lucide-react";
 import dayjs from "dayjs";
-import { useAppStore } from "@/store/useAppStore";
+import { useAppSelector } from "@/store";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface DrugFormProps {
@@ -26,9 +25,8 @@ interface FormErrors {
 }
 
 const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
-  const { userId } = useAppStore((state) => state);
+  const { userId, activeDrug, activeDrugId } = useAppSelector((state) => state.app);
   const { data: drugs = [] } = useDrugs(userId);
-  const { activeDrug, activeDrugId } = useAppStore((state) => state);
 
   const currentDrug = drugs.find((drug) => drug.drug === activeDrug);
   const [loading, setLoading] = useState(false);

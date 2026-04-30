@@ -5,12 +5,12 @@ import cn from "@/utils/cn";
 import { GrFormNext, GrFormPrevious } from "react-icons/gr";
 import Reports from "../Reports";
 
-import { useAppStore } from "@/store/useAppStore";
+import { useAppSelector } from "@/store";
 import { useSchedule } from "@/hooks/useDashboardData";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function DailyReports() {
-  const { userId } = useAppStore((state) => state);
+  const { userId } = useAppSelector((state) => state.app);
   const { data: schedule = [] } = useSchedule(userId);
 
   const days = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];

@@ -10,7 +10,7 @@ import {
   useUploadProfilePictureMutation,
 } from "@/hooks/useDashboardData";
 import { X, Loader2, Camera, User } from "lucide-react";
-import { useAppStore } from "@/store/useAppStore";
+import { useAppSelector } from "@/store";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface ProfileFormProps {
@@ -22,7 +22,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
   setActiveModal,
   activeModal,
 }) => {
-  const { userId } = useAppStore((state) => state);
+  const { userId } = useAppSelector((state) => state.app);
   const { data: info = [] } = useUserInfo(userId);
   const { data: profilePicture = "" } = useProfilePicture(userId);
 

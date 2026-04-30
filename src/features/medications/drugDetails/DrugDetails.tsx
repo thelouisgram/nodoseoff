@@ -20,7 +20,7 @@ import { frequencyToPlaceholder } from "@/utils/dashboard/dashboard";
 import { formatDate } from "@/utils/dashboard/dashboard";
 import { Detail } from "@/types/drug";
 import { convertedTimes, calculateTimePeriod } from "@/utils/drugs";
-import { useAppStore } from "@/store/useAppStore";
+import { useAppSelector } from "@/store";
 import { calculateDrugCompliance } from "@/utils/dashboard/drugs";
 import { format } from "date-fns";
 import Tracker from "../../dashboard/Tracker";
@@ -37,7 +37,7 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
   options,
   setOptions,
 }) => {
-  const { activeDrug, activeDrugId, userId } = useAppStore((state) => state);
+  const { activeDrug, activeDrugId, userId } = useAppSelector((state) => state.app);
 
   const { data: drugs = [] } = useDrugs(userId);
   const { data: schedule = [] } = useSchedule(userId);
@@ -113,7 +113,7 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
     if (!drug) return null;
 
     return calculateDrugCompliance(schedule, activeDrugId);
-  }, [schedule, drug]);
+  }, [schedule, drug, activeDrugId]);
 
   if (!drugDetailsData) {
     setActiveView("list");

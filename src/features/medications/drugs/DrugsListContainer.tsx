@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Inbox, Search } from "lucide-react";
 
-import { useAppStore } from "@/store/useAppStore";
+import { useAppSelector } from "@/store";
 import {
   useDrugs,
   useCompletedDrugs,
@@ -29,7 +29,7 @@ const DrugsListContainer = ({
   activeView,
 }: any) => {
   /* Redux Replacement */
-  const { userId } = useAppStore((state) => state);
+  const { userId } = useAppSelector((state) => state.app);
   const { data: drugs = [] } = useDrugs(userId);
   const { data: completedDrugs = [] } = useCompletedDrugs(userId);
   const { data: allergies = [] } = useAllergies(userId);

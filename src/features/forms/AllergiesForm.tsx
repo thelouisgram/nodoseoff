@@ -6,7 +6,7 @@ import {
   useAddAllergyMutation,
 } from "@/hooks/useDashboardData";
 import { X, Loader2, AlertCircle } from "lucide-react";
-import { useAppStore } from "@/store/useAppStore";
+import { useAppSelector } from "@/store";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface AllergiesFormProps {
@@ -18,7 +18,7 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
   activeModal,
   setActiveModal,
 }) => {
-  const { userId } = useAppStore((state) => state);
+  const { userId } = useAppSelector((state) => state.app);
   const { data: allergies = [] } = useAllergies(userId);
   const { data: info = [] } = useUserInfo(userId);
 

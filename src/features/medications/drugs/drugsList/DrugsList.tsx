@@ -2,7 +2,8 @@ import React, { SetStateAction } from "react";
 import { DrugProps } from "@/types/dashboard";
 import { calculateTimePeriod } from "@/utils/drugs";
 import OptionModal from "../../optionModal";
-import { useAppStore } from "@/store/useAppStore";
+import { useAppSelector, useAppDispatch } from "@/store";
+import { setActiveDrug, setActiveDrugId } from "@/store/appSlice";
 import { AnimatePresence, motion } from "framer-motion";
 
 interface AllergyProps {
@@ -47,9 +48,8 @@ const DrugsList: React.FC<DrugsListProps> = ({
   setActiveView,
   activeView,
 }) => {
-  const { activeDrugId, setActiveDrug, setActiveDrugId } = useAppStore(
-    (state) => state
-  );
+  const { activeDrugId } = useAppSelector((state) => state.app);
+  const dispatch = useAppDispatch();
 
 
   /* ---------------- ALLERGIES ---------------- */
@@ -123,8 +123,8 @@ const DrugsList: React.FC<DrugsListProps> = ({
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.2 }}
               onClick={() => {
-                setActiveDrug(drug.drug);
-                setActiveDrugId(drug.drugId);
+                dispatch(setActiveDrug(drug.drug));
+                dispatch(setActiveDrugId(drug.drugId));
                 setActiveView("details");
               }}
               className="relative flex justify-between items-center capitalize

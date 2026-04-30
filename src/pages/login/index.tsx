@@ -5,13 +5,14 @@ import { useRouter } from "next/router";
 import { ChangeEvent, FormEvent, useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Eye, EyeOff } from "lucide-react";
-import { useAppStore } from "@/store/useAppStore";
+import { useAppSelector, useAppDispatch } from "@/store";
+import { setIsAuthenticated, setUserId } from "@/store/appSlice";
 import { motion } from "framer-motion";
 
 const SignIn = () => {
   const router = useRouter();
   const { signIn, user, loading: authLoading } = useAuth();
-  const { setIsAuthenticated, setUserId } = useAppStore((state) => state);
+  const dispatch = useAppDispatch();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -30,14 +31,14 @@ const SignIn = () => {
 
   useEffect(() => {
     if (!authLoading && user) {
-      setIsAuthenticated(true);
-      setUserId(user.id);
+      dispatch(setIsAuthenticated(true));
+      dispatch(setUserId(user.id));
       router.push("/dashboard");
     }
     if (!authLoading && !user) {
-      setIsAuthenticated(false);
+      dispatch(setIsAuthenticated(false));
     }
-  }, [user, authLoading, router, setIsAuthenticated, setUserId]);
+  }, [user, authLoading, router, dispatch]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();

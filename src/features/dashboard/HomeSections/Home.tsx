@@ -19,7 +19,7 @@ import { calculateClosestDoseCountdown } from "@/utils/dashboard/dashboard";
 import { ScheduleItem } from "@/types/dashboard";
 import SummaryCards from "./SummaryCards";
 import Header from "./Header";
-import { useAppStore } from "@/store/useAppStore";
+import { useAppSelector } from "@/store";
 import FloatingAddActions from "../../medications/drugs/FloatingAddActions";
 
 interface HomeProps {
@@ -42,7 +42,7 @@ const Home: React.FC<HomeProps> = ({
   activeModal,
 }) => {
   /* Redux Replacement with React Query Hooks */
-  const { userId } = useAppStore((state) => state);
+  const { userId } = useAppSelector((state) => state.app);
 
   const { data: drugs = [] } = useDrugs(userId);
   const { data: schedule = [] } = useSchedule(userId);

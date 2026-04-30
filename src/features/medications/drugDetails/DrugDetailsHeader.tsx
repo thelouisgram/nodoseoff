@@ -1,6 +1,7 @@
 import React, { SetStateAction } from "react";
 import OptionModal from "../optionModal";
-import { useAppStore } from "@/store/useAppStore";
+import { useAppSelector, useAppDispatch } from "@/store";
+import { setActiveDrug, setActiveDrugId } from "@/store/appSlice";
 
 interface Props {
   options: boolean;
@@ -25,14 +26,13 @@ const DrugDetailsHeader: React.FC<Props> = ({
   activeAction,
   setActiveAction,
 }) => {
-  const { setActiveDrug, setActiveDrugId, activeDrugId } = useAppStore(
-    (state) => state
-  );
+  const { activeDrugId } = useAppSelector((state) => state.app);
+  const dispatch = useAppDispatch();
 
   const handleBreadcrumbClick = (level: "list") => {
     if (level === "list") {
-      setActiveDrug("");
-      setActiveDrugId("");
+      dispatch(setActiveDrug(""));
+      dispatch(setActiveDrugId(""));
       setActiveView("list");
     }
   };

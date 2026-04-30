@@ -2,7 +2,7 @@ import { Pill, Shield, Clock } from "lucide-react";
 import { calculateClosestDoseCountdown } from "@/utils/dashboard/dashboard";
 import { calculateOverallCompliance } from "@/utils/dashboard/drugs";
 import { useDrugs, useSchedule } from "@/hooks/useDashboardData";
-import { useAppStore } from "@/store/useAppStore";
+import { useAppSelector } from "@/store";
 import { motion } from "framer-motion";
 
 const containerVariants = {
@@ -29,7 +29,7 @@ const cardVariants = {
 };
 
 const SummaryCards = ({}) => {
-  const { userId } = useAppStore((state) => state);
+  const { userId } = useAppSelector((state) => state.app);
   const { data: drugs = [] } = useDrugs(userId);
   const { data: schedule = [] } = useSchedule(userId);
   return (

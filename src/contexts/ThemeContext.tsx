@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useUpdateThemeMutation, useUserTheme } from "@/hooks/useDashboardData";
-import { useAppStore } from "@/store/useAppStore";
+import { useAppSelector } from "@/store";
 
 type Theme = "light" | "dark";
 
@@ -13,7 +13,7 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const { userId } = useAppStore((state) => state);
+  const { userId } = useAppSelector((state) => state.app);
 
   // Get theme from database
   const { data: savedTheme, isLoading: isLoadingTheme } = useUserTheme(userId);
@@ -57,7 +57,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     // Save to database if user is logged in
     if (userId) {
-      updateThemeMutation.mutate({ userId, theme: newTheme });
+      updateThemeMutation.mutateAsync({ userId, theme: newTheme }).catch(console.error);
     }
   };
 

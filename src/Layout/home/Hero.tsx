@@ -3,12 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { Poppins } from "next/font/google";
-import {
-  Menu,
-  X,
-  ArrowRight,
-  ArrowRightCircle,
-} from "lucide-react";
+import { Menu, X, ArrowRight, ArrowRightCircle } from "lucide-react";
 import Link from "next/link";
 
 const poppins = Poppins({
@@ -38,7 +33,9 @@ export default function HeroSection() {
 
         {/* Menu */}
         <nav
-        onClick={()=>{setMenuOpen(false)}}
+          onClick={() => {
+            setMenuOpen(false);
+          }}
           className={`${
             menuOpen ? "max-md:w-full" : "max-md:w-0"
           } max-md:absolute max-md:top-0 max-md:left-0
@@ -70,8 +67,13 @@ export default function HeroSection() {
         </nav>
 
         {/* Right side */}
-        <div className="flex items-center space-x-4">
-
+        <div className="flex items-center space-x-4 flex-row-reverse gap-4">
+          <Link
+            className="hidden md:flex border border-blue-600 text-blue-600 px-5 py-2 rounded-full text-sm font-medium transition"
+            href="/login"
+          >
+            Log in
+          </Link>
           <Link
             className="hidden md:flex bg-blue-600 text-white px-5 py-2 rounded-full text-sm font-medium hover:bg-blue-600 transition"
             href="/signup"
@@ -91,18 +93,18 @@ export default function HeroSection() {
 
       {/* --- HERO CONTENT --- */}
       <main className="flex-grow flex flex-col items-center max-w-7xl mx-auto w-full">
-        <Link href='#tips'>
-        <button
-          className="mt-16 mb-6 flex items-center space-x-2 border border-blue-600 text-blue-600 text-xs rounded-full px-4 pr-1.5 py-1.5 hover:bg-blue-50 transition"
-          type="button"
-        >
-          <span>Explore how NoDoseOff supports medication safety.</span>
+        <Link href="#tips">
+          <button
+            className="mt-16 mb-6 flex items-center space-x-2 border border-blue-600 text-blue-600 text-xs rounded-full px-4 pr-1.5 py-1.5 hover:bg-blue-50 transition"
+            type="button"
+          >
+            <span>Explore how NoDoseOff supports medication safety.</span>
 
-          <span className="flex items-center justify-center size-6 p-1 rounded-full bg-blue-600">
-            <ArrowRight className="w-4 h-4 text-white" />
-          </span>
-        </button>
-</Link>
+            <span className="flex items-center justify-center size-6 p-1 rounded-full bg-blue-600">
+              <ArrowRight className="w-4 h-4 text-white" />
+            </span>
+          </button>
+        </Link>
         <h1 className="text-center text-gray-900 font-bold text-3xl sm:text-4xl md:text-5xl max-w-2xl leading-tight">
           Trusted medication support for
           <span className="text-blue-600"> everyday users</span>

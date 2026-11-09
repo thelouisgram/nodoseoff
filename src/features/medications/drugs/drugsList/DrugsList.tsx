@@ -1,41 +1,43 @@
 import React, { SetStateAction } from "react";
-import { DrugProps } from "@/types/dashboard";
-import { calculateTimePeriod } from "@/utils/drugs";
+import { calculateTimePeriod, GroupedDrug, sameDrugName } from "@/utils/drugs";
 import OptionModal from "../../optionModal";
 import { useAppSelector, useAppDispatch } from "@/store";
 import { setActiveDrug, setActiveDrugId } from "@/store/appSlice";
 import { AnimatePresence, motion } from "framer-motion";
+import { DRUGS_GRID } from "./DrugsListTitle";
 
 interface AllergyProps {
   drug: string;
 }
 
 interface DrugsListProps {
-  newData: DrugProps[] | AllergyProps[] | undefined;
-  tab: "drugs" | "allergies";
+  newData: GroupedDrug[] | AllergyProps[] | undefined;
+  tab: string;
   options: boolean;
   setOptions: React.Dispatch<SetStateAction<boolean>>;
   activeAction: string;
   setActiveAction: (value: string) => void;
   setActiveView: React.Dispatch<SetStateAction<"details" | "list">>;
   activeView: string;
+  startIndex?: number;
 }
 
 const formatFrequency = (freq: string) => {
+  if (!freq) return "—";
   const map: Record<string, string> = {
-    qd: "1x daily",
-    od: "1x daily",
-    bid: "2x daily",
-    tid: "3x daily",
-    qid: "4x daily",
-    prn: "as needed",
-    eod: "every other day",
-    w: "weekly",
-    bw: "biweekly",
-    m: "monthly",
+    qd: "1× daily",
+    od: "1× daily",
+    bid: "2× daily",
+    tid: "3× daily",
+    qid: "4× daily",
+    prn: "As needed",
+    eod: "Every other day",
+    w: "Weekly",
+    bw: "Biweekly",
+    m: "Monthly",
   };
 
-  return map[freq.toLowerCase().trim()] ?? freq.toLowerCase();
+  return map[freq.toLowerCase().trim()] ?? freq;
 };
 
 const DrugsList: React.FC<DrugsListProps> = ({
@@ -47,12 +49,11 @@ const DrugsList: React.FC<DrugsListProps> = ({
   setActiveAction,
   setActiveView,
   activeView,
+  startIndex = 0,
 }) => {
-  const { activeDrugId } = useAppSelector((state) => state.app);
+  const { activeDrug, activeDrugId } = useAppSelector((state) => state.app);
   const dispatch = useAppDispatch();
 
-
-  /* ---------------- ALLERGIES ---------------- */
   if (tab === "allergies") {
     const allergies = newData as AllergyProps[];
 
@@ -61,29 +62,29 @@ const DrugsList: React.FC<DrugsListProps> = ({
         <AnimatePresence mode="popLayout">
           {allergies?.map((item, index) => {
             const isActive = activeDrugId === item.drug;
+            const rowKey = `${item.drug}-${startIndex + index}`;
 
             return (
               <motion.div
-                key={item.drug}
-                layout
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.2 }}
-                className="flex justify-between items-center px-4 ss:px-6 py-3 border-b border-gray-100 dark:border-slate-800 bg-white dark:bg-transparent text-sm last:border-0"
+                key={rowKey}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15 }}
+                className="flex items-center justify-between border-b border-black/[0.05] bg-white px-4 py-3.5 text-sm last:border-0 ss:px-6"
               >
-                <div className="flex items-center">
-                  <span className="w-6 h-6 mr-2 flex items-center justify-center rounded-full bg-gray-100 text-gray-600 dark:text-slate-400 dark:bg-slate-800 text-xs font-bold">
-                    {index + 1}
+                <div className="flex min-w-0 items-center gap-3">
+                  <span className="flex size-8 shrink-0 items-center justify-center rounded-[10px] bg-soft-canvas text-[12px] font-semibold text-soft-muted">
+                    {startIndex + index + 1}
                   </span>
-                  <span className="font-semibold text-slate-800 dark:text-slate-100 capitalize">
+                  <span className="truncate font-semibold capitalize text-soft-ink">
                     {item.drug}
                   </span>
                 </div>
-                
+
                 <div
                   onClick={(e) => e.stopPropagation()}
-                  className="flex justify-end relative"
+                  className="relative flex shrink-0 justify-end"
                 >
                   <OptionModal
                     options={options && isActive}
@@ -105,69 +106,111 @@ const DrugsList: React.FC<DrugsListProps> = ({
     );
   }
 
-  /* ---------------- DRUGS ---------------- */
-  const drugs = newData as DrugProps[];
+  const drugs = newData as GroupedDrug[];
 
   return (
     <div className="flex flex-col">
       <AnimatePresence mode="popLayout">
         {drugs?.map((drug, index) => {
-          const isActive = activeDrugId === drug.drugId;
+          const isActive =
+            sameDrugName(activeDrug, drug.drug) ||
+            activeDrugId === drug.drugId;
+          const courseCount = drug.courseCount || drug.courses?.length || 1;
+          const duration =
+            courseCount > 1
+              ? `${courseCount} courses`
+              : calculateTimePeriod(drug.start, drug.end);
+
+          const freqs = new Set(
+            (drug.courses || [drug]).map((c) =>
+              (c.frequency || "").toLowerCase().trim()
+            )
+          );
+          const frequency =
+            freqs.size > 1
+              ? "Varies"
+              : formatFrequency(drug.frequency);
+
+          const routes = new Set(
+            (drug.courses || [drug]).map((c) =>
+              (c.route || "").toLowerCase().trim()
+            )
+          );
+          const route =
+            routes.size > 1
+              ? "Mixed"
+              : drug.route?.trim()
+                ? drug.route.trim().replace(/^\w/, (c) => c.toUpperCase())
+                : "—";
+
+          const rowKey = `name-${drug.drug.toLowerCase()}-${startIndex + index}`;
 
           return (
             <motion.div
-              key={drug.drugId}
-              layout
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.2 }}
+              key={rowKey}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
               onClick={() => {
                 dispatch(setActiveDrug(drug.drug));
                 dispatch(setActiveDrugId(drug.drugId));
                 setActiveView("details");
               }}
-              className="relative flex justify-between items-center capitalize
-                px-4 ss:px-6 py-3 border-b border-gray-100 dark:border-slate-800
-                bg-white dark:bg-transparent hover:bg-gray-50 dark:hover:bg-slate-800 cursor-pointer
-                 text-sm last:border-0"
+              className={`${DRUGS_GRID} cursor-pointer border-b border-black/[0.05] bg-white px-4 py-3.5 text-sm last:border-0 hover:bg-soft-canvas/80 ss:px-6`}
             >
-              {/* Name */}
-              <div className="flex-[1.5] font-semibold flex items-center gap-2 text-slate-800 dark:text-slate-100">
+              <div className="flex min-w-0 items-center gap-3">
                 <span
-                  className={`w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold
-                  ${isActive ? "bg-blue-500 text-white" : "bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-slate-400"}`}
+                  className={`flex size-8 shrink-0 items-center justify-center rounded-[10px] text-[12px] font-semibold ${
+                    isActive
+                      ? "bg-soft-primary text-soft-card"
+                      : "bg-soft-canvas text-soft-muted"
+                  }`}
                 >
-                  {index + 1}
+                  {startIndex + index + 1}
                 </span>
-                {drug.drug}
+                <div className="min-w-0">
+                  <span className="block truncate font-semibold capitalize text-soft-ink">
+                    {drug.drug}
+                  </span>
+                  {courseCount > 1 ? (
+                    <span className="text-[11px] text-soft-muted">
+                      {courseCount} courses
+                    </span>
+                  ) : null}
+                </div>
               </div>
 
-              {/* Route */}
-              <div className="flex-1 text-center text-gray-600 dark:text-slate-400 hidden ss:flex">
-                <span className="p-1 px-2 bg-gray-100 dark:bg-slate-800 rounded-md text-[13px]">
-                  {drug.route}
+              <div className="hidden min-w-0 ss:block">
+                <span
+                  title={route}
+                  className="inline-block max-w-full truncate rounded-[10px] bg-soft-canvas px-2.5 py-1 text-[12px] font-medium capitalize text-soft-muted"
+                >
+                  {route}
                 </span>
               </div>
 
-              {/* Duration */}
-              <div className="flex-1 text-center text-emerald-700 dark:text-emerald-400 hidden ss:flex">
-                <span className="p-1 px-2 bg-emerald-50 dark:bg-emerald-900/40 rounded-md text-[13px]">
-                  {calculateTimePeriod(drug.start, drug.end)}
+              <div className="hidden min-w-0 ss:block">
+                <span
+                  title={duration}
+                  className="inline-block max-w-full truncate rounded-[10px] bg-soft-mint px-2.5 py-1 text-[12px] font-medium text-soft-mint-ink"
+                >
+                  {duration}
                 </span>
               </div>
 
-              {/* Frequency */}
-              <div className="flex-1 text-center text-purple-700 dark:text-purple-400">
-                <span className="p-1 px-2 bg-purple-50 dark:bg-purple-900/40 rounded-md text-[13px]">
-                  {formatFrequency(drug.frequency)}
+              <div className="min-w-0">
+                <span
+                  title={frequency}
+                  className="inline-block max-w-full truncate rounded-[10px] bg-soft-primary-soft px-2.5 py-1 text-[12px] font-medium text-soft-primary"
+                >
+                  {frequency}
                 </span>
               </div>
 
               <div
                 onClick={(e) => e.stopPropagation()}
-                className="flex-[0.3] justify-end relative"
-                style={{ position: "static" }} // Change positioning context
+                className="relative flex justify-end"
               >
                 <OptionModal
                   options={options && isActive}

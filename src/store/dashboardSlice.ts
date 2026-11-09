@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { DrugProps, ScheduleItem } from "../types/dashboard";
+import { Appointment, DrugProps, ScheduleItem } from "../types/dashboard";
 import { Info } from "../utils/store";
 import { fetchData } from "../utils/fetchData";
 
@@ -10,6 +10,7 @@ export interface DashboardData {
     herbs: string;
     otcDrugs: string;
     schedule: ScheduleItem[];
+    appointment: Appointment | null;
     activeDrugs: DrugProps[];
     expiredDrugs: any[];
     updatedCompletedList: DrugProps[];
@@ -29,9 +30,20 @@ const initialState: DashboardState = {
 
 export const fetchDashboardData = createAsyncThunk(
     'dashboard/fetchDashboardData',
-    async (userId: string) => {
+    async (userId: string): Promise<DashboardData> => {
         const data = await fetchData(userId);
-        return data as DashboardData;
+        return {
+            userInfo: data.userInfo as DashboardData["userInfo"],
+            profilePicture: String(data.profilePicture ?? ""),
+            allergies: (data.allergies ?? []) as DrugProps[],
+            herbs: String(data.herbs ?? ""),
+            otcDrugs: String(data.otcDrugs ?? ""),
+            schedule: (data.schedule ?? []) as ScheduleItem[],
+            appointment: (data.appointment ?? null) as Appointment | null,
+            activeDrugs: (data.activeDrugs ?? []) as DrugProps[],
+            expiredDrugs: data.expiredDrugs ?? [],
+            updatedCompletedList: (data.updatedCompletedList ?? []) as DrugProps[],
+        };
     }
 );
 
@@ -57,10 +69,12 @@ const dashboardSlice = createSlice({
         builder
             .addCase(fetchDashboardData.pending, (state) => {
                 state.status = 'loading';
+                state.error = null;
             })
             .addCase(fetchDashboardData.fulfilled, (state, action) => {
                 state.status = 'succeeded';
                 state.data = action.payload;
+                state.error = null;
             })
             .addCase(fetchDashboardData.rejected, (state, action) => {
                 state.status = 'failed';

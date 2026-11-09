@@ -1,55 +1,49 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import { createClient } from '@supabase/supabase-js';
-import { strictLimiter, createRateLimitHeaders } from '@/lib/ratelimit';
+import { NextApiRequest, NextApiResponse } from "next";
+import { strictLimiter, createRateLimitHeaders } from "@/lib/ratelimit";
+import { requireUserId } from "@/lib/server/auth";
+import { deleteAllUserData } from "@/lib/server/dashboard-data";
+import { deleteCloudinaryAsset } from "@/lib/cloudinary";
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL  ?? ''
-const SERVICE_ROLE_KEY = process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY ?? '';
-
-const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
-
+/**
+ * Deletes app data for the signed-in Neon Auth user.
+ * Neon Auth account deletion is performed on the client via authClient.deleteUser().
+ */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method not allowed' });
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  try {
+    const userId = await requireUserId(req);
+
+    const rateLimitResult = await strictLimiter.limit(`user:${userId}`);
+    const rateLimitHeaders = createRateLimitHeaders(rateLimitResult);
+    Object.entries(rateLimitHeaders).forEach(([key, value]) => {
+      if (value) res.setHeader(key, value);
+    });
+    if (!rateLimitResult.success) {
+      return res.status(429).json({
+        error: "Too many requests",
+        message:
+          "You have exceeded the rate limit for account deletion. Please try again later.",
+      });
     }
 
-    try {
-        const { userId, shouldSoftDelete = false } = req.body;
-
-        if (!userId) {
-            return res.status(400).json({ error: 'User ID is required' });
-        }
-
-        // Apply user-based rate limiting (in addition to IP-based middleware limit)
-        const rateLimitResult = await strictLimiter.limit(`user:${userId}`);
-        const rateLimitHeaders = createRateLimitHeaders(rateLimitResult);
-        
-        if (!rateLimitResult.success) {
-            return res.status(429)
-                .setHeader('X-RateLimit-Limit', rateLimitHeaders['X-RateLimit-Limit'])
-                .setHeader('X-RateLimit-Remaining', rateLimitHeaders['X-RateLimit-Remaining'])
-                .setHeader('X-RateLimit-Reset', rateLimitHeaders['X-RateLimit-Reset'])
-                .setHeader('Retry-After', rateLimitHeaders['Retry-After'] || '3600')
-                .json({ 
-                    error: 'Too many requests',
-                    message: 'You have exceeded the rate limit for account deletion. Please try again later.',
-                    retryAfter: rateLimitHeaders['Retry-After']
-                });
-        }
-
-        const { error } = await supabase.auth.admin.deleteUser(userId, shouldSoftDelete);
-
-        if (error) {
-            console.error('Error deleting user:', error);
-            return res.status(500).json({ error: 'Failed to delete user' });
-        }
-
-        res.status(200)
-            .setHeader('X-RateLimit-Limit', rateLimitHeaders['X-RateLimit-Limit'])
-            .setHeader('X-RateLimit-Remaining', rateLimitHeaders['X-RateLimit-Remaining'])
-            .setHeader('X-RateLimit-Reset', rateLimitHeaders['X-RateLimit-Reset'])
-            .json({ message: 'User account deleted successfully' });
-    } catch (error) {
-        console.error('Server error:', error);
-        res.status(500).json({ error: 'Server error' });
+    const publicId = await deleteAllUserData(userId);
+    if (publicId) {
+      try {
+        await deleteCloudinaryAsset(publicId);
+      } catch (e) {
+        console.warn("Cloudinary delete failed", e);
+      }
     }
+
+    return res.status(200).json({ message: "User account deleted successfully" });
+  } catch (error) {
+    if (error instanceof Error && error.message === "UNAUTHORIZED") {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+    console.error("Server error:", error);
+    return res.status(500).json({ error: "Server error" });
+  }
 }

@@ -139,7 +139,7 @@ const DrugActionModals: React.FC<DrugActionModalsProps> = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-[143] p-4"
+          className="fixed inset-0 bg-soft-ink/25 backdrop-blur-sm flex justify-center items-center z-[143] p-4"
           onClick={handleClose}
         >
           <motion.div
@@ -147,17 +147,17 @@ const DrugActionModals: React.FC<DrugActionModalsProps> = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            className="bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-xl max-w-sm w-full relative transform shadow-2xl"
+            className="relative w-full max-w-sm transform rounded-2xl border border-black/[0.05] bg-white shadow-soft-md"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal header */}
-            <div className="p-6 border-b border-gray-100 dark:border-slate-800 flex justify-between items-center">
-              <h1 className="text-lg font-bold text-slate-800 dark:text-slate-100">
+            <div className="p-6 border-b border-black/[0.04] flex justify-between items-center">
+              <h1 className="text-lg font-bold text-slate-800 ">
                 {config.title}
               </h1>
               <button
                 onClick={handleClose}
-                className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                className="p-1.5 text-soft-muted hover:text-soft-ink hover:bg-soft-canvas rounded-lg transition-colors"
               >
                 <X size={18} />
               </button>
@@ -165,7 +165,7 @@ const DrugActionModals: React.FC<DrugActionModalsProps> = ({
 
             {/* Modal content */}
             <div className="p-6">
-              <p className="text-sm text-gray-600 dark:text-slate-400 mb-6">
+              <p className="text-sm text-soft-muted mb-6">
                 {config.message}
               </p>
 
@@ -175,7 +175,7 @@ const DrugActionModals: React.FC<DrugActionModalsProps> = ({
                 <button
                   onClick={handleClose}
                   disabled={isProcessing}
-                  className="px-4 py-2 text-sm font-semibold border border-gray-100 dark:border-slate-800 text-gray-700 dark:text-slate-300 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 text-sm font-semibold border border-gray-100  text-soft-ink  rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Cancel
                 </button>
@@ -184,7 +184,7 @@ const DrugActionModals: React.FC<DrugActionModalsProps> = ({
                 <button
                   onClick={handleConfirmClick}
                   disabled={isProcessing}
-                  className={`px-4 py-2 text-sm font-semibold text-white rounded-lg transition-colors shadow-md disabled:opacity-70 disabled:cursor-not-allowed ${config.confirmClass}`}
+                  className={`rounded-xl px-4 py-2 text-sm font-semibold text-white shadow-soft-sm transition-colors disabled:cursor-not-allowed disabled:opacity-70 ${config.confirmClass}`}
                 >
                   {isProcessing ? (
                     <>

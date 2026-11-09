@@ -1,21 +1,28 @@
 import React from "react";
 
+/** Shared column template — keep in sync with DrugsList rows. */
+export const DRUGS_GRID =
+  "grid grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)_2rem] items-center gap-x-3 ss:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_2rem]";
+
 const DrugsListTitle = ({ tab }: { tab: string }) => {
-  const titles = ["Name", "Route", "Duration", "Frequency", ""];
+  if (tab === "allergies") {
+    return (
+      <div className="grid grid-cols-[minmax(0,1fr)_2rem] items-center gap-x-3 border-b border-black/[0.05] bg-soft-canvas px-4 py-3 text-[11px] font-semibold uppercase tracking-wide text-soft-muted ss:px-6 ss:text-[12px]">
+        <span>Name</span>
+        <span />
+      </div>
+    );
+  }
 
   return (
-    <div className="px-4 ss:px-6 py-3 flex justify-between items-center uppercase text-blue-600 dark:text-blue-400 font-semibold text-[12px] ss:text-[13px] border-b border-gray-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
-      {tab !== "allergies" ? (
-        <>
-          <span className="flex-[1.5]">Name</span>
-          <span className="hidden ss:flex flex-1 text-center">Route</span>
-          <span className="hidden ss:flex flex-1 text-center">Duration</span>
-          <span className="flex-1 text-center">Frequency</span>
-          <span className="flex-[0.3]"></span>
-        </>
-      ) : (
-        <span className="flex-[1.5]">Name</span>
-      )}
+    <div
+      className={`${DRUGS_GRID} border-b border-black/[0.05] bg-soft-canvas px-4 py-3 text-[11px] font-semibold uppercase tracking-wide text-soft-muted ss:px-6 ss:text-[12px]`}
+    >
+      <span className="text-left">Name</span>
+      <span className="hidden text-left ss:block">Route</span>
+      <span className="hidden text-left ss:block">Duration</span>
+      <span className="text-left">Frequency</span>
+      <span />
     </div>
   );
 };

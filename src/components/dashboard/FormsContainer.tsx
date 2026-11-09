@@ -2,6 +2,7 @@ import React from "react";
 import Contact from "../../features/profile/Contact";
 import AccountSettings from "../../features/profile/AccountSettings";
 import ChangePassword from "../../features/profile/AccountSettings/ChangePassword";
+import DeleteAccount from "../../features/profile/DeleteAccount";
 import DrugHxForm from "../../features/profile/DrugHxForm";
 import AllergiesForm from "../../features/forms/AllergiesForm";
 import DrugsForm from "../../features/forms/DrugsForm";
@@ -33,6 +34,10 @@ const FormsContainer: React.FC<FormContainerProps> = ({
         setActiveModal={setActiveModal}
       />
       <ChangePassword
+        activeModal={activeModal}
+        setActiveModal={setActiveModal}
+      />
+      <DeleteAccount
         activeModal={activeModal}
         setActiveModal={setActiveModal}
       />

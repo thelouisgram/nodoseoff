@@ -1,0 +1,26 @@
+{
+  "name": "NoDoseOff",
+  "short_name": "NoDoseOff",
+  "description": "Medication tracking and dose reminders",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4f7fc",
+  "theme_color": "#002860",
+  "icons": [
+    {
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

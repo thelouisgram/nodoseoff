@@ -1,80 +1,105 @@
+"use client";
+
 import Image from "next/image";
-import { Poppins } from "next/font/google";
+import { Bell } from "lucide-react";
+import { m, useLandingVariants, viewOnce } from "@/components/landing/motion";
 
-const poppins = Poppins({
-  weight: ["400","500","600","700"],
-  subsets: ["latin"],
-});
+const points = [
+  "Track multiple medications without confusion",
+  "Know what you took — and what you still need",
+  "Bring clear adherence history to appointments",
+];
 
-export default function Page() {
+export default function AboutNodoseOff() {
+  const { fadeUp } = useLandingVariants();
+
   return (
-    <div id='about' className={`${poppins.className} max-w-5xl ss:mt-16 mx-auto py-16 px-4 md:px-8 flex flex-col items-center
-     gap-10 bg-gray-900`}>
-      
-      {/* Heading */}
-      <div className="text-center">
-        <h1 className="text-3xl font-semibold text-white">About NodoseOff</h1>
-        <p className="text-sm text-gray-300 mt-2 max-w-md mx-auto">
-          NodoseOff is a telemedicine app designed to help long-term medication users manage their treatments efficiently and safely.
-        </p>
+    <section id="about" className="landing-section bg-white py-20 ss:py-24">
+      <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 ss:px-6 md:grid-cols-2 md:gap-16">
+        <m.div
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="show"
+          viewport={viewOnce}
+          className="relative"
+        >
+          <div className="relative aspect-[4/5] overflow-hidden ss:aspect-[5/6]">
+            <Image
+              src="/assets/people/caregiver.jpg"
+              alt="Caregiver managing medication routines on a laptop"
+              fill
+              quality={75}
+              className="object-cover object-[center_15%]"
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-soft-primary/45 via-transparent to-transparent" />
+          </div>
+
+          <m.div
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="show"
+            viewport={viewOnce}
+            className="absolute -bottom-4 left-4 right-4 border border-white/40 bg-white p-4 shadow-soft-md ss:left-6 ss:right-auto ss:w-[260px]"
+          >
+            <div className="flex items-start gap-3">
+              <span className="flex size-9 shrink-0 items-center justify-center bg-[#e8f6ef] text-[#2f6b4f]">
+                <Bell className="size-4" />
+              </span>
+              <div>
+                <p className="text-[12px] font-bold text-soft-ink">
+                  Evening dose due
+                </p>
+                <p className="mt-0.5 text-[12px] text-soft-muted">
+                  Lisinopril · in 15 minutes
+                </p>
+              </div>
+            </div>
+          </m.div>
+
+          <div className="absolute -right-2 top-8 hidden overflow-hidden border-4 border-white shadow-soft-md ss:block ss:h-28 ss:w-28 md:-right-6">
+            <Image
+              src="/assets/people/clinician.jpg"
+              alt="Clinician ready to review adherence reports"
+              fill
+              className="object-cover"
+              sizes="112px"
+            />
+          </div>
+        </m.div>
+
+        <m.div
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="show"
+          viewport={viewOnce}
+          className="md:pl-4"
+        >
+          <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-soft-primary">
+            Why NoDoseOff
+          </p>
+          <h2 className="mt-3 text-[2rem] font-bold tracking-tight text-soft-ink ss:text-[2.35rem]">
+            Medication routines that protect your health
+          </h2>
+          <p className="mt-4 text-[15px] leading-relaxed text-soft-muted ss:text-[16px]">
+            Missing doses can undo weeks of progress. NoDoseOff keeps your
+            regimen visible, timely, and shareable — so you and your clinicians
+            stay aligned.
+          </p>
+
+          <ul className="mt-8 space-y-4">
+            {points.map((point) => (
+              <li key={point} className="flex gap-3 text-[15px] text-soft-ink">
+                <span
+                  aria-hidden
+                  className="mt-1.5 size-2 shrink-0 bg-[#1a7a6d]"
+                />
+                {point}
+              </li>
+            ))}
+          </ul>
+        </m.div>
       </div>
-
-      <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12 w-full">
-
-        <div className="relative w-full max-w-sm mx-auto md:mx-0">
-          <Image
-            src="/assets/hero/old-man.jpg"
-            alt="NodoseOff App"
-            width={400}
-            height={400}
-            className="rounded-xl object-cover shadow-lg"
-          />
-        </div>
-
-        {/* Features */}
-        <div className="flex-1 flex flex-col gap-6">
-          <h2 className="text-2xl font-semibold text-white text-center md:text-left">Key Features</h2>
-
-          {/* Feature 1 */}
-          <div className="flex items-center gap-4">
-            <div className="p-6 w-16 h-16 flex items-center justify-center rounded-xl border border-gray-700 bg-gray-800">
-              <span className="text-3xl">🛎️</span>
-            </div>
-            <div>
-              <h3 className="text-base font-medium text-white">Medication Reminders</h3>
-              <p className="text-sm text-gray-300">
-                Never miss a dose — set reminders and receive notifications directly in the app.
-              </p>
-            </div>
-          </div>
-
-          {/* Feature 2 */}
-          <div className="flex items-center gap-4">
-            <div className="p-6 w-16 h-16 flex items-center justify-center rounded-xl border border-gray-700 bg-gray-800">
-              <span className="text-3xl">🔄</span>
-            </div>
-            <div>
-              <h3 className="text-base font-medium text-white">Progress Tracking</h3>
-              <p className="text-sm text-gray-300">
-                Monitor your medication history and adherence with easy-to-read analytics.
-              </p>
-            </div>
-          </div>
-
-          {/* Feature 3 */}
-          <div className="flex items-center gap-4">
-            <div className="p-6 w-16 h-16 flex items-center justify-center rounded-xl border border-gray-700 bg-gray-800">
-              <span className="text-3xl">🗂️</span>
-            </div>
-            <div>
-              <h3 className="text-base font-medium text-white">Report Generation</h3>
-              <p className="text-sm text-gray-300">
-                Generate detailed reports of your medication usage and share them with healthcare providers.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    </section>
   );
 }

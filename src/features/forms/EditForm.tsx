@@ -142,7 +142,7 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
     return (
       <div
         key={`time-edit-${index}`}
-        className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg bg-gray-50/50 dark:bg-slate-900 focus-within:ring-2 focus-within:ring-blue-500 flex items-center"
+        className="w-full h-[47px] px-4 border border-black/[0.06] rounded-soft-sm bg-soft-canvas focus-within:ring-4 focus-within:ring-soft-ink/[0.04] flex items-center"
       >
         <input
           type="time"
@@ -151,7 +151,7 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
           value={formData.time[index]}
           onChange={handleInputChange}
           disabled={loading}
-          className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white text-sm dark:[color-scheme:dark] disabled:cursor-not-allowed"
+          className="w-full h-full bg-transparent border-none outline-none p-0 text-soft-ink  text-sm disabled:cursor-not-allowed"
         />
       </div>
     );
@@ -261,7 +261,7 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={handleClose}
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-soft-ink/25 backdrop-blur-sm z-50 flex items-center justify-center p-4"
         >
           {/* Modal Card */}
           <motion.div
@@ -270,17 +270,17 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full ss:max-w-lg bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-2xl shadow-2xl max-h-[80vh] flex flex-col"
+            className="flex max-h-[80vh] w-full flex-col rounded-2xl border border-black/[0.05] bg-white shadow-soft-md ss:max-w-lg"
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 dark:border-slate-800 flex-shrink-0">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100">
+            <div className="flex items-center justify-between px-6 py-5 border-b border-black/[0.04] flex-shrink-0">
+              <h2 className="text-xl font-semibold text-soft-ink ">
                 Edit Drug
               </h2>
               <button
                 onClick={handleClose}
                 disabled={loading}
-                className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-1.5 text-soft-muted hover:text-soft-ink hover:bg-soft-canvas rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 aria-label="Close"
               >
                 <X size={20} />
@@ -294,11 +294,11 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                 <div>
                   <label
                     htmlFor="drugEdit"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                    className="block text-sm font-medium text-soft-ink  mb-2"
                   >
                     Drug
                   </label>
-                  <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center">
+                  <div className="w-full h-[47px] px-4 border border-black/[0.06] rounded-soft-sm focus-within:ring-4 focus-within:ring-soft-ink/[0.04] transition-shadow bg-white flex items-center">
                     <input
                       type="text"
                       id="drugEdit"
@@ -307,7 +307,7 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                       value={formData.drug}
                       onChange={handleInputChange}
                       disabled={true}
-                      className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 cursor-not-allowed"
+                      className="w-full h-full bg-transparent border-none outline-none p-0 text-soft-ink  placeholder:text-soft-muted  cursor-not-allowed"
                       autoComplete="off"
                     />
                   </div>
@@ -317,18 +317,18 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                 <div>
                   <label
                     htmlFor="routeEdit"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                    className="block text-sm font-medium text-soft-ink  mb-2"
                   >
                     Route of Administration
                   </label>
-                  <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center">
+                  <div className="w-full h-[47px] px-4 border border-black/[0.06] rounded-soft-sm focus-within:ring-4 focus-within:ring-soft-ink/[0.04] transition-shadow bg-white flex items-center">
                     <select
                       id="routeEdit"
                       name="route"
                       value={formData.route}
                       onChange={handleSelectChange("route")}
                       disabled={loading}
-                      className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white cursor-pointer dark:[color-scheme:dark]"
+                      className="w-full h-full bg-transparent border-none outline-none p-0 text-soft-ink  cursor-pointer"
                     >
                       <option value="">Select Route</option>
                       <option value="oral">Oral</option>
@@ -346,18 +346,18 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                 <div>
                   <label
                     htmlFor="frequencyEdit"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                    className="block text-sm font-medium text-soft-ink  mb-2"
                   >
                     Frequency
                   </label>
-                  <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center">
+                  <div className="w-full h-[47px] px-4 border border-black/[0.06] rounded-soft-sm focus-within:ring-4 focus-within:ring-soft-ink/[0.04] transition-shadow bg-white flex items-center">
                     <select
                       id="frequencyEdit"
                       name="frequency"
                       value={formData.frequency}
                       onChange={handleSelectChange("frequency")}
                       disabled={loading}
-                      className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white cursor-pointer dark:[color-scheme:dark]"
+                      className="w-full h-full bg-transparent border-none outline-none p-0 text-soft-ink  cursor-pointer"
                     >
                       <option value="">Select Frequency</option>
                       <option value="QD">Once Daily</option>
@@ -375,7 +375,7 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                 {/* Time Inputs */}
                 {formData.frequency && formData.time.length > 0 && (
                   <div className="w-full">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-sm font-medium text-soft-ink  mb-2">
                       Select Time{formData.time.length > 1 ? "s" : ""}
                     </label>
                     <div className="grid grid-cols-2 w-full gap-3">
@@ -386,11 +386,11 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                   <div className="w-full">
                     <label
                       htmlFor="startEdit"
-                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                      className="block text-sm font-medium text-soft-ink  mb-2"
                     >
                       Start Date
                     </label>
-                    <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg bg-gray-50 dark:bg-slate-900 flex items-center">
+                    <div className="w-full h-[47px] px-4 border border-black/[0.06] rounded-soft-sm bg-gray-50  flex items-center">
                       <input
                         type="date"
                         id="startEdit"
@@ -398,7 +398,7 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                         disabled={true}
                         value={getCurrentDate()}
                         onChange={handleInputChange}
-                        className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white cursor-not-allowed dark:[color-scheme:dark] placeholder-gray-400 dark:placeholder-slate-500"
+                        className="w-full h-full bg-transparent border-none outline-none p-0 text-soft-ink  cursor-not-allowed placeholder:text-soft-muted "
                       />
                     </div>
                   </div>
@@ -407,11 +407,11 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                   <div className="w-full">
                     <label
                       htmlFor="endEdit"
-                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                      className="block text-sm font-medium text-soft-ink  mb-2"
                     >
                       End Date
                     </label>
-                    <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center">
+                    <div className="w-full h-[47px] px-4 border border-black/[0.06] rounded-soft-sm focus-within:ring-4 focus-within:ring-soft-ink/[0.04] transition-shadow bg-white flex items-center">
                       <input
                         type="date"
                         id="endEdit"
@@ -419,7 +419,7 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                         value={formData.end}
                         onChange={handleInputChange}
                         disabled={loading}
-                        className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white dark:[color-scheme:dark] disabled:cursor-not-allowed"
+                        className="w-full h-full bg-transparent border-none outline-none p-0 text-soft-ink disabled:cursor-not-allowed"
                       />
                     </div>
                   </div>
@@ -432,11 +432,11 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                     checked={formData.reminder}
                     onChange={handleInputChange}
                     disabled={loading}
-                    className="w-4 h-4 text-blue-600 border-gray-300 dark:border-slate-800 rounded focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed bg-white dark:bg-slate-800"
+                    className="w-4 h-4 text-blue-600 border-gray-300  rounded focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed bg-white"
                   />
                   <label
                     htmlFor="reminder"
-                    className="text-sm font-medium text-gray-700 dark:text-gray-300"
+                    className="text-sm font-medium text-soft-ink "
                   >
                     Add Reminder
                   </label>
@@ -445,7 +445,7 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
             </form>
 
             {/* Footer with Submit Button */}
-            <div className="px-6 py-4 border-t border-gray-100 dark:border-gray-700 flex-shrink-0">
+            <div className="px-6 py-4 border-t border-gray-100 flex-shrink-0">
               <button
                 type="submit"
                 onClick={(e) => {
@@ -456,10 +456,10 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                   handleSubmit(syntheticEvent);
                 }}
                 disabled={loading}
-                className={`w-full py-3 px-4 rounded-lg font-medium text-white transition-all flex items-center justify-center gap-2 ${
+                className={`w-full py-3 px-4 rounded-soft-md font-semibold text-white transition-all flex items-center justify-center gap-2 ${
                   loading
-                    ? "bg-blue-400 cursor-not-allowed"
-                    : "bg-blue-600 hover:bg-blue-700 active:scale-[0.98]"
+                    ? "bg-soft-ink/50 cursor-not-allowed"
+                    : "bg-soft-ink hover:bg-soft-ink/90 active:scale-[0.98]"
                 }`}
               >
                 {loading ? (

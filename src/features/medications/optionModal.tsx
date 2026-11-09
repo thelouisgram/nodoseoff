@@ -12,6 +12,7 @@ import { SetStateAction } from "react";
 import { useAppDispatch } from "@/store";
 import { setActiveDrug, setActiveDrugId } from "@/store/appSlice";
 import { AnimatePresence, motion } from "framer-motion";
+import { manrope } from "@/lib/fonts";
 
 interface OptionModal {
   options: boolean;
@@ -168,7 +169,7 @@ const OptionModal: React.FC<OptionModal> = ({
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.9 }}
           transition={{ duration: 0.15, ease: "easeOut" }}
-          className="fixed z-[9999] text-gray-700 dark:text-gray-200 flex flex-col items-start rounded-lg bg-white dark:bg-slate-900 shadow-xl w-56 border border-gray-200 dark:border-gray-700 overflow-hidden"
+          className={`${manrope.className} fixed z-[9999] flex w-56 flex-col items-start overflow-hidden rounded-xl border border-black/[0.05] bg-white text-soft-ink shadow-soft-md antialiased`}
           style={{
             top: `${position.top}px`,
             left: `${position.left}px`,
@@ -177,6 +178,7 @@ const OptionModal: React.FC<OptionModal> = ({
               : `calc(100vh - ${position.top + 16}px)`,
             overflowY: "auto",
             transformOrigin: openUpward ? "bottom right" : "top right",
+            fontFamily: "var(--font-manrope), system-ui, sans-serif",
           }}
         >
           {/* Automatically render all visible buttons */}
@@ -184,7 +186,7 @@ const OptionModal: React.FC<OptionModal> = ({
             const Icon = button.icon;
             const isFirst = index === 0;
             const isLast = index === visibleButtons.length - 1;
-            const finalHoverClass = `${button.hoverBg} dark:hover:bg-slate-800`;
+            const finalHoverClass = `${button.hoverBg}`;
 
             // Add rounded corners and proper padding for first/last items
             const borderRadiusClass =
@@ -195,9 +197,9 @@ const OptionModal: React.FC<OptionModal> = ({
               <button
                 key={index}
                 onClick={() => handleAction(button.action)}
-                className={`flex items-center gap-3 w-full px-4 ${paddingClass} text-sm ${finalHoverClass} ${borderRadiusClass} transition-colors text-gray-800 dark:text-gray-200`}
+                className={`flex w-full items-center gap-3 px-4 ${paddingClass} text-[14px] font-medium tracking-tight text-soft-ink transition-colors ${finalHoverClass} ${borderRadiusClass}`}
               >
-                <Icon className={`size-4 ${button.iconColor}`} />
+                <Icon className={`size-4 ${button.iconColor}`} strokeWidth={1.75} />
                 {button.label}
               </button>
             );
@@ -218,10 +220,10 @@ const OptionModal: React.FC<OptionModal> = ({
           dispatch(setActiveDrugId(drugId));
           e.stopPropagation();
         }}
-        className="size-8 flex items-center justify-center rounded-full text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-slate-900 transition-colors"
+        className="flex size-8 items-center justify-center rounded-full text-soft-muted transition-colors hover:bg-soft-canvas hover:text-soft-ink"
         aria-label="Drug options"
       >
-        <MoreVertical className="size-6" />
+        <MoreVertical className="size-5" strokeWidth={1.75} />
       </button>
 
       {/* Portal the dropdown to document.body */}

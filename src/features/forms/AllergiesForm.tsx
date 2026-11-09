@@ -92,7 +92,7 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={handleClose}
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-soft-ink/25 backdrop-blur-sm z-50 flex items-center justify-center p-4"
         >
           {/* Modal Card */}
           <motion.div
@@ -101,17 +101,17 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-md bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-2xl shadow-2xl flex flex-col"
+            className="flex w-full max-w-md flex-col rounded-2xl border border-black/[0.05] bg-white shadow-soft-md"
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 dark:border-slate-800 flex-shrink-0">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100">
+            <div className="flex items-center justify-between px-6 py-5 border-b border-black/[0.04] flex-shrink-0">
+              <h2 className="text-xl font-semibold text-soft-ink ">
                 Add Allergy
               </h2>
               <button
                 onClick={handleClose}
                 disabled={loading}
-                className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-1.5 text-soft-muted hover:text-soft-ink hover:bg-soft-canvas rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 aria-label="Close"
               >
                 <X size={20} />
@@ -120,9 +120,9 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
 
             {/* Content */}
             <form onSubmit={handleSubmit} className="p-6 space-y-5">
-              <div className="p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-900/30 rounded-xl flex items-start gap-3">
-                <AlertCircle className="size-5 text-amber-600 dark:text-amber-500 flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-amber-800 dark:text-amber-200">
+              <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl flex items-start gap-3">
+                <AlertCircle className="size-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-amber-800">
                   Adding a drug to allergies will prevent it from being added to
                   your medication schedule.
                 </p>
@@ -131,11 +131,11 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
               <div>
                 <label
                   htmlFor="drug"
-                  className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
+                  className="block text-sm font-medium text-soft-ink  mb-2"
                 >
                   Drug
                 </label>
-                <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center">
+                <div className="w-full h-[47px] px-4 border border-black/[0.06] rounded-soft-sm focus-within:ring-4 focus-within:ring-soft-ink/[0.04] transition-shadow bg-white flex items-center">
                   <input
                     type="text"
                     id="drug"
@@ -144,7 +144,7 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
                     value={drug}
                     onChange={(e) => setDrug(e.target.value)}
                     disabled={loading}
-                    className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500"
+                    className="w-full h-full bg-transparent border-none outline-none p-0 text-soft-ink  placeholder:text-soft-muted "
                     autoFocus
                   />
                 </div>
@@ -154,10 +154,10 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
               <button
                 type="submit"
                 disabled={loading}
-                className={`w-full py-3 px-4 rounded-lg font-medium text-white transition-all flex items-center justify-center gap-2 ${
+                className={`w-full py-3 px-4 rounded-soft-md font-semibold text-white transition-all flex items-center justify-center gap-2 ${
                   loading
-                    ? "bg-blue-400 cursor-not-allowed"
-                    : "bg-blue-600 hover:bg-blue-700 active:scale-[0.98] shadow-md hover:shadow-lg shadow-blue-500/20"
+                    ? "bg-soft-ink/50 cursor-not-allowed"
+                    : "bg-soft-primary shadow-soft-sm hover:bg-soft-primary/90 active:scale-[0.98]"
                 }`}
               >
                 {loading ? (

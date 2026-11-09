@@ -9,31 +9,24 @@ interface DrugsTabProps {
 
 const DrugsTab: React.FC<DrugsTabProps> = ({ setTab, tab }) => {
   return (
-    <div className="mb-8 bg-lightGrey dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800 p-1 rounded-[8px] flex justify-between w-full ss:w-[450px] relative">
+    <div className="relative mb-6 flex w-full justify-between rounded-xl border border-black/[0.05] bg-white p-1 shadow-soft-sm ss:w-[450px]">
       {drugsTab.map((item: string, index: number) => {
         const isActive = item === tab;
         return (
           <button
             key={index}
             onClick={() => setTab(item)}
-            className={`
-              relative px-3 py-2 ss:px-4
-              text-[14px] font-Inter font-[500]
-              w-full
-              rounded-[6px] capitalize
-              transition-all duration-200 z-10
-              ${
-                isActive
-                  ? "text-blue-600 dark:text-blue-400"
-                  : "text-grey dark:text-slate-400 hover:text-gray-700 dark:hover:text-slate-200"
-              }
-            `}
+            className={`relative z-10 w-full rounded-lg px-3 py-2 text-[14px] font-medium capitalize transition-all duration-200 ss:px-4 ${
+              isActive
+                ? "text-soft-ink"
+                : "text-soft-muted hover:text-soft-ink"
+            }`}
           >
             {isActive && (
               <motion.div
-                layoutId="activeTab"
-                className="absolute inset-0 bg-white dark:bg-slate-800 rounded-[6px] shadow-sm border border-gray-200 dark:border-slate-700"
-                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                layoutId="drugs-tab"
+                className="absolute inset-0 rounded-lg border border-black/[0.04] bg-soft-canvas"
+                transition={{ type: "spring", bounce: 0.2, duration: 0.55 }}
               />
             )}
             <span className="relative z-20">{item}</span>

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Inbox, Search } from "lucide-react";
 
 import { useAppSelector } from "@/store";
@@ -11,10 +11,23 @@ import DrugsListHeader from "./drugsList/DrugsListHeader";
 import DrugsListTitle from "./drugsList/DrugsListTitle";
 import DrugsList from "./drugsList/DrugsList";
 import DrugsListPagination from "./drugsList/DrugsListPagination";
+import CompletedCoursesTable from "./CompletedCoursesTable";
+import { SoftEmptyState } from "@/components/ui/soft";
+import { groupDrugsByName, GroupedDrug } from "@/utils/drugs";
 import { DrugProps } from "@/types/dashboard";
 
 interface AllergyProps {
   drug: string;
+}
+
+interface DrugsListContainerProps {
+  tab: string;
+  options: boolean;
+  setOptions: React.Dispatch<React.SetStateAction<boolean>>;
+  activeAction: string;
+  setActiveAction: (value: string) => void;
+  setActiveView: React.Dispatch<React.SetStateAction<"details" | "list">>;
+  activeView: string;
 }
 
 const PER_PAGE = 6;
@@ -27,7 +40,7 @@ const DrugsListContainer = ({
   setActiveAction,
   setActiveView,
   activeView,
-}: any) => {
+}: DrugsListContainerProps) => {
   /* Redux Replacement */
   const { userId } = useAppSelector((state) => state.app);
   const { data: drugs = [] } = useDrugs(userId);
@@ -36,14 +49,25 @@ const DrugsListContainer = ({
 
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [pageMemory, setPageMemory] = useState<Record<string, number>>({});
+  const pageMemory = useRef<Record<string, number>>({});
 
-  const tabData: (DrugProps | AllergyProps)[] = useMemo(() => {
-    if (tab === "ongoing") return drugs;
-    if (tab === "completed") return completedDrugs;
+  const completedCourses = useMemo(() => {
+    return [...completedDrugs].sort((a, b) => {
+      const aEnd = Date.parse(a.end || "") || 0;
+      const bEnd = Date.parse(b.end || "") || 0;
+      if (bEnd !== aEnd) return bEnd - aEnd;
+      return (a.drug || "").localeCompare(b.drug || "", undefined, {
+        sensitivity: "base",
+      });
+    });
+  }, [completedDrugs]);
+
+  const tabData: (GroupedDrug | AllergyProps | DrugProps)[] = useMemo(() => {
+    if (tab === "ongoing") return groupDrugsByName(drugs);
+    if (tab === "completed") return completedCourses;
     if (tab === "allergies") return allergies;
     return [];
-  }, [tab, drugs, completedDrugs, allergies]);
+  }, [tab, drugs, completedCourses, allergies]);
 
   const filtered = useMemo(
     () =>
@@ -54,14 +78,17 @@ const DrugsListContainer = ({
   );
 
   useEffect(() => {
-    setPage(pageMemory[tab] || 1);
-  }, [tab, activeView, pageMemory]);
+    setPage(pageMemory.current[tab] || 1);
+  }, [tab, activeView]);
 
   useEffect(() => {
     const max = Math.max(Math.ceil(filtered.length / PER_PAGE), 1);
-    setPage((p) => Math.min(p, max));
-    setPageMemory((p) => ({ ...p, [tab]: page }));
-  }, [page, filtered.length, tab]);
+    setPage((p) => {
+      const next = Math.min(p, max);
+      pageMemory.current[tab] = next;
+      return next;
+    });
+  }, [filtered.length, tab]);
 
   const data = useMemo(
     () => filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE),
@@ -71,25 +98,31 @@ const DrugsListContainer = ({
   const empty =
     filtered.length === 0 &&
     (search ? (
-      <div className="py-10 text-center text-gray-500">
-        <Search size={40} className="mx-auto" />
-        <p>No results for “{search}”</p>
-      </div>
+      <SoftEmptyState
+        icon={<Search className="size-9" strokeWidth={1.5} />}
+        title={`No results for “${search}”`}
+        description="Try a different name or clear the search."
+      />
     ) : (
-      <div className="py-10 text-center text-gray-500">
-        <Inbox size={40} className="mx-auto" />
-        <p>
-          {tab === "completed"
-            ? "No completed drugs yet"
+      <SoftEmptyState
+        icon={<Inbox className="size-9" strokeWidth={1.5} />}
+        title={
+          tab === "completed"
+            ? "No completed courses yet"
             : tab === "ongoing"
               ? "No ongoing drugs yet"
-              : "No allergies added yet"}
-        </p>
-      </div>
+              : "No allergies added yet"
+        }
+        description={
+          tab === "ongoing"
+            ? "Add your first medication to start tracking doses."
+            : undefined
+        }
+      />
     ));
 
   return (
-    <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-lg mb-36 ss:mb-28 shadow-sm overflow-hidden">
+    <div className="mb-36 overflow-hidden rounded-2xl border border-black/[0.05] bg-white shadow-soft-sm ss:mb-28">
       <DrugsListHeader
         tab={tab}
         searched={search}
@@ -100,18 +133,33 @@ const DrugsListContainer = ({
 
       {filtered.length ? (
         <>
-          <DrugsListTitle tab={tab} />
-
-          <DrugsList
-            newData={data}
-            tab={tab}
-            options={options}
-            setOptions={setOptions}
-            activeAction={activeAction}
-            setActiveAction={setActiveAction}
-            setActiveView={setActiveView}
-            activeView={activeView}
-          />
+          {tab === "completed" ? (
+            <CompletedCoursesTable
+              courses={data as DrugProps[]}
+              startIndex={(page - 1) * PER_PAGE}
+              options={options}
+              setOptions={setOptions}
+              activeAction={activeAction}
+              setActiveAction={setActiveAction}
+              setActiveView={setActiveView}
+              activeView={activeView}
+            />
+          ) : (
+            <>
+              <DrugsListTitle tab={tab} />
+              <DrugsList
+                newData={data as GroupedDrug[] | AllergyProps[]}
+                tab={tab}
+                options={options}
+                setOptions={setOptions}
+                activeAction={activeAction}
+                setActiveAction={setActiveAction}
+                setActiveView={setActiveView}
+                activeView={activeView}
+                startIndex={(page - 1) * PER_PAGE}
+              />
+            </>
+          )}
 
           <DrugsListPagination
             page={page}

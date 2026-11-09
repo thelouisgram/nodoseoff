@@ -7,10 +7,7 @@ import { ScheduleItem } from "../../types/dashboard";
  * @param drugId - The specific drug ID to calculate compliance for
  * @returns Compliance data object with metrics for the specific drug
  */
-export const calculateDrugCompliance = (schedule: any[], drugId: string) => {
-  // Filter schedule to get only doses for this specific drug
-  const drugDoses = schedule.filter((dose) => dose.drugId === drugId);
-
+function summarizeCompliance(drugDoses: any[]) {
   if (drugDoses.length === 0) {
     return {
       totalDoses: 0,
@@ -23,27 +20,27 @@ export const calculateDrugCompliance = (schedule: any[], drugId: string) => {
 
   const now = dayjs();
   const totalDoses = drugDoses.length;
-  
-  // Count completed doses (all doses where completed === true)
-  const completedDoses = drugDoses.filter((dose) => dose.completed === true).length;
+  const completedDoses = drugDoses.filter((dose) => dose.completed === true)
+    .length;
 
-  // Count missed doses (past doses that were not completed)
   const missedDoses = drugDoses.filter((dose) => {
     const doseTime = dayjs(`${dose.date}T${dose.time}`);
     return dose.completed === false && doseTime.isBefore(now);
   }).length;
 
-  // Count remaining doses (future doses that are not yet completed)
   const remainingDoses = drugDoses.filter((dose) => {
     const doseTime = dayjs(`${dose.date}T${dose.time}`);
-    return dose.completed === false && (doseTime.isAfter(now) || doseTime.isSame(now));
+    return (
+      dose.completed === false &&
+      (doseTime.isAfter(now) || doseTime.isSame(now))
+    );
   }).length;
 
-  // Calculate compliance percentage based on doses that SHOULD have been taken
   const dosesAccountedFor = completedDoses + missedDoses;
-  const compliance = dosesAccountedFor > 0 
-    ? Math.round((completedDoses / dosesAccountedFor) * 100) 
-    : 0;
+  const compliance =
+    dosesAccountedFor > 0
+      ? Math.round((completedDoses / dosesAccountedFor) * 100)
+      : 0;
 
   return {
     totalDoses,
@@ -52,6 +49,41 @@ export const calculateDrugCompliance = (schedule: any[], drugId: string) => {
     remainingDoses,
     compliance,
   };
+}
+
+export const calculateDrugCompliance = (schedule: any[], drugId: string) => {
+  return summarizeCompliance(
+    schedule.filter((dose) => dose.drugId === drugId)
+  );
+};
+
+/** Compliance across every course that shares a drug name. */
+export const calculateDrugComplianceByName = (
+  schedule: any[],
+  drugName: string
+) => {
+  const key = drugName.trim().toLowerCase();
+  return summarizeCompliance(
+    schedule.filter(
+      (dose) => String(dose.drug || "").trim().toLowerCase() === key
+    )
+  );
+};
+
+/** Compliance only for the given course drugIds (keeps ongoing vs completed separate). */
+export const calculateDrugComplianceByIds = (
+  schedule: any[],
+  drugIds: string[]
+) => {
+  const idSet = new Set(
+    drugIds.map((id) => String(id || "").trim()).filter(Boolean)
+  );
+  if (idSet.size === 0) {
+    return summarizeCompliance([]);
+  }
+  return summarizeCompliance(
+    schedule.filter((dose) => idSet.has(String(dose.drugId || "").trim()))
+  );
 };
 
 /**

@@ -121,7 +121,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({
     return (
       <div
         key={`time-input-${index}`}
-        className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center"
+        className="w-full h-[47px] px-4 border border-black/[0.06] rounded-soft-sm focus-within:ring-4 focus-within:ring-soft-ink/[0.04] transition-shadow bg-white flex items-center"
       >
         <input
           type="time"
@@ -130,7 +130,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({
           value={formData.time[index]}
           onChange={handleInputChange}
           disabled={loading}
-          className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white dark:[color-scheme:dark] disabled:cursor-not-allowed"
+          className="w-full h-full bg-transparent border-none outline-none p-0 text-soft-ink disabled:cursor-not-allowed"
         />
       </div>
     );
@@ -277,7 +277,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={handleClose}
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-soft-ink/25 backdrop-blur-sm z-50 flex items-center justify-center p-4"
         >
           {/* Modal Card */}
           <motion.div
@@ -286,17 +286,17 @@ const DrugsForm: React.FC<DrugFormProps> = ({
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full ss:max-w-lg bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-2xl shadow-2xl max-h-[80vh] flex flex-col"
+            className="flex max-h-[80vh] w-full flex-col rounded-2xl border border-black/[0.05] bg-white shadow-soft-md ss:max-w-lg"
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 dark:border-slate-800 flex-shrink-0">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100">
+            <div className="flex items-center justify-between px-6 py-5 border-b border-black/[0.04] flex-shrink-0">
+              <h2 className="text-xl font-semibold text-soft-ink ">
                 Add Drug
               </h2>
               <button
                 onClick={handleClose}
                 disabled={loading}
-                className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-1.5 text-soft-muted hover:text-soft-ink hover:bg-soft-canvas rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 aria-label="Close"
               >
                 <X size={20} />
@@ -310,11 +310,11 @@ const DrugsForm: React.FC<DrugFormProps> = ({
                 <div className="w-full">
                   <label
                     htmlFor="drug"
-                    className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
+                    className="block text-sm font-medium text-soft-ink  mb-2"
                   >
                     Drug
                   </label>
-                  <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center">
+                  <div className="w-full h-[47px] px-4 border border-black/[0.06] rounded-soft-sm focus-within:ring-4 focus-within:ring-soft-ink/[0.04] transition-shadow bg-white flex items-center">
                     <input
                       type="text"
                       id="drug"
@@ -323,7 +323,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({
                       value={formData.drug}
                       onChange={handleInputChange}
                       disabled={loading}
-                      className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500"
+                      className="w-full h-full bg-transparent border-none outline-none p-0 text-soft-ink  placeholder:text-soft-muted "
                       autoComplete="off"
                     />
                   </div>
@@ -333,44 +333,44 @@ const DrugsForm: React.FC<DrugFormProps> = ({
                 <div className="w-full">
                   <label
                     htmlFor="route"
-                    className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
+                    className="block text-sm font-medium text-soft-ink  mb-2"
                   >
                     Route of Administration
                   </label>
-                  <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center">
+                  <div className="w-full h-[47px] px-4 border border-black/[0.06] rounded-soft-sm focus-within:ring-4 focus-within:ring-soft-ink/[0.04] transition-shadow bg-white flex items-center">
                     <select
                       id="route"
                       name="route"
                       value={formData.route}
                       onChange={handleSelectChange("route")}
                       disabled={loading}
-                      className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white cursor-pointer dark:[color-scheme:dark]"
+                      className="w-full h-full bg-transparent border-none outline-none p-0 text-soft-ink  cursor-pointer"
                     >
-                      <option value="" className="dark:bg-slate-800">
+                      <option value="" className="">
                         Select Route
                       </option>
-                      <option value="oral" className="dark:bg-slate-800">
+                      <option value="oral" className="">
                         Oral
                       </option>
-                      <option value="topical" className="dark:bg-slate-800">
+                      <option value="topical" className="">
                         Topical
                       </option>
-                      <option value="intravenous" className="dark:bg-slate-800">
+                      <option value="intravenous" className="">
                         Intravenous (IV)
                       </option>
                       <option
                         value="intramuscular"
-                        className="dark:bg-slate-800"
+                        className=""
                       >
                         Intramuscular (IM)
                       </option>
-                      <option value="inhalation" className="dark:bg-slate-800">
+                      <option value="inhalation" className="">
                         Inhalation
                       </option>
-                      <option value="rectal" className="dark:bg-slate-800">
+                      <option value="rectal" className="">
                         Rectal
                       </option>
-                      <option value="sublingual" className="dark:bg-slate-800">
+                      <option value="sublingual" className="">
                         Sublingual
                       </option>
                     </select>
@@ -381,44 +381,44 @@ const DrugsForm: React.FC<DrugFormProps> = ({
                 <div className="w-full">
                   <label
                     htmlFor="frequency"
-                    className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
+                    className="block text-sm font-medium text-soft-ink  mb-2"
                   >
                     Frequency
                   </label>
-                  <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center">
+                  <div className="w-full h-[47px] px-4 border border-black/[0.06] rounded-soft-sm focus-within:ring-4 focus-within:ring-soft-ink/[0.04] transition-shadow bg-white flex items-center">
                     <select
                       id="frequency"
                       name="frequency"
                       value={formData.frequency}
                       onChange={handleSelectChange("frequency")}
                       disabled={loading}
-                      className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white cursor-pointer dark:[color-scheme:dark]"
+                      className="w-full h-full bg-transparent border-none outline-none p-0 text-soft-ink  cursor-pointer"
                     >
-                      <option value="" className="dark:bg-slate-800">
+                      <option value="" className="">
                         Select Frequency
                       </option>
-                      <option value="QD" className="dark:bg-slate-800">
+                      <option value="QD" className="">
                         Once Daily
                       </option>
-                      <option value="BID" className="dark:bg-slate-800">
+                      <option value="BID" className="">
                         Twice Daily
                       </option>
-                      <option value="TID" className="dark:bg-slate-800">
+                      <option value="TID" className="">
                         Thrice Daily
                       </option>
-                      <option value="QID" className="dark:bg-slate-800">
+                      <option value="QID" className="">
                         Four Times Daily
                       </option>
-                      <option value="EOD" className="dark:bg-slate-800">
+                      <option value="EOD" className="">
                         Every Other Day
                       </option>
-                      <option value="W" className="dark:bg-slate-800">
+                      <option value="W" className="">
                         Weekly
                       </option>
-                      <option value="BW" className="dark:bg-slate-800">
+                      <option value="BW" className="">
                         Biweekly
                       </option>
-                      <option value="M" className="dark:bg-slate-800">
+                      <option value="M" className="">
                         Monthly
                       </option>
                     </select>
@@ -428,7 +428,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({
                 {/* Time Inputs */}
                 {formData.frequency && formData.time.length > 0 && (
                   <div className="w-full mb-5">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+                    <label className="block text-sm font-medium text-soft-ink  mb-2">
                       Select Time{formData.time.length > 1 ? "s" : ""}
                     </label>
                     <div className="grid grid-cols-2 w-full gap-3">
@@ -441,11 +441,11 @@ const DrugsForm: React.FC<DrugFormProps> = ({
                   <div className="w-full">
                     <label
                       htmlFor="start"
-                      className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
+                      className="block text-sm font-medium text-soft-ink  mb-2"
                     >
                       Start Date
                     </label>
-                    <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center">
+                    <div className="w-full h-[47px] px-4 border border-black/[0.06] rounded-soft-sm focus-within:ring-4 focus-within:ring-soft-ink/[0.04] transition-shadow bg-white flex items-center">
                       <input
                         type="date"
                         id="start"
@@ -453,7 +453,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({
                         value={formData.start}
                         onChange={handleInputChange}
                         disabled={loading}
-                        className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white dark:[color-scheme:dark] disabled:cursor-not-allowed"
+                        className="w-full h-full bg-transparent border-none outline-none p-0 text-soft-ink disabled:cursor-not-allowed"
                       />
                     </div>
                   </div>
@@ -462,11 +462,11 @@ const DrugsForm: React.FC<DrugFormProps> = ({
                   <div className="w-full">
                     <label
                       htmlFor="end"
-                      className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
+                      className="block text-sm font-medium text-soft-ink  mb-2"
                     >
                       End Date
                     </label>
-                    <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center">
+                    <div className="w-full h-[47px] px-4 border border-black/[0.06] rounded-soft-sm focus-within:ring-4 focus-within:ring-soft-ink/[0.04] transition-shadow bg-white flex items-center">
                       <input
                         type="date"
                         id="end"
@@ -474,7 +474,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({
                         value={formData.end}
                         onChange={handleInputChange}
                         disabled={loading}
-                        className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-white dark:[color-scheme:dark] disabled:cursor-not-allowed"
+                        className="w-full h-full bg-transparent border-none outline-none p-0 text-soft-ink disabled:cursor-not-allowed"
                       />
                   </div>
                 </div>
@@ -488,11 +488,11 @@ const DrugsForm: React.FC<DrugFormProps> = ({
                     checked={formData.reminder}
                     onChange={handleInputChange}
                     disabled={loading}
-                    className="w-4 h-4 text-blue-600 border-gray-300 dark:border-slate-800 rounded focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed bg-white dark:bg-slate-900"
+                    className="w-4 h-4 text-blue-600 border-gray-300  rounded focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed bg-white"
                   />
                   <label
                     htmlFor="reminder"
-                    className="text-sm font-medium text-gray-700 dark:text-slate-300"
+                    className="text-sm font-medium text-soft-ink "
                   >
                     Add Reminder
                   </label>
@@ -501,14 +501,14 @@ const DrugsForm: React.FC<DrugFormProps> = ({
             </form>
 
             {/* Footer with Submit Button */}
-            <div className="px-6 py-4 border-t border-gray-100 dark:border-slate-800 flex-shrink-0">
+            <div className="px-6 py-4 border-t border-black/[0.04] flex-shrink-0">
               <button
                 onClick={handleClick}
                 disabled={loading}
-                className={`w-full py-3 px-4 rounded-lg font-medium text-white transition-all flex items-center justify-center gap-2 ${
+                className={`w-full py-3 px-4 rounded-soft-md font-semibold text-white transition-all flex items-center justify-center gap-2 ${
                   loading
-                    ? "bg-blue-400 cursor-not-allowed"
-                    : "bg-blue-600 hover:bg-blue-700 active:scale-[0.98] shadow-md hover:shadow-lg shadow-blue-500/20"
+                    ? "bg-soft-ink/50 cursor-not-allowed"
+                    : "bg-soft-primary shadow-soft-sm hover:bg-soft-primary/90 active:scale-[0.98]"
                 }`}
               >
                 {loading ? (

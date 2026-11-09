@@ -10,6 +10,7 @@ import Report from "./Report";
 import { useAppSelector, useAppDispatch } from "@/store";
 import { setActiveTab, setIsAuthenticated, setUserId } from "@/store/appSlice";
 
+import { resolveProfileImageUrl } from "@/utils/profilePicture";
 import {
   ChevronRight,
   Cog,
@@ -17,15 +18,15 @@ import {
   FolderDown,
   Headset,
   LogOut,
+  Pencil,
+  Shield,
   UserRound,
 } from "lucide-react";
+import { isAdminEmail } from "@/lib/admin-emails";
 
 interface AccountProps {
   setActiveModal: (value: string) => void;
 }
-
-const CDNURL =
-  "https://opshqmqagtfidynwftzk.supabase.co/storage/v1/object/public/profile-picture/";
 
 const Account: React.FC<AccountProps> = ({ setActiveModal }) => {
   const { userId } = useAppSelector((state) => state.app);
@@ -36,9 +37,9 @@ const Account: React.FC<AccountProps> = ({ setActiveModal }) => {
   const userInfo = info?.[0] || { name: "", phone: "", email: "" };
   const { name, phone, email } = userInfo;
   const [tab, setTab] = useState<"Account" | "Report">("Account");
+  const photoUrl = resolveProfileImageUrl(profilePicture);
 
   const router = useRouter();
-
   const { signOut } = useAuth();
 
   const logOut = async () => {
@@ -58,100 +59,146 @@ const Account: React.FC<AccountProps> = ({ setActiveModal }) => {
   }
 
   return (
-    <div className="h-[100dvh] overflow-y-scroll md:py-16 md:px-12 pt-10 pb-24 md:pb-10 w-full px-4 ss:px-8 text-slate-800 dark:text-slate-100 font-karla">
+    <div className="h-full w-full overflow-y-scroll bg-soft-canvas px-4 pb-24 pt-10 font-jakarta text-soft-ink ss:px-8 md:px-12 md:py-14 md:pb-10">
       <div className="mb-7">
-        <h1 className="text-2xl ss:text-3xl font-semibold font-karla text-slate-800 dark:text-slate-100">
-          My Account
+        <h1 className="truncate font-jakarta text-[28px] font-bold tracking-tight text-soft-ink ss:text-[32px]">
+          Account
         </h1>
-        <p className="text-base text-gray-500 dark:text-slate-400">{name}</p>
+        <p className="mt-1 text-[14px] text-soft-muted ss:text-[15px]">
+          Profile, reports, and preferences
+        </p>
       </div>
 
-      <div className="grid md:grid-cols-[1fr_600px] gap-8">
-        {/* ===== Profile Section ===== */}
-        <div className="flex flex-col gap-8">
-          {/* Avatar */}
-          <div className="flex flex-col items-center text-center">
-            <div className="w-36 h-36 rounded-full border border-gray-300 overflow-hidden flex items-center justify-center">
-              {profilePicture ? (
-                <Image
-                  src={`${CDNURL}${userId}/${profilePicture}`}
-                  width={300}
-                  height={300}
-                  alt="Profile photo"
-                  className="w-full h-full object-cover"
-                  priority
-                />
-              ) : (
-                <UserRound className="size-20 text-gray-400" strokeWidth={1} />
-              )}
+      <div className="mx-auto flex max-w-3xl flex-col gap-5">
+        {/* Profile hero */}
+        <section className="overflow-hidden rounded-2xl border border-black/[0.05] bg-white shadow-soft-sm">
+          <div className="h-20 bg-gradient-to-r from-soft-primary via-[#0a3a6e] to-[#1a5f7a] ss:h-24" />
+          <div className="relative px-5 pb-5 ss:px-6 ss:pb-6">
+            <div className="-mt-12 flex flex-col items-start gap-4 ss:-mt-14">
+              <div className="relative shrink-0">
+                <div className="flex size-[88px] items-center justify-center overflow-hidden rounded-full border-[3px] border-white bg-soft-canvas shadow-soft-sm ss:size-24">
+                  {photoUrl ? (
+                    <Image
+                      src={photoUrl}
+                      width={192}
+                      height={192}
+                      alt="Your profile photo"
+                      className="size-full object-cover"
+                      priority
+                    />
+                  ) : (
+                    <UserRound
+                      className="size-10 text-soft-muted ss:size-12"
+                      strokeWidth={1.25}
+                    />
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveModal("profile")}
+                  className="absolute bottom-0.5 right-0.5 flex size-8 items-center justify-center rounded-full border border-black/[0.06] bg-white text-soft-primary shadow-soft-sm transition hover:bg-soft-canvas"
+                  aria-label="Edit profile"
+                >
+                  <Pencil className="size-3.5" strokeWidth={2} />
+                </button>
+              </div>
+
+              <div className="flex w-full min-w-0 flex-col gap-3 ss:flex-row ss:items-end ss:justify-between">
+                <div className="min-w-0">
+                  <h2 className="break-words text-[22px] font-bold capitalize tracking-tight text-soft-ink ss:text-[24px]">
+                    {name || "Your name"}
+                  </h2>
+                  <p className="mt-1 break-all text-[14px] text-soft-muted">
+                    {email || "No email on file"}
+                  </p>
+                  {phone ? (
+                    <p className="mt-0.5 text-[14px] text-soft-muted">{phone}</p>
+                  ) : null}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveModal("profile")}
+                  className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl border border-black/[0.06] bg-soft-canvas px-3.5 py-2 text-[13px] font-semibold text-soft-ink transition hover:bg-white"
+                >
+                  Edit profile
+                </button>
+              </div>
             </div>
 
-            <h2 className="mt-4 text-xl font-semibold capitalize dark:text-slate-100">
-              {name}
-            </h2>
+            <div className="mt-5 grid gap-2 ss:grid-cols-2">
+              <InfoChip label="Email" value={email || "—"} />
+              <InfoChip label="Phone" value={phone || "—"} />
+            </div>
           </div>
+        </section>
 
-          {/* User Info Boxes */}
-          <div className="flex flex-col gap-3">
-            <div className="bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-xl px-4 py-3 flex justify-between items-center shadow-sm">
-              <span className="text-sm font-medium text-gray-500 dark:text-slate-400">
-                Email
-              </span>
-              <span className="text-sm font-semibold text-slate-800 dark:text-slate-100">
-                {email}
-              </span>
-            </div>
-
-            <div className="bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-xl px-4 py-3 flex justify-between items-center shadow-sm">
-              <span className="text-sm font-medium text-gray-500 dark:text-slate-400">
-                Phone Number
-              </span>
-              <span className="text-sm font-semibold text-slate-800 dark:text-slate-100">
-                {phone}
-              </span>
-            </div>
+        {/* Health records */}
+        <section>
+          <SectionLabel>Health records</SectionLabel>
+          <div className="overflow-hidden rounded-2xl border border-black/[0.05] bg-white shadow-soft-sm">
+            <AccountRow
+              icon={<FileText className="size-[18px]" strokeWidth={1.75} />}
+              label="Drug history"
+              hint="OTC, herbs, and past courses"
+              onClick={() => setActiveModal("drugHx")}
+            />
+            <AccountRow
+              icon={<FolderDown className="size-[18px]" strokeWidth={1.75} />}
+              label="Medication report"
+              hint="Download a PDF for your clinician"
+              onClick={() => setTab("Report")}
+              last
+            />
           </div>
-        </div>
+        </section>
 
-        {/* ===== Actions (Individual Boxes) ===== */}
-        <div className="flex flex-col gap-4">
-          <AccountRow
-            icon={<UserRound className="size-6 text-indigo-600" />}
-            label="Profile Settings"
-            onClick={() => setActiveModal("profile")}
-          />
+        {/* Preferences */}
+        <section>
+          <SectionLabel>Preferences</SectionLabel>
+          <div className="overflow-hidden rounded-2xl border border-black/[0.05] bg-white shadow-soft-sm">
+            <AccountRow
+              icon={<UserRound className="size-[18px]" strokeWidth={1.75} />}
+              label="Profile settings"
+              hint="Name, phone, and photo"
+              onClick={() => setActiveModal("profile")}
+            />
+            <AccountRow
+              icon={<Cog className="size-[18px]" strokeWidth={1.75} />}
+              label="Account settings"
+              hint="Password and security"
+              onClick={() => setActiveModal("accountSettings")}
+            />
+            <AccountRow
+              icon={<Headset className="size-[18px]" strokeWidth={1.75} />}
+              label="Contact us"
+              hint="Questions or support"
+              onClick={() => setActiveModal("contact")}
+              last={!isAdminEmail(email)}
+            />
+            {isAdminEmail(email) ? (
+              <AccountRow
+                icon={<Shield className="size-[18px]" strokeWidth={1.75} />}
+                label="Admin"
+                hint="Internal tools"
+                onClick={() => router.push("/admin")}
+                last
+              />
+            ) : null}
+          </div>
+        </section>
 
-          <AccountRow
-            icon={<FileText className="size-6 text-blue-600" />}
-            label="Drug History"
-            onClick={() => setActiveModal("drugHx")}
-          />
-
-          <AccountRow
-            icon={<FolderDown className="size-6 text-green-600" />}
-            label="Drug Report"
-            onClick={() => setTab("Report")}
-          />
-
-          <AccountRow
-            icon={<Headset className="size-6 text-teal-600" />}
-            label="Contact Us"
-            onClick={() => setActiveModal("contact")}
-          />
-
-          <AccountRow
-            icon={<Cog className="size-6 text-orange-500" />}
-            label="Account Settings"
-            onClick={() => setActiveModal("accountSettings")}
-          />
-
-          <AccountRow
-            icon={<LogOut className="size-6 text-red-600" />}
-            label="Log out"
-            danger
+        {/* Sign out */}
+        <section>
+          <button
+            type="button"
             onClick={logOut}
-          />
-        </div>
+            className="flex w-full items-center justify-center gap-2 rounded-2xl border border-[#f0c9d4] bg-white px-4 py-3.5 text-[14px] font-semibold text-[#8a3d5a] shadow-soft-sm transition hover:bg-[#fff7fa]"
+          >
+            <LogOut className="size-4" strokeWidth={1.75} />
+            Log out
+          </button>
+        </section>
       </div>
     </div>
   );
@@ -159,41 +206,58 @@ const Account: React.FC<AccountProps> = ({ setActiveModal }) => {
 
 export default Account;
 
-interface RowProps {
-  icon: React.ReactNode;
-  label: string;
-  onClick: () => void;
-  danger?: boolean;
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="mb-2 px-1 text-[12px] font-semibold uppercase tracking-[0.14em] text-soft-muted">
+      {children}
+    </p>
+  );
 }
 
-const AccountRow: React.FC<RowProps> = ({
+function InfoChip({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl bg-soft-canvas/80 px-3.5 py-3">
+      <p className="text-[11px] font-medium text-soft-muted">{label}</p>
+      <p className="mt-0.5 truncate text-[14px] font-semibold text-soft-ink">
+        {value}
+      </p>
+    </div>
+  );
+}
+
+function AccountRow({
   icon,
   label,
+  hint,
   onClick,
-  danger = false,
-}) => {
+  last = false,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  hint?: string;
+  onClick: () => void;
+  last?: boolean;
+}) {
   return (
     <button
+      type="button"
       onClick={onClick}
-      className={`
-        w-full p-4 border rounded-xl shadow-sm
-        flex justify-between items-center
-        transition-colors
-        ${
-          danger
-            ? "border-red-100 dark:border-red-900/40 bg-white dark:bg-slate-900 hover:bg-red-50 dark:hover:bg-red-900/10"
-            : "border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-gray-50 dark:hover:bg-slate-800"
-        }
-      `}
+      className={`flex w-full items-center gap-3 px-4 py-3.5 text-left transition hover:bg-soft-canvas/70 ss:px-5 ${
+        last ? "" : "border-b border-black/[0.05]"
+      }`}
     >
-      <div
-        className={`flex gap-3 items-center ${danger ? "text-red-600" : "text-slate-800 dark:text-slate-100"}`}
-      >
+      <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-soft-primary-soft text-soft-primary">
         {icon}
-        <span className="text-sm font-medium">{label}</span>
-      </div>
-
-      <ChevronRight className="size-5 text-gray-400" />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block text-[15px] font-semibold text-soft-ink">
+          {label}
+        </span>
+        {hint ? (
+          <span className="mt-0.5 block text-[12px] text-soft-muted">{hint}</span>
+        ) : null}
+      </span>
+      <ChevronRight className="size-4 shrink-0 text-soft-muted" strokeWidth={1.75} />
     </button>
   );
-};
+}

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { cleanUpDatabase, fetchData } from "../utils/fetchData";
-import { DrugProps, ScheduleItem } from "../types/dashboard";
-import { createClient } from "@/lib/supabase/client";
+import { Appointment, DrugProps, ScheduleItem } from "../types/dashboard";
+import { apiJson } from "@/lib/api-client";
 import { generateDrugId } from "@/utils/drugs";
 import { generateSchedule } from "../utils/dashboard/dashboard";
 import { uploadScheduleToServer, removePastDoses } from "../utils/dashboard/schedule";
@@ -9,646 +9,673 @@ import { sendMail } from "../utils/sendEmail";
 import { generateDrugAddedEmail } from "@/emails/newDrug";
 import { generateDrugAllergyEmail } from "@/emails/drugAllergy";
 import { useAppDispatch, useAppSelector, store } from "@/store";
-import { fetchDashboardData, updateDashboardCache, DashboardData } from "@/store/dashboardSlice";
+import { fetchDashboardData, updateDashboardCache } from "@/store/dashboardSlice";
 
-// Define the shape of the data returned by fetchData
-// The interface DashboardData is imported from dashboardSlice
+async function runMutation(action: string, payload: object) {
+  return apiJson("/api/data/mutations", {
+    method: "POST",
+    json: { action, payload },
+  });
+}
 
-export const useDashboardData = (userId: string | undefined) => {
+/** Owns fetch + expired-drug cleanup. Call once from the dashboard page. */
+export const useDashboardBootstrap = (userId: string | undefined) => {
   const dispatch = useAppDispatch();
   const { data, status, error } = useAppSelector((state) => state.dashboard);
+  const authLoading = useAppSelector((state) => state.auth.loading);
 
   useEffect(() => {
-    if (userId && status === 'idle') {
+    if (userId && !authLoading && status === "idle") {
       dispatch(fetchDashboardData(userId));
     }
-  }, [userId, status, dispatch]);
+  }, [userId, authLoading, status, dispatch]);
 
-  // DB Cleanup Side Effect
   useEffect(() => {
-    if (data && userId) {
-        if (data.expiredDrugs.length > 0) {
-             cleanUpDatabase(userId, data.updatedCompletedList, data.expiredDrugs);
-        }
-    }
-  }, [data, userId]);
+    if (!data || !userId || data.expiredDrugs.length === 0) return;
+    let cancelled = false;
+    (async () => {
+      await cleanUpDatabase(userId, data.updatedCompletedList, data.expiredDrugs);
+      if (cancelled) return;
+      dispatch(updateDashboardCache({ expiredDrugs: [] }));
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [userId, data?.expiredDrugs, data?.updatedCompletedList, dispatch]);
 
-  return { data, isLoading: status === 'loading', error, isError: !!error };
+  return {
+    data,
+    isLoading: status === "loading" || status === "idle",
+    error,
+    isError: status === "failed",
+    refetch: () => (userId ? dispatch(fetchDashboardData(userId)) : undefined),
+  };
 };
 
-// --- Selectors Hooks ---
+/** @deprecated Prefer useDashboardBootstrap once at the page root; selectors below. */
+export const useDashboardData = (userId: string | undefined) =>
+  useDashboardBootstrap(userId);
 
-export const useDrugs = (userId: string | undefined) => {
-    const { data: rawData, isLoading } = useDashboardData(userId);
-    const data = rawData?.activeDrugs || [];
-    return { data, isLoading };
+function useDashboardSlice() {
+  return useAppSelector((state) => state.dashboard);
 }
 
-export const useSchedule = (userId: string | undefined) => {
-    const { data: rawData, isLoading } = useDashboardData(userId);
-    const data = rawData?.schedule || [];
-    return { data, isLoading };
-}
-
-export const useUserInfo = (userId: string | undefined) => {
-    const { data: rawData, isLoading } = useDashboardData(userId);
-    const data = rawData?.userInfo || [];
-    return { data, isLoading };
-}
-
-export const useAllergies = (userId: string | undefined) => {
-    const { data: rawData, isLoading } = useDashboardData(userId);
-    const data = rawData?.allergies || [];
-    return { data, isLoading };
-}
-
-export const useHerbs = (userId: string | undefined) => {
-    const { data: rawData, isLoading } = useDashboardData(userId);
-    const data = rawData?.herbs || "";
-    return { data, isLoading };
-}
-
-export const useOtcDrugs = (userId: string | undefined) => {
-    const { data: rawData, isLoading } = useDashboardData(userId);
-    const data = rawData?.otcDrugs || "";
-    return { data, isLoading };
-}
-
-export const useProfilePicture = (userId: string | undefined) => {
-    const { data: rawData, isLoading } = useDashboardData(userId);
-    const data = rawData?.profilePicture || "";
-    return { data, isLoading };
-}
-
-export const useCompletedDrugs = (userId: string | undefined) => {
-    const { data: rawData, isLoading } = useDashboardData(userId);
-    const data = rawData?.updatedCompletedList || [];
-    return { data, isLoading };
-}
-
-export const useUserTheme = (userId: string | undefined) => {
-    const { data: rawData, isLoading } = useDashboardData(userId);
-    const data = rawData?.userInfo?.[0]?.theme ?? null;
-    return { data, isLoading };
+export const useDrugs = (_userId?: string | undefined) => {
+  const { data, status } = useDashboardSlice();
+  return {
+    data: data?.activeDrugs || [],
+    isLoading: status === "loading",
+  };
 };
 
-// --- Mutation Hooks ---
+export const useSchedule = (_userId?: string | undefined) => {
+  const { data, status } = useDashboardSlice();
+  return {
+    data: data?.schedule || [],
+    isLoading: status === "loading",
+  };
+};
+
+export const useUserInfo = (_userId?: string | undefined) => {
+  const { data, status } = useDashboardSlice();
+  return {
+    data: data?.userInfo || [],
+    isLoading: status === "loading",
+  };
+};
+
+export const useAllergies = (_userId?: string | undefined) => {
+  const { data, status } = useDashboardSlice();
+  return {
+    data: data?.allergies || [],
+    isLoading: status === "loading",
+  };
+};
+
+export const useHerbs = (_userId?: string | undefined) => {
+  const { data, status } = useDashboardSlice();
+  return {
+    data: data?.herbs || "",
+    isLoading: status === "loading",
+  };
+};
+
+export const useOtcDrugs = (_userId?: string | undefined) => {
+  const { data, status } = useDashboardSlice();
+  return {
+    data: data?.otcDrugs || "",
+    isLoading: status === "loading",
+  };
+};
+
+export const useProfilePicture = (_userId?: string | undefined) => {
+  const { data, status } = useDashboardSlice();
+  return {
+    data: data?.profilePicture || "",
+    isLoading: status === "loading",
+  };
+};
+
+export const useAppointment = (_userId?: string | undefined) => {
+  const { data, status } = useDashboardSlice();
+  return {
+    data: (data?.appointment ?? null) as Appointment | null,
+    isLoading: status === "loading",
+  };
+};
+
+export const useCompletedDrugs = (_userId?: string | undefined) => {
+  const { data, status } = useDashboardSlice();
+  return {
+    data: data?.updatedCompletedList || [],
+    isLoading: status === "loading",
+  };
+};
+
+export const useUserTheme = (_userId?: string | undefined) => {
+  const { data, status } = useDashboardSlice();
+  return {
+    data: data?.userInfo?.[0]?.theme ?? null,
+    isLoading: status === "loading",
+  };
+};
 
 interface AddDrugParams {
-    userId: string;
-    drug: string;
-    frequency: string;
-    route: string;
-    start: string;
-    end: string;
-    time: string[];
-    reminder: boolean;
-    userInfo: { name: string; email: string };
+  userId: string;
+  drug: string;
+  frequency: string;
+  route: string;
+  start: string;
+  end: string;
+  time: string[];
+  reminder: boolean;
+  userInfo: { name: string; email: string };
 }
 
 export const useAddDrugMutation = () => {
-    const dispatch = useAppDispatch();
-    const supabase = createClient();
+  const dispatch = useAppDispatch();
+  return {
+    mutateAsync: async (params: AddDrugParams) => {
+      const drugId = generateDrugId(params.drug);
+      await runMutation("insertDrug", { ...params, drugId });
 
-    return {
-        mutateAsync: async (params: AddDrugParams) => {
-            const drugId = generateDrugId(params.drug);
-            
-            // 1. Insert drug
-            const { error: drugError } = await supabase.from("drugs").insert({
-                userId: params.userId,
-                drug: params.drug,
-                frequency: params.frequency,
-                route: params.route,
-                start: params.start,
-                end: params.end,
-                time: params.time,
-                reminder: params.reminder,
-                drugId: drugId,
-            });
-            if (drugError) throw drugError;
+      const currentData = store.getState().dashboard.data;
+      const currentSchedule = currentData?.schedule || [];
+      const newScheduleItems = generateSchedule({ ...params, drugId });
+      const updatedSchedule = [...currentSchedule, ...newScheduleItems];
 
-            // 2. Generate and upload schedule
-            const currentData = store.getState().dashboard.data;
-            const currentSchedule = currentData?.schedule || [];
-            const newScheduleItems = generateSchedule({ ...params, drugId });
-            const updatedSchedule = [...currentSchedule, ...newScheduleItems];
+      await uploadScheduleToServer({ userId: params.userId, schedule: updatedSchedule });
 
-            await uploadScheduleToServer({
-                userId: params.userId,
-                schedule: updatedSchedule,
-            });
+      if (params.userInfo.email) {
+        const { html, subject } = generateDrugAddedEmail(
+          params.userInfo.name,
+          params.drug,
+          params.start,
+          params.end,
+          params.route,
+          params.time
+        );
+        await sendMail(params.userInfo.email, html, subject);
+      }
 
-            // 3. Send email
-            if (params.userInfo.email) {
-                const { html, subject } = generateDrugAddedEmail(
-                    params.userInfo.name,
-                    params.drug,
-                    params.start,
-                    params.end,
-                    params.route,
-                    params.time
-                );
-                await sendMail(params.userInfo.email, html, subject);
-            }
+      dispatch(
+        updateDashboardCache({
+          activeDrugs: [
+            ...(currentData?.activeDrugs || []),
+            {
+              drug: params.drug,
+              frequency: params.frequency,
+              route: params.route,
+              start: params.start,
+              end: params.end,
+              time: params.time,
+              reminder: params.reminder,
+              drugId,
+            },
+          ],
+          schedule: updatedSchedule,
+        })
+      );
 
-            // 4. Update cache
-            dispatch(updateDashboardCache({
-                activeDrugs: [...(currentData?.activeDrugs || []), {
-                    drug: params.drug,
-                    frequency: params.frequency,
-                    route: params.route,
-                    start: params.start,
-                    end: params.end,
-                    time: params.time,
-                    reminder: params.reminder,
-                    drugId: drugId,
-                }],
-                schedule: updatedSchedule,
-            }));
-
-            return { ...params, drugId, updatedSchedule };
-        }
-    };
+      return { ...params, drugId, updatedSchedule };
+    },
+  };
 };
 
 interface UpdateDrugParams {
-    userId: string;
-    activeDrug: string;
-    activeDrugId: string;
-    drug: string;
-    frequency: string;
-    route: string;
-    start: string;
-    end: string;
-    time: string[];
-    reminder: boolean;
-    todayDate: string;
+  userId: string;
+  activeDrug: string;
+  activeDrugId: string;
+  drug: string;
+  frequency: string;
+  route: string;
+  start: string;
+  end: string;
+  time: string[];
+  reminder: boolean;
+  todayDate: string;
 }
 
 export const useUpdateDrugMutation = () => {
-    const dispatch = useAppDispatch();
-    const supabase = createClient();
+  const dispatch = useAppDispatch();
+  return {
+    mutateAsync: async (params: UpdateDrugParams) => {
+      await runMutation("updateDrug", params);
 
-    return {
-        mutateAsync: async (params: UpdateDrugParams) => {
-            const { error: drugUpdateError } = await supabase
-                .from("drugs")
-                .update({
-                    userId: params.userId,
-                    drug: params.drug,
-                    frequency: params.frequency,
-                    route: params.route,
-                    start: params.start,
-                    end: params.end,
-                    time: params.time,
-                    reminder: params.reminder,
-                })
-                .eq("drug", params.activeDrug);
-            if (drugUpdateError) throw drugUpdateError;
+      const currentData = store.getState().dashboard.data;
+      const currentSchedule = currentData?.schedule || [];
 
-            const currentData = store.getState().dashboard.data;
-            const currentSchedule = currentData?.schedule || [];
-            
-            const completedTimesToday = currentSchedule
-                .filter(s => s.drugId === params.activeDrugId && s.date === params.todayDate && s.completed)
-                .map(s => s.time);
+      const completedTimesToday = currentSchedule
+        .filter(
+          (s) =>
+            s.drugId === params.activeDrugId &&
+            s.date === params.todayDate &&
+            s.completed
+        )
+        .map((s) => s.time);
 
-            const strippedSchedule = removePastDoses({
-                activeDrugId: params.activeDrugId,
-                schedule: currentSchedule,
-            });
+      const strippedSchedule = removePastDoses({
+        activeDrugId: params.activeDrugId,
+        schedule: currentSchedule,
+      });
 
-            const newDoses = generateSchedule({
-                ...params,
-                drugId: params.activeDrugId,
-                start: params.todayDate,
-            });
+      const newDoses = generateSchedule({
+        ...params,
+        drugId: params.activeDrugId,
+        start: params.todayDate,
+      });
 
-            const scheduleWithPreservedStatus = newDoses.map(dose => {
-                if (dose.date === params.todayDate && completedTimesToday.includes(dose.time)) {
-                    return { ...dose, completed: true };
-                }
-                return dose;
-            });
-
-            const updatedSchedule = [...strippedSchedule, ...scheduleWithPreservedStatus];
-
-            await uploadScheduleToServer({
-                userId: params.userId,
-                schedule: updatedSchedule,
-            });
-
-            dispatch(updateDashboardCache({
-                activeDrugs: (currentData?.activeDrugs || []).map((drug) =>
-                    drug.drug === params.activeDrug
-                        ? {
-                            ...drug,
-                            drug: params.drug,
-                            frequency: params.frequency,
-                            route: params.route,
-                            start: params.start,
-                            end: params.end,
-                            time: params.time,
-                            reminder: params.reminder,
-                        }
-                        : drug
-                ),
-                schedule: updatedSchedule,
-            }));
-
-            return { ...params, updatedSchedule };
+      const scheduleWithPreservedStatus = newDoses.map((dose) => {
+        if (
+          dose.date === params.todayDate &&
+          completedTimesToday.includes(dose.time)
+        ) {
+          return { ...dose, completed: true };
         }
-    };
+        return dose;
+      });
+
+      const updatedSchedule = [...strippedSchedule, ...scheduleWithPreservedStatus];
+
+      await uploadScheduleToServer({
+        userId: params.userId,
+        schedule: updatedSchedule,
+      });
+
+      dispatch(
+        updateDashboardCache({
+          activeDrugs: (currentData?.activeDrugs || []).map((drug) =>
+            drug.drug === params.activeDrug
+              ? {
+                  ...drug,
+                  drug: params.drug,
+                  frequency: params.frequency,
+                  route: params.route,
+                  start: params.start,
+                  end: params.end,
+                  time: params.time,
+                  reminder: params.reminder,
+                }
+              : drug
+          ),
+          schedule: updatedSchedule,
+        })
+      );
+
+      return { ...params, updatedSchedule };
+    },
+  };
 };
 
 const getTodayDate = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 };
 
 interface DeleteDrugParams {
-    userId: string;
-    drug: string;
+  userId: string;
+  drug: string;
 }
 
 export const useDeleteDrugMutation = () => {
-    const dispatch = useAppDispatch();
-    const supabase = createClient();
+  const dispatch = useAppDispatch();
+  return {
+    mutateAsync: async (params: DeleteDrugParams) => {
+      await runMutation("deleteDrug", params);
 
-    return {
-        mutateAsync: async (params: DeleteDrugParams) => {
-            const { error: drugError } = await supabase.from("drugs").delete().eq("drug", params.drug);
-            if (drugError) throw drugError;
+      const currentData = store.getState().dashboard.data;
+      const currentSchedule = currentData?.schedule || [];
+      const today = getTodayDate();
+      const updatedSchedule = currentSchedule.filter(
+        (s) => s.drug !== params.drug || s.date < today
+      );
 
-            const currentData = store.getState().dashboard.data;
-            const currentSchedule = currentData?.schedule || [];
-            const today = getTodayDate();
-            const updatedSchedule = currentSchedule.filter((s) => 
-                s.drug !== params.drug || s.date < today
-            );
+      await uploadScheduleToServer({
+        userId: params.userId,
+        schedule: updatedSchedule,
+      });
 
-            await uploadScheduleToServer({
-                userId: params.userId,
-                schedule: updatedSchedule,
-            });
+      dispatch(
+        updateDashboardCache({
+          activeDrugs: (currentData?.activeDrugs || []).filter(
+            (drug) => drug.drug !== params.drug
+          ),
+          schedule: updatedSchedule,
+        })
+      );
 
-            dispatch(updateDashboardCache({
-                activeDrugs: (currentData?.activeDrugs || []).filter((drug) => drug.drug !== params.drug),
-                schedule: updatedSchedule,
-            }));
-
-            return { ...params, updatedSchedule };
-        }
-    };
+      return { ...params, updatedSchedule };
+    },
+  };
 };
 
 interface DeleteCompletedDrugParams {
-    userId: string;
-    drug: string;
+  userId: string;
+  drug: string;
 }
 
 export const useDeleteCompletedDrugMutation = () => {
-    const dispatch = useAppDispatch();
-    const supabase = createClient();
+  const dispatch = useAppDispatch();
+  return {
+    mutateAsync: async (params: DeleteCompletedDrugParams) => {
+      const currentData = store.getState().dashboard.data;
+      const updatedCompleted = (currentData?.updatedCompletedList || []).filter(
+        (d) => d.drug !== params.drug
+      );
 
-    return {
-        mutateAsync: async (params: DeleteCompletedDrugParams) => {
-            const currentData = store.getState().dashboard.data;
-            const currentCompleted = currentData?.updatedCompletedList || [];
-            const updatedCompleted = currentCompleted.filter((d) => d.drug !== params.drug);
+      await runMutation("updateCompletedDrugs", {
+        completedDrugs: updatedCompleted,
+      });
 
-            const { error } = await supabase
-                .from("completedDrugs")
-                .update({ completedDrugs: updatedCompleted })
-                .eq("userId", params.userId);
-            if (error) throw error;
-            
-            dispatch(updateDashboardCache({
-                updatedCompletedList: (currentData?.updatedCompletedList || []).filter((d) => d.drug !== params.drug),
-            }));
+      dispatch(
+        updateDashboardCache({
+          updatedCompletedList: updatedCompleted,
+        })
+      );
 
-            return params;
-        }
-    };
+      return params;
+    },
+  };
 };
 
 interface AddAllergyParams {
-    userId: string;
-    drug: string;
-    userInfo?: { name: string; email: string };
+  userId: string;
+  drug: string;
+  userInfo?: { name: string; email: string };
 }
 
 export const useAddAllergyMutation = () => {
-    const dispatch = useAppDispatch();
-    const supabase = createClient();
+  const dispatch = useAppDispatch();
+  return {
+    mutateAsync: async (params: AddAllergyParams) => {
+      const drugId = generateDrugId(params.drug);
+      await runMutation("insertAllergy", {
+        drug: params.drug,
+        drugId,
+        frequency: "",
+        route: "",
+        start: "",
+        end: "",
+        time: [""],
+        reminder: true,
+      });
 
-    return {
-        mutateAsync: async (params: AddAllergyParams) => {
-            const drugId = generateDrugId(params.drug);
-            const { error } = await supabase.from("allergies").insert({
-                userId: params.userId,
-                drug: params.drug,
-                frequency: "",
-                route: "",
-                start: "",
-                end: "",
-                time: [""],
-                reminder: true,
-                drugId: drugId,
-            });
-            if (error) throw error;
+      if (params.userInfo?.email) {
+        const { html, subject } = generateDrugAllergyEmail(
+          params.userInfo.name,
+          params.drug
+        );
+        await sendMail(params.userInfo.email, html, subject);
+      }
 
-            if (params.userInfo?.email) {
-                const { html, subject } = generateDrugAllergyEmail(params.userInfo.name, params.drug);
-                await sendMail(params.userInfo.email, html, subject);
-            }
+      const currentData = store.getState().dashboard.data;
+      dispatch(
+        updateDashboardCache({
+          allergies: [
+            ...(currentData?.allergies || []),
+            {
+              drug: params.drug,
+              frequency: "",
+              route: "",
+              start: "",
+              end: "",
+              time: [""],
+              reminder: true,
+              drugId,
+            },
+          ],
+        })
+      );
 
-            const currentData = store.getState().dashboard.data;
-            dispatch(updateDashboardCache({
-                allergies: [...(currentData?.allergies || []), {
-                    drug: params.drug,
-                    frequency: "",
-                    route: "",
-                    start: "",
-                    end: "",
-                    time: [""],
-                    reminder: true,
-                    drugId: drugId,
-                }],
-            }));
-
-            return { ...params, drugId };
-        }
-    };
+      return { ...params, drugId };
+    },
+  };
 };
 
 interface DeleteAllergyParams {
-    userId: string;
-    drug: string;
+  userId: string;
+  drug: string;
 }
 
 export const useDeleteAllergyMutation = () => {
-    const dispatch = useAppDispatch();
-    const supabase = createClient();
-
-    return {
-        mutateAsync: async (params: DeleteAllergyParams) => {
-            const { error } = await supabase.from("allergies").delete().eq("drug", params.drug);
-            if (error) throw error;
-            
-            const currentData = store.getState().dashboard.data;
-            dispatch(updateDashboardCache({
-                allergies: (currentData?.allergies || []).filter((a) => a.drug !== params.drug),
-            }));
-
-            return params;
-        }
-    };
+  const dispatch = useAppDispatch();
+  return {
+    mutateAsync: async (params: DeleteAllergyParams) => {
+      await runMutation("deleteAllergy", params);
+      const currentData = store.getState().dashboard.data;
+      dispatch(
+        updateDashboardCache({
+          allergies: (currentData?.allergies || []).filter(
+            (a) => a.drug !== params.drug
+          ),
+        })
+      );
+      return params;
+    },
+  };
 };
 
 interface MarkAsAllergyParams {
-    userId: string;
-    drug: string;
-    tab: string;
-    target: DrugProps;
-    userInfo?: { name: string; email: string };
+  userId: string;
+  drug: string;
+  tab: string;
+  target: DrugProps;
+  userInfo?: { name: string; email: string };
 }
 
 export const useMarkAsAllergyMutation = () => {
-    const dispatch = useAppDispatch();
-    const supabase = createClient();
+  const dispatch = useAppDispatch();
+  return {
+    mutateAsync: async (params: MarkAsAllergyParams) => {
+      const currentData = store.getState().dashboard.data;
+      const currentSchedule = currentData?.schedule || [];
+      const today = getTodayDate();
+      let updatedSchedule = currentSchedule;
+      let updatedCompleted = currentData?.updatedCompletedList || [];
 
-    return {
-        mutateAsync: async (params: MarkAsAllergyParams) => {
-            if (params.tab === "ongoing") {
-                await supabase
-                    .from("drugs")
-                    .delete()
-                    .eq("drug", params.drug)
-                    .eq("userId", params.userId);
-            } else if (params.tab === "completed") {
-                const currentData = store.getState().dashboard.data;
-                const currentCompleted = currentData?.updatedCompletedList || [];
-                const updatedCompleted = currentCompleted.filter((d) => d.drug !== params.drug);
+      if (params.tab === "completed") {
+        updatedCompleted = updatedCompleted.filter((d) => d.drug !== params.drug);
+      }
 
-                const { error: completedDeleteError } = await supabase
-                    .from("completedDrugs")
-                    .update({ completedDrugs: updatedCompleted })
-                    .eq("userId", params.userId);
-                
-                if (completedDeleteError) throw completedDeleteError;
-            }
-            
-            const { error: allergyIntoError } = await supabase.from("allergies").insert({
-                userId: params.userId,
-                drug: params.drug,
-                frequency: params.target.frequency || "",
-                route: params.target.route || "",
-                start: params.target.start || "",
-                end: params.target.end || "",
-                time: params.target.time || [""],
-                reminder: true,
-                drugId: params.target.drugId,
-            });
-            if (allergyIntoError) throw allergyIntoError;
+      await runMutation("markAsAllergy", {
+        tab: params.tab,
+        drug: params.drug,
+        target: params.target,
+        updatedCompleted,
+      });
 
-            const currentData = store.getState().dashboard.data;
-            const currentSchedule = currentData?.schedule || [];
-            const today = getTodayDate();
-            let updatedSchedule = currentSchedule;
+      if (params.tab === "ongoing") {
+        updatedSchedule = currentSchedule.filter(
+          (s) => s.drug !== params.drug || s.date < today
+        );
+        await uploadScheduleToServer({
+          userId: params.userId,
+          schedule: updatedSchedule,
+        });
+      }
 
-            if (params.tab === "ongoing") {
-                updatedSchedule = currentSchedule.filter((s) => 
-                    s.drug !== params.drug || s.date < today
-                );
-                await uploadScheduleToServer({
-                    userId: params.userId,
-                    schedule: updatedSchedule,
-                });
-            }
+      if (params.userInfo?.email) {
+        const { html, subject } = generateDrugAllergyEmail(
+          params.userInfo.name,
+          params.drug
+        );
+        await sendMail(params.userInfo.email, html, subject);
+      }
 
-            if (params.userInfo?.email) {
-                const { html, subject } = generateDrugAllergyEmail(params.userInfo.name, params.drug);
-                await sendMail(params.userInfo.email, html, subject);
-            }
+      const newAllergyEntry: DrugProps = {
+        drug: params.drug,
+        frequency: params.target.frequency || "",
+        route: params.target.route || "",
+        start: params.target.start || "",
+        end: params.target.end || "",
+        time: params.target.time || [""],
+        reminder: true,
+        drugId: params.target.drugId,
+      };
 
-            const newAllergyEntry: DrugProps = {
-                drug: params.drug,
-                frequency: params.target.frequency || "",
-                route: params.target.route || "",
-                start: params.target.start || "",
-                end: params.target.end || "",
-                time: params.target.time || [""],
-                reminder: true,
-                drugId: params.target.drugId,
-            };
+      if (params.tab === "ongoing") {
+        dispatch(
+          updateDashboardCache({
+            activeDrugs: (currentData?.activeDrugs || []).filter(
+              (d) => d.drug !== params.drug
+            ),
+            schedule: updatedSchedule,
+            allergies: [...(currentData?.allergies || []), newAllergyEntry],
+          })
+        );
+      } else {
+        dispatch(
+          updateDashboardCache({
+            updatedCompletedList: updatedCompleted,
+            allergies: [...(currentData?.allergies || []), newAllergyEntry],
+          })
+        );
+      }
 
-            if (params.tab === "ongoing") {
-                dispatch(updateDashboardCache({
-                    activeDrugs: (currentData?.activeDrugs || []).filter((d) => d.drug !== params.drug),
-                    schedule: updatedSchedule,
-                    allergies: [...(currentData?.allergies || []), newAllergyEntry],
-                }));
-            } else {
-                dispatch(updateDashboardCache({
-                    updatedCompletedList: (currentData?.updatedCompletedList || []).filter((d) => d.drug !== params.drug),
-                    allergies: [...(currentData?.allergies || []), newAllergyEntry],
-                }));
-            }
-
-            return { ...params, updatedSchedule };
-        }
-    };
+      return { ...params, updatedSchedule };
+    },
+  };
 };
 
 interface UpdateProfileParams {
-    userId: string;
-    name: string;
-    phone: string;
+  userId: string;
+  name: string;
+  phone: string;
 }
 
 export const useUpdateProfileMutation = () => {
-    const dispatch = useAppDispatch();
-    const supabase = createClient();
-
-    return {
-        mutateAsync: async (params: UpdateProfileParams) => {
-            const { error } = await supabase
-                .from("users")
-                .update({ name: params.name, phone: params.phone })
-                .eq("userId", params.userId);
-            if (error) throw error;
-            
-            const currentData = store.getState().dashboard.data;
-            dispatch(updateDashboardCache({
-                userInfo: (currentData?.userInfo || []).map((info, index) =>
-                    index === 0 ? { ...info, name: params.name, phone: params.phone } : info
-                ),
-            }));
-
-            return params;
-        }
-    };
+  const dispatch = useAppDispatch();
+  return {
+    mutateAsync: async (params: UpdateProfileParams) => {
+      await runMutation("updateProfile", params);
+      const currentData = store.getState().dashboard.data;
+      dispatch(
+        updateDashboardCache({
+          userInfo: (currentData?.userInfo || []).map((info, index) =>
+            index === 0 ? { ...info, name: params.name, phone: params.phone } : info
+          ),
+        })
+      );
+      return params;
+    },
+  };
 };
 
 interface UploadProfilePictureParams {
-    userId: string;
-    file: File;
-    currentPicture: string;
+  userId: string;
+  file: File;
+  currentPicture: string;
 }
 
 export const useUploadProfilePictureMutation = () => {
-    const dispatch = useAppDispatch();
-    const supabase = createClient();
-
-    return {
-        mutateAsync: async (params: UploadProfilePictureParams) => {
-            const bucket = "profile-picture";
-            const newFileName = `${Date.now()}-${params.file.name}`;
-            const filePath = `${params.userId}/${newFileName}`;
-
-            if (params.currentPicture) {
-                await supabase.storage
-                    .from(bucket)
-                    .remove([`${params.userId}/${params.currentPicture}`]);
-            }
-
-            const { error } = await supabase.storage
-                .from(bucket)
-                .upload(filePath, params.file);
-
-            if (error) throw error;
-            
-            dispatch(updateDashboardCache({
-                profilePicture: newFileName,
-            }));
-
-            return { ...params, newFileName };
+  const dispatch = useAppDispatch();
+  return {
+    mutateAsync: async (params: UploadProfilePictureParams) => {
+      const arrayBuffer = await params.file.arrayBuffer();
+      const bytes = new Uint8Array(arrayBuffer);
+      let binary = "";
+      bytes.forEach((b) => {
+        binary += String.fromCharCode(b);
+      });
+      const fileBase64 = btoa(binary);
+      const result = await apiJson<{ profilePicture: string }>(
+        "/api/data/mutations",
+        {
+          method: "POST",
+          json: {
+            action: "uploadProfilePicture",
+            payload: {
+              fileBase64,
+              filename: params.file.name,
+            },
+          },
         }
-    };
+      );
+
+      dispatch(updateDashboardCache({ profilePicture: result.profilePicture }));
+      return { ...params, newFileName: result.profilePicture };
+    },
+  };
 };
 
 interface UpdateDrugHistoryParams {
-    userId: string;
-    otcDrugs: string;
-    herbs: string;
+  userId: string;
+  otcDrugs: string;
+  herbs: string;
 }
 
 export const useUpdateDrugHistoryMutation = () => {
-    const dispatch = useAppDispatch();
-    const supabase = createClient();
-
-    return {
-        mutateAsync: async (params: UpdateDrugHistoryParams) => {
-            const { error } = await supabase
-                .from("drugHistory")
-                .update({
-                    otcDrugs: params.otcDrugs,
-                    herbs: params.herbs,
-                })
-                .eq("userId", params.userId);
-            if (error) throw error;
-            
-            dispatch(updateDashboardCache({
-                otcDrugs: params.otcDrugs,
-                herbs: params.herbs,
-            }));
-
-            return params;
-        }
-    };
+  const dispatch = useAppDispatch();
+  return {
+    mutateAsync: async (params: UpdateDrugHistoryParams) => {
+      await runMutation("updateDrugHistory", params);
+      dispatch(
+        updateDashboardCache({
+          otcDrugs: params.otcDrugs,
+          herbs: params.herbs,
+        })
+      );
+      return params;
+    },
+  };
 };
 
 interface UpdateScheduleParams {
-    userId: string;
-    schedule: ScheduleItem[];
+  userId: string;
+  schedule: ScheduleItem[];
 }
 
 export const useUpdateScheduleMutation = () => {
-    const dispatch = useAppDispatch();
-
-    return {
-        mutateAsync: async (params: UpdateScheduleParams) => {
-            await uploadScheduleToServer({ userId: params.userId, schedule: params.schedule });
-            
-            dispatch(updateDashboardCache({
-                schedule: params.schedule,
-            }));
-
-            return params;
-        }
-    };
+  const dispatch = useAppDispatch();
+  return {
+    mutateAsync: async (params: UpdateScheduleParams) => {
+      await uploadScheduleToServer({
+        userId: params.userId,
+        schedule: params.schedule,
+      });
+      dispatch(updateDashboardCache({ schedule: params.schedule }));
+      return params;
+    },
+  };
 };
 
 interface UpdateThemeParams {
-    userId: string;
-    theme: "light" | "dark";
+  userId: string;
+  theme: "light" | "dark";
 }
 
 export const useUpdateThemeMutation = () => {
-    const dispatch = useAppDispatch();
-    const supabase = createClient();
+  const dispatch = useAppDispatch();
+  return {
+    mutateAsync: async (params: UpdateThemeParams) => {
+      await runMutation("updateTheme", params);
+      const currentData = store.getState().dashboard.data;
+      dispatch(
+        updateDashboardCache({
+          userInfo: (currentData?.userInfo || []).map((info, index) =>
+            index === 0 ? { ...info, theme: params.theme } : info
+          ),
+        })
+      );
+      return params;
+    },
+  };
+};
 
-    return {
-        mutateAsync: async (params: UpdateThemeParams) => {
-            const { error } = await supabase
-                .from("users")
-                .update({ theme: params.theme })
-                .eq("userId", params.userId);
-            if (error) throw error;
-            
-            const currentData = store.getState().dashboard.data;
-            dispatch(updateDashboardCache({
-                userInfo: (currentData?.userInfo || []).map((info, index) =>
-                    index === 0 ? { ...info, theme: params.theme } : info
-                ),
-            }));
+interface UpsertAppointmentParams {
+  userId: string;
+  doctor: string;
+  location: string;
+  startsAt: string;
+  notes: string;
+}
 
-            return params;
-        }
-    };
+export const useUpsertAppointmentMutation = () => {
+  const dispatch = useAppDispatch();
+  return {
+    mutateAsync: async (params: UpsertAppointmentParams) => {
+      const appointment: Appointment = {
+        doctor: params.doctor.trim(),
+        location: params.location.trim(),
+        startsAt: params.startsAt,
+        notes: params.notes.trim(),
+      };
+      await runMutation("upsertAppointment", appointment);
+      dispatch(updateDashboardCache({ appointment }));
+      return appointment;
+    },
+  };
+};
+
+export const useDeleteAppointmentMutation = () => {
+  const dispatch = useAppDispatch();
+  return {
+    mutateAsync: async () => {
+      await runMutation("deleteAppointment", {});
+      dispatch(updateDashboardCache({ appointment: null }));
+    },
+  };
 };

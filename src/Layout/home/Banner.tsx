@@ -1,85 +1,75 @@
-import { Poppins } from "next/font/google";
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
-
-const poppins = Poppins({
-  weight: [
-    "100","200","300","400","500","600","700","800","900"
-  ],
-  style: ["normal","italic"],
-  subsets: ["latin"],
-});
+import { ArrowRight } from "lucide-react";
+import { m, useLandingVariants, viewOnce } from "@/components/landing/motion";
 
 export default function Banner() {
-  const navyBlue = "hsl(218,89%,15%)"; // darker navy
-  const deepBlue = "hsl(218,89%,10%)"; // for gradient and button
-
-  const avatars = [
-    "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=200",
-    "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200",
-    "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200&h=200&auto=format&fit=crop"
-  ];
+  const { fadeUp } = useLandingVariants();
 
   return (
-    <div
-      className={`${poppins.className} max-w-5xl py-16 md:pl-24 md:w-full mx-2 md:mx-auto flex flex-col items-start justify-center text-left rounded-2xl p-10`}
-      style={{
-        background: `linear-gradient(to bottom, ${navyBlue}, ${deepBlue})`,
-        color: "white",
-      }}
-    >
-      <div className="flex items-center">
-        <div className="flex -space-x-3 pr-3">
-          {avatars.map((src, i) => (
-            <Image
-              key={i}
-              src={src}
-              alt={`user ${i + 1}`}
-              width={32}
-              height={32}
-              className={`rounded-full hover:-translate-y-px transition z-[${i + 1}]`}
-            />
-          ))}
-        </div>
+    <section className="landing-section bg-white py-16 ss:py-20">
+      <div className="mx-auto max-w-6xl px-4 ss:px-6">
+        <m.div
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="show"
+          viewport={viewOnce}
+          className="relative overflow-hidden bg-soft-primary px-6 py-14 text-white ss:px-12 ss:py-16"
+        >
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -right-16 -top-16 size-56 rounded-full bg-white/10"
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -bottom-20 left-1/3 size-64 rounded-full bg-[#1a7a6d]/35"
+          />
 
-        {/* Stars */}
-        <div className="ml-3 flex flex-col items-start gap-1">
-          <div className="flex items-center gap-0.5">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <svg
-                key={i}
-                width="13"
-                height="12"
-                viewBox="0 0 13 12"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M5.85536 0.463527C6.00504 0.00287118 6.65674 0.00287028 6.80642 0.463526L7.82681 3.60397C7.89375 3.80998 8.08572 3.94946 8.30234 3.94946H11.6044C12.0888 3.94946 12.2901 4.56926 11.8983 4.85397L9.22687 6.79486C9.05162 6.92219 8.97829 7.14787 9.04523 7.35388L10.0656 10.4943C10.2153 10.955 9.68806 11.338 9.2962 11.0533L6.62478 9.11244C6.44954 8.98512 6.21224 8.98512 6.037 9.11244L3.36558 11.0533C2.97372 11.338 2.44648 10.955 2.59616 10.4943L3.61655 7.35388C3.68349 7.14787 3.61016 6.92219 3.43491 6.79486L0.763497 4.85397C0.37164 4.56927 0.573027 3.94946 1.05739 3.94946H4.35944C4.57606 3.94946 4.76803 3.80998 4.83497 3.60397L5.85536 0.463527Z"
-                  fill="#FF8F20"
-                />
-              </svg>
-            ))}
+          <div className="relative flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+            <div className="max-w-2xl">
+              <div className="mb-5 flex items-center">
+                <div className="relative z-[2] size-11 overflow-hidden border-2 border-white">
+                  <Image
+                    src="/assets/people/clinician.jpg"
+                    alt="Clinician using NoDoseOff reports"
+                    fill
+                    className="object-cover"
+                    sizes="44px"
+                  />
+                </div>
+                <div className="relative z-[1] -ml-3 size-11 overflow-hidden border-2 border-white">
+                  <Image
+                    src="/assets/people/caregiver.jpg"
+                    alt="Caregiver staying on top of doses"
+                    fill
+                    className="object-cover"
+                    sizes="44px"
+                  />
+                </div>
+                <p className="ml-4 text-[12px] font-medium text-white/70">
+                  Patients &amp; caregivers, same calm routine
+                </p>
+              </div>
+              <h2 className="text-[2rem] font-bold tracking-tight ss:text-[2.5rem]">
+                Ready for fewer missed doses?
+              </h2>
+              <p className="mt-3 max-w-lg text-[15px] leading-relaxed text-white/75 ss:text-[16px]">
+                Create a free account, add your medications, and let AMANDA 6
+                help you stay steady.
+              </p>
+            </div>
+            <Link
+              href="/signup"
+              className="inline-flex shrink-0 items-center gap-2 bg-white px-7 py-3.5 text-[15px] font-bold text-soft-primary transition-opacity hover:opacity-92"
+            >
+              Get started free
+              <ArrowRight className="size-4" />
+            </Link>
           </div>
-          <p className="text-sm text-white/70">Built by Doctors</p>
-        </div>
+        </m.div>
       </div>
-
-      <h1 className="text-4xl md:text-[46px] md:leading-[60px] font-semibold max-w-xl mt-5">
-        Track your medications better
-      </h1>
-
-      <p className="mt-3 text-white/80 max-w-lg">
-        NoDoseOff helps long-term drug users stay on track with their medication, ensuring safety, reminders, and expert guidance.
-      </p>
-        <Link href="/signup">
-
-      <button
-        className="px-12 py-2.5 border border-transparent bg-gradient-to-r from-blue-700 to-blue-900 hover:from-blue-800 hover:to-blue-950 transition-all rounded-full text-sm mt-8 text-white"
-      >
-        Get Started
-      </button>
-      </Link>
-    </div>
+    </section>
   );
 }

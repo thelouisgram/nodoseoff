@@ -1,7 +1,6 @@
 import React, {
   useEffect,
   useMemo,
-  useRef,
   useState,
   useCallback,
 } from "react";
@@ -16,12 +15,17 @@ import { DrugDetailsProps } from "@/types/drug";
 import DrugDetailsHeader from "../drugDetails/DrugDetailsHeader";
 import DrugSummaryCard from "../drugDetails/DrugSummaryCard";
 import DrugDetailsGrid from "../drugDetails/DrugDetailsGrid";
+import DrugCourses from "../drugDetails/DrugCourses";
 import { frequencyToPlaceholder } from "@/utils/dashboard/dashboard";
 import { formatDate } from "@/utils/dashboard/dashboard";
 import { Detail } from "@/types/drug";
-import { convertedTimes, calculateTimePeriod } from "@/utils/drugs";
+import {
+  convertedTimes,
+  calculateTimePeriod,
+  sameDrugName,
+} from "@/utils/drugs";
 import { useAppSelector } from "@/store";
-import { calculateDrugCompliance } from "@/utils/dashboard/drugs";
+import { calculateDrugComplianceByIds } from "@/utils/dashboard/drugs";
 import { format } from "date-fns";
 import Tracker from "../../dashboard/Tracker";
 import DoseCard from "../../dashboard/DoseCard";
@@ -37,7 +41,9 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
   options,
   setOptions,
 }) => {
-  const { activeDrug, activeDrugId, userId } = useAppSelector((state) => state.app);
+  const { activeDrug, activeDrugId, userId } = useAppSelector(
+    (state) => state.app
+  );
 
   const { data: drugs = [] } = useDrugs(userId);
   const { data: schedule = [] } = useSchedule(userId);
@@ -67,7 +73,7 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
           userId: userId!,
           schedule: updatedSchedule,
         });
-      } catch (error) {
+      } catch {
         toast.error(
           "Failed to update dose. Please check your network connection."
         );
@@ -76,19 +82,42 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
     [schedule, userId, updateScheduleMutation]
   );
 
+  const drugsArray = tab === "ongoing" ? drugs : completedDrugs;
+
+  // Courses for this drug name within the current tab only (ongoing ≠ completed)
+  const courses = useMemo(() => {
+    const matches = drugsArray.filter((item) =>
+      sameDrugName(item.drug, activeDrug)
+    );
+    return [...matches].sort((a, b) => {
+      const aEnd = Date.parse(a.end || "") || 0;
+      const bEnd = Date.parse(b.end || "") || 0;
+      return bEnd - aEnd;
+    });
+  }, [drugsArray, activeDrug]);
+
+  // All course IDs in this tab only — never includes the other tab's regimens
+  const courseIds = useMemo(
+    () =>
+      courses.map((c) => String(c.drugId || "").trim()).filter(Boolean),
+    [courses]
+  );
+
   const { todaysDose, yesterdaysDose } = useMemo(() => {
+    const idSet = new Set(courseIds);
     const filterAndSortByDate = (dateString: string): ScheduleItem[] =>
       schedule
         .filter(
           (dose: ScheduleItem) =>
-            dose.date === dateString && dose.drug === activeDrug
+            dose.date === dateString &&
+            idSet.has(String(dose.drugId || "").trim())
         )
         .sort((a, b) => a.time.localeCompare(b.time));
     return {
       todaysDose: filterAndSortByDate(formattedToday),
       yesterdaysDose: filterAndSortByDate(formattedYesterday),
     };
-  }, [schedule, formattedToday, formattedYesterday, activeDrug]);
+  }, [schedule, formattedToday, formattedYesterday, courseIds]);
 
   const allDosesToRender = useMemo(() => {
     const doses = tracker === "Today" ? todaysDose : yesterdaysDose;
@@ -97,36 +126,36 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
       .sort((a, b) => Number(a.completed) - Number(b.completed))
       .map((item: ScheduleItem) => (
         <DoseCard
-          key={`${item.id}-${item.drug}`}
+          key={`${item.id}-${item.drugId}-${item.time}`}
           item={item}
           onUpdateCompleted={updateCompleted}
         />
       ));
   }, [tracker, todaysDose, yesterdaysDose, updateCompleted]);
 
-  const drugsArray = tab === "ongoing" ? drugs : completedDrugs;
-
-  const drugDetailsData = drugsArray?.find((item) => item.drug === activeDrug);
-  const drug = drugDetailsData?.drug;
+  const latestCourse =
+    courses.find((c) => c.drugId && c.drugId === activeDrugId) || courses[0];
 
   const complianceData = useMemo(() => {
-    if (!drug) return null;
+    if (courseIds.length === 0) return null;
+    return calculateDrugComplianceByIds(schedule, courseIds);
+  }, [schedule, courseIds]);
 
-    return calculateDrugCompliance(schedule, activeDrugId);
-  }, [schedule, drug, activeDrugId]);
+  useEffect(() => {
+    if (courses.length === 0) {
+      setActiveView("list");
+    }
+  }, [courses.length, setActiveView]);
 
-  if (!drugDetailsData) {
-    setActiveView("list");
+  if (!latestCourse || !complianceData) {
     return null;
   }
 
-  const { frequency, time, start, end, reminder, route, drugId } =
-    drugDetailsData;
-  const duration = calculateTimePeriod(start, end);
-  console.log(drugId);
-  console.log("active drug", activeDrugId);
-
-  if (!complianceData) return null;
+  const { frequency, time, start, end, reminder, route, drug } = latestCourse;
+  const duration =
+    courses.length > 1
+      ? `${courses.length} courses`
+      : calculateTimePeriod(start, end);
 
   const {
     missedDoses,
@@ -137,12 +166,46 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
   } = complianceData;
 
   const details: Detail[] = [
-    { name: "Frequency", details: frequencyToPlaceholder[frequency] },
-    { name: "Time", details: convertedTimes(time).join(", ") },
+    {
+      name: "Frequency",
+      details:
+        courses.length > 1 &&
+        new Set(courses.map((c) => c.frequency)).size > 1
+          ? "Varies by course"
+          : frequencyToPlaceholder[frequency] || frequency,
+    },
+    {
+      name: "Time",
+      details:
+        courses.length > 1 &&
+        new Set(courses.map((c) => (c.time || []).join(","))).size > 1
+          ? "Varies by course"
+          : convertedTimes(time).join(", "),
+    },
     { name: "Duration", details: duration },
     { name: "Reminder", details: reminder ? "Yes" : "No" },
-    { name: "Start Date", details: formatDate(start) },
-    { name: "End Date", details: formatDate(end) },
+    {
+      name: "Start Date",
+      details:
+        courses.length > 1
+          ? formatDate(
+              [...courses].sort(
+                (a, b) => Date.parse(a.start || "") - Date.parse(b.start || "")
+              )[0]?.start || start
+            )
+          : formatDate(start),
+    },
+    {
+      name: "End Date",
+      details:
+        courses.length > 1
+          ? formatDate(
+              [...courses].sort(
+                (a, b) => Date.parse(b.end || "") - Date.parse(a.end || "")
+              )[0]?.end || end
+            )
+          : formatDate(end),
+    },
     { name: "Total Doses", details: `${totalDoses}` },
     { name: "Completed Doses", details: `${completedDoses}` },
     { name: "Missed Doses", details: `${missedDoses}` },
@@ -150,7 +213,7 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
   ];
 
   return (
-    <div className="h-full w-full  text-gray-800 relative">
+    <div className="relative h-full w-full font-jakarta text-soft-ink">
       <DrugDetailsHeader
         options={options}
         setOptions={setOptions}
@@ -162,33 +225,48 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
         setActiveAction={setActiveAction}
       />
 
-      <h3 className="text-[11px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-3 px-1">
+      <h3 className="mb-3 px-1 text-[11px] font-bold uppercase tracking-widest text-soft-muted">
         Overview
       </h3>
       <DrugSummaryCard
         compliance={compliance}
         drug={drug ?? ""}
         tab={tab}
-        route={route}
+        route={
+          courses.length > 1 &&
+          new Set(courses.map((c) => (c.route || "").toLowerCase())).size > 1
+            ? "Mixed"
+            : route
+        }
       />
 
       {tab === "ongoing" && (
-        <div className="mt-8 mb-2 w-full">
-          <h3 className="text-[11px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-3 px-1">
-            Dose Tracker
-          </h3>
-          <Tracker
-            tracker={tracker}
-            dosesToDisplay={allDosesToRender}
-            totalDoses={allDosesToRender.length}
-            setTracker={setTracker}
-          />
+        <div className="mb-2 mt-8 w-full">
+          <div className="rounded-2xl border border-black/[0.05] bg-white p-4 shadow-soft-sm ss:p-5 md:p-6">
+            <div className="mb-4">
+              <h2 className="text-[18px] font-semibold tracking-tight text-soft-ink">
+                Doses
+              </h2>
+              <p className="mt-0.5 text-[13px] text-soft-muted">
+                Mark doses as you take them
+              </p>
+            </div>
+            <Tracker
+              tracker={tracker}
+              dosesToDisplay={allDosesToRender}
+              totalDoses={allDosesToRender.length}
+              setTracker={setTracker}
+              layoutScope="drugs"
+            />
+          </div>
         </div>
       )}
 
+      <DrugCourses courses={courses} schedule={schedule} />
+
       <div className="mt-8">
-        <h3 className="text-[11px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-3 px-1">
-          Details
+        <h3 className="mb-3 px-1 text-[11px] font-bold uppercase tracking-widest text-soft-muted">
+          {courses.length > 1 ? "Combined details" : "Details"}
         </h3>
         <DrugDetailsGrid details={details} />
       </div>

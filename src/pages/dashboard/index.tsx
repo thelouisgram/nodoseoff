@@ -1,9 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import Loader from "@/components/dashboard/Loader";
-import Head from "next/head";
+import SeoHead from "@/components/seo/SeoHead";
 import { useRouter } from "next/router";
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import SideBar from "@/components/dashboard/SideBar";
@@ -12,25 +12,29 @@ import MainDashboard from "@/components/dashboard/MainDashboard";
 import FormsContainer from "@/components/dashboard/FormsContainer";
 import { useAppSelector, useAppDispatch } from "@/store";
 import { setActiveTab, setIsAuthenticated, setUserId } from "@/store/appSlice";
-import { useDashboardData } from "@/hooks/useDashboardData";
-import { ThemeProvider } from "@/contexts/ThemeContext";
+import { useDashboardBootstrap } from "@/hooks/useDashboardData";
+import { SoftErrorState } from "@/components/ui/soft";
+import ErrorBoundary from "@/components/ui/ErrorBoundary";
 import { motion } from "framer-motion";
 
 const Page = () => {
-  // Use useAuth to get the true user state
   const { user, loading: authLoading, signOut } = useAuth();
   const { activeTab } = useAppSelector((state) => state.app);
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  // Local UI states
   const [tracker, setTracker] = useState("Today");
   const [add, setAdd] = useState(false);
   const [activeAction, setActiveAction] = useState("");
-  const [nav, setNav] = useState(false);
+  const [nav, setNav] = useState(true);
   const [activeModal, setActiveModal] = useState("");
 
-  const { isLoading: dashboardLoading, isError } = useDashboardData(user?.id);
+  const {
+    isLoading: dashboardLoading,
+    isError,
+    error,
+    refetch,
+  } = useDashboardBootstrap(user?.id);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -43,12 +47,6 @@ const Page = () => {
       dispatch(setUserId(user.id));
     }
   }, [user, dispatch]);
-
-  useEffect(() => {
-    if (isError) {
-      toast.error("Could not load your data. Please refresh.");
-    }
-  }, [isError]);
 
   const isLoading = authLoading || (user ? dashboardLoading : true);
 
@@ -65,58 +63,89 @@ const Page = () => {
     }
   };
 
-  if (authLoading || isLoading) {
+  if (authLoading || (isLoading && !isError)) {
     return <Loader />;
   }
 
+  if (isError) {
+    const profileMissing = error?.includes("User profile not found");
+    return (
+      <SoftErrorState
+        title={profileMissing ? "Profile setup incomplete" : "Could not load your data"}
+        description={
+          profileMissing
+            ? "Finish signup setup, then try again."
+            : "Check your connection and retry."
+        }
+        onRetry={() => refetch()}
+      />
+    );
+  }
+
   return (
-    <ThemeProvider>
-      <Suspense fallback={<Loader />}>
-        <Head>
-          <title>NoDoseOff | DashBoard</title>
-        </Head>
-        <motion.section
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          className={`flex relative w-full bg-white dark:bg-slate-950 h-[100dvh] transition-colors duration-300 overflow-hidden`}
+    <>
+      <SeoHead
+        title="Dashboard"
+        description="Your NoDoseOff dashboard for medications, dose tracking, and adherence."
+        path="/dashboard"
+        noIndex
+      />
+      <motion.section
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.25 }}
+        className="relative flex h-[100dvh] w-full overflow-hidden bg-soft-canvas font-jakarta text-soft-ink"
+      >
+        <aside
+          className={`relative hidden shrink-0 flex-col border-r border-black/[0.05] bg-white px-2.5 py-6 transition-all duration-300 md:flex ${
+            nav ? "md:w-[88px] lg:w-[236px]" : "w-[88px]"
+          }`}
         >
-          <div
-            className={`bg-white dark:bg-slate-950 py-10 pl-6 hidden md:flex flex-col justify-between relative font-karla transition-all duration-300
-              border-r border-gray-200 dark:border-slate-900 ${nav ? "md:w-[84px] lg:w-[300px]" : "w-[86px]"}`}
-          >
-            <SideBar
-              activeTab={activeTab}
-              handleSignOut={handleSignOut}
-              nav={nav}
-              setNav={setNav}
-            />
-          </div>
-          {/* Main Dashboard */}
-          <MainDashboard
+          <SideBar
             activeTab={activeTab}
-            isLoading={isLoading}
-            setActiveModal={setActiveModal}
-            activeModal={activeModal}
-            tracker={tracker}
-            setTracker={setTracker}
-            add={add}
-            setAdd={setAdd}
-            activeAction={activeAction}
-            setActiveAction={setActiveAction}
+            handleSignOut={handleSignOut}
+            nav={nav}
+            setNav={setNav}
           />
+        </aside>
+
+        <div className="relative min-w-0 flex-1 overflow-hidden bg-soft-canvas">
+          <ErrorBoundary
+            label="dashboard"
+            onReset={() => dispatch(setActiveTab("Home"))}
+          >
+            <MainDashboard
+              activeTab={activeTab}
+              isLoading={isLoading}
+              setActiveModal={setActiveModal}
+              activeModal={activeModal}
+              tracker={tracker}
+              setTracker={setTracker}
+              add={add}
+              setAdd={setAdd}
+              activeAction={activeAction}
+              setActiveAction={setActiveAction}
+            />
+          </ErrorBoundary>
+        </div>
+
+        <ErrorBoundary
+          label="forms"
+          onReset={() => setActiveModal("")}
+        >
           <FormsContainer
             activeModal={activeModal}
             setActiveModal={setActiveModal}
           />
-          <div className="fixed bottom-4 left-1/2 -translate-x-1/2 md:hidden z-40 w-[90%] max-w-[450px] px-4">
-            <div className="w-full h-[64px] bg-white/70 dark:bg-slate-900/70 backdrop-blur-lg border border-white dark:border-slate-700 flex justify-between items-center px-4 ss:px-8 ss:pr-12 rounded-2xl shadow-xl shadow-black/5 ring-1 ring-black/5">
-              <MobileSidebar activeTab={activeTab} />
-            </div>
+        </ErrorBoundary>
+
+        <div className="fixed bottom-4 left-1/2 z-40 w-[92%] max-w-[420px] -translate-x-1/2 md:hidden">
+          <div className="flex h-[64px] w-full items-center rounded-2xl border border-black/[0.05] bg-white/95 px-2 shadow-soft-md backdrop-blur-lg">
+            <MobileSidebar activeTab={activeTab} />
           </div>
-        </motion.section>
-      </Suspense>
-    </ThemeProvider>
+        </div>
+      </motion.section>
+    </>
   );
 };
 

@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth/server";
 import {
   emailLimiter,
   strictLimiter,
@@ -18,6 +19,8 @@ const publicPaths = [
   "/api/send-mail",
 ];
 
+const neonAuthMiddleware = auth.middleware({ loginUrl: "/login" });
+
 function isPublicPath(pathname: string) {
   return publicPaths.some(
     (p) => pathname === p || pathname.startsWith(`${p}/`)
@@ -26,6 +29,13 @@ function isPublicPath(pathname: string) {
 
 export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // Complete Google/OAuth return: exchange verifier + challenge cookie for
+  // session cookies. Without this, get-session works once via the verifier
+  // query param but /api/auth/token stays 401 and the app bounces to /login.
+  if (request.nextUrl.searchParams.has("neon_auth_session_verifier")) {
+    return neonAuthMiddleware(request);
+  }
 
   // Neon Auth proxy — do not rate-limit (OAuth/session/token chatter).
   if (pathname.startsWith("/api/auth")) {

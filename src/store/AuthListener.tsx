@@ -47,6 +47,14 @@ export default function AuthListener() {
           return;
         }
 
+        // Keep the session even if JWT minting is briefly unavailable.
+        // Clearing auth here caused a login↔dashboard bounce after OAuth.
+        const email = user.email || undefined;
+        dispatch(setAuthUser({ id: user.id, email }));
+        dispatch(setUserId(user.id));
+        dispatch(setIsAuthenticated(true));
+        if (!cancelled) dispatch(setAuthLoading(false));
+
         const token = await getAccessToken();
         if (cancelled) return;
 
@@ -56,19 +64,13 @@ export default function AuthListener() {
             window.setTimeout(() => {
               if (!cancelled) void applySession();
             }, 500 * jwtAttempts);
-            return; // keep authLoading true while retrying
+          } else {
+            console.warn("Session present but JWT unavailable after retries");
           }
-          console.warn("Session present but JWT unavailable after retries");
-          clearAuth();
-          if (!cancelled) dispatch(setAuthLoading(false));
           return;
         }
 
         jwtAttempts = 0;
-        const email = user.email || undefined;
-        dispatch(setAuthUser({ id: user.id, email }));
-        dispatch(setUserId(user.id));
-        dispatch(setIsAuthenticated(true));
 
         if (email && bootstrappedRef.current !== user.id) {
           bootstrappedRef.current = user.id;
@@ -87,7 +89,6 @@ export default function AuthListener() {
             bootstrappedRef.current = null;
           });
         }
-        if (!cancelled) dispatch(setAuthLoading(false));
       } catch (err) {
         console.warn("Session check failed:", err);
         if (!cancelled) {

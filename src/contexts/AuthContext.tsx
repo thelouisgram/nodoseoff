@@ -35,12 +35,11 @@ export function useAuthSignIn() {
   };
 
   const signInWithGoogle = async () => {
+    // Relative path — absolute production URLs can 403 as INVALID_CALLBACKURL
+    // when Neon Auth trusted origins lag deploy aliases.
     const { error } = await authClient.signIn.social({
       provider: "google",
-      callbackURL:
-        typeof window !== "undefined"
-          ? `${window.location.origin}/dashboard`
-          : "/dashboard",
+      callbackURL: "/dashboard",
     });
     if (error) {
       throw new Error(error.message || "Google sign-in failed");

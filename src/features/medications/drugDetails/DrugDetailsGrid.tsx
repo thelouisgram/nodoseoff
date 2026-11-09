@@ -70,16 +70,16 @@ const DrugDetailsGrid: React.FC<DrugDetailsGridProps> = ({ details }) => {
           <motion.div
             key={index}
             variants={itemVariants}
-            className="flex items-center gap-3 rounded-lg border border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-sm"
+            className="flex items-center gap-3 rounded-xl border border-black/[0.05] bg-white p-4 shadow-soft-sm"
           >
             <div className={`flex items-center justify-center ${color}`}>
               <Icon className="size-5" />
             </div>
             <div className="flex flex-col min-w-0">
-              <span className="text-[11px] text-gray-400 dark:text-gray-500 uppercase tracking-wide">
+              <span className="text-[11px] text-gray-400 uppercase tracking-wide">
                 {detail.name}
               </span>
-              <span className="text-sm font-semibold text-gray-900 dark:text-slate-100 truncate capitalize">
+              <span className="text-sm font-semibold text-gray-900 truncate capitalize">
                 {detail.details || "—"}
               </span>
             </div>

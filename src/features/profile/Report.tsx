@@ -21,12 +21,18 @@ import {
   Leaf,
   Loader2,
 } from "lucide-react";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
-import Image from "next/image";
 
 interface ReportProps {
   setTab: Function;
+}
+
+function formatList(items: string[] | string | undefined | null): string {
+  if (Array.isArray(items)) {
+    const cleaned = items.map((s) => String(s || "").trim()).filter(Boolean);
+    return cleaned.length ? cleaned.join(", ") : "None recorded";
+  }
+  const s = String(items || "").trim();
+  return s || "None recorded";
 }
 
 const Report: React.FC<ReportProps> = ({ setTab }) => {
@@ -43,7 +49,9 @@ const Report: React.FC<ReportProps> = ({ setTab }) => {
   const { name, phone, email } = userInfo;
 
   const currentDrugs = drugs.map((d) => d.drug);
-  const allergicDrugs = allergies.map((d) => d?.drug);
+  const allergicDrugs = allergies
+    .map((d) => d?.drug)
+    .filter(Boolean) as string[];
 
   const filterRecentDrugs = (items: DrugProps[]) => {
     const sixMonthsAgo = new Date();
@@ -56,8 +64,12 @@ const Report: React.FC<ReportProps> = ({ setTab }) => {
   };
 
   const recentDrugs = filterRecentDrugs(completedDrugs);
-
   const adherence = calculateOverallCompliance(schedule);
+  const generatedLabel = new Date().toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 
   const reportRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
@@ -66,238 +78,326 @@ const Report: React.FC<ReportProps> = ({ setTab }) => {
     if (!reportRef.current) return;
     setLoading(true);
 
+    let clone: HTMLElement | null = null;
+
     try {
-      const clone = reportRef.current.cloneNode(true) as HTMLElement;
-      clone.style.position = "absolute";
-      clone.style.left = "-9999px";
+      const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
+        import("html2canvas"),
+        import("jspdf"),
+      ]);
+
+      clone = reportRef.current.cloneNode(true) as HTMLElement;
+      clone.style.position = "fixed";
+      clone.style.left = "0";
+      clone.style.top = "0";
       clone.style.width = "794px";
+      clone.style.maxWidth = "794px";
+      clone.style.minHeight = "auto";
+      clone.style.height = "auto";
+      clone.style.margin = "0";
+      clone.style.zIndex = "-1";
+      clone.style.opacity = "1";
+      clone.style.background = "#ffffff";
+      clone.style.pointerEvents = "none";
+      // Lock logo size in the clone so html2canvas can't stretch it
+      clone.querySelectorAll("img[data-report-logo]").forEach((node) => {
+        const img = node as HTMLImageElement;
+        img.style.width = "120px";
+        img.style.height = "auto";
+        img.style.maxWidth = "120px";
+        img.style.maxHeight = "28px";
+        img.removeAttribute("sizes");
+      });
       document.body.appendChild(clone);
+
+      // Wait for logo image(s) to decode before capture
+      await Promise.all(
+        Array.from(clone.querySelectorAll("img")).map((img) =>
+          img.complete
+            ? Promise.resolve()
+            : new Promise<void>((resolve) => {
+                img.onload = () => resolve();
+                img.onerror = () => resolve();
+              })
+        )
+      );
 
       const canvas = await html2canvas(clone, {
         scale: 2,
         useCORS: true,
+        allowTaint: true,
+        backgroundColor: "#ffffff",
         width: 794,
         windowWidth: 794,
+        scrollX: 0,
+        scrollY: 0,
       });
-
-      document.body.removeChild(clone);
 
       const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF("p", "mm", "a4");
-
       const pageWidth = pdf.internal.pageSize.getWidth();
-      const ratio = pageWidth / canvas.width;
+      const pageHeight = pdf.internal.pageSize.getHeight();
 
-      pdf.addImage(imgData, "PNG", 0, 0, pageWidth, canvas.height * ratio);
+      const margin = 0;
+      const usableWidth = pageWidth - margin * 2;
+      const usableHeight = pageHeight - margin * 2;
 
-      pdf.save(`${name.replace(/\s+/g, "_")}_drug_report.pdf`);
+      // Fit the full report on a single page — avoids mid-component page cuts
+      const widthRatio = usableWidth / canvas.width;
+      const heightRatio = usableHeight / canvas.height;
+      const ratio = Math.min(widthRatio, heightRatio);
+
+      const renderWidth = canvas.width * ratio;
+      const renderHeight = canvas.height * ratio;
+      const offsetX = margin + (usableWidth - renderWidth) / 2;
+      const offsetY = margin + (usableHeight - renderHeight) / 2;
+
+      pdf.addImage(
+        imgData,
+        "PNG",
+        offsetX,
+        offsetY,
+        renderWidth,
+        renderHeight,
+        undefined,
+        "FAST"
+      );
+
+      const fileName = `${(name || "patient").replace(/\s+/g, "_")}_medication_report.pdf`;
+      pdf.save(fileName);
       toast.success("PDF downloaded");
     } catch (err) {
       toast.error("Failed to generate PDF");
       console.error(err);
     } finally {
+      if (clone?.parentNode) clone.parentNode.removeChild(clone);
       setLoading(false);
     }
   };
 
-  const SummarySection = ({
-    title,
-    data,
-    icon: Icon,
-    chip,
-  }: {
+  const sections: {
     title: string;
-    data: string[] | string;
-    icon: any;
-    chip: string;
-  }) => (
-    <div className="flex gap-3 p-4 rounded-xl border border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
-      <div
-        className={`h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0 ${chip}`}
-      >
-        <Icon className="size-5" />
-      </div>
-      <div className="min-w-0">
-        <p className="text-[11px] uppercase tracking-wide text-gray-400">
-          {title}
-        </p>
-        <p className="text-sm font-semibold break-words capitalize text-slate-800 dark:text-slate-100">
-          {Array.isArray(data) ? data.join(", ") || "—" : data || "—"}
-        </p>
-      </div>
-    </div>
-  );
+    body: string;
+    icon: typeof Pill;
+    tone: string;
+  }[] = [
+    {
+      title: "Current medications",
+      body: formatList(currentDrugs),
+      icon: Pill,
+      tone: "bg-[#E8EEF5] text-[#002860]",
+    },
+    {
+      title: "Completed (last 6 months)",
+      body: formatList(recentDrugs),
+      icon: History,
+      tone: "bg-[#F6E7D8] text-[#7A5A3C]",
+    },
+    {
+      title: "Allergies",
+      body: formatList(allergicDrugs),
+      icon: AlertTriangle,
+      tone: "bg-[#FFE4EE] text-[#8A3D5A]",
+    },
+    {
+      title: "Over-the-counter",
+      body: formatList(otcDrugs),
+      icon: ShoppingCart,
+      tone: "bg-[#E8EEF5] text-[#002860]",
+    },
+    {
+      title: "Herbs & supplements",
+      body: formatList(herbs),
+      icon: Leaf,
+      tone: "bg-[#E5F6EE] text-[#2F6B4F]",
+    },
+  ];
 
   return (
-    <div className="h-[100dvh] overflow-y-scroll w-full px-6 ss:px-8 pt-10 pb-24 font-Inter text-slate-800">
-      {/* Breadcrumb */}
-      <nav className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1 mb-6 font-karla">
+    <div className="h-[100dvh] w-full overflow-y-scroll px-6 pb-24 pt-10 font-jakarta text-soft-ink ss:px-8">
+      <nav className="mb-6 flex items-center gap-1 text-sm text-soft-muted">
         <button
+          type="button"
           onClick={() => setTab("Account")}
-          className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+          className="transition-colors hover:text-soft-primary"
         >
           Settings
         </button>
-        <span className="dark:text-gray-600">/</span>
-        <span className="text-gray-800 dark:text-slate-100 font-semibold">
-          Report
-        </span>
+        <span>/</span>
+        <span className="font-semibold text-soft-ink">Report</span>
       </nav>
 
-      {/* Header */}
-      <div className="flex flex-col ss:flex-row justify-between gap-6 mb-8">
+      <div className="mb-8 flex flex-col justify-between gap-6 ss:flex-row ss:items-end">
         <div>
-          <h1 className="text-2xl ss:text-3xl font-semibold dark:text-slate-100">
-            Drug Report
+          <h1 className="text-2xl font-semibold tracking-tight ss:text-3xl">
+            Medication report
           </h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Share your drug history with your physician
+          <p className="mt-1 text-sm text-soft-muted">
+            A clean summary you can share with your clinician
           </p>
         </div>
 
         <button
+          type="button"
           onClick={handleDownloadPDF}
           disabled={loading}
-          className="hidden ss:flex h-12 px-4 items-center gap-2 rounded-lg border border-gray-100 dark:border-slate-800 text-slate-800 dark:text-slate-400 disabled:opacity-70 bg-white dark:bg-slate-900 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors"
+          className="hidden h-11 items-center gap-2 rounded-xl bg-soft-primary px-4 text-[14px] font-semibold text-white shadow-soft-sm transition hover:bg-soft-primary/90 disabled:opacity-70 ss:inline-flex"
         >
           {loading ? (
             <>
-              <Loader2 className="size-5 animate-spin" />
-              Generating...
+              <Loader2 className="size-4 animate-spin" />
+              Generating…
             </>
           ) : (
             <>
-              <Download className="size-5" />
+              <Download className="size-4" />
               Download PDF
             </>
           )}
         </button>
       </div>
 
-      {/* ✅ MOBILE (< ss): Download Card */}
-      <div className="ss:hidden flex justify-center mt-12">
+      <div className="mt-8 flex justify-center ss:hidden">
         <button
+          type="button"
           onClick={handleDownloadPDF}
           disabled={loading}
-          className="w-full max-w-sm h-44 flex flex-col items-center justify-center gap-4 rounded-2xl border border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm disabled:opacity-60"
+          className="flex h-44 w-full max-w-sm flex-col items-center justify-center gap-4 rounded-2xl border border-black/[0.05] bg-white shadow-soft-sm disabled:opacity-60"
         >
           {loading ? (
             <>
-              <Loader2 className="size-10 animate-spin text-gray-600 dark:text-gray-400" />
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Generating PDF…
-              </p>
+              <Loader2 className="size-10 animate-spin text-soft-muted" />
+              <p className="text-sm text-soft-muted">Generating PDF…</p>
             </>
           ) : (
             <>
-              <div className="h-16 w-16 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
-                <Download className="size-8 text-slate-800 dark:text-slate-100" />
+              <div className="flex size-16 items-center justify-center rounded-full bg-soft-primary-soft text-soft-primary">
+                <Download className="size-7" />
               </div>
               <div className="text-center">
-                <p className="font-semibold dark:text-slate-100">
-                  Download Drug Report
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  PDF • A4 document
-                </p>
+                <p className="font-semibold text-soft-ink">Download report</p>
+                <p className="text-xs text-soft-muted">PDF · A4</p>
               </div>
             </>
           )}
         </button>
       </div>
 
-      {/* ✅ PREVIEW (>= ss only) */}
-      <div className="hidden ss:flex justify-center">
-        <div className="w-full max-w-[794px]">
+      <div className="ss:flex ss:justify-center">
+        <div className="pointer-events-none fixed left-[-9999px] top-0 w-[794px] ss:pointer-events-auto ss:static ss:w-full ss:max-w-[794px]">
           <div
             ref={reportRef}
-            className="bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 shadow-sm p-8 flex flex-col min-h-[1123px]"
+            className="flex flex-col bg-white text-[#0B1A2E]"
+            style={{ fontFamily: "Manrope, system-ui, sans-serif" }}
           >
-            {/* Header */}
-            <div className="flex justify-between items-center pb-4 border-b border-gray-100 dark:border-slate-800">
-              <div className="relative w-[120px] h-[24px] flex-shrink-0">
-                <Image
-                  src="/assets/logo/logo-with-name-blue.png"
-                  alt="NoDoseOff"
-                  fill
-                  className="block dark:hidden object-contain"
-                  sizes="120px"
-                  priority
-                />
-                <Image
-                  src="/assets/logo/logo-with-name-white.png"
-                  alt="NoDoseOff"
-                  fill
-                  className="hidden dark:block object-contain"
-                  sizes="120px"
-                  priority
-                />
-              </div>
-
-              <div className="text-right text-sm dark:text-slate-300">
-                <p className="font-medium dark:text-slate-100">{name}</p>
-                <p className="text-gray-500 dark:text-gray-400">{email}</p>
-                <p className="text-gray-500 dark:text-gray-400">{phone}</p>
+            {/* Header — former compact logo treatment */}
+            <div className="flex items-center justify-between gap-6 border-b border-black/[0.06] px-10 py-6">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                data-report-logo
+                src="/assets/logo/logo-with-name-blue.png"
+                alt="NoDoseOff"
+                width={120}
+                height={28}
+                style={{
+                  width: 120,
+                  height: "auto",
+                  maxWidth: 120,
+                  maxHeight: 28,
+                  display: "block",
+                  objectFit: "contain",
+                }}
+              />
+              <div className="text-right text-[13px] leading-snug">
+                <p className="font-semibold capitalize text-[#0B1A2E]">
+                  {name || "Patient"}
+                </p>
+                <p className="text-[#6B7280]">{email || "—"}</p>
+                <p className="text-[#6B7280]">{phone || "—"}</p>
               </div>
             </div>
 
-            {/* Content */}
-            <div className="py-6 space-y-6 flex-1">
-              <h1 className="text-xl text-slate-800 dark:text-slate-100 font-bold font-Poppins text-center">
-                Medication History Report
-              </h1>
-              <div>
-                <p className="text-sm font-medium mb-2 dark:text-slate-300">
-                  Drug Compliance
+            <div className="px-10 py-7">
+              <div className="flex items-end justify-between gap-4 border-b border-black/[0.06] pb-5">
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#6B7280]">
+                    Clinical summary
+                  </p>
+                  <h1 className="mt-1 text-[22px] font-bold tracking-tight text-[#002860]">
+                    Medication History Report
+                  </h1>
+                </div>
+                <p className="shrink-0 text-[12px] text-[#6B7280]">
+                  {generatedLabel}
                 </p>
-                <div className="h-2 bg-gray-100 dark:bg-slate-800 rounded-full">
+              </div>
+
+              {/* Adherence */}
+              <div className="mt-6 rounded-xl border border-black/[0.06] bg-[#F4F5F7] p-4">
+                <div className="flex items-end justify-between gap-4">
+                  <div>
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6B7280]">
+                      Overall adherence
+                    </p>
+                    <p className="mt-0.5 text-[12px] text-[#6B7280]">
+                      Based on recorded dose completions
+                    </p>
+                  </div>
+                  <p className="text-[32px] font-bold leading-none tracking-tight text-[#002860]">
+                    {adherence}
+                    <span className="text-[16px] font-semibold text-[#6B7280]">
+                      %
+                    </span>
+                  </p>
+                </div>
+                <div className="mt-3 h-2 overflow-hidden rounded-full bg-white">
                   <div
-                    className="h-full bg-slate-800 dark:bg-blue-500 rounded-full"
-                    style={{ width: `${adherence}%` }}
+                    className="h-full rounded-full bg-[#002860]"
+                    style={{
+                      width: `${Math.min(100, Math.max(0, adherence))}%`,
+                    }}
                   />
                 </div>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                  {adherence}% adherence
+              </div>
+
+              {/* Sections */}
+              <div className="mt-6 space-y-3">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6B7280]">
+                  Medication overview
+                </p>
+                {sections.map(({ title, body, icon: Icon, tone }) => (
+                  <div
+                    key={title}
+                    className="flex gap-3 rounded-xl border border-black/[0.06] bg-white p-3.5"
+                  >
+                    <span
+                      className={`flex size-9 shrink-0 items-center justify-center rounded-lg ${tone}`}
+                    >
+                      <Icon className="size-4" strokeWidth={1.75} />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#6B7280]">
+                        {title}
+                      </p>
+                      <p className="mt-0.5 text-[13px] font-medium leading-relaxed capitalize text-[#0B1A2E]">
+                        {body}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-8 border-t border-black/[0.06] pt-4">
+                <p className="text-[11px] leading-relaxed text-[#6B7280]">
+                  Generated with NoDoseOff for clinical discussion. This report
+                  is informational and does not replace professional medical
+                  advice. Verify details with the patient before changing
+                  treatment.
+                </p>
+                <p className="mt-2 text-[11px] text-[#9CA3AF]">
+                  nodoseoff.com · Report generated {generatedLabel}
                 </p>
               </div>
-
-              <SummarySection
-                title="Ongoing Drugs"
-                data={currentDrugs}
-                icon={Pill}
-                chip="text-indigo-600 bg-indigo-50 dark:bg-indigo-900/50"
-              />
-              <SummarySection
-                title="Past Drugs (Last 6 Months)"
-                data={recentDrugs}
-                icon={History}
-                chip="text-orange-600 bg-orange-50 dark:bg-orange-900/50"
-              />
-              <SummarySection
-                title="Allergies"
-                data={allergicDrugs}
-                icon={AlertTriangle}
-                chip="text-red-600 bg-red-50 dark:bg-red-900/50"
-              />
-
-              <div className="grid grid-cols-2 gap-4">
-                <SummarySection
-                  title="OTC Drugs"
-                  data={otcDrugs || "—"}
-                  icon={ShoppingCart}
-                  chip="text-blue-600 bg-blue-50 dark:bg-blue-900/50"
-                />
-                <SummarySection
-                  title="Herbs & Concoctions"
-                  data={herbs || "—"}
-                  icon={Leaf}
-                  chip="text-green-600 bg-green-50 dark:bg-green-900/50"
-                />
-              </div>
-            </div>
-
-            <div className="pt-4 border-t border-gray-100 dark:border-slate-800 text-xs text-gray-400 dark:text-gray-500 text-center">
-              Report generated via NoDoseOff • {new Date().toLocaleDateString()}
             </div>
           </div>
         </div>

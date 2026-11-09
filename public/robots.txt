@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /admin
+Disallow: /api/
+Disallow: /sso-callback
+Disallow: /reset
+Disallow: /forgetpassword
+
+Sitemap: https://nodoseoff.vercel.app/sitemap.xml

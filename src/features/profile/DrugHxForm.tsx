@@ -80,7 +80,7 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
   return (
     <div
       onClick={handleClose}
-      className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-soft-ink/25 backdrop-blur-sm z-50 flex items-center justify-center p-4"
     >
       {/* Modal Card */}
       <div
@@ -89,17 +89,17 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
           activeModal === "drugHx"
             ? "scale-100 opacity-100"
             : "scale-95 opacity-0"
-        } transition-all duration-200 w-full max-w-md bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-2xl shadow-2xl`}
+        } w-full max-w-md rounded-2xl border border-black/[0.05] bg-white shadow-soft-md transition-all duration-200`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 dark:border-slate-800">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-black/[0.04]">
+          <h2 className="text-xl font-semibold text-soft-ink ">
             Drug History
           </h2>
           <button
             onClick={handleClose}
             disabled={loading}
-            className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-1.5 text-soft-muted hover:text-soft-ink hover:bg-soft-canvas rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             aria-label="Close"
           >
             <X size={20} />
@@ -112,26 +112,26 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
           <div>
             <label
               htmlFor="otcDrugs"
-              className="block text-sm font-medium text-gray-800 dark:text-gray-300 mb-2"
+              className="block text-sm font-medium text-soft-ink  mb-2"
             >
               Over the Counter Drugs
             </label>
-            <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center">
+            <div className="w-full h-[47px] px-4 border border-black/[0.06] rounded-soft-sm focus-within:ring-4 focus-within:ring-soft-ink/[0.04] transition-shadow bg-white flex items-center">
               <select
                 id="otcDrugs"
                 name="otcDrugs"
                 value={formData.otcDrugs !== null ? formData.otcDrugs : ""}
                 onChange={handleSelectChange("otcDrugs")}
                 disabled={loading}
-                className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-gray-100 cursor-pointer dark:[color-scheme:dark]"
+                className="w-full h-full bg-transparent border-none outline-none p-0 text-soft-ink cursor-pointer"
               >
-                <option value="" className="dark:bg-slate-800">
+                <option value="" className="">
                   Select option
                 </option>
-                <option value="yes" className="dark:bg-slate-800">
+                <option value="yes" className="">
                   Yes
                 </option>
-                <option value="no" className="dark:bg-slate-800">
+                <option value="no" className="">
                   No
                 </option>
               </select>
@@ -142,26 +142,26 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
           <div>
             <label
               htmlFor="herbs"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              className="block text-sm font-medium text-soft-ink  mb-2"
             >
               Herbs and Concoctions
             </label>
-            <div className="w-full h-[47px] px-4 border border-gray-300 dark:border-slate-800 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 transition-shadow bg-white dark:bg-slate-900 flex items-center">
+            <div className="w-full h-[47px] px-4 border border-black/[0.06] rounded-soft-sm focus-within:ring-4 focus-within:ring-soft-ink/[0.04] transition-shadow bg-white flex items-center">
               <select
                 id="herbs"
                 name="herbs"
                 value={formData.herbs !== null ? formData.herbs : ""}
                 onChange={handleSelectChange("herbs")}
                 disabled={loading}
-                className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-900 dark:text-gray-100 cursor-pointer dark:[color-scheme:dark]"
+                className="w-full h-full bg-transparent border-none outline-none p-0 text-soft-ink cursor-pointer"
               >
-                <option value="" className="dark:bg-slate-800">
+                <option value="" className="">
                   Select option
                 </option>
-                <option value="yes" className="dark:bg-slate-800">
+                <option value="yes" className="">
                   Yes
                 </option>
-                <option value="no" className="dark:bg-slate-800">
+                <option value="no" className="">
                   No
                 </option>
               </select>
@@ -170,14 +170,14 @@ const DrugHxForm: React.FC<DrugHxFormProps> = ({
         </form>
 
         {/* Footer with Submit Button */}
-        <div className="px-6 py-4 border-t border-gray-100 dark:border-slate-800">
+        <div className="px-6 py-4 border-t border-black/[0.04]">
           <button
             onClick={handleClick}
             disabled={loading}
-            className={`w-full py-3 px-4 rounded-lg font-medium text-white transition-all flex items-center justify-center gap-2 ${
+            className={`w-full py-3 px-4 rounded-soft-md font-semibold text-white transition-all flex items-center justify-center gap-2 ${
               loading
-                ? "bg-blue-400 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700 active:scale-[0.98]"
+                ? "bg-soft-primary/50 cursor-not-allowed"
+                : "bg-soft-primary hover:bg-soft-primary/90 active:scale-[0.98]"
             }`}
           >
             {loading ? (

@@ -3,22 +3,32 @@
 import Link from "next/link";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useRouter } from "next/router";
-import { createClient } from "@/lib/supabase/client";
-import Head from "next/head";
+import { apiJson } from "@/lib/api-client";
+import SeoHead from "@/components/seo/SeoHead";
 import ReCAPTCHA from "react-google-recaptcha";
 import { sendMail } from "@/utils/sendEmail";
 import { generateWelcomeEmail } from "@/emails/welcomeMail";
-import { useAuth } from "@/contexts/AuthContext";
-import { EyeOff, Eye, Pill } from "lucide-react";
+import { useAuthSignUp } from "@/contexts/AuthContext";
+import { useGuestOnlyRedirect } from "@/hooks/useGuestOnlyRedirect";
+import Loader from "@/components/dashboard/Loader";
+import { EyeOff, Eye } from "lucide-react";
 import { useAppDispatch } from "@/store";
 import { setIsAuthenticated, setUserId } from "@/store/appSlice";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
+import {
+  SoftButton,
+  SoftCard,
+  SoftInput,
+  SoftLabel,
+  SoftPage,
+} from "@/components/ui/soft";
 
 const CreateAccount = () => {
-  const supabase = createClient();
   const router = useRouter();
-  const { signUp } = useAuth();
+  const { signUp, signUpWithGoogle, ready } = useAuthSignUp();
+  const { loading: authLoading, isRedirecting, isGuest } = useGuestOnlyRedirect();
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -37,17 +47,24 @@ const CreateAccount = () => {
   const [loading, setLoading] = useState(false);
   const [captchaToken, setCaptchaToken] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData({ ...formData, [name]: value });
   };
 
-  const handleConfirmPassword = (e: ChangeEvent<HTMLInputElement>) => {
-    setConfirmPassword(e.target.value);
+  const handleGoogle = async () => {
+    setGoogleLoading(true);
+    setErrorMessage("");
+    try {
+      await signUpWithGoogle();
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "Google sign-up failed.";
+      setErrorMessage(message);
+      setGoogleLoading(false);
+    }
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -57,22 +74,16 @@ const CreateAccount = () => {
       setErrorMessage("Passwords do not match.");
       return;
     }
-
     if (!captchaToken) {
       setErrorMessage("Please complete the CAPTCHA verification.");
       return;
     }
-
-    const fieldsEmpty = Object.values(formData).some((field) => field === "");
-    if (fieldsEmpty) {
+    if (Object.values(formData).some((field) => field === "")) {
       setErrorMessage("Please fill in all fields.");
       return;
     }
-
-    if (formData.password.length < 6) {
-      setErrorMessage(
-        "Please enter a password that is at least 6 characters long."
-      );
+    if (formData.password.length < 8) {
+      setErrorMessage("Please enter a password that is at least 8 characters long.");
       return;
     }
 
@@ -82,7 +93,8 @@ const CreateAccount = () => {
     try {
       const { user: signedUpUser, error: signUpError } = await signUp(
         formData.email,
-        formData.password
+        formData.password,
+        formData.fullName
       );
 
       if (signUpError || !signedUpUser) {
@@ -94,269 +106,226 @@ const CreateAccount = () => {
       }
 
       const userId = signedUpUser.id;
+      dispatch(setUserId(userId));
+      dispatch(setIsAuthenticated(true));
 
-      if (userId) {
-        dispatch(setUserId(userId));
-        dispatch(setIsAuthenticated(true));
-
-        const { error: userError } = await supabase.from("users").insert({
+      await apiJson("/api/users/bootstrap", {
+        method: "POST",
+        json: {
           name: formData.fullName,
           phone: formData.phoneNumber,
           email: formData.email,
-          userId: userId,
-        });
+        },
+      });
 
-        if (userError) throw userError;
-
-        await supabase.from("schedule").insert({
-          userId: userId,
-          schedule: [],
-        });
-
-        await supabase.from("completedDrugs").insert({
-          userId: userId,
-          completedDrugs: [],
-        });
-
-        await supabase.from("drugHistory").insert({
-          userId: userId,
-          otcDrugs: "",
-          herbs: "",
-        });
-
+      try {
         const { html, subject } = generateWelcomeEmail();
         await sendMail(formData.email, html, subject);
-
-        router.push("/dashboard");
+      } catch (mailError) {
+        console.warn("Welcome email failed:", mailError);
       }
+
+      router.push("/dashboard");
     } catch (error) {
       console.error("Unexpected error:", error);
-      setErrorMessage(
-        "An unexpected error occurred during profile creation. Please try again."
-      );
+      const detail = error instanceof Error ? error.message : "Unknown error";
+      let friendly = detail;
+      try {
+        const parsed = JSON.parse(detail) as { error?: string };
+        if (parsed.error) friendly = parsed.error;
+      } catch {
+        /* not JSON */
+      }
+      if (friendly.includes("Unauthorized") || detail.includes("401")) {
+        friendly =
+          "Your account was created but we could not save your profile. Sign in and try again.";
+      }
+      setErrorMessage(friendly || "An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
+  if (authLoading || isRedirecting || !isGuest) {
+    return <Loader />;
+  }
+
   return (
     <>
-      <Head>
-        <title>Create Account - NoDoseOff</title>
-      </Head>
+      <SeoHead
+        title="Create account"
+        description="Create a free NoDoseOff account to track medications, get dose reminders, and stay consistent."
+        path="/signup"
+      />
 
-      <div className="min-h-screen flex">
-        {/* Right Side - Form */}
-        <div className="flex-1 flex items-center justify-center p-8 bg-gray-50 dark:bg-slate-950 transition-colors duration-300">
+      <SoftPage>
+        <div className="flex min-h-screen items-center justify-center p-5 ss:p-8">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="w-full max-w-md"
+            transition={{ duration: 0.45 }}
+            className="w-full max-w-[440px]"
           >
-            {/* Mobile Logo */}
-            <Link href="/">
-              <div className="w-full flex justify-center">
-                <Image
-                  src="/assets/logo/logo-with-name-blue.png"
-                  width={180}
-                  height={60}
-                  alt="logo"
-                  className="mb-10 relative z-10 dark:hidden"
-                />
-                <Image
-                  src="/assets/logo/logo-with-name-white.png"
-                  width={180}
-                  height={60}
-                  alt="logo"
-                  className="mb-10 relative z-10 hidden dark:block"
-                />
-              </div>
+            <Link href="/" className="mb-8 flex justify-center">
+              <Image
+                src="/assets/logo/logo-with-name-blue.png"
+                width={160}
+                height={48}
+                alt="NoDoseOff logo"
+                className="h-10 w-auto"
+              />
             </Link>
 
-            <div className="mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-2">
-                Create Account
+            <SoftCard className="p-7 ss:p-9">
+              <p className="mb-2 text-[13px] font-medium text-soft-muted">
+                Get started
+              </p>
+              <h2 className="text-[28px] font-bold tracking-tight text-soft-ink">
+                Create account
               </h2>
-              <p className="text-gray-600 dark:text-gray-400">
-                Start managing your medications today
+              <p className="mb-7 mt-2 text-[15px] leading-relaxed text-soft-muted">
+                Start a calm medication plan you can actually stick with.
               </p>
-            </div>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div>
-                <label
-                  htmlFor="fullName"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
-                >
-                  Full Name
-                </label>
-                <input
-                  id="fullName"
-                  name="fullName"
-                  type="text"
-                  className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500"
-                  placeholder="Full Name"
-                  value={formData.fullName}
-                  onChange={handleInputChange}
-                  required
+              <div className="mb-4 space-y-4">
+                <GoogleSignInButton
+                  onClick={handleGoogle}
+                  loading={googleLoading}
+                  label="Sign up with Google"
                 />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
-                >
-                  Email Address
-                </label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500"
-                  placeholder="Email Address"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="phoneNumber"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
-                >
-                  Phone Number
-                </label>
-                <input
-                  id="phoneNumber"
-                  name="phoneNumber"
-                  type="tel"
-                  className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500"
-                  placeholder="Phone Number"
-                  value={formData.phoneNumber}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
-                >
-                  Password
-                </label>
-                <div className="relative">
-                  <input
-                    id="password"
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    className="w-full px-4 py-2.5 pr-12 bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500"
-                    placeholder="Password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    required
-                  />
-                  <button
-                    type="button"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 transition"
-                    onClick={() => setShowPassword(!showPassword)}
-                    aria-label={
-                      showPassword ? "Hide password" : "Show password"
-                    }
-                  >
-                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                  </button>
-                </div>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="confirmPassword"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
-                >
-                  Confirm Password
-                </label>
-                <div className="relative">
-                  <input
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
-                    className="w-full px-4 py-2.5 pr-12 bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500"
-                    placeholder="Confirm Password"
-                    value={confirmPassword}
-                    onChange={handleConfirmPassword}
-                    required
-                  />
-                  <button
-                    type="button"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 transition"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    aria-label={
-                      showConfirmPassword ? "Hide password" : "Show password"
-                    }
-                  >
-                    {showConfirmPassword ? (
-                      <EyeOff size={20} />
-                    ) : (
-                      <Eye size={20} />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              {errorMessage && (
-                <div className="flex items-start gap-3 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 rounded-lg">
-                  <svg
-                    className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <circle cx="12" cy="12" r="10" strokeWidth="2" />
-                    <line x1="12" y1="8" x2="12" y2="12" strokeWidth="2" />
-                    <line x1="12" y1="16" x2="12.01" y2="16" strokeWidth="2" />
-                  </svg>
-                  <span className="text-sm text-red-800 dark:text-red-200">
-                    {errorMessage}
+                <div className="relative flex items-center py-1">
+                  <div className="flex-grow border-t border-black/[0.06]" />
+                  <span className="mx-3 flex-shrink text-[12px] font-medium uppercase tracking-wide text-soft-muted">
+                    or email
                   </span>
+                  <div className="flex-grow border-t border-black/[0.06]" />
                 </div>
-              )}
-
-              <div className="flex justify-center">
-                <ReCAPTCHA
-                  sitekey={recaptchaSiteKey}
-                  onChange={(token) => setCaptchaToken(token || "")}
-                />
               </div>
 
-              <button
-                type="submit"
-                className="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center"
-                disabled={loading}
-              >
-                {loading ? (
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                ) : (
-                  "Create Account"
-                )}
-              </button>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {(
+                  [
+                    { id: "fullName", label: "Full name", type: "text", placeholder: "Your name" },
+                    { id: "email", label: "Email", type: "email", placeholder: "you@example.com" },
+                    { id: "phoneNumber", label: "Phone", type: "tel", placeholder: "Phone number" },
+                  ] as const
+                ).map((field) => (
+                  <div key={field.id}>
+                    <SoftLabel htmlFor={field.id}>{field.label}</SoftLabel>
+                    <SoftInput
+                      id={field.id}
+                      name={field.id}
+                      type={field.type}
+                      placeholder={field.placeholder}
+                      value={formData[field.id]}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                ))}
 
-              <p className="text-center text-sm text-gray-600 dark:text-gray-400">
-                Already have an account?{" "}
-                <Link
-                  href="/login"
-                  className="text-blue-600 dark:text-blue-400 font-semibold hover:text-blue-700 dark:hover:text-blue-300 transition"
+                <div>
+                  <SoftLabel htmlFor="password">Password</SoftLabel>
+                  <div className="relative">
+                    <SoftInput
+                      id="password"
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="At least 8 characters"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      className="pr-12"
+                      minLength={8}
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-soft-muted hover:text-soft-ink"
+                      onClick={() => setShowPassword(!showPassword)}
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <SoftLabel htmlFor="confirmPassword">Confirm password</SoftLabel>
+                  <div className="relative">
+                    <SoftInput
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="Confirm password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="pr-12"
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-soft-muted hover:text-soft-ink"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      aria-label={
+                        showConfirmPassword ? "Hide password" : "Show password"
+                      }
+                    >
+                      {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                </div>
+
+                {errorMessage && (
+                  <div className="rounded-soft-md border border-soft-pink bg-soft-pink px-4 py-3 text-sm text-soft-pink-ink">
+                    {errorMessage}
+                  </div>
+                )}
+
+                <div className="flex justify-center overflow-hidden rounded-soft-md">
+                  <ReCAPTCHA
+                    sitekey={recaptchaSiteKey}
+                    onChange={(token) => setCaptchaToken(token || "")}
+                  />
+                </div>
+
+                <p className="text-[12px] leading-relaxed text-soft-muted">
+                  By creating an account you agree to our{" "}
+                  <Link href="/terms" className="font-semibold text-soft-ink underline">
+                    Terms
+                  </Link>{" "}
+                  and{" "}
+                  <Link href="/privacy" className="font-semibold text-soft-ink underline">
+                    Privacy Policy
+                  </Link>
+                  .
+                </p>
+
+                <SoftButton
+                  type="submit"
+                  className="w-full"
+                  disabled={loading || !ready}
                 >
-                  Sign in
-                </Link>
-              </p>
-            </form>
+                  {loading ? (
+                    <span className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                  ) : (
+                    "Create account"
+                  )}
+                </SoftButton>
+
+                <p className="pt-1 text-center text-[14px] text-soft-muted">
+                  Already have an account?{" "}
+                  <Link
+                    href="/login"
+                    className="font-semibold text-soft-ink hover:underline"
+                  >
+                    Sign in
+                  </Link>
+                </p>
+              </form>
+            </SoftCard>
           </motion.div>
         </div>
-      </div>
+      </SoftPage>
     </>
   );
 };

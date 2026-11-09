@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface AppState {
   userId: string;
@@ -13,7 +13,7 @@ interface AppState {
 const initialState: AppState = {
   userId: "",
   isAuthenticated: false,
-  activeTab: "Dashboard",
+  activeTab: "Home",
   activeDrug: "",
   activeDrugId: "",
   activeAllergy: "",
@@ -21,7 +21,7 @@ const initialState: AppState = {
 };
 
 const appSlice = createSlice({
-  name: 'app',
+  name: "app",
   initialState,
   reducers: {
     setUserId: (state, action: PayloadAction<string>) => {
@@ -45,6 +45,7 @@ const appSlice = createSlice({
     setSearchedWord: (state, action: PayloadAction<string>) => {
       state.searchedWord = action.payload;
     },
+    resetAppState: () => ({ ...initialState }),
   },
 });
 
@@ -56,6 +57,7 @@ export const {
   setActiveDrugId,
   setActiveAllergy,
   setSearchedWord,
+  resetAppState,
 } = appSlice.actions;
 
 export default appSlice.reducer;

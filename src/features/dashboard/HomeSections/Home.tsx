@@ -1,9 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useMemo, useCallback } from "react";
 import { format } from "date-fns";
-import dayjs from "dayjs";
 import { toast } from "sonner";
 import {
   useDrugs,
@@ -14,16 +13,19 @@ import {
 import DailyReports from "./DailyReports";
 import Tracker from "../Tracker";
 import DoseCard from "../DoseCard";
-import { calculateClosestDoseCountdown } from "@/utils/dashboard/dashboard";
+import SummaryCards from "./SummaryCards";
+import WeekStreak from "./WeekStreak";
+import HomeAlerts from "./HomeAlerts";
+import NextAppointment from "./NextAppointment";
+import AmandaShortcuts from "./AmandaShortcuts";
 
 import { ScheduleItem } from "@/types/dashboard";
-import SummaryCards from "./SummaryCards";
 import Header from "./Header";
 import { useAppSelector } from "@/store";
 import FloatingAddActions from "../../medications/drugs/FloatingAddActions";
 
 interface HomeProps {
-  isLoading: boolean;
+  isLoading?: boolean;
   setActiveModal: (string: string) => void;
   setTracker: (value: string) => void;
   tracker: string;
@@ -33,7 +35,6 @@ interface HomeProps {
 }
 
 const Home: React.FC<HomeProps> = ({
-  isLoading,
   setActiveModal,
   setTracker,
   tracker,
@@ -41,26 +42,11 @@ const Home: React.FC<HomeProps> = ({
   setAdd,
   activeModal,
 }) => {
-  /* Redux Replacement with React Query Hooks */
   const { userId } = useAppSelector((state) => state.app);
-
-  const { data: drugs = [] } = useDrugs(userId);
   const { data: schedule = [] } = useSchedule(userId);
+  const { data: drugs = [] } = useDrugs(userId);
 
   const updateScheduleMutation = useUpdateScheduleMutation();
-  // Removed
-  const [countDown, setCountDown] = useState("");
-
-  /** Countdown for next dose */
-  useEffect(() => {
-    const calculateAndSetCountdown = () => {
-      const newCountdown = calculateClosestDoseCountdown(schedule);
-      setCountDown(newCountdown);
-    };
-    calculateAndSetCountdown();
-    const intervalId = setInterval(calculateAndSetCountdown, 1000);
-    return () => clearInterval(intervalId);
-  }, [drugs, isLoading]);
 
   /** Dates */
   const { formattedToday, formattedYesterday } = useMemo(() => {
@@ -71,21 +57,6 @@ const Home: React.FC<HomeProps> = ({
       formattedYesterday: format(yesterday, "yyyy-MM-dd"),
     };
   }, []);
-
-  /** Percentage completed */
-  const percentageCompleted = useMemo(() => {
-    const now = dayjs();
-    const drugItems = schedule.filter((dose: ScheduleItem) => {
-      const doseTime = dayjs(`${dose.date}T${dose.time}`);
-      // Count doses that were either completed or were scheduled in the past
-      return dose.completed || doseTime.isBefore(now);
-    });
-
-    if (drugItems.length === 0) return 0;
-
-    const completedDoses = drugItems.filter((dose) => dose.completed).length;
-    return Math.round((completedDoses / drugItems.length) * 100);
-  }, [schedule]);
 
   /** Filter doses by date */
   const { todaysDose, yesterdaysDose } = useMemo(() => {
@@ -137,24 +108,44 @@ const Home: React.FC<HomeProps> = ({
   }, [tracker, todaysDose, yesterdaysDose, updateCompleted]);
 
   return (
-    <div className="w-full h-[100dvh] overflow-y-scroll md:py-16 md:px-12 pt-10 pb-24 md:pb-20 text-navyBlue dark:text-slate-100 font-karla relative">
-      {/* Header */}
+    <div className="relative h-[100dvh] w-full overflow-y-scroll bg-soft-canvas px-0 pb-24 pt-10 font-jakarta text-soft-ink md:px-12 md:py-16 md:pb-20">
       <Header />
-      {/* Summary Cards */}
       <SummaryCards />
-      {/* Tracker  */}
-      <div className="px-4 ss:px-8 md:px-0">
-        <Tracker
-          tracker={tracker}
-          dosesToDisplay={allDosesToRender}
-          totalDoses={allDosesToRender.length}
-          setTracker={setTracker}
-        />
+      <div className="mx-4 mb-4 ss:mx-8 md:mx-0">
+        <div className="rounded-2xl border border-black/[0.05] bg-white p-4 shadow-soft-sm ss:p-5 md:p-6">
+          <div className="mb-4">
+            <h2 className="text-[18px] font-semibold tracking-tight text-soft-ink">
+              Doses
+            </h2>
+            <p className="mt-0.5 text-[13px] text-soft-muted">
+              Mark doses as you take them
+              {drugs.length > 0
+                ? ` · ${drugs.length} active med${drugs.length === 1 ? "" : "s"}`
+                : ""}
+            </p>
+          </div>
+          <Tracker
+            tracker={tracker}
+            dosesToDisplay={allDosesToRender}
+            totalDoses={allDosesToRender.length}
+            setTracker={setTracker}
+            layoutScope="home"
+          />
+        </div>
       </div>
-      {/* Daily Reports */}
+      <HomeAlerts
+        schedule={schedule}
+        drugs={drugs}
+        onCatchUp={async (item) => {
+          if (item.completed) return;
+          await updateCompleted(item);
+        }}
+      />
+      <NextAppointment />
+      <WeekStreak schedule={schedule} />
+      <AmandaShortcuts drugs={drugs} />
       <DailyReports />
 
-      {/* Floating Add Actions */}
       <FloatingAddActions
         add={add}
         setAdd={setAdd}

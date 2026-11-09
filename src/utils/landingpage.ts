@@ -1,41 +1,17 @@
 export const links = [
   { title: "Home", id: "home" },
   { title: "Features", id: "features" },
-  { title: "How it works", id: "steps" },
-  { title: "Tips", id: "tips" },
-];
-
-export const steps = [
-  {
-    title: "Create a NoDoseOff Account",
-    desc: "Creating an account is the first step to ensuring absolute drug compliance, granting access to vital tools for managing medication.",
-  },{
-    title: "Add and Track Medication",
-    desc: "Input your prescribed medications into the app, including dosage, frequency, and start/end dates.",
-  },{
-    title: "Add Allergies",
-    desc: "Incorporate allergies for a thorough medication profile.",
-  },{
-    title: "Monitoring and Reporting",
-    desc: "The app tracks users' medication adherence over time, providing insights into their compliance behavior.",
-  },
+  { title: "AMANDA 6", id: "amanda" },
+  { title: "How it works", id: "how-it-works" },
+  { title: "Who it’s for", id: "who" },
 ];
 
 export const days = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
 export const scrollToSection = (sectionId: string) => {
-    const section = document.getElementById(sectionId);
+  const section = document.getElementById(sectionId);
 
-    if (section) {
-        section.scrollIntoView({ behavior: 'smooth' });
-    }
+  if (section) {
+    section.scrollIntoView({ behavior: "smooth" });
+  }
 };
-
-
-export const items = [
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 4',
-    'Item 5',
-  ];

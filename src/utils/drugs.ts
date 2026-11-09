@@ -1,43 +1,91 @@
-export const drugsTab: string[] =[
-   "ongoing", "completed", "allergies" 
-]
+import { DrugProps } from "@/types/dashboard";
+
+export const drugsTab: string[] = [
+  "ongoing",
+  "completed",
+  "allergies",
+];
+
+/** One list row per drug name; courses keep every distinct regimen. */
+export type GroupedDrug = DrugProps & {
+  courses: DrugProps[];
+  courseCount: number;
+};
+
+function normalizeDrugName(name: string) {
+  return name.trim().toLowerCase();
+}
+
+function courseSortKey(course: DrugProps) {
+  const end = Date.parse(course.end || "");
+  const start = Date.parse(course.start || "");
+  return (Number.isNaN(end) ? 0 : end) * 1e13 + (Number.isNaN(start) ? 0 : start);
+}
+
+/** Collapse duplicate drug names into one row (latest course as summary). */
+export function groupDrugsByName(drugs: DrugProps[]): GroupedDrug[] {
+  const map = new Map<string, DrugProps[]>();
+
+  for (const drug of drugs) {
+    const key = normalizeDrugName(drug.drug || "");
+    if (!key) continue;
+    const list = map.get(key) ?? [];
+    list.push(drug);
+    map.set(key, list);
+  }
+
+  const grouped: GroupedDrug[] = [];
+  for (const courses of map.values()) {
+    const sorted = [...courses].sort(
+      (a, b) => courseSortKey(b) - courseSortKey(a)
+    );
+    const latest = sorted[0];
+    grouped.push({
+      ...latest,
+      courses: sorted,
+      courseCount: sorted.length,
+    });
+  }
+
+  return grouped.sort((a, b) =>
+    a.drug.localeCompare(b.drug, undefined, { sensitivity: "base" })
+  );
+}
+
+export function sameDrugName(a: string, b: string) {
+  return normalizeDrugName(a) === normalizeDrugName(b);
+}
 
 export function calculateTimePeriod(startDate: string, endDate: string): string {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    const durationInDays = Math.floor(
-      (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
-    );
-    const durationInYears = Math.floor(durationInDays / 365);
-    const remainingDaysAfterYears = durationInDays % 365;
+  const start = new Date(startDate);
+  const end = new Date(endDate);
 
-    const durationInMonths = Math.floor(remainingDaysAfterYears / 30);
-    const remainingDaysAfterMonths = remainingDaysAfterYears % 30;
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+    return "—";
+  }
 
-    const durationInWeeks = Math.floor(remainingDaysAfterMonths / 7);
-    const remainingDaysAfterWeeks = remainingDaysAfterMonths % 7;
+  const durationInDays = Math.max(
+    0,
+    Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))
+  );
 
-    const durationText: string[] = [];
+  if (durationInDays <= 0) return "< 1 day";
+  if (durationInDays === 1) return "1 day";
 
-    if (durationInYears > 0) {
-      durationText.push(`${durationInYears} year${durationInYears > 1 ? "s" : ""}`);
-    }
+  const years = Math.floor(durationInDays / 365);
+  const afterYears = durationInDays % 365;
+  const months = Math.floor(afterYears / 30);
+  const afterMonths = afterYears % 30;
+  const weeks = Math.floor(afterMonths / 7);
+  const days = afterMonths % 7;
 
-    if (durationInMonths > 0) {
-      durationText.push(`${durationInMonths} month${durationInMonths > 1 ? "s" : ""}`);
-    }
+  const parts: string[] = [];
+  if (years > 0) parts.push(`${years}y`);
+  if (months > 0) parts.push(`${months}mo`);
+  if (weeks > 0) parts.push(`${weeks}w`);
+  if (days > 0) parts.push(`${days}d`);
 
-    if (durationInWeeks > 0) {
-      durationText.push(`${durationInWeeks} week${durationInWeeks > 1 ? "s" : ""}`);
-    }
-
-    if (remainingDaysAfterWeeks > 0) {
-      durationText.push(`${remainingDaysAfterWeeks} day${remainingDaysAfterWeeks > 1 ? "s" : ""}`);
-    } else {
-      durationText.push(`1 day`);
-    }
-
-    return durationText.join(", ");
+  return parts.join(" ") || "—";
 }
 
 export const convertedTimes = (times: string[]) => {

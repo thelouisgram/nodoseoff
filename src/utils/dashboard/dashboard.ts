@@ -1,5 +1,5 @@
 import { DrugProps, ScheduleItem } from "../../types/dashboard";
-import { Home, Pill, User } from "lucide-react";
+import { House, Tablets, Sparkles, CircleUser } from "lucide-react";
 import { LucideIcon } from "lucide-react";
 
 interface TabItem {
@@ -7,10 +7,12 @@ interface TabItem {
   icon: LucideIcon;
 }
 
+/** Icons chosen for similar optical weight/bounding shape in the sidebar. */
 export const tabs: TabItem[] = [
-  { name: "Home", icon: Home },
-  { name: "Drugs", icon: Pill },
-  { name: "Account", icon: User },
+  { name: "Home", icon: House },
+  { name: "Drugs", icon: Tablets },
+  { name: "AMANDA 6", icon: Sparkles },
+  { name: "Account", icon: CircleUser },
 ];
 
 export const days = [
@@ -122,21 +124,34 @@ export const generateSchedule = (drugDetails: DrugProps) => {
 };
 
 function calculateNextDoseTime(schedule: ScheduleItem[]): Date | null {
-  let nextDoseTime: Date | null = null;
+  return getNextUpcomingDose(schedule)?.at ?? null;
+}
 
-  schedule.forEach((dose) => {
-    const doseTime = new Date(`${dose?.date}T${dose?.time}`);
-    const currentTime = new Date();
+/** Next incomplete dose still in the future. */
+export function getNextUpcomingDose(schedule: ScheduleItem[]): {
+  dose: ScheduleItem;
+  at: Date;
+} | null {
+  let best: { dose: ScheduleItem; at: Date } | null = null;
+  const now = new Date();
 
-    if (
-      doseTime > currentTime &&
-      (!nextDoseTime || doseTime < nextDoseTime)
-    ) {
-      nextDoseTime = doseTime;
-    }
-});
+  for (const dose of schedule) {
+    if (dose.completed) continue;
+    const at = new Date(`${dose.date}T${dose.time}`);
+    if (Number.isNaN(at.getTime()) || at <= now) continue;
+    if (!best || at < best.at) best = { dose, at };
+  }
 
-  return nextDoseTime;
+  return best;
+}
+
+export function formatDoseClock(time: string): string {
+  const [hourString, minutes = "00"] = time.split(":");
+  const hour = parseInt(hourString, 10);
+  if (Number.isNaN(hour)) return time;
+  const period = hour < 12 ? "AM" : "PM";
+  const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+  return `${displayHour}:${minutes.padStart(2, "0")} ${period}`;
 }
 
 export function calculateClosestDoseCountdown(schedule: ScheduleItem[]): string {

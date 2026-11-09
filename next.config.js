@@ -1,18 +1,26 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-   images: {
+  images: {
+    qualities: [75, 80, 100],
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'opshqmqagtfidynwftzk.supabase.co',
-        port: '',
-        pathname: '/storage/v1/object/public/profile-picture/**',
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "opshqmqagtfidynwftzk.supabase.co",
+        pathname: "/storage/v1/object/public/profile-picture/**",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+        pathname: "/**",
       },
     ],
-    domains: ["images.unsplash.com"], // add any external image host here
-
   },
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

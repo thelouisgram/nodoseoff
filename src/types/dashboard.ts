@@ -15,6 +15,7 @@ export interface ScheduleItem {
  }
 
  export interface DrugProps {
+  id?: number;
   drug: string;
   end: string;
   frequency: string;
@@ -23,4 +24,12 @@ export interface ScheduleItem {
   start: string;
   time: string[];
   drugId: string;
+}
+
+/** Next clinician appointment saved from the Home tab */
+export interface Appointment {
+  doctor: string;
+  location: string;
+  startsAt: string;
+  notes: string;
 }

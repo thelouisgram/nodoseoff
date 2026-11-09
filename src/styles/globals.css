@@ -1,20 +1,31 @@
-@import url("https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Reem+Kufi+Fun:wght@400..700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Reem+Kufi+Fun:wght@400..700&display=swap");
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
   -webkit-tap-highlight-color: transparent;
+  --soft-canvas: #f4f5f7;
+  --soft-card: #ffffff;
+  --soft-ink: #0b1a2e;
+  --soft-muted: #6b7280;
+  /* Logo navy from logo-blue.png */
+  --soft-primary: #002860;
+  --soft-primary-soft: #e8eef5;
+  --soft-shadow: 0 1px 2px rgba(11, 26, 46, 0.04),
+    0 8px 24px rgba(11, 26, 46, 0.05);
+  --soft-shadow-sm: 0 1px 1px rgba(11, 26, 46, 0.03),
+    0 4px 12px rgba(11, 26, 46, 0.04);
+  color-scheme: light;
 }
 
-/* Default background colors for html/body */
+/* Soft canvas — Manrope via next/font (--font-manrope) */
 html,
 body {
-  background-color: #ffffff;
+  background-color: var(--soft-canvas);
+  color: var(--soft-ink);
+  font-family: var(--font-manrope), system-ui, sans-serif;
+  font-feature-settings: "ss01" on, "cv11" on;
+  letter-spacing: -0.011em;
 }
 
 .dark html,
@@ -32,6 +43,54 @@ html.dark body {
   50% {
     transform: translateY(-30px);
   }
+}
+
+@keyframes landing-kenburns {
+  0% {
+    transform: scale(1.04) translate3d(0, 0, 0);
+  }
+  100% {
+    transform: scale(1.08) translate3d(-0.8%, 0.4%, 0);
+  }
+}
+
+/* Soft section enter (CSS fallback; GPU-friendly) */
+@keyframes landing-fade-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.landing-hero-media {
+  transform: scale(1.04);
+  /* Only animate on larger screens — cheaper than full-bleed mobile ken burns */
+}
+
+@media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+  .landing-hero-media {
+    animation: landing-kenburns 36s ease-in-out infinite alternate;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-hero-media {
+    animation: none !important;
+  }
+
+  html {
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Light paint isolation — avoid content-visibility (breaks whileInView / hides blocks) */
+.landing-section,
+.landing-section-critical {
+  contain: paint;
 }
 
 .robot {
@@ -54,7 +113,7 @@ html.dark body {
 }
 
 .shadow {
-  box-shadow: 4px 4px 6px 2px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--soft-shadow);
 }
 
 .lds-ellipsis {
@@ -190,8 +249,7 @@ html.dark body {
 }
 
 .shadow-nav {
-  /* Horizontal offset (positive value moves the shadow to the right) */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Adjust values as needed */
+  box-shadow: var(--soft-shadow-sm);
 }
 
 @keyframes slide {

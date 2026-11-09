@@ -9,14 +9,11 @@ interface tabsProps {
 }
 
 const MobileSideBar = ({ activeTab }: { activeTab: string }) => {
-  const renderedTabs = tabs.map((item: tabsProps, index: number) => (
-    <div key={index}>
-      <MobileTabs item={item} activeTab={activeTab} />
-    </div>
-  ));
   return (
-    <div className="flex justify-between w-full h-full px-3 items-center">
-      {renderedTabs}
+    <div className="flex h-full w-full items-center justify-around px-1">
+      {tabs.map((item: tabsProps) => (
+        <MobileTabs key={item.name} item={item} activeTab={activeTab} />
+      ))}
     </div>
   );
 };

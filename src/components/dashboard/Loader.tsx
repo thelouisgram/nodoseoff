@@ -1,11 +1,7 @@
-import React from 'react'
+import PageLoader from "@/components/ui/PageLoader";
 
 const Loader = () => {
-  return (
-    <div className=" w-full h-[100dvh] flex items-center justify-center">
-      <div className="loaderInfinity"></div>
-    </div>
-  );
-}
+  return <PageLoader label="Loading your dashboard…" />;
+};
 
-export default Loader
+export default Loader;

@@ -12,6 +12,7 @@ import {
 import { X, Loader2, Camera, User } from "lucide-react";
 import { useAppSelector } from "@/store";
 import { motion, AnimatePresence } from "framer-motion";
+import { resolveProfileImageUrl } from "@/utils/profilePicture";
 
 interface ProfileFormProps {
   setActiveModal: (value: string) => void;
@@ -36,31 +37,44 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarURL, setAvatarURL] = useState<string | null>(null);
+  const [localPreview, setLocalPreview] = useState<string | null>(null);
+
+  const savedAvatarURL = resolveProfileImageUrl(profilePicture, userId);
+  const displayURL = localPreview || avatarURL || savedAvatarURL;
 
   useEffect(() => {
-    if (profilePicture) {
-      setAvatarURL(CDNURL + userId + "/" + profilePicture);
-    } else {
-      setAvatarURL(null);
-    }
-  }, [profilePicture, userId]);
+    setAvatarURL(savedAvatarURL);
+  }, [savedAvatarURL]);
+
+  useEffect(() => {
+    return () => {
+      if (localPreview) URL.revokeObjectURL(localPreview);
+    };
+  }, [localPreview]);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.length) return;
     const file = e.target.files[0];
     setAvatarFile(file);
-    setAvatarURL(URL.createObjectURL(file));
+    setLocalPreview((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return URL.createObjectURL(file);
+    });
+  };
+
+  const resetAvatarPreview = () => {
+    setAvatarFile(null);
+    setLocalPreview((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return null;
+    });
+    setAvatarURL(savedAvatarURL);
   };
 
   const handleClose = () => {
     if (!loading) {
       setActiveModal("");
-      setAvatarFile(null);
-      if (profilePicture) {
-        setAvatarURL(CDNURL + userId + "/" + profilePicture);
-      } else {
-        setAvatarURL(null);
-      }
+      resetAvatarPreview();
       setFormData({ name, phone, email });
     }
   };
@@ -90,12 +104,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 
       toast.success("Profile updated!");
       setActiveModal("");
-      setAvatarFile(null);
-      if (profilePicture) {
-        setAvatarURL(CDNURL + userId + "/" + profilePicture);
-      } else {
-        setAvatarURL(null);
-      }
+      resetAvatarPreview();
     } catch (error) {
       toast.error("An error occurred, please try again");
     } finally {
@@ -114,9 +123,6 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const CDNURL =
-    "https://opshqmqagtfidynwftzk.supabase.co/storage/v1/object/public/profile-picture/";
-
   return (
     <AnimatePresence>
       {activeModal === "profile" && (
@@ -134,17 +140,17 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-lg bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]"
+            className="flex max-h-[80vh] w-full max-w-lg flex-col overflow-hidden rounded-2xl border border-black/[0.05] bg-white shadow-soft-md"
           >
             {/* Header */}
-            <div className="px-6 py-5 border-b border-gray-100 dark:border-slate-800 flex items-center justify-between bg-white dark:bg-slate-900 flex-shrink-0">
-              <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">
+            <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between bg-white flex-shrink-0">
+              <h2 className="text-xl font-bold text-slate-800">
                 Edit Profile
               </h2>
               <button
                 onClick={handleClose}
                 disabled={loading}
-                className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors disabled:opacity-50"
+                className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
               >
                 <X size={20} />
               </button>
@@ -159,21 +165,25 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                 {/* Avatar Section */}
                 <div className="flex flex-col items-center">
                   <div className="relative group">
-                    <div className="size-28 rounded-full border-4 border-gray-50 dark:border-slate-800 overflow-hidden bg-gray-100 dark:bg-slate-800 shadow-inner">
-                      {avatarURL ? (
+                    <div className="relative size-28 overflow-hidden rounded-full border-4 border-gray-50 bg-gray-100 shadow-inner">
+                      {displayURL ? (
                         <Image
-                          src={avatarURL}
-                          alt="Avatar Preview"
-                          fill
-                          className="object-cover rounded-full"
+                          key={displayURL}
+                          src={displayURL}
+                          alt="Preview of your profile photo"
+                          width={224}
+                          height={224}
+                          unoptimized={displayURL.startsWith("blob:")}
+                          className="size-full object-cover"
+                          priority
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-400">
+                        <div className="flex size-full items-center justify-center text-gray-400">
                           <User size={48} strokeWidth={1.5} />
                         </div>
                       )}
                     </div>
-                    <label className="absolute bottom-0 right-0 p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg cursor-pointer transition-transform hover:scale-110 active:scale-95">
+                    <label className="absolute bottom-0 right-0 cursor-pointer rounded-full bg-soft-primary p-2 text-white shadow-soft-sm transition-transform hover:scale-110 hover:bg-soft-primary/90 active:scale-95">
                       <Camera size={18} />
                       <input
                         type="file"
@@ -184,7 +194,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                       />
                     </label>
                   </div>
-                  <p className="mt-3 text-xs font-medium text-gray-500 dark:text-gray-400">
+                  <p className="mt-3 text-xs font-medium text-gray-500">
                     JPG, PNG or GIF. Max 5MB
                   </p>
                 </div>
@@ -192,16 +202,16 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                 {/* Form Fields */}
                 <div className="grid gap-6">
                   <div className="space-y-2">
-                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                    <label className="text-sm font-semibold text-slate-700">
                       Full Name
                     </label>
-                    <div className="w-full h-[47px] px-4 border border-gray-200 dark:border-slate-800 rounded-xl bg-gray-50/50 dark:bg-slate-900 focus-within:ring-2 focus-within:ring-blue-500 transition-all flex items-center">
+                    <div className="w-full h-[47px] px-4 border border-gray-200 rounded-xl bg-gray-50/50 focus-within:ring-2 focus-within:ring-blue-500 transition-all flex items-center">
                       <input
                         type="text"
                         name="name"
                         value={formData.name}
                         onChange={handleInputChange}
-                        className="w-full h-full bg-transparent border-none outline-none p-0 text-slate-800 dark:text-white"
+                        className="w-full h-full bg-transparent border-none outline-none p-0 text-slate-800"
                         placeholder="Enter your name"
                         required
                         disabled={loading}
@@ -210,16 +220,16 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                    <label className="text-sm font-semibold text-slate-700">
                       Phone Number
                     </label>
-                    <div className="w-full h-[47px] px-4 border border-gray-200 dark:border-slate-800 rounded-xl bg-gray-50/50 dark:bg-slate-900 focus-within:ring-2 focus-within:ring-blue-500 transition-all flex items-center">
+                    <div className="w-full h-[47px] px-4 border border-gray-200 rounded-xl bg-gray-50/50 focus-within:ring-2 focus-within:ring-blue-500 transition-all flex items-center">
                       <input
                         type="tel"
                         name="phone"
                         value={formData.phone}
                         onChange={handleInputChange}
-                        className="w-full h-full bg-transparent border-none outline-none p-0 text-slate-800 dark:text-white"
+                        className="w-full h-full bg-transparent border-none outline-none p-0 text-slate-800"
                         placeholder="+234 000 000 0000"
                         required
                         disabled={loading}
@@ -228,14 +238,14 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                    <label className="text-sm font-semibold text-slate-700">
                       Email Address
                     </label>
-                    <div className="w-full h-[47px] px-4 border border-gray-100 dark:border-slate-800 rounded-xl bg-gray-100/50 dark:bg-slate-900/50 flex items-center">
+                    <div className="w-full h-[47px] px-4 border border-gray-100 rounded-xl bg-gray-100/50 flex items-center">
                       <input
                         type="email"
                         value={info[0]?.email}
-                        className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-500 dark:text-slate-500 cursor-not-allowed"
+                        className="w-full h-full bg-transparent border-none outline-none p-0 text-gray-500 cursor-not-allowed"
                         disabled
                       />
                     </div>
@@ -244,7 +254,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
               </div>
             </form>
             {/* Footer */}
-            <div className="px-6 py-5 border-t border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 flex-shrink-0">
+            <div className="px-6 py-5 border-t border-gray-100 bg-white flex-shrink-0">
               <button
                 type="submit"
                 onClick={handleClick}
@@ -252,7 +262,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                 className={`w-full py-3.5 px-4 rounded-xl font-bold text-white transition-all flex items-center justify-center gap-2 ${
                   loading
                     ? "bg-blue-400 cursor-not-allowed"
-                    : "bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-500/25 active:scale-[0.98]"
+                    : "bg-soft-primary shadow-soft-sm hover:bg-soft-primary/90 active:scale-[0.98]"
                 }`}
               >
                 {loading ? (

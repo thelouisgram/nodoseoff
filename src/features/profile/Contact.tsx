@@ -20,7 +20,7 @@ const Contact: React.FC<ContactProps> = ({ activeModal, setActiveModal }) => {
   return (
     <div
       onClick={handleClose}
-      className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-soft-ink/25 backdrop-blur-sm z-50 flex items-center justify-center p-4"
     >
       {/* Modal Card */}
       <div
@@ -29,16 +29,16 @@ const Contact: React.FC<ContactProps> = ({ activeModal, setActiveModal }) => {
           activeModal === "contact"
             ? "scale-100 opacity-100"
             : "scale-95 opacity-0"
-        } transition-all duration-200 w-full max-w-md bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-2xl shadow-2xl`}
+        } w-full max-w-md rounded-2xl border border-black/[0.05] bg-white shadow-soft-md transition-all duration-200`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 dark:border-slate-800">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-black/[0.04]">
+          <h2 className="text-xl font-semibold text-soft-ink">
             Contact Us
           </h2>
           <button
             onClick={handleClose}
-            className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+            className="p-1.5 text-soft-muted hover:text-soft-ink hover:bg-soft-canvas rounded-lg transition-colors"
             aria-label="Close"
           >
             <X size={20} />
@@ -50,10 +50,10 @@ const Contact: React.FC<ContactProps> = ({ activeModal, setActiveModal }) => {
           <div className="space-y-4">
             {contactInfo.map((item, index) => (
               <div key={index} className="space-y-2">
-                <div className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                <div className="flex items-center gap-2 text-sm font-medium text-soft-ink ">
                   <Mail
                     size={16}
-                    className="text-blue-600 dark:text-blue-400"
+                    className="text-blue-600"
                   />
                   <span>{item.label}</span>
                 </div>
@@ -63,9 +63,9 @@ const Contact: React.FC<ContactProps> = ({ activeModal, setActiveModal }) => {
           </div>
 
           {/* Additional Info */}
-          <div className="mt-6 p-4 bg-blue-50/50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-900/40">
-            <p className="text-sm text-gray-700 dark:text-gray-300">
-              <span className="font-medium text-blue-900 dark:text-blue-200">
+          <div className="mt-6 p-4 bg-blue-50/50 rounded-lg border border-blue-100">
+            <p className="text-sm text-soft-ink ">
+              <span className="font-medium text-blue-900">
                 Need help?
               </span>{" "}
               We typically respond within 24-48 hours.

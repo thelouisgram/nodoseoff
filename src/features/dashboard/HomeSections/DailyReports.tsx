@@ -21,7 +21,6 @@ export default function DailyReports() {
 
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
 
-  // Map of date -> completion tally
   const completionTally = useMemo(() => {
     const map: Record<string, { total: number; completed: number }> = {};
     schedule.forEach((item) => {
@@ -35,7 +34,6 @@ export default function DailyReports() {
 
   const calendarDates = generateDate(viewMonth.month(), viewMonth.year());
 
-  // Mobile injection index
   const injectionIndex = useMemo(() => {
     if (!isMobile) return -1;
 
@@ -48,10 +46,8 @@ export default function DailyReports() {
     return Math.min((Math.floor(idx / 7) + 1) * 7, calendarDates.length);
   }, [calendarDates, isMobile, selectedDate]);
 
-  // Calendar grid with injection
-  const calendarGrid = calendarDates.reduce<JSX.Element[]>(
+  const calendarGrid = calendarDates.reduce<React.ReactElement[]>(
     (acc, { date, currentMonth }, idx) => {
-      // Inject report for mobile if needed (not last row)
       if (isMobile && idx === injectionIndex && idx !== calendarDates.length) {
         acc.push(
           <motion.div
@@ -62,7 +58,7 @@ export default function DailyReports() {
             transition={{ duration: 0.3 }}
             className="col-span-7 overflow-hidden"
           >
-            <div className="mt-2 mb-4">
+            <div className="mb-4 mt-2">
               <Reports today={viewMonth} selectDate={selectedDate} isMobile />
             </div>
           </motion.div>
@@ -82,35 +78,32 @@ export default function DailyReports() {
           key={idx}
           onClick={() => setSelectedDate(date)}
           className={cn(
-            "h-12 flex flex-col items-center justify-center rounded-lg border transition-all duration-200 relative",
+            "relative flex h-12 flex-col items-center justify-center rounded-soft-sm border transition-all duration-200",
             currentMonth
-              ? "bg-white border-gray-200 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-200"
-              : "bg-gray-50 text-gray-400 border-gray-100 dark:bg-slate-900 dark:border-slate-800 dark:text-gray-500",
-            isSelected &&
-              "border-transparent dark:border-transparent text-blue-600 dark:text-blue-400"
+              ? "border-black/[0.05] bg-white text-soft-ink"
+              : "border-transparent bg-transparent text-soft-muted/50",
+            isSelected && "border-transparent text-soft-ink"
           )}
         >
           {isSelected && (
             <motion.div
               layoutId="selectedDate"
-              className="absolute inset-0 bg-blue-50 dark:bg-blue-900/30 border border-blue-500 rounded-lg shadow-sm"
+              className="absolute inset-0 rounded-soft-sm border border-soft-ink/15 bg-soft-peach shadow-soft-sm"
               transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
             />
           )}
-          <span className="text-sm font-medium relative z-10">
-            {date.date()}
-          </span>
+          <span className="relative z-10 text-sm font-medium">{date.date()}</span>
           {currentMonth && isPast && (
             <span
               className={cn(
-                "mt-1 h-2 w-2 rounded-full relative z-10",
+                "relative z-10 mt-1 h-1.5 w-1.5 rounded-full",
                 !tally
-                  ? "bg-gray-300"
+                  ? "bg-black/15"
                   : percent === 100
-                    ? "bg-green-500"
+                    ? "bg-soft-mint-ink"
                     : percent > 0
-                      ? "bg-yellow-400"
-                      : "bg-red-500"
+                      ? "bg-amber-400"
+                      : "bg-soft-pink-ink"
               )}
             />
           )}
@@ -122,7 +115,6 @@ export default function DailyReports() {
     []
   );
 
-  // Inject report at the end if last row is selected
   if (isMobile && injectionIndex === calendarDates.length) {
     calendarGrid.push(
       <motion.div
@@ -133,7 +125,7 @@ export default function DailyReports() {
         transition={{ duration: 0.3 }}
         className="col-span-7 overflow-hidden"
       >
-        <div className="mt-2 mb-4">
+        <div className="mb-4 mt-2">
           <Reports today={viewMonth} selectDate={selectedDate} isMobile />
         </div>
       </motion.div>
@@ -142,52 +134,55 @@ export default function DailyReports() {
 
   return (
     <>
-      <h3 className="mt-10 mb-4 px-4 ss:px-8 md:px-0 text-[18px] font-semibold text-gray-800 dark:text-slate-100">
-        Daily Reports
-      </h3>
+      <div className="mb-4 mt-8 px-4 ss:px-8 md:mt-10 md:px-0">
+        <h3 className="text-[18px] font-semibold tracking-tight text-soft-ink">
+          Daily reports
+        </h3>
+        <p className="mt-0.5 text-[13px] text-soft-muted">
+          See how your week has been going
+        </p>
+      </div>
 
-      <section className="flex flex-col ip:flex-row gap-6 px-4 ss:px-6 md:px-0">
-        {/* Calendar Card */}
-        <div className="w-full ip:max-w-[520px] bg-white dark:bg-slate-900 rounded-xl border border-gray-200 dark:border-slate-700 p-5 shadow-sm">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-4">
+      <section className="flex flex-col gap-6 px-4 ss:px-6 ip:flex-row md:px-0">
+        <div className="w-full rounded-2xl border border-black/[0.05] bg-white p-5 shadow-soft-sm ip:max-w-[520px]">
+          <div className="mb-4 flex items-center justify-between">
             <button
               onClick={() => setViewMonth(viewMonth.subtract(1, "month"))}
-              className="p-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700 dark:text-slate-200 transition "
+              className="rounded-soft-sm p-2 text-soft-ink transition hover:bg-white"
             >
               <GrFormPrevious />
             </button>
 
             <div className="flex gap-2">
-              <div className="h-[38px] px-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-transparent focus-within:ring-2 focus-within:ring-blue-500 transition-all flex items-center">
+              <div className="flex h-[38px] items-center rounded-soft-sm border border-black/[0.06] bg-white px-3">
                 <select
                   value={viewMonth.month()}
                   onChange={(e) =>
                     setViewMonth(viewMonth.month(Number(e.target.value)))
                   }
-                  className="text-sm bg-transparent border-none outline-none p-0 dark:text-gray-200 cursor-pointer w-full dark:[color-scheme:dark]"
+                  className="w-full cursor-pointer border-none bg-transparent p-0 text-sm text-soft-ink outline-none"
                 >
                   {months.map((m, i) => (
-                    <option key={i} value={i} className="dark:bg-slate-900">
+                    <option key={i} value={i}>
                       {m}
                     </option>
                   ))}
                 </select>
               </div>
 
-              <div className="h-[38px] px-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-transparent focus-within:ring-2 focus-within:ring-blue-500 transition-all flex items-center">
+              <div className="flex h-[38px] items-center rounded-soft-sm border border-black/[0.06] bg-white px-3">
                 <select
                   value={viewMonth.year()}
                   onChange={(e) =>
                     setViewMonth(viewMonth.year(Number(e.target.value)))
                   }
-                  className="text-sm bg-transparent border-none outline-none p-0 dark:text-gray-200 cursor-pointer w-full dark:[color-scheme:dark]"
+                  className="w-full cursor-pointer border-none bg-transparent p-0 text-sm text-soft-ink outline-none"
                 >
                   {Array.from(
                     { length: 11 },
                     (_, i) => todaySystem.year() - 5 + i
                   ).map((y) => (
-                    <option key={y} value={y} className="dark:bg-slate-900">
+                    <option key={y} value={y}>
                       {y}
                     </option>
                   ))}
@@ -197,21 +192,19 @@ export default function DailyReports() {
 
             <button
               onClick={() => setViewMonth(viewMonth.add(1, "month"))}
-              className="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-200 transition"
+              className="rounded-soft-sm p-2 text-soft-ink transition hover:bg-white"
             >
               <GrFormNext />
             </button>
           </div>
 
-          {/* Weekdays */}
-          <div className="grid grid-cols-7 mb-2 text-xs text-gray-400 text-center">
+          <div className="mb-2 grid grid-cols-7 text-center text-xs text-soft-muted">
             {days.map((d) => (
               <div key={d}>{d}</div>
             ))}
           </div>
 
-          {/* Calendar Grid */}
-          <div className="grid grid-cols-7 gap-2 overflow-hidden relative min-h-[300px]">
+          <div className="relative grid min-h-[300px] grid-cols-7 gap-2 overflow-hidden">
             <AnimatePresence mode="popLayout" initial={false}>
               <motion.div
                 key={viewMonth.format("YYYY-MM")}
@@ -227,8 +220,7 @@ export default function DailyReports() {
           </div>
         </div>
 
-        {/* Desktop Reports */}
-        <div className="hidden ss:block w-full">
+        <div className="hidden w-full ss:block">
           <Reports
             today={viewMonth}
             selectDate={selectedDate}

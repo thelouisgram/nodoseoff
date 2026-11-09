@@ -1,43 +1,51 @@
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
+import LandingNav from "@/Layout/home/LandingNav";
 import Hero from "@/Layout/home/Hero";
-import Tips from "@/Layout/home/Tips";
+import Features from "@/Layout/home/Features";
+import HomePulse from "@/Layout/home/HomePulse";
+import Amanda from "@/Layout/home/Amanda";
+import AboutNodoseOff from "@/Layout/home/About";
+import HowItWorks from "@/Layout/home/HowItWorks";
+import WhoItsFor from "@/Layout/home/WhoItsFor";
+import Safety from "@/Layout/home/Safety";
+import MobileAppSoon from "@/Layout/home/MobileAppSoon";
 import Banner from "@/Layout/home/Banner";
 import Footer from "@/Layout/home/Footer";
-import MeetTheTeam from "@/Layout/home/Team";
-import Testimonials from "@/Layout/home/Testimonials";
-import AboutNodoseOff from "@/Layout/home/About";
+import SeoHead from "@/components/seo/SeoHead";
+import { LandingMotion } from "@/components/landing/motion";
 
 const Home = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-
   useEffect(() => {
-    const checkScrollPosition = () => {
-      // Update scroll state
-      setIsScrolled(window.scrollY !== 0);
-    };
-
-    // Enable smooth scrolling
-    document.documentElement.style.scrollBehavior = "smooth";
-
-    // Add event listener to handle scroll position
-    window.addEventListener("scroll", checkScrollPosition);
-
-    // Cleanup the event listener on component unmount
+    const root = document.documentElement;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    root.style.scrollBehavior = reduce ? "auto" : "smooth";
     return () => {
-      window.removeEventListener("scroll", checkScrollPosition);
+      root.style.scrollBehavior = "";
     };
   }, []);
 
   return (
-    <section className="text-blackBlue font-karla overflow-hidden">
-      <Hero />
-      <AboutNodoseOff />
-      <Tips />
-      <Testimonials />
-      <MeetTheTeam />
-      <Banner />
-      <Footer />
-    </section>
+    <LandingMotion>
+      <SeoHead
+        title="Medication Tracking & Dose Reminders"
+        description="Never miss a dose. Track long-term medications, get smart reminders, ask AMANDA 6, and generate adherence reports with NoDoseOff."
+        path="/"
+      />
+      <LandingNav />
+      <main className="overflow-x-hidden bg-[#f3f7fb] font-sans text-soft-ink antialiased">
+        <Hero />
+        <Features />
+        <HomePulse />
+        <Amanda />
+        <AboutNodoseOff />
+        <HowItWorks />
+        <WhoItsFor />
+        <Safety />
+        <MobileAppSoon />
+        <Banner />
+        <Footer />
+      </main>
+    </LandingMotion>
   );
 };
 

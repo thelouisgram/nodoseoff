@@ -40,22 +40,22 @@ const DrugDetailsHeader: React.FC<Props> = ({
   return (
     <div className="mb-6">
       {/* Breadcrumbs */}
-      <nav className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1 mb-4">
+      <nav className="text-sm text-gray-500 flex items-center gap-1 mb-4">
         <button
           onClick={() => handleBreadcrumbClick("list")}
-          className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+          className="hover:text-blue-600 transition-colors"
         >
           {capitalize(tab)}
         </button>
-        <span className="mx-1 dark:text-gray-600">/</span>
-        <span className="text-gray-800 dark:text-slate-100 font-semibold capitalize">
+        <span className="mx-1">/</span>
+        <span className="text-gray-800 font-semibold capitalize">
           {drug}
         </span>
       </nav>
 
       {/* Title and Options */}
       <div className="w-full flex justify-between items-center">
-        <h1 className="text-3xl ss:text-4xl font-extrabold capitalize text-slate-800 dark:text-slate-100 pb-1">
+        <h1 className="text-3xl ss:text-4xl font-extrabold capitalize text-slate-800 pb-1">
           {drug}
         </h1>
         <OptionModal

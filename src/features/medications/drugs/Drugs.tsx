@@ -168,7 +168,7 @@ const Drugs: React.FC<DrugsProps> = ({
       onClick={() => {
         setOptions(false);
       }}
-      className="h-[100dvh] overflow-y-scroll w-full md:py-16 md:px-12 px-4 pt-10 ss:p-10 ss:pb-24 text-navyBlue dark:text-slate-100 font-karla relative"
+      className="relative h-[100dvh] w-full overflow-y-scroll bg-soft-canvas px-4 pb-24 pt-10 font-jakarta text-soft-ink ss:px-8 md:px-12 md:py-14 md:pb-20"
     >
       <AnimatePresence mode="wait">
         {activeView === "list" ? (

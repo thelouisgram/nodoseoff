@@ -19,20 +19,20 @@ interface StatusConfig {
 const statusMap: Record<string, StatusConfig> = {
   Ongoing: {
     label: "Active",
-    text: "text-green-600 dark:text-green-400",
-    bg: "bg-green-50 dark:bg-green-900/20",
+    text: "text-green-600",
+    bg: "bg-green-50",
     Icon: Activity,
   },
   Completed: {
     label: "Completed",
-    text: "text-blue-600 dark:text-blue-400",
-    bg: "bg-blue-50 dark:bg-blue-900/20",
+    text: "text-blue-600",
+    bg: "bg-blue-50",
     Icon: CheckCircle,
   },
   Allergies: {
     label: "Allergy",
-    text: "text-red-600 dark:text-red-400",
-    bg: "bg-red-50 dark:bg-red-900/20",
+    text: "text-red-600",
+    bg: "bg-red-50",
     Icon: Beaker,
   },
 };
@@ -45,8 +45,8 @@ const DrugSummaryCard: React.FC<DrugSummaryCardProps> = ({
 }) => {
   const status = statusMap[tab] || {
     label: tab,
-    text: "text-gray-600 dark:text-gray-400",
-    bg: "bg-gray-50 dark:bg-slate-800",
+    text: "text-gray-600",
+    bg: "bg-gray-50",
     Icon: Clock,
   };
 
@@ -62,7 +62,7 @@ const DrugSummaryCard: React.FC<DrugSummaryCardProps> = ({
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="w-full ss:w-1/2 rounded-xl border border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 space-y-4 shadow-sm"
+      className="w-full space-y-4 rounded-2xl border border-black/[0.05] bg-white p-5 shadow-soft-sm ss:w-1/2"
     >
       {/* Header */}
       <div className="flex items-center justify-start">
@@ -77,20 +77,20 @@ const DrugSummaryCard: React.FC<DrugSummaryCardProps> = ({
       {/* Info Row */}
       <div className="flex items-center justify-between text-sm">
         <div>
-          <p className="text-gray-400 dark:text-gray-500 text-xs">Route</p>
-          <p className="font-medium text-gray-800 dark:text-slate-200 capitalize">
+          <p className="text-gray-400 text-xs">Route</p>
+          <p className="font-medium text-gray-800 capitalize">
             {route || "N/A"}
           </p>
         </div>
 
         <div className="text-right">
-          <p className="text-gray-400 dark:text-gray-500 text-xs">Compliance</p>
+          <p className="text-gray-400 text-xs">Compliance</p>
           <p className={`font-semibold ${complianceColor}`}>{compliance}%</p>
         </div>
       </div>
 
       {/* Progress bar (animated) */}
-      <div className="w-full h-1.5 bg-gray-100 dark:bg-slate-800 rounded-full overflow-hidden">
+      <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
         <motion.div
           className={`h-full rounded-full ${
             compliance >= 80

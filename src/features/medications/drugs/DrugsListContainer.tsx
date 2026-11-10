@@ -11,10 +11,8 @@ import DrugsListHeader from "./drugsList/DrugsListHeader";
 import DrugsListTitle from "./drugsList/DrugsListTitle";
 import DrugsList from "./drugsList/DrugsList";
 import DrugsListPagination from "./drugsList/DrugsListPagination";
-import CompletedCoursesTable from "./CompletedCoursesTable";
 import { SoftEmptyState } from "@/components/ui/soft";
 import { groupDrugsByName, GroupedDrug } from "@/utils/drugs";
-import { DrugProps } from "@/types/dashboard";
 
 interface AllergyProps {
   drug: string;
@@ -51,8 +49,9 @@ const DrugsListContainer = ({
   const [page, setPage] = useState(1);
   const pageMemory = useRef<Record<string, number>>({});
 
-  const completedCourses = useMemo(() => {
-    return [...completedDrugs].sort((a, b) => {
+  // One row per drug name (same as ongoing); each course stays in details.
+  const completedGrouped = useMemo(() => {
+    return groupDrugsByName(completedDrugs).sort((a, b) => {
       const aEnd = Date.parse(a.end || "") || 0;
       const bEnd = Date.parse(b.end || "") || 0;
       if (bEnd !== aEnd) return bEnd - aEnd;
@@ -62,12 +61,12 @@ const DrugsListContainer = ({
     });
   }, [completedDrugs]);
 
-  const tabData: (GroupedDrug | AllergyProps | DrugProps)[] = useMemo(() => {
+  const tabData: (GroupedDrug | AllergyProps)[] = useMemo(() => {
     if (tab === "ongoing") return groupDrugsByName(drugs);
-    if (tab === "completed") return completedCourses;
+    if (tab === "completed") return completedGrouped;
     if (tab === "allergies") return allergies;
     return [];
-  }, [tab, drugs, completedCourses, allergies]);
+  }, [tab, drugs, completedGrouped, allergies]);
 
   const filtered = useMemo(
     () =>
@@ -108,7 +107,7 @@ const DrugsListContainer = ({
         icon={<Inbox className="size-9" strokeWidth={1.5} />}
         title={
           tab === "completed"
-            ? "No completed courses yet"
+            ? "No completed drugs yet"
             : tab === "ongoing"
               ? "No ongoing drugs yet"
               : "No allergies added yet"
@@ -133,34 +132,18 @@ const DrugsListContainer = ({
 
       {filtered.length ? (
         <>
-          {tab === "completed" ? (
-            <CompletedCoursesTable
-              courses={data as DrugProps[]}
-              startIndex={(page - 1) * PER_PAGE}
-              options={options}
-              setOptions={setOptions}
-              activeAction={activeAction}
-              setActiveAction={setActiveAction}
-              setActiveView={setActiveView}
-              activeView={activeView}
-            />
-          ) : (
-            <>
-              <DrugsListTitle tab={tab} />
-              <DrugsList
-                newData={data as GroupedDrug[] | AllergyProps[]}
-                tab={tab}
-                options={options}
-                setOptions={setOptions}
-                activeAction={activeAction}
-                setActiveAction={setActiveAction}
-                setActiveView={setActiveView}
-                activeView={activeView}
-                startIndex={(page - 1) * PER_PAGE}
-              />
-            </>
-          )}
-
+          <DrugsListTitle tab={tab} />
+          <DrugsList
+            newData={data as GroupedDrug[] | AllergyProps[]}
+            tab={tab}
+            options={options}
+            setOptions={setOptions}
+            activeAction={activeAction}
+            setActiveAction={setActiveAction}
+            setActiveView={setActiveView}
+            activeView={activeView}
+            startIndex={(page - 1) * PER_PAGE}
+          />
           <DrugsListPagination
             page={page}
             total={filtered.length}

@@ -100,10 +100,10 @@ export default function DailyReports() {
                 !tally
                   ? "bg-black/15"
                   : percent === 100
-                    ? "bg-soft-mint-ink"
+                    ? "bg-green-400"
                     : percent > 0
-                      ? "bg-amber-400"
-                      : "bg-soft-pink-ink"
+                      ? "bg-yellow-400"
+                      : "bg-red-400"
               )}
             />
           )}

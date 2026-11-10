@@ -1,5 +1,5 @@
 import React from "react";
-import { ShieldOff, Pill, X, Plus } from "lucide-react";
+import { ShieldOff, Pill, Plus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface FloatingAddActionsProps {
@@ -41,7 +41,7 @@ const FloatingAddActions: React.FC<FloatingAddActionsProps> = ({
                 initial={{ opacity: 0, y: 20, scale: 0.85 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 20, scale: 0.85 }}
-                transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                transition={{ type: "spring", stiffness: 380, damping: 24 }}
                 className="flex items-center gap-3"
               >
                 <span className="rounded-xl border border-black/[0.05] bg-white px-3 py-1.5 text-sm font-semibold text-soft-ink shadow-soft-sm">
@@ -52,7 +52,7 @@ const FloatingAddActions: React.FC<FloatingAddActionsProps> = ({
                     setAdd(false);
                     setActiveModal("drugs");
                   }}
-                  className="flex size-12 items-center justify-center rounded-full border border-black/[0.05] bg-soft-blue text-soft-blue-ink shadow-soft-sm transition hover:scale-105 active:scale-95 ss:size-14"
+                  className="ndo-press flex size-12 items-center justify-center rounded-full border border-black/[0.05] bg-soft-blue text-soft-blue-ink shadow-soft-sm transition hover:scale-105 ss:size-14"
                 >
                   <Pill className="size-6 ss:size-7" strokeWidth={1.8} />
                 </button>
@@ -64,8 +64,8 @@ const FloatingAddActions: React.FC<FloatingAddActionsProps> = ({
                 exit={{ opacity: 0, y: 20, scale: 0.85 }}
                 transition={{
                   type: "spring",
-                  stiffness: 260,
-                  damping: 20,
+                  stiffness: 380,
+                  damping: 24,
                   delay: 0.05,
                 }}
                 className="flex items-center gap-3"
@@ -78,7 +78,7 @@ const FloatingAddActions: React.FC<FloatingAddActionsProps> = ({
                     setAdd(false);
                     setActiveModal("allergies");
                   }}
-                  className="flex size-12 items-center justify-center rounded-full border border-black/[0.05] bg-soft-lavender text-soft-lavender-ink shadow-soft-sm transition hover:scale-105 active:scale-95 ss:size-14"
+                  className="ndo-press flex size-12 items-center justify-center rounded-full border border-black/[0.05] bg-soft-lavender text-soft-lavender-ink shadow-soft-sm transition hover:scale-105 ss:size-14"
                 >
                   <ShieldOff className="size-6 ss:size-7" strokeWidth={1.8} />
                 </button>
@@ -89,22 +89,18 @@ const FloatingAddActions: React.FC<FloatingAddActionsProps> = ({
 
         <motion.button
           onClick={() => setAdd((prev) => !prev)}
-          initial={{ opacity: 0, scale: 0 }}
+          initial={{ opacity: 0, scale: 0.7 }}
           animate={{ opacity: 1, scale: 1 }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          transition={{ delay: 0.5 }}
+          whileHover={{ scale: 1.06 }}
+          whileTap={{ scale: 0.94 }}
+          transition={{ type: "spring", stiffness: 400, damping: 22, delay: 0.25 }}
           className="relative z-[146] flex size-14 items-center justify-center rounded-full bg-soft-primary shadow-soft-float ss:size-16"
         >
           <motion.div
-            animate={{ rotate: add ? 0 : 90 }}
-            transition={{ type: "spring", stiffness: 260, damping: 20 }}
+            animate={{ rotate: add ? 45 : 0 }}
+            transition={{ type: "spring", stiffness: 380, damping: 22 }}
           >
-            {add ? (
-              <X className="size-7 text-white ss:size-8" strokeWidth={2.2} />
-            ) : (
-              <Plus className="size-7 text-white ss:size-8" strokeWidth={2.2} />
-            )}
+            <Plus className="size-7 text-white ss:size-8" strokeWidth={2.2} />
           </motion.div>
         </motion.button>
       </div>

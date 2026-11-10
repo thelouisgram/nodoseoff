@@ -24,7 +24,7 @@ const moments = [
   {
     label: "Next dose",
     title: "Kemi’s losartan at 8:00",
-    body: "She’s packing school lunches. Home shows “in 14m” — the pill stays in the plan.",
+    body: "She’s packing school lunches. Overview shows “in 14m” — the pill stays in the plan.",
   },
   {
     label: "This week",
@@ -39,16 +39,16 @@ const moments = [
   {
     label: "Ask AMANDA 6",
     title: "“Can I take these with dinner?”",
-    body: "A chip from Home opens AMANDA 6 with the evening stack already loaded.",
+    body: "A chip from Overview opens AMANDA 6 with the evening stack already loaded.",
   },
 ];
 
 export default function HomePulse() {
-  const { fadeUp, stagger, reduce } = useLandingVariants();
+  const { fadeUp, stagger, scaleIn, reduce } = useLandingVariants();
 
   return (
     <section
-      id="home-pulse"
+      id="overview"
       className="landing-section relative overflow-hidden bg-[#f3f7fb] py-20 text-soft-ink ss:py-24"
     >
       <div
@@ -62,9 +62,8 @@ export default function HomePulse() {
 
       <div className="relative mx-auto max-w-6xl px-4 ss:px-6">
         <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-16">
-          {/* Life-shaped Home mock */}
           <m.div
-            variants={fadeUp}
+            variants={scaleIn}
             initial="hidden"
             whileInView="show"
             viewport={viewOnce}
@@ -74,7 +73,7 @@ export default function HomePulse() {
               <div className="mb-4 flex items-end justify-between gap-3 px-1">
                 <div>
                   <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-soft-muted">
-                    Home
+                    Overview
                   </p>
                   <p className="mt-1 text-[20px] font-bold tracking-tight text-soft-ink">
                     Hi Kemi,
@@ -85,7 +84,6 @@ export default function HomePulse() {
                 </span>
               </div>
 
-              {/* Next dose */}
               <m.div
                 initial={reduce ? false : { opacity: 0, y: 10 }}
                 whileInView={reduce ? undefined : { opacity: 1, y: 0 }}
@@ -109,7 +107,6 @@ export default function HomePulse() {
                 </p>
               </m.div>
 
-              {/* Week streak */}
               <m.div
                 initial={reduce ? false : { opacity: 0, y: 10 }}
                 whileInView={reduce ? undefined : { opacity: 1, y: 0 }}
@@ -142,7 +139,6 @@ export default function HomePulse() {
                 </div>
               </m.div>
 
-              {/* Missed + refill + amanda row */}
               <m.div
                 initial={reduce ? false : { opacity: 0, y: 10 }}
                 whileInView={reduce ? undefined : { opacity: 1, y: 0 }}
@@ -228,7 +224,6 @@ export default function HomePulse() {
             </m.p>
           </m.div>
 
-          {/* Copy + life examples */}
           <div>
             <m.div
               variants={fadeUp}
@@ -237,7 +232,7 @@ export default function HomePulse() {
               viewport={viewOnce}
             >
               <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-soft-primary">
-                Inside Home
+                Overview
               </p>
               <h2 className="mt-3 text-[2rem] font-bold tracking-tight text-soft-ink ss:text-[2.35rem]">
                 Insights shaped like real days

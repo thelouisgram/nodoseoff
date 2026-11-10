@@ -1,3 +1,5 @@
+"use client";
+
 import React, { Dispatch, SetStateAction } from "react";
 import Home from "@/features/dashboard/HomeSections/Home";
 import Drugs from "@/features/medications/drugs/Drugs";
@@ -5,6 +7,7 @@ import AiAssistant from "@/features/ai/AiAssistant";
 import Account from "@/features/profile/Account";
 import ErrorBoundary from "@/components/ui/ErrorBoundary";
 import { AnimatePresence, motion } from "framer-motion";
+import { useAppPageTransition } from "@/components/landing/motion";
 
 interface MainDashboardProps {
   activeTab: string;
@@ -31,16 +34,18 @@ const MainDashboard: React.FC<MainDashboardProps> = ({
   setAdd,
   setActiveModal,
 }) => {
+  const pageMotion = useAppPageTransition();
+
   return (
     <div className="relative h-full w-full overflow-hidden bg-soft-canvas">
       <AnimatePresence mode="wait">
         {activeTab === "Home" ? (
           <motion.div
             key="home"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            initial={pageMotion.initial}
+            animate={pageMotion.animate}
+            exit={pageMotion.exit}
+            transition={pageMotion.transition}
             className="h-full w-full"
           >
             <ErrorBoundary label="home">
@@ -58,10 +63,10 @@ const MainDashboard: React.FC<MainDashboardProps> = ({
         ) : activeTab === "Drugs" ? (
           <motion.div
             key="drugs"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            initial={pageMotion.initial}
+            animate={pageMotion.animate}
+            exit={pageMotion.exit}
+            transition={pageMotion.transition}
             className="h-full w-full"
           >
             <ErrorBoundary label="drugs">
@@ -78,10 +83,10 @@ const MainDashboard: React.FC<MainDashboardProps> = ({
         ) : activeTab === "Account" ? (
           <motion.div
             key="account"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            initial={pageMotion.initial}
+            animate={pageMotion.animate}
+            exit={pageMotion.exit}
+            transition={pageMotion.transition}
             className="h-full w-full"
           >
             <ErrorBoundary label="account">
@@ -92,7 +97,7 @@ const MainDashboard: React.FC<MainDashboardProps> = ({
       </AnimatePresence>
 
       {/* Keep AI mounted so chat history stays in memory across tab switches */}
-      <div
+      <motion.div
         className={`absolute inset-0 h-full w-full ${
           activeTab === "AMANDA 6" ||
           activeTab === "AMANDA" ||
@@ -105,11 +110,20 @@ const MainDashboard: React.FC<MainDashboardProps> = ({
           activeTab !== "AMANDA" &&
           activeTab !== "AI"
         }
+        initial={false}
+        animate={
+          activeTab === "AMANDA 6" ||
+          activeTab === "AMANDA" ||
+          activeTab === "AI"
+            ? { opacity: 1 }
+            : { opacity: 0 }
+        }
+        transition={pageMotion.transition}
       >
         <ErrorBoundary label="ai">
           <AiAssistant />
         </ErrorBoundary>
-      </div>
+      </motion.div>
     </div>
   );
 };

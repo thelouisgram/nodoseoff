@@ -14,16 +14,16 @@ const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.06 },
+    transition: { staggerChildren: 0.08, delayChildren: 0.04 },
   },
 };
 
 const cardVariants = {
-  hidden: { opacity: 0, y: 10 },
+  hidden: { opacity: 0, y: 14 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { type: "spring" as const, stiffness: 140, damping: 18 },
+    transition: { type: "spring" as const, stiffness: 280, damping: 24 },
   },
 };
 

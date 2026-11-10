@@ -80,9 +80,9 @@ const SignIn = () => {
       <SoftPage>
         <div className="min-h-screen flex items-center justify-center p-5 ss:p-8">
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, ease: "easeOut" }}
+            initial={{ opacity: 0, y: 18, scale: 0.985 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             className="w-full max-w-[420px]"
           >
             <Link href="/" className="mb-8 flex justify-center">

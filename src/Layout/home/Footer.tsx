@@ -6,7 +6,7 @@ import { openCookieSettings } from "@/components/legal/CookieConsent";
 
 const productLinks = [
   { href: "#features", label: "Features" },
-  { href: "#home-pulse", label: "Home insights" },
+  { href: "#overview", label: "Overview" },
   { href: "#amanda", label: "AMANDA 6" },
   { href: "#how-it-works", label: "How it works" },
   { href: "#who", label: "Who it’s for" },

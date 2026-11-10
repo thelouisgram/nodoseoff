@@ -78,8 +78,21 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
 
   const drugsArray = tab === "ongoing" ? drugs : completedDrugs;
 
-  // Courses for this drug name within the current tab only (ongoing ≠ completed)
+  // Ongoing: all regimens for this drug name.
+  // Completed: the selected course only (list is already per-course).
   const courses = useMemo(() => {
+    if (tab === "completed") {
+      const selected =
+        drugsArray.find(
+          (item) =>
+            item.drugId &&
+            activeDrugId &&
+            String(item.drugId) === String(activeDrugId)
+        ) ||
+        drugsArray.find((item) => sameDrugName(item.drug, activeDrug));
+      return selected ? [selected] : [];
+    }
+
     const matches = drugsArray.filter((item) =>
       sameDrugName(item.drug, activeDrug)
     );
@@ -88,7 +101,7 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
       const bEnd = Date.parse(b.end || "") || 0;
       return bEnd - aEnd;
     });
-  }, [drugsArray, activeDrug]);
+  }, [drugsArray, activeDrug, activeDrugId, tab]);
 
   // All course IDs in this tab only — never includes the other tab's regimens
   const courseIds = useMemo(
@@ -212,51 +225,56 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
         setActiveAction={setActiveAction}
       />
 
-      <h3 className="mb-3 px-1 text-[11px] font-bold uppercase tracking-widest text-soft-muted">
-        Overview
-      </h3>
-      <DrugSummaryCard
-        compliance={compliance}
-        drug={drug ?? ""}
-        tab={tab}
-        route={
-          courses.length > 1 &&
-          new Set(courses.map((c) => (c.route || "").toLowerCase())).size > 1
-            ? "Mixed"
-            : route
-        }
-      />
+      {tab === "completed" ? (
+        <DrugCourses courses={courses} schedule={schedule} />
+      ) : (
+        <>
+          <h3 className="mb-3 px-1 text-[11px] font-bold uppercase tracking-widest text-soft-muted">
+            Overview
+          </h3>
+          <DrugSummaryCard
+            compliance={compliance}
+            drug={drug ?? ""}
+            tab={tab}
+            route={
+              courses.length > 1 &&
+              new Set(courses.map((c) => (c.route || "").toLowerCase())).size >
+                1
+                ? "Mixed"
+                : route
+            }
+          />
 
-      {tab === "ongoing" && (
-        <div className="mb-2 mt-8 w-full">
-          <div className="rounded-2xl border border-black/[0.05] bg-white p-4 shadow-soft-sm ss:p-5 md:p-6">
-            <div className="mb-4">
-              <h2 className="text-[18px] font-semibold tracking-tight text-soft-ink">
-                Doses
-              </h2>
-              <p className="mt-0.5 text-[13px] text-soft-muted">
-                Mark doses as you take them
-              </p>
+          <div className="mb-2 mt-8 w-full">
+            <div className="rounded-2xl border border-black/[0.05] bg-white p-4 shadow-soft-sm ss:p-5 md:p-6">
+              <div className="mb-4">
+                <h2 className="text-[18px] font-semibold tracking-tight text-soft-ink">
+                  Doses
+                </h2>
+                <p className="mt-0.5 text-[13px] text-soft-muted">
+                  Mark doses as you take them
+                </p>
+              </div>
+              <Tracker
+                tracker={tracker}
+                doses={dosesForTracker}
+                onUpdateCompleted={updateCompleted}
+                setTracker={setTracker}
+                layoutScope="drugs"
+              />
             </div>
-            <Tracker
-              tracker={tracker}
-              doses={dosesForTracker}
-              onUpdateCompleted={updateCompleted}
-              setTracker={setTracker}
-              layoutScope="drugs"
-            />
           </div>
-        </div>
+
+          <DrugCourses courses={courses} schedule={schedule} />
+
+          <div className="mt-8">
+            <h3 className="mb-3 px-1 text-[11px] font-bold uppercase tracking-widest text-soft-muted">
+              {courses.length > 1 ? "Combined details" : "Details"}
+            </h3>
+            <DrugDetailsGrid details={details} />
+          </div>
+        </>
       )}
-
-      <DrugCourses courses={courses} schedule={schedule} />
-
-      <div className="mt-8">
-        <h3 className="mb-3 px-1 text-[11px] font-bold uppercase tracking-widest text-soft-muted">
-          {courses.length > 1 ? "Combined details" : "Details"}
-        </h3>
-        <DrugDetailsGrid details={details} />
-      </div>
     </div>
   );
 };

@@ -133,7 +133,7 @@ export default function AdminPage() {
   };
 
   if (checking || authLoading || !allowed) {
-    return <PageLoader label="Loading admin…" />;
+    return <PageLoader label="Opening admin…" />;
   }
 
   return (

@@ -67,10 +67,10 @@ const DrugsList: React.FC<DrugsListProps> = ({
             return (
               <motion.div
                 key={rowKey}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.15 }}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
                 className="flex items-center justify-between border-b border-black/[0.05] bg-white px-4 py-3.5 text-sm last:border-0 ss:px-6"
               >
                 <div className="flex min-w-0 items-center gap-3">
@@ -113,8 +113,14 @@ const DrugsList: React.FC<DrugsListProps> = ({
       <AnimatePresence mode="popLayout">
         {drugs?.map((drug, index) => {
           const isActive =
-            sameDrugName(activeDrug, drug.drug) ||
-            activeDrugId === drug.drugId;
+            tab === "completed"
+              ? Boolean(
+                  activeDrugId &&
+                    drug.drugId &&
+                    String(activeDrugId) === String(drug.drugId)
+                )
+              : sameDrugName(activeDrug, drug.drug) ||
+                activeDrugId === drug.drugId;
           const courseCount = drug.courseCount || drug.courses?.length || 1;
           const duration =
             courseCount > 1
@@ -143,15 +149,18 @@ const DrugsList: React.FC<DrugsListProps> = ({
                 ? drug.route.trim().replace(/^\w/, (c) => c.toUpperCase())
                 : "—";
 
-          const rowKey = `name-${drug.drug.toLowerCase()}-${startIndex + index}`;
+          const rowKey =
+            tab === "completed"
+              ? `course-${drug.drugId || drug.drug}-${drug.start}-${drug.end}-${startIndex + index}`
+              : `name-${drug.drug.toLowerCase()}-${startIndex + index}`;
 
           return (
             <motion.div
               key={rowKey}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.15 }}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
               onClick={() => {
                 dispatch(setActiveDrug(drug.drug));
                 dispatch(setActiveDrugId(drug.drugId));
@@ -173,7 +182,13 @@ const DrugsList: React.FC<DrugsListProps> = ({
                   <span className="block truncate font-semibold capitalize text-soft-ink">
                     {drug.drug}
                   </span>
-                  {courseCount > 1 ? (
+                  {tab === "completed" ? (
+                    <span className="text-[11px] text-soft-muted">
+                      {drug.start && drug.end
+                        ? `${drug.start} → ${drug.end}`
+                        : "Course"}
+                    </span>
+                  ) : courseCount > 1 ? (
                     <span className="text-[11px] text-soft-muted">
                       {courseCount} courses
                     </span>

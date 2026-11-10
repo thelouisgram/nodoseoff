@@ -11,13 +11,13 @@ const points = [
 ];
 
 export default function AboutNodoseOff() {
-  const { fadeUp } = useLandingVariants();
+  const { fadeUp, slideInLeft, slideInRight } = useLandingVariants();
 
   return (
     <section id="about" className="landing-section bg-white py-20 ss:py-24">
       <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 ss:px-6 md:grid-cols-2 md:gap-16">
         <m.div
-          variants={fadeUp}
+          variants={slideInLeft}
           initial="hidden"
           whileInView="show"
           viewport={viewOnce}
@@ -69,7 +69,7 @@ export default function AboutNodoseOff() {
         </m.div>
 
         <m.div
-          variants={fadeUp}
+          variants={slideInRight}
           initial="hidden"
           whileInView="show"
           viewport={viewOnce}

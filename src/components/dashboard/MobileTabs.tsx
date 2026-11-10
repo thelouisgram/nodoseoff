@@ -35,17 +35,16 @@ const MobileTabs: React.FC<TabsProps> = ({ item, activeTab }) => {
       aria-current={isActive ? "page" : undefined}
       aria-label={label}
     >
-      {isActive ? (
-        <motion.span
-          layoutId="mobile-nav-active"
-          className="absolute inset-y-1 inset-x-1 rounded-2xl bg-soft-primary-soft"
-          transition={{ type: "spring", stiffness: 420, damping: 34 }}
-        />
-      ) : null}
-
-      <span className="relative z-[1] grid size-8 place-items-center">
+      <span className="relative z-[1] grid size-9 place-items-center">
+        {isActive ? (
+          <motion.span
+            layoutId="mobile-nav-active"
+            className="absolute inset-0 rounded-xl bg-soft-primary-soft"
+            transition={{ type: "spring", stiffness: 420, damping: 30, mass: 0.7 }}
+          />
+        ) : null}
         <Icon
-          className="size-[20px]"
+          className="relative z-[1] size-[20px]"
           strokeWidth={isActive ? 2 : 1.75}
           absoluteStrokeWidth
         />

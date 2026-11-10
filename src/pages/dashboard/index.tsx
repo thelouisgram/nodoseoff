@@ -16,6 +16,8 @@ import { useDashboardBootstrap } from "@/hooks/useDashboardData";
 import { SoftErrorState } from "@/components/ui/soft";
 import ErrorBoundary from "@/components/ui/ErrorBoundary";
 import { motion } from "framer-motion";
+import AppMotion from "@/components/motion/AppMotion";
+import { ndoEase, ndoSpring } from "@/components/landing/motion";
 
 const Page = () => {
   const { user, loading: authLoading, signOut } = useAuth();
@@ -83,7 +85,7 @@ const Page = () => {
   }
 
   return (
-    <>
+    <AppMotion>
       <SeoHead
         title="Dashboard"
         description="Your NoDoseOff dashboard for medications, dose tracking, and adherence."
@@ -93,7 +95,7 @@ const Page = () => {
       <motion.section
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.25 }}
+        transition={{ duration: 0.35, ease: ndoEase }}
         className="relative flex h-[100dvh] w-full overflow-hidden bg-soft-canvas font-jakarta text-soft-ink"
       >
         <aside
@@ -145,9 +147,9 @@ const Page = () => {
         >
           <div className="pointer-events-auto mx-auto w-full max-w-[440px]">
             <motion.div
-              initial={{ y: 16, opacity: 0 }}
+              initial={{ y: 24, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ type: "spring", stiffness: 380, damping: 28, delay: 0.05 }}
+              transition={{ ...ndoSpring, delay: 0.08 }}
               className="flex h-[68px] items-center rounded-[22px] border border-black/[0.06] bg-white/90 px-1.5 shadow-soft-float backdrop-blur-xl"
             >
               <MobileSidebar activeTab={activeTab} />
@@ -155,7 +157,7 @@ const Page = () => {
           </div>
         </div>
       </motion.section>
-    </>
+    </AppMotion>
   );
 };
 

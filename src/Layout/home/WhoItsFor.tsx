@@ -64,6 +64,8 @@ export default function WhoItsFor() {
             <m.article
               key={item.title}
               variants={fadeUp}
+              whileHover={{ y: -4 }}
+              transition={{ type: "spring", stiffness: 360, damping: 28 }}
               className="group relative min-h-[380px] overflow-hidden ss:min-h-[420px]"
             >
               <Image

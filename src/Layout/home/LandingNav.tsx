@@ -4,10 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArrowRight, Menu, X } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ndoEase } from "@/components/landing/motion";
 
 const navLinks = [
   { href: "#features", label: "Features" },
-  { href: "#home-pulse", label: "Home" },
+  { href: "#overview", label: "Overview" },
   { href: "#amanda", label: "AMANDA 6" },
   { href: "#how-it-works", label: "How it works" },
   { href: "#who", label: "Who it’s for" },
@@ -110,47 +112,69 @@ export default function LandingNav() {
         </div>
       </header>
 
-      {/* Full-screen sheet — sibling of header so fixed positioning stays clean */}
-      {menuOpen ? (
-        <div
-          className="fixed inset-0 z-[90] flex flex-col bg-[#031428] pt-16 lg:hidden"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Navigation menu"
-        >
-          <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-6 pb-8 pt-6">
-            <nav className="flex flex-col">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setMenuOpen(false)}
-                  className="border-b border-white/10 py-4 text-[1.35rem] font-semibold tracking-tight text-white transition-colors hover:text-white/80"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </nav>
+      <AnimatePresence>
+        {menuOpen ? (
+          <motion.div
+            key="mobile-nav"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.22, ease: ndoEase }}
+            className="fixed inset-0 z-[90] flex flex-col bg-[#031428] pt-16 lg:hidden"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Navigation menu"
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 8 }}
+              transition={{ duration: 0.3, ease: ndoEase, delay: 0.04 }}
+              className="flex min-h-0 flex-1 flex-col overflow-y-auto px-6 pb-8 pt-6"
+            >
+              <nav className="flex flex-col">
+                {navLinks.map((link, index) => (
+                  <motion.div
+                    key={link.href}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{
+                      duration: 0.28,
+                      ease: ndoEase,
+                      delay: 0.05 + index * 0.04,
+                    }}
+                  >
+                    <Link
+                      href={link.href}
+                      onClick={() => setMenuOpen(false)}
+                      className="block border-b border-white/10 py-4 text-[1.35rem] font-semibold tracking-tight text-white transition-colors hover:text-white/80"
+                    >
+                      {link.label}
+                    </Link>
+                  </motion.div>
+                ))}
+              </nav>
 
-            <div className="mt-8 flex flex-col gap-3">
-              <Link
-                href="/login"
-                onClick={() => setMenuOpen(false)}
-                className="border border-white/25 px-5 py-3.5 text-center text-[15px] font-semibold text-white"
-              >
-                Log in
-              </Link>
-              <Link
-                href="/signup"
-                onClick={() => setMenuOpen(false)}
-                className="bg-white px-5 py-3.5 text-center text-[15px] font-semibold text-soft-primary"
-              >
-                Get started free
-              </Link>
-            </div>
-          </div>
-        </div>
-      ) : null}
+              <div className="mt-8 flex flex-col gap-3">
+                <Link
+                  href="/login"
+                  onClick={() => setMenuOpen(false)}
+                  className="ndo-press border border-white/25 px-5 py-3.5 text-center text-[15px] font-semibold text-white"
+                >
+                  Log in
+                </Link>
+                <Link
+                  href="/signup"
+                  onClick={() => setMenuOpen(false)}
+                  className="ndo-press bg-white px-5 py-3.5 text-center text-[15px] font-semibold text-soft-primary"
+                >
+                  Get started free
+                </Link>
+              </div>
+            </motion.div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </>
   );
 }

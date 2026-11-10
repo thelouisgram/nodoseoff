@@ -30,7 +30,7 @@ const samplePrompts = [
 ];
 
 export default function Amanda() {
-  const { fadeUp, stagger } = useLandingVariants();
+  const { fadeUp, stagger, scaleIn } = useLandingVariants();
 
   return (
     <section
@@ -103,7 +103,7 @@ export default function Amanda() {
         </m.div>
 
         <m.div
-          variants={fadeUp}
+          variants={scaleIn}
           initial="hidden"
           whileInView="show"
           viewport={viewOnce}

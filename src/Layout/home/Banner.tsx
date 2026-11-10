@@ -6,13 +6,13 @@ import { ArrowRight } from "lucide-react";
 import { m, useLandingVariants, viewOnce } from "@/components/landing/motion";
 
 export default function Banner() {
-  const { fadeUp } = useLandingVariants();
+  const { scaleIn } = useLandingVariants();
 
   return (
     <section className="landing-section bg-white py-16 ss:py-20">
       <div className="mx-auto max-w-6xl px-4 ss:px-6">
         <m.div
-          variants={fadeUp}
+          variants={scaleIn}
           initial="hidden"
           whileInView="show"
           viewport={viewOnce}
@@ -62,10 +62,10 @@ export default function Banner() {
             </div>
             <Link
               href="/signup"
-              className="inline-flex shrink-0 items-center gap-2 bg-white px-7 py-3.5 text-[15px] font-bold text-soft-primary transition-opacity hover:opacity-92"
+              className="ndo-press group inline-flex shrink-0 items-center gap-2 bg-white px-7 py-3.5 text-[15px] font-bold text-soft-primary transition-opacity hover:opacity-92"
             >
               Get started free
-              <ArrowRight className="size-4" />
+              <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5" />
             </Link>
           </div>
         </m.div>

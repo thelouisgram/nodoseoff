@@ -54,8 +54,9 @@ export default function MobileAppSoon() {
             Same calm routine — in your pocket
           </h2>
           <p className="mt-4 max-w-md text-[15px] leading-relaxed text-white/70 ss:text-[16px]">
-            We’re building native iOS and Android apps so dose reminders, Home
-            insights, and AMANDA 6 travel with you — lock screen to pharmacy run.
+            We’re building native iOS and Android apps so dose reminders,
+            overview insights, and AMANDA 6 travel with you — lock screen to
+            pharmacy run.
           </p>
 
           <ul className="mt-7 space-y-3 text-[14px] text-white/75">
@@ -145,7 +146,7 @@ export default function MobileAppSoon() {
                       <div className="flex items-end justify-between gap-2">
                         <div>
                           <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-soft-muted">
-                            Home
+                            Overview
                           </p>
                           <p className="text-[15px] font-bold tracking-tight">
                             Hi Kemi,

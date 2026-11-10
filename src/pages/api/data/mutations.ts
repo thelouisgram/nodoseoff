@@ -193,6 +193,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           fileBase64: string;
           filename: string;
         };
+        if (typeof fileBase64 !== "string" || !fileBase64) {
+          return res.status(400).json({ error: "Missing image data" });
+        }
+        // ~5MB decoded ceiling (base64 is ~4/3 of binary size)
+        if (fileBase64.length > 7_000_000) {
+          return res.status(400).json({ error: "Image too large (max 5MB)" });
+        }
+        const lowerName = String(filename || "upload.jpg").toLowerCase();
+        if (!/\.(jpe?g|png|webp|gif)$/.test(lowerName)) {
+          return res.status(400).json({ error: "Unsupported image type" });
+        }
         const existing = await sql`
           SELECT profile_picture FROM users WHERE "userId" = ${userId} LIMIT 1
         `;
@@ -213,17 +224,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(200).json({ ok: true });
   } catch (e) {
     console.error("mutation error", action, e);
-    const message =
-      e instanceof Error ? e.message : "Mutation failed";
+    const message = e instanceof Error ? e.message : "Mutation failed";
     const isCloudinary =
       action === "uploadProfilePicture" ||
       message.includes("Cloudinary") ||
       message.includes("cloud_name");
     return res.status(isCloudinary ? 400 : 500).json({
       error: isCloudinary
-        ? "Profile upload failed. Check CLOUDINARY_CLOUD_NAME, API_KEY, and API_SECRET in .env."
+        ? "Profile upload failed. Please try a smaller JPG or PNG."
         : "Mutation failed",
-      detail: message,
     });
   }
 }

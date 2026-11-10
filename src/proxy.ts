@@ -26,7 +26,8 @@ function isPublicPath(pathname: string) {
   );
 }
 
-export default async function middleware(request: NextRequest) {
+/** Next.js 16 Proxy (formerly Middleware) — file must remain `src/proxy.ts`. */
+export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Complete Google/OAuth return: exchange verifier + challenge cookie for

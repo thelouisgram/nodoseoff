@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { requireUserId } from "@/lib/server/auth";
+import { requireAuthUser } from "@/lib/server/auth";
 import {
   bootstrapUser,
   linkLegacyAccountsByEmail,
@@ -10,7 +10,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ error: "Method not allowed" });
   }
   try {
-    const userId = await requireUserId(req);
+    const authUser = await requireAuthUser(req);
+    const jwtEmail = authUser.email?.trim().toLowerCase();
+    if (!jwtEmail) {
+      return res.status(400).json({
+        error: "Authenticated email is required for bootstrap",
+      });
+    }
+
     const { name, phone, email, onlyIfMissing, linkLegacy } = req.body as {
       name?: string;
       phone?: string;
@@ -18,21 +25,36 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       onlyIfMissing?: boolean;
       linkLegacy?: boolean;
     };
-    if (!name || !email) {
-      return res.status(400).json({ error: "name and email are required" });
+
+    const bodyEmail =
+      typeof email === "string" ? email.trim().toLowerCase() : "";
+    // Never trust body email for identity — must match the JWT claim.
+    if (bodyEmail && bodyEmail !== jwtEmail) {
+      return res.status(403).json({ error: "Email does not match session" });
     }
+
+    const displayName =
+      (typeof name === "string" && name.trim()) ||
+      authUser.name?.trim() ||
+      jwtEmail.split("@")[0] ||
+      "User";
+
     await bootstrapUser(
-      userId,
+      authUser.userId,
       {
-        name,
-        phone: phone ?? "",
-        email,
+        name: displayName,
+        phone: typeof phone === "string" ? phone : "",
+        email: jwtEmail,
       },
       { onlyIfMissing: Boolean(onlyIfMissing) }
     );
+
     let legacyLinked = 0;
     if (linkLegacy !== false) {
-      legacyLinked = await linkLegacyAccountsByEmail(userId, email);
+      legacyLinked = await linkLegacyAccountsByEmail(
+        authUser.userId,
+        jwtEmail
+      );
     }
     return res.status(200).json({ ok: true, legacyLinked });
   } catch (e) {

@@ -97,8 +97,8 @@ const Page = () => {
         className="relative flex h-[100dvh] w-full overflow-hidden bg-soft-canvas font-jakarta text-soft-ink"
       >
         <aside
-          className={`relative hidden shrink-0 flex-col border-r border-black/[0.05] bg-white px-2.5 py-6 transition-all duration-300 md:flex ${
-            nav ? "md:w-[88px] lg:w-[236px]" : "w-[88px]"
+          className={`relative hidden shrink-0 flex-col border-r border-black/[0.05] bg-white px-2.5 py-5 transition-all duration-300 md:flex ${
+            nav ? "md:w-[88px] lg:w-[240px]" : "w-[88px]"
           }`}
         >
           <SideBar
@@ -139,9 +139,19 @@ const Page = () => {
           />
         </ErrorBoundary>
 
-        <div className="fixed bottom-4 left-1/2 z-40 w-[92%] max-w-[420px] -translate-x-1/2 md:hidden">
-          <div className="flex h-[64px] w-full items-center rounded-2xl border border-black/[0.05] bg-white/95 px-2 shadow-soft-md backdrop-blur-lg">
-            <MobileSidebar activeTab={activeTab} />
+        {/* Mobile / tablet dock */}
+        <div
+          className="pointer-events-none fixed inset-x-0 bottom-0 z-40 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:hidden"
+        >
+          <div className="pointer-events-auto mx-auto w-full max-w-[440px]">
+            <motion.div
+              initial={{ y: 16, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ type: "spring", stiffness: 380, damping: 28, delay: 0.05 }}
+              className="flex h-[68px] items-center rounded-[22px] border border-black/[0.06] bg-white/90 px-1.5 shadow-soft-float backdrop-blur-xl"
+            >
+              <MobileSidebar activeTab={activeTab} />
+            </motion.div>
           </div>
         </div>
       </motion.section>

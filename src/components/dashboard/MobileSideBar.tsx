@@ -1,20 +1,27 @@
-import React from "react";
-import MobileTabs from "./MobileTabs";
-import { tabs } from "@/utils/dashboard/dashboard";
-import { LucideIcon } from "lucide-react";
+"use client";
 
-interface tabsProps {
+import { LayoutGroup } from "framer-motion";
+import type { LucideIcon } from "lucide-react";
+import { tabs } from "@/utils/dashboard/dashboard";
+import MobileTabs from "./MobileTabs";
+
+interface TabItem {
   name: string;
   icon: LucideIcon;
 }
 
 const MobileSideBar = ({ activeTab }: { activeTab: string }) => {
   return (
-    <div className="flex h-full w-full items-center justify-around px-1">
-      {tabs.map((item: tabsProps) => (
-        <MobileTabs key={item.name} item={item} activeTab={activeTab} />
-      ))}
-    </div>
+    <LayoutGroup id="mobile-dock">
+      <nav
+        className="flex h-full w-full items-stretch gap-0.5 px-1"
+        aria-label="Main"
+      >
+        {tabs.map((item: TabItem) => (
+          <MobileTabs key={item.name} item={item} activeTab={activeTab} />
+        ))}
+      </nav>
+    </LayoutGroup>
   );
 };
 

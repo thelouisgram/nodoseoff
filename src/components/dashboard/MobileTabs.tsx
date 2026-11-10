@@ -1,7 +1,13 @@
-import React from "react";
-import { LucideIcon } from "lucide-react";
+"use client";
+
+import { motion } from "framer-motion";
+import type { LucideIcon } from "lucide-react";
 import { useAppDispatch } from "@/store";
 import { setActiveTab } from "@/store/appSlice";
+import {
+  dashboardTabLabel,
+  isDashboardTabActive,
+} from "@/utils/dashboard/nav";
 
 interface TabItem {
   name: string;
@@ -16,34 +22,40 @@ interface TabsProps {
 const MobileTabs: React.FC<TabsProps> = ({ item, activeTab }) => {
   const dispatch = useAppDispatch();
   const Icon = item.icon;
-  const isActive =
-    activeTab === item.name ||
-    (item.name === "AMANDA 6" &&
-      (activeTab === "AI" || activeTab === "AMANDA"));
+  const isActive = isDashboardTabActive(item.name, activeTab);
+  const label = dashboardTabLabel(item.name);
 
   return (
     <button
       type="button"
       onClick={() => dispatch(setActiveTab(item.name))}
-      className={`flex min-w-[64px] flex-col items-center justify-center gap-1 rounded-xl px-2 py-1.5 transition-colors ${
+      className={`relative flex min-h-[52px] min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-2xl px-1 transition-colors ${
         isActive ? "text-soft-primary" : "text-soft-muted"
       }`}
       aria-current={isActive ? "page" : undefined}
-      aria-label={item.name}
+      aria-label={label}
     >
-      <span
-        className={`grid size-9 place-items-center rounded-lg transition-colors ${
-          isActive ? "bg-soft-primary-soft text-soft-primary" : ""
-        }`}
-      >
-        <Icon className="size-5" strokeWidth={1.75} absoluteStrokeWidth />
+      {isActive ? (
+        <motion.span
+          layoutId="mobile-nav-active"
+          className="absolute inset-y-1 inset-x-1 rounded-2xl bg-soft-primary-soft"
+          transition={{ type: "spring", stiffness: 420, damping: 34 }}
+        />
+      ) : null}
+
+      <span className="relative z-[1] grid size-8 place-items-center">
+        <Icon
+          className="size-[20px]"
+          strokeWidth={isActive ? 2 : 1.75}
+          absoluteStrokeWidth
+        />
       </span>
       <span
-        className={`text-[10px] tracking-tight ss:text-[11px] ${
+        className={`relative z-[1] text-[11px] leading-none tracking-tight ${
           isActive ? "font-semibold" : "font-medium"
         }`}
       >
-        {item.name === "AMANDA 6" ? "A6" : item.name}
+        {label}
       </span>
     </button>
   );

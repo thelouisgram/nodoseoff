@@ -20,26 +20,26 @@ const week = [
   { d: "S", today: true, filled: true },
 ];
 
-const moments = [
+const points = [
   {
     label: "Next dose",
-    title: "Kemi’s losartan at 8:00",
-    body: "She’s packing school lunches. Overview shows “in 14m” — the pill stays in the plan.",
+    title: "See what’s due next",
+    body: "A clear countdown for the next medication — name, time, and how soon it’s due.",
   },
   {
     label: "This week",
-    title: "Four green days after travel",
-    body: "Airport chaos knocked Wednesday. The week chips still tell the true story.",
+    title: "Track your streak",
+    body: "Seven day chips show which days stayed on track, so progress is visible at a glance.",
   },
   {
     label: "Catch-up",
-    title: "Yesterday’s evening metformin",
-    body: "One quiet “missed yesterday,” a Catch up tap, then back to today’s list.",
+    title: "Fix missed doses fast",
+    body: "Yesterday’s misses and ending courses surface quietly, with a one-tap catch-up when you need it.",
   },
   {
     label: "Ask AMANDA 6",
-    title: "“Can I take these with dinner?”",
-    body: "A chip from Overview opens AMANDA 6 with the evening stack already loaded.",
+    title: "Ask about your regimen",
+    body: "Open a question from Overview and AMANDA 6 already knows the meds on your schedule.",
   },
 ];
 
@@ -61,22 +61,41 @@ export default function HomePulse() {
       />
 
       <div className="relative mx-auto max-w-6xl px-4 ss:px-6">
-        <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-16">
+        <m.div
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="show"
+          viewport={viewOnce}
+          className="max-w-2xl"
+        >
+          <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-soft-primary">
+            Overview
+          </p>
+          <h2 className="mt-3 text-[2rem] font-bold tracking-tight text-soft-ink ss:text-[2.35rem]">
+            Your day, in one place
+          </h2>
+          <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-soft-muted ss:text-[16px]">
+            Overview is the first screen after you sign in — next dose, weekly
+            streak, catch-ups, and a quick path into AMANDA 6.
+          </p>
+        </m.div>
+
+        <div className="mt-12 flex flex-col gap-10 ss:mt-14 ss:flex-row ss:items-start ss:gap-10 md:gap-14 lg:gap-16">
           <m.div
             variants={scaleIn}
             initial="hidden"
             whileInView="show"
             viewport={viewOnce}
-            className="relative mx-auto w-full max-w-md lg:mx-0 lg:max-w-none"
+            className="relative mx-auto w-full max-w-md shrink-0 ss:mx-0 ss:w-[min(100%,420px)] ss:max-w-none md:w-[min(48%,460px)]"
           >
             <div className="relative overflow-hidden rounded-[28px] border border-black/[0.06] bg-soft-canvas p-4 shadow-soft-md ss:p-5">
               <div className="mb-4 flex items-end justify-between gap-3 px-1">
                 <div>
                   <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-soft-muted">
-                    Overview
+                    Today
                   </p>
                   <p className="mt-1 text-[20px] font-bold tracking-tight text-soft-ink">
-                    Hi Kemi,
+                    Good morning
                   </p>
                 </div>
                 <span className="rounded-full bg-soft-mint px-2.5 py-1 text-[11px] font-semibold text-soft-mint-ink">
@@ -212,59 +231,29 @@ export default function HomePulse() {
                 </div>
               </m.div>
             </div>
-
-            <m.p
-              initial={reduce ? false : { opacity: 0 }}
-              whileInView={reduce ? undefined : { opacity: 1 }}
-              viewport={viewOnce}
-              transition={{ delay: 0.35, duration: 0.4 }}
-              className="mt-4 text-center text-[12px] text-soft-muted lg:text-left"
-            >
-              A Tuesday morning, mid-routine.
-            </m.p>
           </m.div>
 
-          <div>
-            <m.div
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="show"
-              viewport={viewOnce}
-            >
-              <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-soft-primary">
-                Overview
-              </p>
-              <h2 className="mt-3 text-[2rem] font-bold tracking-tight text-soft-ink ss:text-[2.35rem]">
-                Insights shaped like real days
-              </h2>
-              <p className="mt-3 max-w-md text-[15px] leading-relaxed text-soft-muted ss:text-[16px]">
-                Your next dose, this week’s streak, a catch-up when yesterday
-                slipped, and AMANDA 6 when a question shows up mid-routine.
-              </p>
-            </m.div>
-
-            <m.ul
-              variants={stagger}
-              initial="hidden"
-              whileInView="show"
-              viewport={viewOnce}
-              className="mt-9 space-y-6"
-            >
-              {moments.map((moment) => (
-                <m.li key={moment.title} variants={fadeUp} className="max-w-md">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-soft-primary/80">
-                    {moment.label}
-                  </p>
-                  <h3 className="mt-1.5 text-[16px] font-bold tracking-tight text-soft-ink">
-                    {moment.title}
-                  </h3>
-                  <p className="mt-1 text-[14px] leading-relaxed text-soft-muted">
-                    {moment.body}
-                  </p>
-                </m.li>
-              ))}
-            </m.ul>
-          </div>
+          <m.ul
+            variants={stagger}
+            initial="hidden"
+            whileInView="show"
+            viewport={viewOnce}
+            className="min-w-0 flex-1 space-y-7 ss:pt-1"
+          >
+            {points.map((point) => (
+              <m.li key={point.title} variants={fadeUp} className="max-w-md">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-soft-primary/80">
+                  {point.label}
+                </p>
+                <h3 className="mt-1.5 text-[16px] font-bold tracking-tight text-soft-ink">
+                  {point.title}
+                </h3>
+                <p className="mt-1 text-[14px] leading-relaxed text-soft-muted">
+                  {point.body}
+                </p>
+              </m.li>
+            ))}
+          </m.ul>
         </div>
       </div>
     </section>

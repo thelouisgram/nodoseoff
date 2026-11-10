@@ -2,33 +2,17 @@
 
 import type { ReactNode } from "react";
 import { authClient } from "@/lib/auth/client";
-import { signOutAction } from "@/app/actions/auth";
 import { useAppDispatch, useAppSelector } from "@/store";
 import { setAuthUser } from "@/store/authSlice";
 import { setIsAuthenticated, setUserId, resetAppState } from "@/store/appSlice";
 import { clearDashboardData } from "@/store/dashboardSlice";
 
+/**
+ * Clear Neon Auth cookies without importing server-only createNeonAuth.
+ * (Pages Router + server actions was bundling cookie secrets into the client.)
+ */
 async function clearRemoteSession() {
-  // Prefer server action so first-party cookies clear even when the
-  // browser client throws on a non-2xx / OAuth provider logout redirect.
-  const server = await signOutAction().catch((err) => {
-    console.warn("signOutAction rejected:", err);
-    return { ok: false as const };
-  });
-  if (server.ok) return;
-
-  try {
-    await authClient.signOut({
-      // Avoid Google/OIDC end-session navigation fighting our /login redirect.
-      disableRedirect: true,
-    });
-    return;
-  } catch (err) {
-    console.warn("authClient.signOut failed:", err);
-  }
-
-  // Last resort: same-origin POST (does not throw on 4xx).
-  await fetch("/api/auth/sign-out", {
+  const res = await fetch("/api/auth/sign-out", {
     method: "POST",
     credentials: "include",
     headers: {
@@ -37,8 +21,17 @@ async function clearRemoteSession() {
     },
     body: JSON.stringify({ disableRedirect: true }),
   }).catch((err) => {
-    console.warn("sign-out fetch fallback failed:", err);
+    console.warn("sign-out fetch failed:", err);
+    return null;
   });
+
+  if (res?.ok) return;
+
+  try {
+    await authClient.signOut({ disableRedirect: true });
+  } catch (err) {
+    console.warn("authClient.signOut failed:", err);
+  }
 }
 
 /** Session state for the whole app. */

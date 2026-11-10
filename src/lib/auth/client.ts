@@ -22,8 +22,71 @@ function isExpectedUnauth(err: unknown): boolean {
   return /unauthorized|forbidden/i.test(msg);
 }
 
-/** Prefer Better Auth JWT; never send opaque session ids as Bearer tokens. */
-export async function getAccessToken(): Promise<string | null> {
+const JWT_CACHE_FALLBACK_MS = 45_000;
+const JWT_EXP_REFRESH_BUFFER_MS = 30_000;
+
+let cachedAccessToken: string | null = null;
+let cachedAccessTokenExpiresAt = 0;
+let inflightAccessToken: Promise<string | null> | null = null;
+let accessTokenCacheGeneration = 0;
+
+function decodeJwtExpMs(token: string): number | null {
+  try {
+    const payload = token.split(".")[1];
+    if (!payload) return null;
+    const base64 = payload.replace(/-/g, "+").replace(/_/g, "/");
+    const json = atob(base64);
+    const parsed = JSON.parse(json) as { exp?: unknown };
+    if (typeof parsed.exp === "number" && Number.isFinite(parsed.exp)) {
+      return parsed.exp * 1000;
+    }
+  } catch {
+    /* ignore */
+  }
+  return null;
+}
+
+function cacheExpiryMsForJwt(token: string, now: number): number {
+  const expMs = decodeJwtExpMs(token);
+  if (expMs != null) {
+    return Math.max(now, expMs - JWT_EXP_REFRESH_BUFFER_MS);
+  }
+  return now + JWT_CACHE_FALLBACK_MS;
+}
+
+function readCachedAccessToken(): string | null {
+  if (!cachedAccessToken || !isJwt(cachedAccessToken)) {
+    return null;
+  }
+  if (Date.now() >= cachedAccessTokenExpiresAt) {
+    cachedAccessToken = null;
+    cachedAccessTokenExpiresAt = 0;
+    return null;
+  }
+  return cachedAccessToken;
+}
+
+function storeAccessTokenInCache(token: string | null): string | null {
+  if (!token || !isJwt(token)) {
+    cachedAccessToken = null;
+    cachedAccessTokenExpiresAt = 0;
+    return null;
+  }
+  const now = Date.now();
+  cachedAccessToken = token;
+  cachedAccessTokenExpiresAt = cacheExpiryMsForJwt(token, now);
+  return token;
+}
+
+/** Drop in-memory JWT cache (e.g. on sign-out or 401). */
+export function clearAccessTokenCache(): void {
+  accessTokenCacheGeneration += 1;
+  cachedAccessToken = null;
+  cachedAccessTokenExpiresAt = 0;
+  inflightAccessToken = null;
+}
+
+async function fetchAccessTokenFresh(): Promise<string | null> {
   try {
     const result = await authClient.token();
     if (result && typeof result === "object" && "error" in result && result.error) {
@@ -74,4 +137,29 @@ export async function getAccessToken(): Promise<string | null> {
   }
 
   return null;
+}
+
+/** Prefer Better Auth JWT; never send opaque session ids as Bearer tokens. */
+export async function getAccessToken(): Promise<string | null> {
+  const cached = readCachedAccessToken();
+  if (cached) return cached;
+
+  if (inflightAccessToken) {
+    return inflightAccessToken;
+  }
+
+  const generation = accessTokenCacheGeneration;
+  inflightAccessToken = (async () => {
+    try {
+      const token = await fetchAccessTokenFresh();
+      if (generation !== accessTokenCacheGeneration) {
+        return null;
+      }
+      return storeAccessTokenInCache(token);
+    } finally {
+      inflightAccessToken = null;
+    }
+  })();
+
+  return inflightAccessToken;
 }

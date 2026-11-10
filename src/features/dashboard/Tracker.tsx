@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+import DoseCard from "./DoseCard";
+import { ScheduleItem } from "@/types/dashboard";
 
 interface TrackerProps {
   tracker: string;
-  dosesToDisplay: React.ReactElement[];
-  totalDoses: number;
+  doses: ScheduleItem[];
+  onUpdateCompleted: (item: ScheduleItem) => void | Promise<void>;
   setTracker: (value: string) => void;
   /** Unique layoutId scope so Home / Drugs tabs don’t fight */
   layoutScope?: string;
@@ -14,24 +16,22 @@ const DOSES_PER_PAGE = 4;
 
 const Tracker: React.FC<TrackerProps> = ({
   tracker,
-  dosesToDisplay,
-  totalDoses,
+  doses,
+  onUpdateCompleted,
   setTracker,
   layoutScope = "home",
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
-  const totalPages = Math.ceil(dosesToDisplay.length / DOSES_PER_PAGE);
+  const totalDoses = doses.length;
+  const totalPages = Math.ceil(totalDoses / DOSES_PER_PAGE);
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [tracker, dosesToDisplay.length]);
+  }, [tracker, totalDoses]);
 
   const startIndex = (currentPage - 1) * DOSES_PER_PAGE;
-  const visibleDoses = dosesToDisplay.slice(
-    startIndex,
-    startIndex + DOSES_PER_PAGE
-  );
+  const visibleDoses = doses.slice(startIndex, startIndex + DOSES_PER_PAGE);
 
   return (
     <div className="mb-0">
@@ -67,33 +67,21 @@ const Tracker: React.FC<TrackerProps> = ({
       </div>
 
       <div className="grid auto-rows-min gap-3 ss:grid-cols-2">
-        <AnimatePresence mode="popLayout" initial={false}>
-          {visibleDoses.length > 0 ? (
-            visibleDoses.map((dose) => (
-              <motion.div
-                key={dose.key}
-                layout
-                initial={{ opacity: 0, scale: 0.97 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.97 }}
-                transition={{ duration: 0.2 }}
-                className="w-full"
-              >
-                {dose}
-              </motion.div>
-            ))
-          ) : (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="col-span-2 w-full rounded-soft-lg border border-black/[0.04] bg-soft-canvas py-10 text-center"
-            >
-              <p className="text-sm text-soft-muted">
-                No doses scheduled for {tracker.toLowerCase()}
-              </p>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {visibleDoses.length > 0 ? (
+          visibleDoses.map((item) => (
+            <DoseCard
+              key={`${item.id}-${item.drugId}-${item.time}`}
+              item={item}
+              onUpdateCompleted={onUpdateCompleted}
+            />
+          ))
+        ) : (
+          <div className="col-span-2 w-full rounded-soft-lg border border-black/[0.04] bg-soft-canvas py-10 text-center">
+            <p className="text-sm text-soft-muted">
+              No doses scheduled for {tracker.toLowerCase()}
+            </p>
+          </div>
+        )}
       </div>
 
       {totalPages > 1 && (

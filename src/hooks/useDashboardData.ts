@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { toast } from "sonner";
 import { cleanUpDatabase, fetchData } from "../utils/fetchData";
 import { Appointment, DrugProps, ScheduleItem } from "../types/dashboard";
 import { apiJson } from "@/lib/api-client";
@@ -8,7 +9,7 @@ import { uploadScheduleToServer, removePastDoses } from "../utils/dashboard/sche
 import { sendMail } from "../utils/sendEmail";
 import { generateDrugAddedEmail } from "@/emails/newDrug";
 import { generateDrugAllergyEmail } from "@/emails/drugAllergy";
-import { useAppDispatch, useAppSelector, store } from "@/store";
+import { useAppDispatch, useAppSelector, store, type AppDispatch } from "@/store";
 import { fetchDashboardData, updateDashboardCache } from "@/store/dashboardSlice";
 
 async function runMutation(action: string, payload: object) {
@@ -618,6 +619,114 @@ export const useUpdateScheduleMutation = () => {
       });
       dispatch(updateDashboardCache({ schedule: params.schedule }));
       return params;
+    },
+  };
+};
+
+interface PendingScheduleWrite {
+  userId: string;
+  item: ScheduleItem;
+  previousCompleted: boolean;
+  resolve: () => void;
+  reject: (error: unknown) => void;
+}
+
+function toggleDoseInSchedule(
+  schedule: ScheduleItem[],
+  item: ScheduleItem
+): ScheduleItem[] {
+  return schedule.map((dose) =>
+    dose.id === item.id && dose.drugId === item.drugId
+      ? { ...dose, completed: !dose.completed }
+      : dose
+  );
+}
+
+function revertDoseToggles(
+  schedule: ScheduleItem[],
+  writes: PendingScheduleWrite[]
+): ScheduleItem[] {
+  const revertMap = new Map(
+    writes.map((w) => [
+      `${w.item.id}-${w.item.drugId}`,
+      w.previousCompleted,
+    ])
+  );
+  return schedule.map((dose) => {
+    const key = `${dose.id}-${dose.drugId}`;
+    if (revertMap.has(key)) {
+      return { ...dose, completed: revertMap.get(key)! };
+    }
+    return dose;
+  });
+}
+
+const scheduleWriteQueue: PendingScheduleWrite[] = [];
+let scheduleFlushRunning = false;
+
+async function flushScheduleWriteQueue(dispatch: AppDispatch) {
+  if (scheduleFlushRunning) return;
+  scheduleFlushRunning = true;
+  try {
+    while (scheduleWriteQueue.length > 0) {
+      const batch = scheduleWriteQueue.splice(0);
+      const userId = batch[0]?.userId;
+      if (!userId) continue;
+
+      const schedule = store.getState().dashboard.data?.schedule ?? [];
+      try {
+        await uploadScheduleToServer({ userId, schedule });
+        batch.forEach((entry) => entry.resolve());
+      } catch (error) {
+        const current = store.getState().dashboard.data?.schedule ?? [];
+        dispatch(
+          updateDashboardCache({
+            schedule: revertDoseToggles(current, batch),
+          })
+        );
+        toast.error(
+          "Failed to update dose. Please check your network connection."
+        );
+        batch.forEach((entry) => entry.reject(error));
+      }
+    }
+  } finally {
+    scheduleFlushRunning = false;
+    if (scheduleWriteQueue.length > 0) {
+      void flushScheduleWriteQueue(dispatch);
+    }
+  }
+}
+
+interface ToggleDoseCompletedParams {
+  userId: string;
+  item: ScheduleItem;
+}
+
+export const useToggleDoseCompletedMutation = () => {
+  const dispatch = useAppDispatch();
+  return {
+    /** Optimistic toggle — resolves immediately; server sync is queued/coalesced. */
+    mutateAsync: async ({ userId, item }: ToggleDoseCompletedParams) => {
+      const schedule = store.getState().dashboard.data?.schedule ?? [];
+      const existing = schedule.find(
+        (dose) => dose.id === item.id && dose.drugId === item.drugId
+      );
+      const previousCompleted = existing?.completed ?? item.completed;
+
+      const toggled = toggleDoseInSchedule(schedule, item);
+      dispatch(updateDashboardCache({ schedule: toggled }));
+
+      scheduleWriteQueue.push({
+        userId,
+        item,
+        previousCompleted,
+        resolve: () => {},
+        reject: () => {},
+      });
+      void flushScheduleWriteQueue(dispatch).catch((error) => {
+        console.error("Schedule sync failed:", error);
+      });
     },
   };
 };

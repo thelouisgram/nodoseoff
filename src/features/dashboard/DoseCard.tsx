@@ -1,11 +1,10 @@
 import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { Check, Loader2 } from "lucide-react";
 import { ScheduleItem } from "@/types/dashboard";
 
 interface DoseCardProps {
   item: ScheduleItem;
-  onUpdateCompleted: (item: ScheduleItem) => void;
+  onUpdateCompleted: (item: ScheduleItem) => void | Promise<void>;
 }
 
 const formatTime = (time: string): string => {
@@ -17,28 +16,24 @@ const formatTime = (time: string): string => {
 };
 
 const DoseCard: React.FC<DoseCardProps> = ({ item, onUpdateCompleted }) => {
-  const [loading, setLoading] = React.useState(false);
+  const [busy, setBusy] = React.useState(false);
 
-  const handleDoseClick = async () => {
-    setLoading(true);
-    await onUpdateCompleted(item);
-    setLoading(false);
+  const handleDoseClick = () => {
+    // Per-card debounce only — other doses stay clickable concurrently.
+    // Optimistic Redux update makes the checkmark flip immediately.
+    if (busy) return;
+    setBusy(true);
+    void Promise.resolve(onUpdateCompleted(item));
+    window.setTimeout(() => setBusy(false), 220);
   };
 
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 6 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -6, scale: 0.98 }}
-      transition={{ duration: 0.18 }}
-      className="flex w-full items-center justify-between rounded-xl border border-black/[0.05] bg-soft-canvas/70 px-3.5 py-3.5"
-    >
+    <div className="flex w-full items-center justify-between rounded-xl border border-black/[0.05] bg-soft-canvas/70 px-3.5 py-3.5">
       <div className="flex min-w-0 items-center gap-3">
         <button
           type="button"
           onClick={handleDoseClick}
-          disabled={loading}
+          disabled={busy}
           className={`flex size-9 shrink-0 items-center justify-center rounded-full border transition ${
             item.completed
               ? "border-soft-mint-ink/25 bg-soft-mint text-soft-mint-ink"
@@ -48,20 +43,11 @@ const DoseCard: React.FC<DoseCardProps> = ({ item, onUpdateCompleted }) => {
             item.completed ? "not taken" : "taken"
           }`}
         >
-          <AnimatePresence mode="wait">
-            {loading ? (
-              <motion.span
-                key="loading"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                <Loader2 className="size-3.5 animate-spin text-soft-muted" />
-              </motion.span>
-            ) : item.completed ? (
-              <Check className="size-3.5" strokeWidth={2.5} />
-            ) : null}
-          </AnimatePresence>
+          {busy && !item.completed ? (
+            <Loader2 className="size-3.5 animate-spin text-soft-muted" />
+          ) : item.completed ? (
+            <Check className="size-3.5" strokeWidth={2.5} />
+          ) : null}
         </button>
 
         <div className="flex min-w-0 flex-col">
@@ -83,7 +69,7 @@ const DoseCard: React.FC<DoseCardProps> = ({ item, onUpdateCompleted }) => {
       >
         {item.completed ? "Completed" : "Pending"}
       </span>
-    </motion.div>
+    </div>
   );
 };
 

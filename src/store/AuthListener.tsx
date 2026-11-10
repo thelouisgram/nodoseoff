@@ -13,10 +13,12 @@ type SessionUser = {
 };
 
 const MAX_JWT_RETRIES = 4;
+const FOCUS_REFRESH_DEBOUNCE_MS = 2_000;
 
 export default function AuthListener() {
   const dispatch = useAppDispatch();
   const bootstrappedRef = useRef<string | null>(null);
+  const lastFocusRefreshAtRef = useRef(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -101,6 +103,11 @@ export default function AuthListener() {
     void applySession();
 
     const onFocus = () => {
+      const now = Date.now();
+      if (now - lastFocusRefreshAtRef.current < FOCUS_REFRESH_DEBOUNCE_MS) {
+        return;
+      }
+      lastFocusRefreshAtRef.current = now;
       jwtAttempts = 0;
       void applySession();
     };

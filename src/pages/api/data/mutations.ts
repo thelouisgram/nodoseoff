@@ -64,8 +64,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         break;
       }
       case "updateSchedule": {
+        const schedule = payload.schedule;
+        if (!Array.isArray(schedule)) {
+          return res.status(400).json({ error: "schedule must be an array" });
+        }
+        if (schedule.length > 20_000) {
+          return res.status(400).json({ error: "schedule too large" });
+        }
         await sql`
-          UPDATE schedule SET schedule = ${JSON.stringify(payload.schedule ?? [])}::jsonb
+          UPDATE schedule SET schedule = ${JSON.stringify(schedule)}::jsonb
           WHERE "userId" = ${userId}
         `;
         break;

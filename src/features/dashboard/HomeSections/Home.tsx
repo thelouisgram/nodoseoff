@@ -7,12 +7,11 @@ import { toast } from "sonner";
 import {
   useDrugs,
   useSchedule,
-  useUpdateScheduleMutation,
+  useToggleDoseCompletedMutation,
 } from "@/hooks/useDashboardData";
 
 import DailyReports from "./DailyReports";
 import Tracker from "../Tracker";
-import DoseCard from "../DoseCard";
 import SummaryCards from "./SummaryCards";
 import WeekStreak from "./WeekStreak";
 import HomeAlerts from "./HomeAlerts";
@@ -46,7 +45,7 @@ const Home: React.FC<HomeProps> = ({
   const { data: schedule = [] } = useSchedule(userId);
   const { data: drugs = [] } = useDrugs(userId);
 
-  const updateScheduleMutation = useUpdateScheduleMutation();
+  const toggleDoseCompleted = useToggleDoseCompletedMutation();
 
   /** Dates */
   const { formattedToday, formattedYesterday } = useMemo(() => {
@@ -73,39 +72,26 @@ const Home: React.FC<HomeProps> = ({
   /** Update completed status */
   const updateCompleted = useCallback(
     async (item: ScheduleItem) => {
-      const updatedSchedule = schedule.map((dose: ScheduleItem) =>
-        dose.id === item.id && dose.drugId === item.drugId
-          ? { ...dose, completed: !dose.completed }
-          : dose
-      );
       try {
-        await updateScheduleMutation.mutateAsync({
+        await toggleDoseCompleted.mutateAsync({
           userId: userId!,
-          schedule: updatedSchedule,
+          item,
         });
-      } catch (error) {
+      } catch {
         toast.error(
           "Failed to update dose. Please check your network connection."
         );
       }
     },
-    [schedule, userId, updateScheduleMutation]
+    [userId, toggleDoseCompleted]
   );
 
-  /** Doses to render */
-  const allDosesToRender = useMemo(() => {
+  const dosesForTracker = useMemo(() => {
     const doses = tracker === "Today" ? todaysDose : yesterdaysDose;
     return doses
       .slice()
-      .sort((a, b) => Number(a.completed) - Number(b.completed))
-      .map((item: ScheduleItem) => (
-        <DoseCard
-          key={`${item.id}-${item.drug}`}
-          item={item}
-          onUpdateCompleted={updateCompleted}
-        />
-      ));
-  }, [tracker, todaysDose, yesterdaysDose, updateCompleted]);
+      .sort((a, b) => Number(a.completed) - Number(b.completed));
+  }, [tracker, todaysDose, yesterdaysDose]);
 
   return (
     <div className="relative h-[100dvh] w-full overflow-y-scroll bg-soft-canvas px-0 pb-24 pt-10 font-jakarta text-soft-ink md:px-12 md:py-16 md:pb-20">
@@ -126,8 +112,8 @@ const Home: React.FC<HomeProps> = ({
           </div>
           <Tracker
             tracker={tracker}
-            dosesToDisplay={allDosesToRender}
-            totalDoses={allDosesToRender.length}
+            doses={dosesForTracker}
+            onUpdateCompleted={updateCompleted}
             setTracker={setTracker}
             layoutScope="home"
           />

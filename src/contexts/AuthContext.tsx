@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { authClient } from "@/lib/auth/client";
+import { authClient, clearAccessTokenCache } from "@/lib/auth/client";
 import { useAppDispatch, useAppSelector } from "@/store";
 import { setAuthUser } from "@/store/authSlice";
 import { setIsAuthenticated, setUserId, resetAppState } from "@/store/appSlice";
@@ -43,6 +43,7 @@ export function useAuth() {
     try {
       await clearRemoteSession();
     } finally {
+      clearAccessTokenCache();
       // Always clear local state so a remote failure cannot leave the UI stuck.
       dispatch(setAuthUser(null));
       dispatch(resetAppState());

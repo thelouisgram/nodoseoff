@@ -8,7 +8,7 @@ import {
   useDrugs,
   useSchedule,
   useCompletedDrugs,
-  useUpdateScheduleMutation,
+  useToggleDoseCompletedMutation,
 } from "@/hooks/useDashboardData";
 import { DrugDetailsProps } from "@/types/drug";
 
@@ -28,7 +28,6 @@ import { useAppSelector } from "@/store";
 import { calculateDrugComplianceByIds } from "@/utils/dashboard/drugs";
 import { format } from "date-fns";
 import Tracker from "../../dashboard/Tracker";
-import DoseCard from "../../dashboard/DoseCard";
 import { ScheduleItem } from "@/types/dashboard";
 import { toast } from "sonner";
 
@@ -50,7 +49,7 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
   const { data: completedDrugs = [] } = useCompletedDrugs(userId);
 
   const [tracker, setTracker] = useState("Today");
-  const updateScheduleMutation = useUpdateScheduleMutation();
+  const toggleDoseCompleted = useToggleDoseCompletedMutation();
 
   const { formattedToday, formattedYesterday } = useMemo(() => {
     const today = new Date();
@@ -63,15 +62,10 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
 
   const updateCompleted = useCallback(
     async (item: ScheduleItem) => {
-      const updatedSchedule = schedule.map((dose: ScheduleItem) =>
-        dose.id === item.id && dose.drugId === item.drugId
-          ? { ...dose, completed: !dose.completed }
-          : dose
-      );
       try {
-        await updateScheduleMutation.mutateAsync({
+        await toggleDoseCompleted.mutateAsync({
           userId: userId!,
-          schedule: updatedSchedule,
+          item,
         });
       } catch {
         toast.error(
@@ -79,7 +73,7 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
         );
       }
     },
-    [schedule, userId, updateScheduleMutation]
+    [userId, toggleDoseCompleted]
   );
 
   const drugsArray = tab === "ongoing" ? drugs : completedDrugs;
@@ -119,19 +113,12 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
     };
   }, [schedule, formattedToday, formattedYesterday, courseIds]);
 
-  const allDosesToRender = useMemo(() => {
+  const dosesForTracker = useMemo(() => {
     const doses = tracker === "Today" ? todaysDose : yesterdaysDose;
     return doses
       .slice()
-      .sort((a, b) => Number(a.completed) - Number(b.completed))
-      .map((item: ScheduleItem) => (
-        <DoseCard
-          key={`${item.id}-${item.drugId}-${item.time}`}
-          item={item}
-          onUpdateCompleted={updateCompleted}
-        />
-      ));
-  }, [tracker, todaysDose, yesterdaysDose, updateCompleted]);
+      .sort((a, b) => Number(a.completed) - Number(b.completed));
+  }, [tracker, todaysDose, yesterdaysDose]);
 
   const latestCourse =
     courses.find((c) => c.drugId && c.drugId === activeDrugId) || courses[0];
@@ -253,8 +240,8 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
             </div>
             <Tracker
               tracker={tracker}
-              dosesToDisplay={allDosesToRender}
-              totalDoses={allDosesToRender.length}
+              doses={dosesForTracker}
+              onUpdateCompleted={updateCompleted}
               setTracker={setTracker}
               layoutScope="drugs"
             />

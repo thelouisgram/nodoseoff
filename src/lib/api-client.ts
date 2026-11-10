@@ -1,8 +1,9 @@
-import { getAccessToken } from "@/lib/auth/client";
+import { clearAccessTokenCache, getAccessToken } from "@/lib/auth/client";
 
 export async function apiJson<T>(
   path: string,
-  options: RequestInit & { json?: unknown } = {}
+  options: RequestInit & { json?: unknown } = {},
+  retryOnUnauthorized = true
 ): Promise<T> {
   const { json, ...init } = options;
   const headers = new Headers(init.headers);
@@ -20,6 +21,10 @@ export async function apiJson<T>(
     credentials: "include",
     body: json !== undefined ? JSON.stringify(json) : init.body,
   });
+  if (res.status === 401 && retryOnUnauthorized) {
+    clearAccessTokenCache();
+    return apiJson<T>(path, options, false);
+  }
   if (!res.ok) {
     const text = await res.text();
     throw new Error(text || res.statusText);

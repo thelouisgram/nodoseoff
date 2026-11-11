@@ -1,5 +1,10 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { Appointment, DrugProps, ScheduleItem } from "../types/dashboard";
+import {
+  Appointment,
+  DrugProps,
+  HealthJournalEntry,
+  ScheduleItem,
+} from "../types/dashboard";
 import { Info } from "../utils/store";
 import { fetchData } from "../utils/fetchData";
 
@@ -11,6 +16,7 @@ export interface DashboardData {
     otcDrugs: string;
     schedule: ScheduleItem[];
     appointment: Appointment | null;
+    healthJournal: HealthJournalEntry[];
     activeDrugs: DrugProps[];
     expiredDrugs: any[];
     updatedCompletedList: DrugProps[];
@@ -40,6 +46,7 @@ export const fetchDashboardData = createAsyncThunk(
             otcDrugs: String(data.otcDrugs ?? ""),
             schedule: (data.schedule ?? []) as ScheduleItem[],
             appointment: (data.appointment ?? null) as Appointment | null,
+            healthJournal: (data.healthJournal ?? []) as HealthJournalEntry[],
             activeDrugs: (data.activeDrugs ?? []) as DrugProps[],
             expiredDrugs: data.expiredDrugs ?? [],
             updatedCompletedList: (data.updatedCompletedList ?? []) as DrugProps[],

@@ -188,6 +188,87 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         await sql`DELETE FROM appointments WHERE "userId" = ${userId}`;
         break;
       }
+      case "insertHealthJournal": {
+        const kindRaw = String(payload.kind ?? "").trim();
+        const kind =
+          kindRaw === "mood" || kindRaw === "side_effect" || kindRaw === "note"
+            ? kindRaw
+            : "";
+        if (!kind) {
+          return res.status(400).json({ error: "Invalid journal kind" });
+        }
+        const mood = String(payload.mood ?? "").trim().slice(0, 40);
+        const symptom = String(payload.symptom ?? "").trim().slice(0, 120);
+        const drug = String(payload.drug ?? "").trim().slice(0, 120);
+        const drugId = String(payload.drugId ?? "").trim().slice(0, 120);
+        const notes = String(payload.notes ?? "").trim().slice(0, 500);
+        const severityRaw = payload.severity;
+        let severity: number | null = null;
+        if (severityRaw != null && severityRaw !== "") {
+          const n = Number(severityRaw);
+          if (!Number.isInteger(n) || n < 1 || n > 5) {
+            return res.status(400).json({ error: "Severity must be 1–5" });
+          }
+          severity = n;
+        }
+        if (kind === "mood" && !mood) {
+          return res.status(400).json({ error: "Pick a mood" });
+        }
+        if (kind === "side_effect" && !symptom) {
+          return res.status(400).json({ error: "Describe the side effect" });
+        }
+        if (kind === "note" && !notes) {
+          return res.status(400).json({ error: "Add a note" });
+        }
+        const loggedAtRaw = String(payload.loggedAt ?? "").trim();
+        const loggedAt = loggedAtRaw ? new Date(loggedAtRaw) : new Date();
+        if (Number.isNaN(loggedAt.getTime())) {
+          return res.status(400).json({ error: "Invalid logged date" });
+        }
+        const rows = await sql`
+          INSERT INTO health_journal (
+            "userId", kind, mood, severity, symptom, drug, "drugId", notes, logged_at
+          )
+          VALUES (
+            ${userId},
+            ${kind},
+            ${mood},
+            ${severity},
+            ${symptom},
+            ${drug},
+            ${drugId},
+            ${notes},
+            ${loggedAt.toISOString()}
+          )
+          RETURNING id, kind, mood, severity, symptom, drug, "drugId", notes, logged_at
+        `;
+        const row = rows[0] as Record<string, unknown>;
+        return res.status(200).json({
+          ok: true,
+          entry: {
+            id: Number(row.id),
+            kind: String(row.kind),
+            mood: String(row.mood ?? ""),
+            severity: row.severity == null ? null : Number(row.severity),
+            symptom: String(row.symptom ?? ""),
+            drug: String(row.drug ?? ""),
+            drugId: String(row.drugId ?? ""),
+            notes: String(row.notes ?? ""),
+            loggedAt: new Date(String(row.logged_at)).toISOString(),
+          },
+        });
+      }
+      case "deleteHealthJournal": {
+        const id = Number(payload.id);
+        if (!Number.isInteger(id) || id <= 0) {
+          return res.status(400).json({ error: "Invalid entry id" });
+        }
+        await sql`
+          DELETE FROM health_journal
+          WHERE "userId" = ${userId} AND id = ${id}
+        `;
+        break;
+      }
       case "uploadProfilePicture": {
         const { fileBase64, filename } = payload as {
           fileBase64: string;

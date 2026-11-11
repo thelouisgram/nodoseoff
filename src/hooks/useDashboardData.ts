@@ -1,7 +1,13 @@
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { cleanUpDatabase, fetchData } from "../utils/fetchData";
-import { Appointment, DrugProps, ScheduleItem } from "../types/dashboard";
+import {
+  Appointment,
+  DrugProps,
+  HealthJournalEntry,
+  HealthJournalKind,
+  ScheduleItem,
+} from "../types/dashboard";
 import { apiJson } from "@/lib/api-client";
 import { generateDrugId } from "@/utils/drugs";
 import { generateSchedule } from "../utils/dashboard/dashboard";
@@ -785,6 +791,60 @@ export const useDeleteAppointmentMutation = () => {
     mutateAsync: async () => {
       await runMutation("deleteAppointment", {});
       dispatch(updateDashboardCache({ appointment: null }));
+    },
+  };
+};
+
+export const useHealthJournal = (_userId?: string | undefined) => {
+  const { data, status } = useDashboardSlice();
+  return {
+    data: (data?.healthJournal ?? []) as HealthJournalEntry[],
+    isLoading: status === "loading",
+  };
+};
+
+interface InsertHealthJournalParams {
+  kind: HealthJournalKind;
+  mood?: string;
+  severity?: number | null;
+  symptom?: string;
+  drug?: string;
+  drugId?: string;
+  notes?: string;
+  loggedAt?: string;
+}
+
+export const useInsertHealthJournalMutation = () => {
+  const dispatch = useAppDispatch();
+  return {
+    mutateAsync: async (params: InsertHealthJournalParams) => {
+      const result = await runMutation("insertHealthJournal", params);
+      const entry = (result as { entry?: HealthJournalEntry })?.entry;
+      if (!entry) {
+        throw new Error("Journal entry missing from response");
+      }
+      const current = store.getState().dashboard.data?.healthJournal ?? [];
+      dispatch(
+        updateDashboardCache({
+          healthJournal: [entry, ...current].slice(0, 80),
+        })
+      );
+      return entry;
+    },
+  };
+};
+
+export const useDeleteHealthJournalMutation = () => {
+  const dispatch = useAppDispatch();
+  return {
+    mutateAsync: async (id: number) => {
+      await runMutation("deleteHealthJournal", { id });
+      const current = store.getState().dashboard.data?.healthJournal ?? [];
+      dispatch(
+        updateDashboardCache({
+          healthJournal: current.filter((e) => e.id !== id),
+        })
+      );
     },
   };
 };

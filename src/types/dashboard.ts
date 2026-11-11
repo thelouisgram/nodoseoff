@@ -33,3 +33,18 @@ export interface Appointment {
   startsAt: string;
   notes: string;
 }
+
+export type HealthJournalKind = "mood" | "side_effect" | "note";
+
+/** Mood / side-effect / note entry logged from Home for AMANDA context */
+export interface HealthJournalEntry {
+  id: number;
+  kind: HealthJournalKind;
+  mood: string;
+  severity: number | null;
+  symptom: string;
+  drug: string;
+  drugId: string;
+  notes: string;
+  loggedAt: string;
+}

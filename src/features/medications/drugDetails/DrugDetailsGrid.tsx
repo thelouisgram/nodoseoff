@@ -1,4 +1,3 @@
-// components/DrugDetailsGrid.tsx
 import React from "react";
 import { Clock, Calendar, Repeat, Droplet, Target, Info } from "lucide-react";
 import { motion } from "framer-motion";
@@ -31,27 +30,27 @@ const itemVariants = {
 const iconMap = (name: string) => {
   switch (name.toLowerCase()) {
     case "frequency":
-      return { Icon: Repeat, color: "text-indigo-600" };
+      return { Icon: Repeat, color: "text-soft-primary" };
     case "time":
-      return { Icon: Clock, color: "text-green-600" };
+      return { Icon: Clock, color: "text-soft-mint-ink" };
     case "duration":
-      return { Icon: Calendar, color: "text-orange-500" };
+      return { Icon: Calendar, color: "text-soft-peach-ink" };
     case "reminder":
-      return { Icon: Target, color: "text-teal-600" };
+      return { Icon: Target, color: "text-soft-lavender-ink" };
     case "start date":
-      return { Icon: Calendar, color: "text-green-500" };
+      return { Icon: Calendar, color: "text-soft-mint-ink" };
     case "end date":
-      return { Icon: Calendar, color: "text-red-500" };
+      return { Icon: Calendar, color: "text-soft-pink-ink" };
     case "total doses":
-      return { Icon: Droplet, color: "text-blue-600" };
+      return { Icon: Droplet, color: "text-soft-primary" };
     case "completed doses":
-      return { Icon: Droplet, color: "text-green-600" };
+      return { Icon: Droplet, color: "text-soft-mint-ink" };
     case "missed doses":
-      return { Icon: Droplet, color: "text-red-600" };
+      return { Icon: Droplet, color: "text-soft-pink-ink" };
     case "remaining doses":
-      return { Icon: Droplet, color: "text-yellow-600" };
+      return { Icon: Droplet, color: "text-soft-peach-ink" };
     default:
-      return { Icon: Info, color: "text-gray-400" };
+      return { Icon: Info, color: "text-soft-muted" };
   }
 };
 
@@ -61,7 +60,7 @@ const DrugDetailsGrid: React.FC<DrugDetailsGridProps> = ({ details }) => {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="grid ss:grid-cols-2 md:grid-cols-3 gap-3 pb-24"
+      className="grid gap-3 pb-24 ss:grid-cols-2 md:grid-cols-3"
     >
       {details.map((detail, index) => {
         const { Icon, color } = iconMap(detail.name);
@@ -72,14 +71,16 @@ const DrugDetailsGrid: React.FC<DrugDetailsGridProps> = ({ details }) => {
             variants={itemVariants}
             className="flex items-center gap-3 rounded-xl border border-black/[0.05] bg-white p-4 shadow-soft-sm"
           >
-            <div className={`flex items-center justify-center ${color}`}>
-              <Icon className="size-5" />
+            <div
+              className={`flex size-9 shrink-0 items-center justify-center rounded-xl bg-soft-canvas ${color}`}
+            >
+              <Icon className="size-4" strokeWidth={2} />
             </div>
-            <div className="flex flex-col min-w-0">
-              <span className="text-[11px] text-gray-400 uppercase tracking-wide">
+            <div className="flex min-w-0 flex-col">
+              <span className="text-[11px] uppercase tracking-wide text-soft-muted">
                 {detail.name}
               </span>
-              <span className="text-sm font-semibold text-gray-900 truncate capitalize">
+              <span className="truncate text-sm font-semibold capitalize text-soft-ink">
                 {detail.details || "—"}
               </span>
             </div>

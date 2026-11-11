@@ -9,6 +9,17 @@ type MedRow = {
   time?: unknown;
 };
 
+type JournalRow = {
+  id?: unknown;
+  kind?: unknown;
+  mood?: unknown;
+  severity?: unknown;
+  symptom?: unknown;
+  drug?: unknown;
+  notes?: unknown;
+  loggedAt?: unknown;
+};
+
 function formatTimes(time: unknown): string {
   if (!Array.isArray(time) || time.length === 0) return "";
   return time
@@ -36,12 +47,88 @@ function formatMedLine(row: MedRow): string {
   return bits.length ? `- ${name} (${bits.join("; ")})` : `- ${name}`;
 }
 
+function formatJournalLine(row: JournalRow): string {
+  const when = String(row.loggedAt || "").slice(0, 10) || "unknown date";
+  const kind = String(row.kind || "note");
+  const drug = String(row.drug || "").trim();
+  const linked = drug ? ` · linked med: ${drug}` : "";
+
+  if (kind === "mood") {
+    const mood = String(row.mood || "").trim() || "unspecified";
+    const notes = String(row.notes || "").trim();
+    return `- ${when}: mood=${mood}${notes ? ` · ${notes}` : ""}${linked}`;
+  }
+
+  if (kind === "side_effect") {
+    const symptom = String(row.symptom || "").trim() || "unspecified";
+    const severity =
+      row.severity == null || row.severity === ""
+        ? ""
+        : ` · severity ${row.severity}/5`;
+    const notes = String(row.notes || "").trim();
+    return `- ${when}: side effect=${symptom}${severity}${notes ? ` · ${notes}` : ""}${linked}`;
+  }
+
+  const notes = String(row.notes || "").trim() || "(empty note)";
+  return `- ${when}: note=${notes}${linked}`;
+}
+
+/** Summarize recurring side effects by drug for AMANDA pattern questions. */
+function summarizeSideEffects(entries: JournalRow[]): string[] {
+  const sideEffects = entries.filter(
+    (e) => String(e.kind) === "side_effect" && String(e.symptom || "").trim()
+  );
+  if (sideEffects.length === 0) return [];
+
+  const byKey = new Map<
+    string,
+    { count: number; severities: number[]; drug: string; symptom: string }
+  >();
+
+  for (const e of sideEffects) {
+    const symptom = String(e.symptom || "")
+      .trim()
+      .toLowerCase();
+    const drug = String(e.drug || "")
+      .trim()
+      .toLowerCase();
+    const key = `${drug || "unlinked"}::${symptom}`;
+    const severity =
+      e.severity == null || e.severity === "" ? null : Number(e.severity);
+    const prev = byKey.get(key) || {
+      count: 0,
+      severities: [] as number[],
+      drug: String(e.drug || "").trim() || "unlinked",
+      symptom: String(e.symptom || "").trim(),
+    };
+    prev.count += 1;
+    if (severity != null && !Number.isNaN(severity)) {
+      prev.severities.push(severity);
+    }
+    byKey.set(key, prev);
+  }
+
+  return Array.from(byKey.values())
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 12)
+    .map((row) => {
+      const avg =
+        row.severities.length > 0
+          ? (
+              row.severities.reduce((s, n) => s + n, 0) / row.severities.length
+            ).toFixed(1)
+          : null;
+      return `- ${row.symptom}${row.drug !== "unlinked" ? ` (with ${row.drug})` : ""}: ${row.count} log${row.count === 1 ? "" : "s"}${avg ? `, avg severity ${avg}/5` : ""}`;
+    });
+}
+
 /** Build a compact medication snapshot for the AI system prompt. */
 export async function buildUserMedsContext(userId: string): Promise<string> {
   try {
     const data = await loadDashboardForUser(userId);
     const active = (data.activeDrugs || []) as MedRow[];
     const allergies = (data.allergies || []) as MedRow[];
+    const journal = (data.healthJournal || []) as JournalRow[];
     const otc = String(data.otcDrugs || "").trim();
     const herbs = String(data.herbs || "").trim();
 
@@ -70,8 +157,29 @@ export async function buildUserMedsContext(userId: string): Promise<string> {
     if (otc) lines.push(`OTC / other drugs noted: ${otc}`);
     if (herbs) lines.push(`Herbs / supplements noted: ${herbs}`);
 
+    const sideSummary = summarizeSideEffects(journal);
+    if (sideSummary.length > 0) {
+      lines.push(
+        "Side-effect frequency from the patient’s logged journal (use for questions like “which side effect is more consistent since I started X”):"
+      );
+      lines.push(...sideSummary);
+    }
+
+    if (journal.length > 0) {
+      lines.push(
+        "Recent mood / side-effect / note logs (newest first, up to 40):"
+      );
+      for (const entry of journal.slice(0, 40)) {
+        lines.push(formatJournalLine(entry));
+      }
+    } else {
+      lines.push(
+        "Health journal: no mood or side-effect logs yet. If they ask about patterns since starting a med, say they haven’t logged symptoms yet and suggest logging a side effect from the + menu on Overview."
+      );
+    }
+
     lines.push(
-      "When answering, prefer these listed meds. Do not invent prescriptions they are not taking. If the list is empty, say so and ask them to add meds in the Drugs tab or name a medication."
+      "When answering, prefer these listed meds and journal logs. Do not invent prescriptions, moods, or side effects they did not log. If comparing consistency of side effects, use the frequency summary and dated logs. If the list is empty, say so and ask them to add meds in the Drugs tab or log symptoms in Overview."
     );
 
     return lines.join("\n");

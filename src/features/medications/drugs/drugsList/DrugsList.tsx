@@ -113,14 +113,8 @@ const DrugsList: React.FC<DrugsListProps> = ({
       <AnimatePresence mode="popLayout">
         {drugs?.map((drug, index) => {
           const isActive =
-            tab === "completed"
-              ? Boolean(
-                  activeDrugId &&
-                    drug.drugId &&
-                    String(activeDrugId) === String(drug.drugId)
-                )
-              : sameDrugName(activeDrug, drug.drug) ||
-                activeDrugId === drug.drugId;
+            sameDrugName(activeDrug, drug.drug) ||
+            activeDrugId === drug.drugId;
           const courseCount = drug.courseCount || drug.courses?.length || 1;
           const duration =
             courseCount > 1
@@ -149,10 +143,7 @@ const DrugsList: React.FC<DrugsListProps> = ({
                 ? drug.route.trim().replace(/^\w/, (c) => c.toUpperCase())
                 : "—";
 
-          const rowKey =
-            tab === "completed"
-              ? `course-${drug.drugId || drug.drug}-${drug.start}-${drug.end}-${startIndex + index}`
-              : `name-${drug.drug.toLowerCase()}-${startIndex + index}`;
+          const rowKey = `name-${drug.drug.toLowerCase()}-${startIndex + index}`;
 
           return (
             <motion.div
@@ -182,13 +173,7 @@ const DrugsList: React.FC<DrugsListProps> = ({
                   <span className="block truncate font-semibold capitalize text-soft-ink">
                     {drug.drug}
                   </span>
-                  {tab === "completed" ? (
-                    <span className="text-[11px] text-soft-muted">
-                      {drug.start && drug.end
-                        ? `${drug.start} → ${drug.end}`
-                        : "Course"}
-                    </span>
-                  ) : courseCount > 1 ? (
+                  {courseCount > 1 ? (
                     <span className="text-[11px] text-soft-muted">
                       {courseCount} courses
                     </span>

@@ -1,5 +1,5 @@
 import React, { SetStateAction, RefObject, useState } from "react";
-import { ShieldOff, Trash2, Pencil, Loader2, X } from "lucide-react";
+import { ShieldOff, Trash2, Pencil, RefreshCw, Loader2, X } from "lucide-react";
 import { useAppSelector, useAppDispatch } from "@/store";
 import { setActiveDrug, setActiveDrugId } from "@/store/appSlice";
 import { motion, AnimatePresence } from "framer-motion";
@@ -107,6 +107,18 @@ const DrugActionModals: React.FC<DrugActionModalsProps> = ({
       confirmClass: "bg-blue-600 hover:bg-blue-600",
       onConfirm: async () => {
         setActiveModal("edit");
+        setActiveAction("");
+      },
+    },
+    refill: {
+      title: `Refill ${activeDrug.toUpperCase()}`,
+      message:
+        "Start a new course using this medication’s last settings. You can adjust dates, times, and frequency before saving.",
+      confirmText: "Continue",
+      confirmIcon: RefreshCw,
+      confirmClass: "bg-soft-primary hover:bg-soft-primary/90",
+      onConfirm: async () => {
+        setActiveModal("refill");
         setActiveAction("");
       },
     },

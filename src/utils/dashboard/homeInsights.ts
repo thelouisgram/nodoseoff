@@ -214,6 +214,7 @@ export function buildAmandaShortcuts(drugNames: string[]): string[] {
     return [
       "Tips for remembering evening doses",
       "What should I ask my pharmacist about a new prescription?",
+      "How should I track side effects day to day?",
     ];
   }
   const first = unique[0];
@@ -222,10 +223,11 @@ export function buildAmandaShortcuts(drugNames: string[]): string[] {
     unique.length > 1
       ? "Any interactions among my medications today?"
       : `Common side effects of ${first}?`,
+    `Which side effect has been more consistent since I started ${first}?`,
     second
       ? `Can I take ${first} and ${second} together?`
       : `Tips for staying on schedule with ${first}`,
-  ].slice(0, 2);
+  ].slice(0, 3);
 }
 
 export function formatRelativeDoseLabel(

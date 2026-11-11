@@ -67,16 +67,15 @@ module.exports = {
         "soft-2xl": "32px",
       },
       boxShadow: {
-        // Border-first elevation (Donezo-like): soft, short, low-opacity
-        soft: "0 1px 2px rgba(11, 26, 46, 0.04), 0 8px 24px rgba(11, 26, 46, 0.05)",
-        "soft-sm":
-          "0 1px 1px rgba(11, 26, 46, 0.03), 0 4px 12px rgba(11, 26, 46, 0.04)",
+        // Border-first elevation: hairline, short, low-opacity
+        soft: "0 1px 2px rgba(11, 26, 46, 0.03), 0 3px 10px rgba(11, 26, 46, 0.03)",
+        "soft-sm": "0 1px 2px rgba(11, 26, 46, 0.025)",
         "soft-md":
-          "0 2px 4px rgba(11, 26, 46, 0.04), 0 12px 32px rgba(11, 26, 46, 0.06)",
+          "0 1px 2px rgba(11, 26, 46, 0.03), 0 4px 14px rgba(11, 26, 46, 0.035)",
         "soft-lg":
-          "0 4px 8px rgba(11, 26, 46, 0.04), 0 20px 48px rgba(11, 26, 46, 0.08)",
+          "0 1px 3px rgba(11, 26, 46, 0.03), 0 8px 20px rgba(11, 26, 46, 0.045)",
         "soft-float":
-          "0 2px 6px rgba(0, 40, 96, 0.12), 0 10px 28px rgba(0, 40, 96, 0.14)",
+          "0 1px 3px rgba(0, 40, 96, 0.06), 0 6px 16px rgba(0, 40, 96, 0.08)",
         "soft-inset": "inset 0 1px 0 rgba(255,255,255,0.8)",
       },
       height: {},

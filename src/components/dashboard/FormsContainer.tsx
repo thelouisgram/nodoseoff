@@ -8,6 +8,8 @@ import AllergiesForm from "../../features/forms/AllergiesForm";
 import DrugsForm from "../../features/forms/DrugsForm";
 import EditForm from "../../features/forms/EditForm";
 import ProfileForm from "../../features/forms/ProfileForm";
+import SideEffectsForm from "../../features/forms/SideEffectsForm";
+import AppointmentForm from "../../features/forms/AppointmentForm";
 
 interface FormContainerProps {
   activeModal: string;
@@ -23,6 +25,14 @@ const FormsContainer: React.FC<FormContainerProps> = ({
       <DrugsForm setActiveModal={setActiveModal} activeModal={activeModal} />
       <EditForm setActiveModal={setActiveModal} activeModal={activeModal} />
       <AllergiesForm
+        setActiveModal={setActiveModal}
+        activeModal={activeModal}
+      />
+      <SideEffectsForm
+        setActiveModal={setActiveModal}
+        activeModal={activeModal}
+      />
+      <AppointmentForm
         setActiveModal={setActiveModal}
         activeModal={activeModal}
       />

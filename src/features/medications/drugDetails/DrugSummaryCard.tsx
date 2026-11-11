@@ -7,6 +7,7 @@ interface DrugSummaryCardProps {
   tab: string;
   route: string;
   compliance: number;
+  courseCount?: number;
 }
 
 interface StatusConfig {
@@ -17,45 +18,52 @@ interface StatusConfig {
 }
 
 const statusMap: Record<string, StatusConfig> = {
-  Ongoing: {
+  ongoing: {
     label: "Active",
-    text: "text-green-600",
-    bg: "bg-green-50",
+    text: "text-soft-mint-ink",
+    bg: "bg-soft-mint",
     Icon: Activity,
   },
-  Completed: {
+  completed: {
     label: "Completed",
-    text: "text-blue-600",
-    bg: "bg-blue-50",
+    text: "text-soft-primary",
+    bg: "bg-soft-primary-soft",
     Icon: CheckCircle,
   },
-  Allergies: {
+  allergies: {
     label: "Allergy",
-    text: "text-red-600",
-    bg: "bg-red-50",
+    text: "text-soft-pink-ink",
+    bg: "bg-soft-pink",
     Icon: Beaker,
   },
 };
 
 const DrugSummaryCard: React.FC<DrugSummaryCardProps> = ({
-  drug,
   tab,
   route,
   compliance,
+  courseCount = 1,
 }) => {
   const status = statusMap[tab] || {
     label: tab,
-    text: "text-gray-600",
-    bg: "bg-gray-50",
+    text: "text-soft-muted",
+    bg: "bg-soft-canvas",
     Icon: Clock,
   };
 
   const complianceColor =
     compliance >= 80
-      ? "text-green-600"
+      ? "text-soft-mint-ink"
       : compliance >= 60
-        ? "text-yellow-600"
-        : "text-red-600";
+        ? "text-soft-peach-ink"
+        : "text-soft-pink-ink";
+
+  const barColor =
+    compliance >= 80
+      ? "bg-soft-mint-ink"
+      : compliance >= 60
+        ? "bg-soft-peach-ink"
+        : "bg-soft-pink-ink";
 
   return (
     <motion.div
@@ -64,41 +72,39 @@ const DrugSummaryCard: React.FC<DrugSummaryCardProps> = ({
       transition={{ duration: 0.4 }}
       className="w-full space-y-4 rounded-2xl border border-black/[0.05] bg-white p-5 shadow-soft-sm ss:w-1/2"
     >
-      {/* Header */}
-      <div className="flex items-center justify-start">
+      <div className="flex flex-wrap items-center gap-2">
         <span
-          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium ${status.bg} ${status.text}`}
+          className={`inline-flex items-center gap-1.5 rounded-[10px] px-2.5 py-1 text-[12px] font-semibold ${status.bg} ${status.text}`}
         >
           <status.Icon className="size-3.5" />
           {status.label}
         </span>
+        {courseCount > 1 ? (
+          <span className="rounded-[10px] bg-soft-canvas px-2.5 py-1 text-[12px] font-semibold text-soft-muted">
+            {courseCount} courses
+          </span>
+        ) : null}
       </div>
 
-      {/* Info Row */}
       <div className="flex items-center justify-between text-sm">
         <div>
-          <p className="text-gray-400 text-xs">Route</p>
-          <p className="font-medium text-gray-800 capitalize">
-            {route || "N/A"}
+          <p className="text-[11px] text-soft-muted">Route</p>
+          <p className="font-semibold capitalize text-soft-ink">
+            {route || "—"}
           </p>
         </div>
 
         <div className="text-right">
-          <p className="text-gray-400 text-xs">Compliance</p>
+          <p className="text-[11px] text-soft-muted">
+            {tab === "completed" ? "Overall adherence" : "Compliance"}
+          </p>
           <p className={`font-semibold ${complianceColor}`}>{compliance}%</p>
         </div>
       </div>
 
-      {/* Progress bar (animated) */}
-      <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-soft-canvas">
         <motion.div
-          className={`h-full rounded-full ${
-            compliance >= 80
-              ? "bg-green-500"
-              : compliance >= 60
-                ? "bg-yellow-400"
-                : "bg-red-500"
-          }`}
+          className={`h-full rounded-full ${barColor}`}
           initial={{ width: 0 }}
           animate={{ width: `${compliance}%` }}
           transition={{ type: "spring", bounce: 0, duration: 1, delay: 0.2 }}

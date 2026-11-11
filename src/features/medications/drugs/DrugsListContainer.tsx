@@ -49,32 +49,24 @@ const DrugsListContainer = ({
   const [page, setPage] = useState(1);
   const pageMemory = useRef<Record<string, number>>({});
 
-  // Completed: one row per course (not collapsed by name).
-  const completedCourses = useMemo(() => {
-    return [...completedDrugs]
-      .map(
-        (course): GroupedDrug => ({
-          ...course,
-          courses: [course],
-          courseCount: 1,
-        })
-      )
-      .sort((a, b) => {
-        const aEnd = Date.parse(a.end || "") || 0;
-        const bEnd = Date.parse(b.end || "") || 0;
-        if (bEnd !== aEnd) return bEnd - aEnd;
-        return (a.drug || "").localeCompare(b.drug || "", undefined, {
-          sensitivity: "base",
-        });
+  // Completed: one row per drug name; each finished regimen is a course in details.
+  const completedGrouped = useMemo(() => {
+    return groupDrugsByName(completedDrugs).sort((a, b) => {
+      const aEnd = Date.parse(a.end || "") || 0;
+      const bEnd = Date.parse(b.end || "") || 0;
+      if (bEnd !== aEnd) return bEnd - aEnd;
+      return (a.drug || "").localeCompare(b.drug || "", undefined, {
+        sensitivity: "base",
       });
+    });
   }, [completedDrugs]);
 
   const tabData: (GroupedDrug | AllergyProps)[] = useMemo(() => {
     if (tab === "ongoing") return groupDrugsByName(drugs);
-    if (tab === "completed") return completedCourses;
+    if (tab === "completed") return completedGrouped;
     if (tab === "allergies") return allergies;
     return [];
-  }, [tab, drugs, completedCourses, allergies]);
+  }, [tab, drugs, completedGrouped, allergies]);
 
   const filtered = useMemo(
     () =>

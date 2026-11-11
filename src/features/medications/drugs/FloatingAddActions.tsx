@@ -1,5 +1,11 @@
 import React from "react";
-import { ShieldOff, Pill, Plus } from "lucide-react";
+import {
+  CalendarPlus,
+  CircleAlert,
+  ShieldOff,
+  Pill,
+  Plus,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface FloatingAddActionsProps {
@@ -8,6 +14,37 @@ interface FloatingAddActionsProps {
   activeModal: string;
   setActiveModal: (value: string) => void;
 }
+
+const ACTIONS = [
+  {
+    id: "drugs",
+    label: "Add medication",
+    Icon: Pill,
+    btn: "bg-soft-blue text-soft-blue-ink",
+    delay: 0,
+  },
+  {
+    id: "side-effects",
+    label: "Side effect",
+    Icon: CircleAlert,
+    btn: "bg-soft-peach text-soft-peach-ink",
+    delay: 0.04,
+  },
+  {
+    id: "appointment",
+    label: "Appointment",
+    Icon: CalendarPlus,
+    btn: "bg-soft-mint text-soft-mint-ink",
+    delay: 0.08,
+  },
+  {
+    id: "allergies",
+    label: "Add allergy",
+    Icon: ShieldOff,
+    btn: "bg-soft-lavender text-soft-lavender-ink",
+    delay: 0.12,
+  },
+] as const;
 
 const FloatingAddActions: React.FC<FloatingAddActionsProps> = ({
   add,
@@ -36,64 +73,50 @@ const FloatingAddActions: React.FC<FloatingAddActionsProps> = ({
       <div className="fixed bottom-24 right-5 z-[144] flex flex-col items-end ss:right-10 md:bottom-10">
         <AnimatePresence>
           {add && (
-            <div className="mb-4 flex flex-col items-end gap-3">
-              <motion.div
-                initial={{ opacity: 0, y: 20, scale: 0.85 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 20, scale: 0.85 }}
-                transition={{ type: "spring", stiffness: 380, damping: 24 }}
-                className="flex items-center gap-3"
-              >
-                <span className="rounded-xl border border-black/[0.05] bg-white px-3 py-1.5 text-sm font-semibold text-soft-ink shadow-soft-sm">
-                  Add medication
-                </span>
-                <button
+            <div className="mb-4 flex flex-col items-end gap-2.5">
+              {ACTIONS.map(({ id, label, Icon, btn, delay }) => (
+                <motion.button
+                  key={id}
+                  type="button"
+                  initial={{ opacity: 0, y: 16, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 12, scale: 0.9 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 400,
+                    damping: 24,
+                    delay,
+                  }}
                   onClick={() => {
                     setAdd(false);
-                    setActiveModal("drugs");
+                    setActiveModal(id);
                   }}
-                  className="ndo-press flex size-12 items-center justify-center rounded-full border border-black/[0.05] bg-soft-blue text-soft-blue-ink shadow-soft-sm transition hover:scale-105 ss:size-14"
+                  className="ndo-press group flex items-center gap-2.5"
                 >
-                  <Pill className="size-6 ss:size-7" strokeWidth={1.8} />
-                </button>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20, scale: 0.85 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 20, scale: 0.85 }}
-                transition={{
-                  type: "spring",
-                  stiffness: 380,
-                  damping: 24,
-                  delay: 0.05,
-                }}
-                className="flex items-center gap-3"
-              >
-                <span className="rounded-xl border border-black/[0.05] bg-white px-3 py-1.5 text-sm font-semibold text-soft-ink shadow-soft-sm">
-                  Add allergy
-                </span>
-                <button
-                  onClick={() => {
-                    setAdd(false);
-                    setActiveModal("allergies");
-                  }}
-                  className="ndo-press flex size-12 items-center justify-center rounded-full border border-black/[0.05] bg-soft-lavender text-soft-lavender-ink shadow-soft-sm transition hover:scale-105 ss:size-14"
-                >
-                  <ShieldOff className="size-6 ss:size-7" strokeWidth={1.8} />
-                </button>
-              </motion.div>
+                  <span className="rounded-full border border-black/[0.04] bg-white px-3.5 py-2 text-[13px] font-semibold text-soft-ink shadow-soft-sm transition group-hover:border-black/[0.08]">
+                    {label}
+                  </span>
+                  <span
+                    className={`flex size-12 items-center justify-center rounded-full border border-black/[0.04] shadow-soft-sm transition group-hover:scale-105 ss:size-14 ${btn}`}
+                  >
+                    <Icon className="size-5 ss:size-6" strokeWidth={2} />
+                  </span>
+                </motion.button>
+              ))}
             </div>
           )}
         </AnimatePresence>
 
         <motion.button
+          type="button"
           onClick={() => setAdd((prev) => !prev)}
           initial={{ opacity: 0, scale: 0.7 }}
           animate={{ opacity: 1, scale: 1 }}
           whileHover={{ scale: 1.06 }}
           whileTap={{ scale: 0.94 }}
           transition={{ type: "spring", stiffness: 400, damping: 22, delay: 0.25 }}
+          aria-label={add ? "Close add menu" : "Open add menu"}
+          aria-expanded={add}
           className="relative z-[146] flex size-14 items-center justify-center rounded-full bg-soft-primary shadow-soft-float ss:size-16"
         >
           <motion.div

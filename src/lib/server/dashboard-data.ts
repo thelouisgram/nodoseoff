@@ -11,6 +11,7 @@ export async function loadDashboardForUser(userId: string) {
     historyRows,
     scheduleRows,
     appointmentRows,
+    journalResult,
   ] = await Promise.all([
       sql`SELECT name, phone, email, theme, profile_picture, profile_picture_url FROM users WHERE "userId" = ${userId} LIMIT 1`,
       sql`SELECT id, drug, frequency, route, start, "end", time, reminder, "drugId" FROM drugs WHERE "userId" = ${userId}`,
@@ -19,7 +20,27 @@ export async function loadDashboardForUser(userId: string) {
       sql`SELECT "otcDrugs", herbs FROM "drugHistory" WHERE "userId" = ${userId} LIMIT 1`,
       sql`SELECT schedule FROM schedule WHERE "userId" = ${userId} LIMIT 1`,
       sql`SELECT doctor, location, starts_at, notes FROM appointments WHERE "userId" = ${userId} LIMIT 1`,
+      sql`
+        SELECT id, kind, mood, severity, symptom, drug, "drugId", notes, logged_at
+        FROM health_journal
+        WHERE "userId" = ${userId}
+        ORDER BY logged_at DESC
+        LIMIT 80
+      `.catch((error: unknown) => {
+        // Don't take down the whole dashboard if the journal migration isn't on this DB yet.
+        const code =
+          error && typeof error === "object" && "code" in error
+            ? String((error as { code?: string }).code || "")
+            : "";
+        if (code === "42P01") {
+          console.warn("health_journal missing; returning empty journal");
+          return [] as Record<string, unknown>[];
+        }
+        throw error;
+      }),
     ]);
+
+  const journalRows = journalResult as Record<string, unknown>[];
 
   const user = userRows[0];
   if (!user) {
@@ -85,6 +106,23 @@ export async function loadDashboardForUser(userId: string) {
       }
     : null;
 
+  const healthJournal = (journalRows as Array<Record<string, unknown>>).map(
+    (row) => ({
+      id: Number(row.id),
+      kind: String(row.kind || "note"),
+      mood: String(row.mood ?? ""),
+      severity:
+        row.severity == null || row.severity === ""
+          ? null
+          : Number(row.severity),
+      symptom: String(row.symptom ?? ""),
+      drug: String(row.drug ?? ""),
+      drugId: String(row.drugId ?? ""),
+      notes: String(row.notes ?? ""),
+      loggedAt: new Date(String(row.logged_at)).toISOString(),
+    })
+  );
+
   return {
     userInfo: [
       {
@@ -101,6 +139,7 @@ export async function loadDashboardForUser(userId: string) {
     otcDrugs: historyRows[0]?.otcDrugs ?? "",
     schedule: scheduleRows[0]?.schedule ?? [],
     appointment,
+    healthJournal,
     activeDrugs,
     expiredDrugs,
     updatedCompletedList,
@@ -137,6 +176,7 @@ export async function deleteAllUserData(userId: string) {
     sql`DELETE FROM "completedDrugs" WHERE "userId" = ${userId}`,
     sql`DELETE FROM "drugHistory" WHERE "userId" = ${userId}`,
     sql`DELETE FROM appointments WHERE "userId" = ${userId}`,
+    sql`DELETE FROM health_journal WHERE "userId" = ${userId}`,
   ]);
   await sql`DELETE FROM users WHERE "userId" = ${userId}`;
   return publicId ?? "";
@@ -288,6 +328,11 @@ export async function mergeUserDataIntoAccount(
   } else if (fromAppt[0]) {
     await sql`DELETE FROM appointments WHERE "userId" = ${fromUserId}`;
   }
+
+  await sql`
+    UPDATE health_journal SET "userId" = ${toUserId}
+    WHERE "userId" = ${fromUserId}
+  `;
 
   await sql`DELETE FROM users WHERE "userId" = ${fromUserId}`;
 }

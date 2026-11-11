@@ -4,11 +4,13 @@ import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
   useDrugs,
+  useCompletedDrugs,
   useAllergies,
   useUserInfo,
   useAddDrugMutation,
 } from "@/hooks/useDashboardData";
 import { dose } from "@/utils/dashboard/dashboard";
+import { sameDrugName } from "@/utils/drugs";
 import dayjs from "dayjs";
 import { useAppSelector } from "@/store";
 import { motion, AnimatePresence } from "framer-motion";
@@ -30,13 +32,17 @@ const DrugsForm: React.FC<DrugFormProps> = ({
   setActiveModal,
 }) => {
   /* Redux Replacement */
-  const { userId } = useAppSelector((state) => state.app);
+  const { userId, activeDrug, activeDrugId } = useAppSelector(
+    (state) => state.app
+  );
 
   const { data: drugs = [] } = useDrugs(userId);
+  const { data: completed = [] } = useCompletedDrugs(userId);
   const { data: allergies = [] } = useAllergies(userId);
   const { data: info = [] } = useUserInfo(userId);
 
   const addDrugMutation = useAddDrugMutation();
+  const isRefill = activeModal === "refill";
 
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -60,19 +66,69 @@ const DrugsForm: React.FC<DrugFormProps> = ({
   });
 
   useEffect(() => {
-    let defaultTimeValues: string[] = [];
-
     const selectedDose: SelectedDoseTypes | undefined = dose?.find(
       (item) => item.frequency === formData.frequency
     );
-    if (selectedDose) {
-      defaultTimeValues = selectedDose.time || [];
-      setFormData({
-        ...formData,
-        time: defaultTimeValues,
-      });
-    }
-  }, [formData.frequency]);
+    if (!selectedDose) return;
+
+    setFormData((prev) => {
+      // Keep prefilled refill times when they already match this frequency
+      if (
+        isRefill &&
+        prev.time.length === (selectedDose.time?.length || 0) &&
+        prev.time.every((t) => Boolean(t))
+      ) {
+        return prev;
+      }
+      return {
+        ...prev,
+        time: selectedDose.time || [],
+      };
+    });
+  }, [formData.frequency, isRefill]);
+
+  // Prefill from latest matching course when opening refill
+  useEffect(() => {
+    if (!isRefill) return;
+
+    const pool = [...drugs, ...completed];
+    const byId = pool.find(
+      (d) => d.drugId && activeDrugId && d.drugId === activeDrugId
+    );
+    const byName = pool
+      .filter((d) => sameDrugName(d.drug, activeDrug))
+      .sort((a, b) => {
+        const aEnd = Date.parse(a.end || "") || 0;
+        const bEnd = Date.parse(b.end || "") || 0;
+        return bEnd - aEnd;
+      })[0];
+    const source = byId || byName;
+    if (!source) return;
+
+    const start = dayjs().format("YYYY-MM-DD");
+    const prevDays = Math.max(
+      0,
+      dayjs(source.end).diff(dayjs(source.start), "day")
+    );
+    const end =
+      prevDays > 0
+        ? dayjs(start).add(prevDays, "day").format("YYYY-MM-DD")
+        : "";
+
+    setFormData({
+      drug: source.drug,
+      frequency: source.frequency || "",
+      route: source.route || "",
+      start,
+      end,
+      time: Array.isArray(source.time) && source.time.length
+        ? [...source.time]
+        : [""],
+      reminder: Boolean(source.reminder),
+      drugId: "",
+    });
+    resetFormErrors();
+  }, [isRefill, activeDrug, activeDrugId, drugs, completed]);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
@@ -181,9 +237,11 @@ const DrugsForm: React.FC<DrugFormProps> = ({
       return;
     }
 
-    const drugAlreadyExists = drugs.some(
-      (drug) => drug.drug.toLowerCase() === formData.drug.toLowerCase()
-    );
+    const drugAlreadyExists =
+      !isRefill &&
+      drugs.some(
+        (drug) => drug.drug.toLowerCase() === formData.drug.toLowerCase()
+      );
 
     const allergicToDrug = allergies.some(
       (item) => item.drug.toLowerCase() === formData.drug.toLowerCase()
@@ -223,7 +281,11 @@ const DrugsForm: React.FC<DrugFormProps> = ({
         },
       });
 
-      toast.success(`${formData.drug.toUpperCase()} added successfully!`);
+      toast.success(
+        isRefill
+          ? `${formData.drug.toUpperCase()} refill started!`
+          : `${formData.drug.toUpperCase()} added successfully!`
+      );
       setActiveModal("");
     } catch (error) {
       toast.error(
@@ -267,11 +329,11 @@ const DrugsForm: React.FC<DrugFormProps> = ({
     handleSubmit(syntheticEvent);
   };
 
-  if (activeModal !== "drugs") return null;
+  if (activeModal !== "drugs" && activeModal !== "refill") return null;
 
   return (
     <AnimatePresence>
-      {activeModal === "drugs" && (
+      {(activeModal === "drugs" || activeModal === "refill") && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -291,7 +353,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-5 border-b border-black/[0.04] flex-shrink-0">
               <h2 className="text-xl font-semibold text-soft-ink ">
-                Add Drug
+                {isRefill ? "Refill medication" : "Add Drug"}
               </h2>
               <button
                 onClick={handleClose}
@@ -322,8 +384,9 @@ const DrugsForm: React.FC<DrugFormProps> = ({
                       placeholder="e.g., Rifampicin"
                       value={formData.drug}
                       onChange={handleInputChange}
-                      disabled={loading}
-                      className="w-full h-full bg-transparent border-none outline-none p-0 text-soft-ink  placeholder:text-soft-muted "
+                      disabled={loading || isRefill}
+                      readOnly={isRefill}
+                      className="w-full h-full bg-transparent border-none outline-none p-0 text-soft-ink  placeholder:text-soft-muted capitalize disabled:cursor-not-allowed"
                       autoComplete="off"
                     />
                   </div>
@@ -514,8 +577,10 @@ const DrugsForm: React.FC<DrugFormProps> = ({
                 {loading ? (
                   <>
                     <Loader2 size={18} className="animate-spin" />
-                    <span>Adding...</span>
+                    <span>{isRefill ? "Starting…" : "Adding..."}</span>
                   </>
+                ) : isRefill ? (
+                  "Start refill"
                 ) : (
                   "Add Drug"
                 )}

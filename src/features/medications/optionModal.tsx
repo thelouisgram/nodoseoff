@@ -6,6 +6,7 @@ import {
   Pencil,
   ShieldOff,
   Eye,
+  RefreshCw,
   LucideIcon,
 } from "lucide-react";
 import { SetStateAction } from "react";
@@ -136,6 +137,14 @@ const OptionModal: React.FC<OptionModal> = ({
       hoverBg: "hover:bg-blue-50",
       action: "edit",
       showCondition: tab !== "completed" && tab !== "allergies",
+    },
+    {
+      label: "Refill",
+      icon: RefreshCw,
+      iconColor: "text-soft-primary",
+      hoverBg: "hover:bg-soft-primary-soft",
+      action: "refill",
+      showCondition: tab === "ongoing" || tab === "completed",
     },
     {
       label: "Delete Drug",

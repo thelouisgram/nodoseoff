@@ -103,6 +103,27 @@ CREATE TABLE IF NOT EXISTS appointments (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- Mood, side effects, and free notes for AMANDA 6 pattern questions
+CREATE TABLE IF NOT EXISTS health_journal (
+  id BIGSERIAL PRIMARY KEY,
+  "userId" TEXT NOT NULL REFERENCES users ("userId") ON DELETE CASCADE,
+  kind TEXT NOT NULL CHECK (kind IN ('mood', 'side_effect', 'note')),
+  mood TEXT NOT NULL DEFAULT '',
+  severity INT CHECK (severity IS NULL OR (severity >= 1 AND severity <= 5)),
+  symptom TEXT NOT NULL DEFAULT '',
+  drug TEXT NOT NULL DEFAULT '',
+  "drugId" TEXT NOT NULL DEFAULT '',
+  notes TEXT NOT NULL DEFAULT '',
+  logged_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS health_journal_user_logged_idx
+  ON health_journal ("userId", logged_at DESC);
+
+CREATE INDEX IF NOT EXISTS health_journal_user_kind_idx
+  ON health_journal ("userId", kind, logged_at DESC);
+
 CREATE TABLE IF NOT EXISTS newsletter_subscribers (
   id BIGSERIAL PRIMARY KEY,
   email TEXT NOT NULL,

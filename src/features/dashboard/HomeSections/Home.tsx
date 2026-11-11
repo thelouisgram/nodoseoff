@@ -15,7 +15,6 @@ import Tracker from "../Tracker";
 import SummaryCards from "./SummaryCards";
 import WeekStreak from "./WeekStreak";
 import HomeAlerts from "./HomeAlerts";
-import NextAppointment from "./NextAppointment";
 import AmandaShortcuts from "./AmandaShortcuts";
 
 import { ScheduleItem } from "@/types/dashboard";
@@ -127,7 +126,6 @@ const Home: React.FC<HomeProps> = ({
           await updateCompleted(item);
         }}
       />
-      <NextAppointment />
       <WeekStreak schedule={schedule} />
       <AmandaShortcuts drugs={drugs} />
       <DailyReports />

@@ -48,7 +48,7 @@ const SideBar: React.FC<SideBarProps> = ({
         <button
           type="button"
           onClick={() => setNav(!nav)}
-          className="hidden size-10 shrink-0 place-items-center rounded-xl text-soft-muted transition hover:bg-black/[0.04] hover:text-soft-primary lg:grid"
+          className="hidden size-10 shrink-0 place-items-center rounded-xl text-soft-muted transition hover:bg-soft-canvas hover:text-soft-ink lg:grid"
           aria-label={nav ? "Collapse sidebar" : "Expand sidebar"}
         >
           {nav ? (
@@ -89,11 +89,11 @@ const SideBar: React.FC<SideBarProps> = ({
         <button
           type="button"
           onClick={handleSignOut}
-          className={`group flex w-full items-center justify-center rounded-2xl px-1.5 py-1.5 text-soft-muted transition-colors hover:bg-soft-pink hover:text-soft-pink-ink ${
+          className={`group flex w-full items-center justify-center rounded-2xl px-1.5 py-1.5 text-soft-muted transition-colors hover:text-soft-pink-ink ${
             nav ? "lg:justify-start lg:gap-3 lg:pr-3" : ""
           }`}
         >
-          <span className="grid size-10 shrink-0 place-items-center rounded-xl">
+          <span className="grid size-10 shrink-0 place-items-center rounded-xl transition-colors group-hover:bg-soft-pink">
             <LogOut className="size-[19px]" strokeWidth={1.75} absoluteStrokeWidth />
           </span>
           <span

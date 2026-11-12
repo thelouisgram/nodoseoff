@@ -32,11 +32,7 @@ const Tabs: React.FC<TabsProps> = ({ item, activeTab, nav }) => {
       onClick={() => dispatch(setActiveTab(item.name))}
       className={`group relative flex w-full items-center justify-center rounded-2xl px-1.5 py-1.5 transition-colors ${
         nav ? "lg:justify-start lg:gap-3 lg:pr-3" : ""
-      } ${
-        isActive
-          ? "text-soft-primary"
-          : "text-soft-muted hover:bg-black/[0.03] hover:text-soft-ink"
-      }`}
+      } ${isActive ? "text-soft-primary" : "text-soft-muted hover:text-soft-ink"}`}
       aria-current={isActive ? "page" : undefined}
       title={!nav ? label : undefined}
     >
@@ -44,7 +40,7 @@ const Tabs: React.FC<TabsProps> = ({ item, activeTab, nav }) => {
         className={`relative z-[1] grid size-10 shrink-0 place-items-center rounded-xl transition-colors ${
           isActive
             ? "text-soft-primary"
-            : "text-soft-muted group-hover:text-soft-ink"
+            : "text-soft-muted group-hover:bg-soft-canvas group-hover:text-soft-ink"
         }`}
       >
         {isActive ? (
@@ -64,7 +60,11 @@ const Tabs: React.FC<TabsProps> = ({ item, activeTab, nav }) => {
       <span
         className={`relative z-[1] min-w-0 truncate text-[14px] tracking-tight transition-all ${
           nav ? "hidden lg:inline" : "hidden"
-        } ${isActive ? "font-semibold text-soft-primary" : "font-medium"}`}
+        } ${
+          isActive
+            ? "font-semibold text-soft-primary"
+            : "font-medium group-hover:font-semibold"
+        }`}
       >
         {label}
       </span>

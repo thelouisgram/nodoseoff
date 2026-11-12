@@ -1,5 +1,5 @@
-import React, { SetStateAction, RefObject, useState } from "react";
-import { ShieldOff, Trash2, Pencil, RefreshCw, Loader2, X } from "lucide-react";
+import React, { SetStateAction, RefObject, useEffect, useState } from "react";
+import { ShieldOff, Trash2, Pencil, Loader2, X } from "lucide-react";
 import { useAppSelector, useAppDispatch } from "@/store";
 import { setActiveDrug, setActiveDrugId } from "@/store/appSlice";
 import { motion, AnimatePresence } from "framer-motion";
@@ -110,23 +110,18 @@ const DrugActionModals: React.FC<DrugActionModalsProps> = ({
         setActiveAction("");
       },
     },
-    refill: {
-      title: `Refill ${activeDrug.toUpperCase()}`,
-      message:
-        "Start a new course using this medication’s last settings. You can adjust dates, times, and frequency before saving.",
-      confirmText: "Continue",
-      confirmIcon: RefreshCw,
-      confirmClass: "bg-soft-primary hover:bg-soft-primary/90",
-      onConfirm: async () => {
-        setActiveModal("refill");
-        setActiveAction("");
-      },
-    },
   };
+
+  // Open refill form immediately (no extra confirm step)
+  useEffect(() => {
+    if (activeAction !== "refill") return;
+    setActiveAction("");
+    setActiveModal("refill");
+  }, [activeAction, setActiveAction, setActiveModal]);
 
   const config = modalConfig[activeAction as keyof typeof modalConfig];
 
-  if (!config || !activeAction) return null;
+  if (!config || !activeAction || activeAction === "refill") return null;
 
   const ConfirmIcon = config.confirmIcon;
 

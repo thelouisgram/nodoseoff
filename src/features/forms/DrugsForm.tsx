@@ -1,6 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import React, {
+  ChangeEvent,
+  FormEvent,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { toast } from "sonner";
 import {
   useDrugs,
@@ -36,13 +42,15 @@ const DrugsForm: React.FC<DrugFormProps> = ({
     (state) => state.app
   );
 
-  const { data: drugs = [] } = useDrugs(userId);
-  const { data: completed = [] } = useCompletedDrugs(userId);
+  const { data: drugs = [], isLoading: drugsLoading } = useDrugs(userId);
+  const { data: completed = [], isLoading: completedLoading } =
+    useCompletedDrugs(userId);
   const { data: allergies = [] } = useAllergies(userId);
   const { data: info = [] } = useUserInfo(userId);
 
   const addDrugMutation = useAddDrugMutation();
   const isRefill = activeModal === "refill";
+  const refillSeeded = useRef(false);
 
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -65,6 +73,36 @@ const DrugsForm: React.FC<DrugFormProps> = ({
     time: "",
   });
 
+  const resetFormErrors = () => {
+    setFormErrors({
+      drug: "",
+      frequency: "",
+      route: "",
+      start: "",
+      end: "",
+      time: "",
+    });
+  };
+
+  const resetFormData = () => {
+    setFormData({
+      drug: "",
+      frequency: "",
+      route: "",
+      start: new Date().toISOString().substr(0, 10),
+      end: "",
+      time: [],
+      reminder: true,
+      drugId: "",
+    });
+  };
+
+  useEffect(() => {
+    if (!isRefill) {
+      refillSeeded.current = false;
+    }
+  }, [isRefill]);
+
   useEffect(() => {
     const selectedDose: SelectedDoseTypes | undefined = dose?.find(
       (item) => item.frequency === formData.frequency
@@ -72,9 +110,8 @@ const DrugsForm: React.FC<DrugFormProps> = ({
     if (!selectedDose) return;
 
     setFormData((prev) => {
-      // Keep prefilled refill times when they already match this frequency
+      // Keep prefilled / user-edited times when count already matches
       if (
-        isRefill &&
         prev.time.length === (selectedDose.time?.length || 0) &&
         prev.time.every((t) => Boolean(t))
       ) {
@@ -85,11 +122,11 @@ const DrugsForm: React.FC<DrugFormProps> = ({
         time: selectedDose.time || [],
       };
     });
-  }, [formData.frequency, isRefill]);
+  }, [formData.frequency]);
 
-  // Prefill from latest matching course when opening refill
+  // Prefill from latest matching course when opening refill (once per open)
   useEffect(() => {
-    if (!isRefill) return;
+    if (!isRefill || refillSeeded.current) return;
 
     const pool = [...drugs, ...completed];
     const byId = pool.find(
@@ -103,32 +140,55 @@ const DrugsForm: React.FC<DrugFormProps> = ({
         return bEnd - aEnd;
       })[0];
     const source = byId || byName;
-    if (!source) return;
+    if (!source) {
+      // Wait until drug lists have loaded before failing
+      if (drugsLoading || completedLoading) return;
+      if (!activeDrug && !activeDrugId) return;
+      toast.error("Could not find that medication to refill");
+      setActiveModal("");
+      return;
+    }
 
+    const frequency = String(source.frequency || "")
+      .trim()
+      .toUpperCase();
+    const route = String(source.route || "")
+      .trim()
+      .toLowerCase();
     const start = dayjs().format("YYYY-MM-DD");
-    const prevDays = Math.max(
-      0,
-      dayjs(source.end).diff(dayjs(source.start), "day")
-    );
-    const end =
-      prevDays > 0
-        ? dayjs(start).add(prevDays, "day").format("YYYY-MM-DD")
-        : "";
+    const rawDays = dayjs(source.end).diff(dayjs(source.start), "day");
+    const prevDays =
+      Number.isFinite(rawDays) && rawDays > 0 ? rawDays : 7;
+    const end = dayjs(start).add(prevDays, "day").format("YYYY-MM-DD");
 
+    const sourceTimes = Array.isArray(source.time)
+      ? source.time.map((t) => String(t || "").trim()).filter(Boolean)
+      : [];
+    const defaults =
+      dose.find((d) => d.frequency === frequency)?.time || ["08:00"];
+
+    refillSeeded.current = true;
     setFormData({
-      drug: source.drug,
-      frequency: source.frequency || "",
-      route: source.route || "",
+      drug: String(source.drug || "").trim().toLowerCase(),
+      frequency,
+      route,
       start,
       end,
-      time: Array.isArray(source.time) && source.time.length
-        ? [...source.time]
-        : [""],
-      reminder: Boolean(source.reminder),
+      time: sourceTimes.length ? sourceTimes : [...defaults],
+      reminder: source.reminder !== false,
       drugId: "",
     });
     resetFormErrors();
-  }, [isRefill, activeDrug, activeDrugId, drugs, completed]);
+  }, [
+    isRefill,
+    activeDrug,
+    activeDrugId,
+    drugs,
+    completed,
+    drugsLoading,
+    completedLoading,
+    setActiveModal,
+  ]);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
@@ -209,12 +269,20 @@ const DrugsForm: React.FC<DrugFormProps> = ({
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    const frequency = String(formData.frequency || "").trim().toUpperCase();
+    const route = String(formData.route || "").trim().toLowerCase();
+    const drugName = String(formData.drug || "").trim().toLowerCase();
+    const times = (formData.time || [])
+      .map((t) => String(t || "").trim())
+      .filter(Boolean);
+
     const errors: Record<string, string> = {
-      name: formData.drug ? "" : "Please fill in the Name of drug field.",
-      frequency: formData.frequency ? "" : "Please select a Frequency.",
-      route: formData.route ? "" : "Please select a Route.",
+      name: drugName ? "" : "Please fill in the Name of drug field.",
+      frequency: frequency ? "" : "Please select a Frequency.",
+      route: route ? "" : "Please select a Route.",
       start: formData.start ? "" : "Please select a Start Date.",
       end: formData.end ? "" : "Please select an End Date.",
+      time: times.length ? "" : "Please fill in all time fields.",
     };
 
     if (formData.start && formData.end) {
@@ -240,41 +308,49 @@ const DrugsForm: React.FC<DrugFormProps> = ({
     const drugAlreadyExists =
       !isRefill &&
       drugs.some(
-        (drug) => drug.drug.toLowerCase() === formData.drug.toLowerCase()
+        (drug) => drug.drug.toLowerCase() === drugName
       );
 
     const allergicToDrug = allergies.some(
-      (item) => item.drug.toLowerCase() === formData.drug.toLowerCase()
+      (item) => item.drug.toLowerCase() === drugName
     );
 
     if (drugAlreadyExists) {
-      toast.error(`'${formData.drug}' already exists!`);
-      resetFormData();
+      toast.error(`'${drugName}' already exists!`);
       return;
     }
 
     if (allergicToDrug) {
-      toast.error(`'${formData.drug}' is a known drug allergy!`);
-      resetFormData();
+      toast.error(`'${drugName}' is a known drug allergy!`);
       return;
     }
 
-    addDrug();
+    void addDrug({
+      drug: drugName,
+      frequency,
+      route,
+      start: formData.start,
+      end: formData.end,
+      time: times,
+      reminder: formData.reminder,
+    });
   };
 
-  const addDrug = async () => {
+  const addDrug = async (payload: {
+    drug: string;
+    frequency: string;
+    route: string;
+    start: string;
+    end: string;
+    time: string[];
+    reminder: boolean;
+  }) => {
     setLoading(true);
 
     try {
       await addDrugMutation.mutateAsync({
         userId: userId!,
-        drug: formData.drug,
-        frequency: formData.frequency,
-        route: formData.route,
-        start: formData.start,
-        end: formData.end,
-        time: formData.time,
-        reminder: formData.reminder,
+        ...payload,
         userInfo: {
           name: info[0]?.name || "",
           email: info[0]?.email || "",
@@ -283,43 +359,21 @@ const DrugsForm: React.FC<DrugFormProps> = ({
 
       toast.success(
         isRefill
-          ? `${formData.drug.toUpperCase()} refill started!`
-          : `${formData.drug.toUpperCase()} added successfully!`
+          ? `${payload.drug.toUpperCase()} refill started!`
+          : `${payload.drug.toUpperCase()} added successfully!`
       );
+      refillSeeded.current = false;
       setActiveModal("");
+      resetFormData();
+      resetFormErrors();
     } catch (error) {
+      console.error(error);
       toast.error(
         "Error adding drug, Check Internet Connection and Try again!"
       );
     } finally {
-      resetFormData();
-      resetFormErrors();
       setLoading(false);
     }
-  };
-
-  const resetFormData = () => {
-    setFormData({
-      drug: "",
-      frequency: "",
-      route: "",
-      start: new Date().toISOString().substr(0, 10),
-      end: "",
-      time: [],
-      reminder: true,
-      drugId: "",
-    });
-  };
-
-  const resetFormErrors = () => {
-    setFormErrors({
-      drug: "",
-      frequency: "",
-      route: "",
-      start: "",
-      end: "",
-      time: "",
-    });
   };
 
   const handleClick = () => {
@@ -339,7 +393,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={handleClose}
-          className="fixed inset-0 bg-soft-ink/25 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 z-[150] flex items-center justify-center bg-soft-ink/25 p-4 backdrop-blur-sm"
         >
           {/* Modal Card */}
           <motion.div
@@ -348,7 +402,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
             onClick={(e) => e.stopPropagation()}
-            className="flex max-h-[80vh] w-full flex-col rounded-2xl border border-black/[0.05] bg-white shadow-soft-md ss:max-w-lg"
+            className="relative z-[160] flex max-h-[80vh] w-full flex-col rounded-2xl border border-black/[0.05] bg-white shadow-soft-md ss:max-w-lg"
           >
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-5 border-b border-black/[0.04] flex-shrink-0">

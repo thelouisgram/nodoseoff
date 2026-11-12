@@ -163,26 +163,37 @@ export const useAddDrugMutation = () => {
   const dispatch = useAppDispatch();
   return {
     mutateAsync: async (params: AddDrugParams) => {
-      const drugId = generateDrugId(params.drug);
-      await runMutation("insertDrug", { ...params, drugId });
+      const frequency = String(params.frequency || "").trim().toUpperCase();
+      const route = String(params.route || "").trim().toLowerCase();
+      const drug = String(params.drug || "").trim().toLowerCase();
+      const time = Array.isArray(params.time)
+        ? params.time.map((t) => String(t || "").trim()).filter(Boolean)
+        : [];
+      const normalized = { ...params, drug, frequency, route, time };
+      const drugId = generateDrugId(normalized.drug);
+      await runMutation("insertDrug", { ...normalized, drugId });
 
       const currentData = store.getState().dashboard.data;
       const currentSchedule = currentData?.schedule || [];
-      const newScheduleItems = generateSchedule({ ...params, drugId });
+      const newScheduleItems = generateSchedule({ ...normalized, drugId });
       const updatedSchedule = [...currentSchedule, ...newScheduleItems];
 
-      await uploadScheduleToServer({ userId: params.userId, schedule: updatedSchedule });
+      await uploadScheduleToServer({
+        userId: params.userId,
+        schedule: updatedSchedule,
+      });
 
+      // Email is best-effort — never block refill/add on provider rate limits
       if (params.userInfo.email) {
         const { html, subject } = generateDrugAddedEmail(
           params.userInfo.name,
-          params.drug,
-          params.start,
-          params.end,
-          params.route,
-          params.time
+          normalized.drug,
+          normalized.start,
+          normalized.end,
+          normalized.route,
+          normalized.time
         );
-        await sendMail(params.userInfo.email, html, subject);
+        void sendMail(params.userInfo.email, html, subject);
       }
 
       dispatch(
@@ -190,13 +201,13 @@ export const useAddDrugMutation = () => {
           activeDrugs: [
             ...(currentData?.activeDrugs || []),
             {
-              drug: params.drug,
-              frequency: params.frequency,
-              route: params.route,
-              start: params.start,
-              end: params.end,
-              time: params.time,
-              reminder: params.reminder,
+              drug: normalized.drug,
+              frequency: normalized.frequency,
+              route: normalized.route,
+              start: normalized.start,
+              end: normalized.end,
+              time: normalized.time,
+              reminder: normalized.reminder,
               drugId,
             },
           ],
@@ -204,7 +215,7 @@ export const useAddDrugMutation = () => {
         })
       );
 
-      return { ...params, drugId, updatedSchedule };
+      return { ...normalized, drugId, updatedSchedule };
     },
   };
 };
@@ -395,7 +406,7 @@ export const useAddAllergyMutation = () => {
           params.userInfo.name,
           params.drug
         );
-        await sendMail(params.userInfo.email, html, subject);
+        void sendMail(params.userInfo.email, html, subject);
       }
 
       const currentData = store.getState().dashboard.data;
@@ -489,7 +500,7 @@ export const useMarkAsAllergyMutation = () => {
           params.userInfo.name,
           params.drug
         );
-        await sendMail(params.userInfo.email, html, subject);
+        void sendMail(params.userInfo.email, html, subject);
       }
 
       const newAllergyEntry: DrugProps = {

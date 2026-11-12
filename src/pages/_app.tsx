@@ -12,7 +12,6 @@ import ErrorBoundary from "@/components/ui/ErrorBoundary";
 import VisitBeacon from "@/components/analytics/VisitBeacon";
 import CookieConsent from "@/components/legal/CookieConsent";
 import { SoftButton, SoftCard, SoftPage } from "@/components/ui/soft";
-import PageLoader from "@/components/ui/PageLoader";
 import { manrope } from "@/lib/fonts";
 
 function ForceLightMode() {
@@ -61,7 +60,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <div className={`${manrope.variable} font-sans antialiased`}>
         <Toaster position="top-center" richColors closeButton />
         <Provider store={store}>
-          <PersistGate loading={<PageLoader label="Starting NoDoseOff…" />} persistor={persistor}>
+          <PersistGate loading={null} persistor={persistor}>
             <ForceLightMode />
             <UnhandledRejectionToaster />
             <AuthListener />

@@ -29,13 +29,17 @@ const MobileTabs: React.FC<TabsProps> = ({ item, activeTab }) => {
     <button
       type="button"
       onClick={() => dispatch(setActiveTab(item.name))}
-      className={`relative flex min-h-[52px] min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-2xl px-1 transition-colors ${
-        isActive ? "text-soft-primary" : "text-soft-muted"
+      className={`group relative flex min-h-[52px] min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-2xl px-1 transition-colors ${
+        isActive ? "text-soft-primary" : "text-soft-muted hover:text-soft-ink"
       }`}
       aria-current={isActive ? "page" : undefined}
       aria-label={label}
     >
-      <span className="relative z-[1] grid size-9 place-items-center">
+      <span
+        className={`relative z-[1] grid size-9 place-items-center rounded-xl transition-colors ${
+          isActive ? "" : "group-hover:bg-soft-canvas"
+        }`}
+      >
         {isActive ? (
           <motion.span
             layoutId="mobile-nav-active"
@@ -51,7 +55,7 @@ const MobileTabs: React.FC<TabsProps> = ({ item, activeTab }) => {
       </span>
       <span
         className={`relative z-[1] text-[11px] leading-none tracking-tight ${
-          isActive ? "font-semibold" : "font-medium"
+          isActive ? "font-semibold" : "font-medium group-hover:font-semibold"
         }`}
       >
         {label}

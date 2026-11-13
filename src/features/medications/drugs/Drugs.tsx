@@ -192,12 +192,6 @@ const Drugs: React.FC<DrugsProps> = ({
               setActiveView={setActiveView}
               activeView={activeView}
             />
-            <FloatingAddActions
-              add={add}
-              setAdd={setAdd}
-              activeModal={activeModal}
-              setActiveModal={setActiveModal}
-            />
           </motion.div>
         ) : (
           <motion.div
@@ -220,6 +214,17 @@ const Drugs: React.FC<DrugsProps> = ({
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Outside panel motion so fixed positioning isn’t warped by transforms */}
+      {activeView === "list" ? (
+        <FloatingAddActions
+          add={add}
+          setAdd={setAdd}
+          activeModal={activeModal}
+          setActiveModal={setActiveModal}
+        />
+      ) : null}
+
       <DrugActionModals
         deleteOngoingDrug={deleteOngoingDrug}
         deleteCompletedDrug={deleteCompletedDrug}

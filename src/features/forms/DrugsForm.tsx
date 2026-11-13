@@ -88,6 +88,9 @@ const DrugsForm: React.FC<DrugFormProps> = ({
     });
   };
 
+  const remindersGloballyOn =
+    drugs.length === 0 || drugs.some((d) => d.reminder !== false);
+
   const resetFormData = () => {
     setFormData({
       drug: "",
@@ -96,7 +99,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({
       start: new Date().toISOString().substr(0, 10),
       end: "",
       time: [],
-      reminder: true,
+      reminder: remindersGloballyOn,
       drugId: "",
     });
   };
@@ -106,6 +109,15 @@ const DrugsForm: React.FC<DrugFormProps> = ({
       refillSeeded.current = false;
     }
   }, [isRefill]);
+
+  useEffect(() => {
+    if (activeModal !== "drugs") return;
+    setFormData((prev) =>
+      prev.reminder === remindersGloballyOn
+        ? prev
+        : { ...prev, reminder: remindersGloballyOn }
+    );
+  }, [activeModal, remindersGloballyOn]);
 
   useEffect(() => {
     const selectedDose: SelectedDoseTypes | undefined = dose?.find(
@@ -183,7 +195,9 @@ const DrugsForm: React.FC<DrugFormProps> = ({
       start,
       end,
       time: sourceTimes.length ? sourceTimes : [...defaults],
-      reminder: source.reminder !== false,
+      reminder:
+        source.reminder !== false &&
+        (drugs.length === 0 || drugs.some((d) => d.reminder !== false)),
       drugId: "",
     });
     resetFormErrors();

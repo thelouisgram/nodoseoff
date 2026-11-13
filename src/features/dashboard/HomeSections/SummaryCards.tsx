@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { AlarmClock, Pill, HeartPulse, ArrowUpRight } from "lucide-react";
+import { AlarmClock, Pill, HeartPulse } from "lucide-react";
 import {
   calculateClosestDoseCountdown,
   formatDoseClock,
@@ -31,103 +31,117 @@ const SummaryCards = () => {
   }, [schedule]);
 
   const ongoingCount = countUniqueDrugNames(drugs);
+  const adherence = calculateOverallCompliance(schedule);
 
-  const secondary = [
+  const cards = [
     {
+      key: "next",
+      featured: true,
+      label: "Next dose",
+      icon: AlarmClock,
+      title: next ? next.dose.drug : "None due",
+      subtitle: next
+        ? `${formatDoseClock(next.dose.time)}${
+            countdown && countdown !== "00:00:00" ? ` · in ${countdown}` : ""
+          }`
+        : "No upcoming doses scheduled",
+    },
+    {
+      key: "ongoing",
+      featured: false,
       label: "Ongoing",
-      value: String(ongoingCount),
-      hint: ongoingCount === 1 ? "active medication" : "active medications",
       icon: Pill,
+      title: String(ongoingCount),
+      subtitle:
+        ongoingCount === 1 ? "active medication" : "active medications",
     },
     {
-      label: "Compliance",
-      value: `${calculateOverallCompliance(schedule)}%`,
-      hint: "overall adherence",
+      key: "adherence",
+      featured: false,
+      label: "Adherence",
       icon: HeartPulse,
+      title: `${adherence}%`,
+      subtitle: "overall adherence",
     },
-  ];
+  ] as const;
 
   return (
     <motion.section
       variants={stagger}
       initial="hidden"
       animate="show"
-      className="bar mb-4 grid gap-3 px-4 ss:mb-5 ss:grid-cols-2 ss:px-8 md:mb-6 md:grid-cols-12 md:px-0"
+      className="mb-4 ss:mb-5 md:mb-6"
     >
-      {/* Featured: label → drug name → time stacked underneath */}
-      <motion.div
-        variants={rise}
-        className="relative overflow-hidden rounded-2xl bg-soft-primary p-5 text-white shadow-soft-sm ss:col-span-2 md:col-span-6"
-      >
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -right-8 -top-10 size-40 rounded-full bg-white/10"
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -bottom-12 right-6 size-32 rounded-full bg-white/5"
-        />
-
-        <div className="relative flex items-start justify-between gap-3">
-          <p className="text-[13px] font-medium text-white/70">Next dose</p>
-          <span className="flex size-9 items-center justify-center rounded-full border border-white/15 bg-white/10">
-            <AlarmClock className="size-4" strokeWidth={1.75} />
-          </span>
-        </div>
-
-        {next ? (
-          <div className="relative mt-4 min-w-0">
-            <h4 className="truncate text-[26px] font-bold leading-tight tracking-tight capitalize">
-              {next.dose.drug}
-            </h4>
-            <p className="mt-1.5 text-[14px] font-medium text-white/75">
-              {formatDoseClock(next.dose.time)}
-              {countdown && countdown !== "00:00:00" ? (
-                <span className="text-white/50"> · in {countdown}</span>
+      {/* Mobile: one horizontal snap strip. Desktop: 3-up grid. */}
+      <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1 [-ms-overflow-style:none] [scrollbar-width:none] ss:px-8 md:grid md:grid-cols-12 md:overflow-visible md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden">
+        {cards.map((card) => {
+          const Icon = card.icon;
+          return (
+            <motion.div
+              key={card.key}
+              variants={rise}
+              className={`relative flex w-[min(78vw,280px)] shrink-0 snap-center flex-col justify-between overflow-hidden rounded-2xl p-5 shadow-soft-sm ss:w-[min(42vw,300px)] md:w-auto md:min-h-[148px] md:shrink md:snap-align-none ${
+                card.featured
+                  ? "bg-soft-primary text-white md:col-span-6"
+                  : "border border-black/[0.05] bg-white text-soft-ink md:col-span-3"
+              }`}
+            >
+              {card.featured ? (
+                <>
+                  <div
+                    aria-hidden
+                    className="pointer-events-none absolute -right-8 -top-10 size-40 rounded-full bg-white/10"
+                  />
+                  <div
+                    aria-hidden
+                    className="pointer-events-none absolute -bottom-12 right-6 size-32 rounded-full bg-white/5"
+                  />
+                </>
               ) : null}
-            </p>
-          </div>
-        ) : (
-          <div className="relative mt-4">
-            <h4 className="text-[22px] font-bold tracking-tight">None due</h4>
-            <p className="mt-1.5 text-[14px] font-medium text-white/70">
-              No upcoming doses scheduled
-            </p>
-          </div>
-        )}
-      </motion.div>
 
-      {secondary.map((card) => {
-        const Icon = card.icon;
-        return (
-          <motion.div
-            key={card.label}
-            variants={rise}
-            className="relative flex min-h-[148px] flex-col justify-between rounded-2xl border border-black/[0.05] bg-white p-5 shadow-soft-sm md:col-span-3"
-          >
-            <div className="flex items-start justify-between gap-2">
-              <p className="text-[13px] font-medium text-soft-muted">
-                {card.label}
-              </p>
-              <span className="flex size-9 items-center justify-center rounded-full border border-soft-primary/10 bg-soft-primary-soft text-soft-primary">
-                <Icon className="size-4" strokeWidth={1.75} />
-              </span>
-            </div>
-            <div className="mt-6">
-              <div className="flex items-end gap-2">
-                <h4 className="text-[32px] font-bold leading-none tracking-tight text-soft-ink">
-                  {card.value}
-                </h4>
-                <ArrowUpRight
-                  className="mb-1 size-4 text-soft-primary/45"
-                  strokeWidth={2}
-                />
+              <div className="relative flex items-start justify-between gap-2">
+                <p
+                  className={`text-[13px] font-medium ${
+                    card.featured ? "text-white/70" : "text-soft-muted"
+                  }`}
+                >
+                  {card.label}
+                </p>
+                <span
+                  className={`flex size-9 items-center justify-center rounded-full ${
+                    card.featured
+                      ? "border border-white/15 bg-white/10"
+                      : "border border-soft-primary/10 bg-soft-primary-soft text-soft-primary"
+                  }`}
+                >
+                  <Icon className="size-4" strokeWidth={1.75} />
+                </span>
               </div>
-              <p className="mt-2 text-[13px] text-soft-muted">{card.hint}</p>
-            </div>
-          </motion.div>
-        );
-      })}
+
+              <div className="relative mt-5 min-w-0 md:mt-6">
+                <h4
+                  className={`truncate font-bold leading-tight tracking-tight ${
+                    card.featured
+                      ? "text-[22px] capitalize ss:text-[24px]"
+                      : "text-[28px] leading-none ss:text-[32px]"
+                  }`}
+                >
+                  {card.title}
+                </h4>
+                <p
+                  className={`mt-1.5 text-[13px] ${
+                    card.featured
+                      ? "font-medium text-white/70"
+                      : "text-soft-muted"
+                  }`}
+                >
+                  {card.subtitle}
+                </p>
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
     </motion.section>
   );
 };

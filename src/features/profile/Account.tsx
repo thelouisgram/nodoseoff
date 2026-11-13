@@ -1,12 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 
-import {
-  useUserInfo,
-  useProfilePicture,
-  useDrugs,
-  useSchedule,
-} from "@/hooks/useDashboardData";
+import { useUserInfo, useProfilePicture } from "@/hooks/useDashboardData";
 import Image from "next/image";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
@@ -16,8 +11,6 @@ import { useAppSelector, useAppDispatch } from "@/store";
 import { setActiveTab, setIsAuthenticated, setUserId } from "@/store/appSlice";
 
 import { resolveProfileImageUrl } from "@/utils/profilePicture";
-import { calculateOverallCompliance } from "@/utils/dashboard/drugs";
-import { countUniqueDrugNames } from "@/utils/drugs";
 import { motion } from "framer-motion";
 import { useDashboardSectionMotion } from "@/components/landing/motion";
 import {
@@ -43,20 +36,12 @@ const Account: React.FC<AccountProps> = ({ setActiveModal }) => {
   const dispatch = useAppDispatch();
   const { data: info = [] } = useUserInfo(userId);
   const { data: profilePicture = "" } = useProfilePicture(userId);
-  const { data: drugs = [] } = useDrugs(userId);
-  const { data: schedule = [] } = useSchedule(userId);
 
   const userInfo = info?.[0] || { name: "", phone: "", email: "" };
   const { name, phone, email } = userInfo;
   const [tab, setTab] = useState<"Account" | "Report">("Account");
   const photoUrl = resolveProfileImageUrl(profilePicture);
   const { stagger, rise } = useDashboardSectionMotion();
-
-  const ongoingCount = countUniqueDrugNames(drugs);
-  const adherence = useMemo(
-    () => calculateOverallCompliance(schedule),
-    [schedule]
-  );
 
   const router = useRouter();
   const { signOut } = useAuth();
@@ -148,15 +133,6 @@ const Account: React.FC<AccountProps> = ({ setActiveModal }) => {
               Edit profile
             </button>
           </div>
-
-          <dl className="mt-6 grid grid-cols-3 gap-3">
-            <Stat label="Phone" value={phone || "—"} />
-            <Stat
-              label="Active meds"
-              value={String(ongoingCount)}
-            />
-            <Stat label="Adherence" value={`${adherence}%`} />
-          </dl>
         </motion.section>
 
         <div className="flex flex-col gap-7">
@@ -244,17 +220,6 @@ const Account: React.FC<AccountProps> = ({ setActiveModal }) => {
 };
 
 export default Account;
-
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="min-w-0 rounded-xl border border-black/[0.05] bg-white px-3 py-3 shadow-soft-sm">
-      <dt className="text-[11px] font-medium text-soft-muted">{label}</dt>
-      <dd className="mt-1 truncate text-[15px] font-semibold text-soft-ink">
-        {value}
-      </dd>
-    </div>
-  );
-}
 
 function SectionLabel({
   children,

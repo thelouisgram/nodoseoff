@@ -789,6 +789,33 @@ export const useUpdateThemeMutation = () => {
   };
 };
 
+interface UpdateRemindersParams {
+  userId: string;
+  enabled: boolean;
+}
+
+/** Turn dose reminders on/off for every ongoing medication. */
+export const useUpdateRemindersMutation = () => {
+  const dispatch = useAppDispatch();
+  return {
+    mutateAsync: async (params: UpdateRemindersParams) => {
+      await runMutation("updateReminders", {
+        enabled: params.enabled,
+      });
+      const currentData = store.getState().dashboard.data;
+      dispatch(
+        updateDashboardCache({
+          activeDrugs: (currentData?.activeDrugs || []).map((drug) => ({
+            ...drug,
+            reminder: params.enabled,
+          })),
+        })
+      );
+      return params;
+    },
+  };
+};
+
 interface UpsertAppointmentParams {
   userId: string;
   doctor: string;

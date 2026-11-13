@@ -181,6 +181,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         `;
         break;
       }
+      case "updateReminders": {
+        const enabled = Boolean(payload.enabled);
+        await sql`
+          UPDATE drugs SET reminder = ${enabled}
+          WHERE "userId" = ${userId}
+        `;
+        break;
+      }
       case "updateDrugHistory": {
         await sql`
           UPDATE "drugHistory" SET "otcDrugs" = ${String(payload.otcDrugs)}, herbs = ${String(payload.herbs)}

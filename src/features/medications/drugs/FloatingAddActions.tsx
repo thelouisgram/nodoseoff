@@ -1,4 +1,7 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   CalendarPlus,
   CircleAlert,
@@ -6,7 +9,8 @@ import {
   Pill,
   Plus,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { ndoEase } from "@/components/landing/motion";
 
 interface FloatingAddActionsProps {
   add: boolean;
@@ -21,28 +25,24 @@ const ACTIONS = [
     label: "Add medication",
     Icon: Pill,
     btn: "bg-soft-blue text-soft-blue-ink",
-    delay: 0,
   },
   {
     id: "side-effects",
-    label: "Side effect",
+    label: "Add side effect",
     Icon: CircleAlert,
     btn: "bg-soft-peach text-soft-peach-ink",
-    delay: 0.04,
   },
   {
     id: "appointment",
-    label: "Appointment",
+    label: "Book appointment",
     Icon: CalendarPlus,
     btn: "bg-soft-mint text-soft-mint-ink",
-    delay: 0.08,
   },
   {
     id: "allergies",
     label: "Add allergy",
     Icon: ShieldOff,
     btn: "bg-soft-lavender text-soft-lavender-ink",
-    delay: 0.12,
   },
 ] as const;
 
@@ -52,41 +52,85 @@ const FloatingAddActions: React.FC<FloatingAddActionsProps> = ({
   activeModal,
   setActiveModal,
 }) => {
+  const reduce = useReducedMotion();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (activeModal !== "" || !mounted) return null;
+
   const handleClose = () => setAdd(false);
 
-  if (activeModal !== "") return null;
-
-  return (
+  return createPortal(
     <>
       <AnimatePresence>
-        {add && (
+        {add ? (
           <motion.div
+            key="fab-backdrop"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: reduce ? 0 : 0.2, ease: ndoEase }}
             className="fixed inset-0 z-[143] bg-soft-ink/25 backdrop-blur-sm"
             onClick={handleClose}
           />
-        )}
+        ) : null}
       </AnimatePresence>
 
-      <div className="fixed bottom-24 right-5 z-[144] flex flex-col items-end ss:right-10 md:bottom-10">
+      <div className="pointer-events-none fixed bottom-24 right-5 z-[144] flex flex-col items-end ss:right-10 md:bottom-10">
         <AnimatePresence>
-          {add && (
-            <div className="mb-4 flex flex-col items-end gap-2.5">
-              {ACTIONS.map(({ id, label, Icon, btn, delay }) => (
+          {add ? (
+            <motion.div
+              key="fab-actions"
+              initial="hidden"
+              animate="show"
+              exit="exit"
+              variants={{
+                hidden: {},
+                show: {
+                  transition: {
+                    staggerChildren: reduce ? 0 : 0.045,
+                    delayChildren: reduce ? 0 : 0.02,
+                  },
+                },
+                exit: {
+                  transition: {
+                    staggerChildren: reduce ? 0 : 0.03,
+                    staggerDirection: -1,
+                  },
+                },
+              }}
+              className="pointer-events-auto mb-3 flex flex-col items-end gap-2.5"
+            >
+              {ACTIONS.map(({ id, label, Icon, btn }) => (
                 <motion.button
                   key={id}
                   type="button"
-                  initial={{ opacity: 0, y: 16, scale: 0.9 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 12, scale: 0.9 }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 400,
-                    damping: 24,
-                    delay,
+                  variants={{
+                    hidden: reduce
+                      ? { opacity: 0 }
+                      : { opacity: 0, y: 10, scale: 0.96 },
+                    show: {
+                      opacity: 1,
+                      y: 0,
+                      scale: 1,
+                      transition: {
+                        duration: 0.28,
+                        ease: ndoEase,
+                      },
+                    },
+                    exit: reduce
+                      ? { opacity: 0 }
+                      : {
+                          opacity: 0,
+                          y: 8,
+                          scale: 0.96,
+                          transition: { duration: 0.18, ease: ndoEase },
+                        },
                   }}
+                  style={{ transformOrigin: "bottom right" }}
                   onClick={() => {
                     setAdd(false);
                     setActiveModal(id);
@@ -97,37 +141,40 @@ const FloatingAddActions: React.FC<FloatingAddActionsProps> = ({
                     {label}
                   </span>
                   <span
-                    className={`flex size-12 items-center justify-center rounded-full border border-black/[0.04] shadow-soft-sm transition group-hover:scale-105 ss:size-14 ${btn}`}
+                    className={`flex size-12 items-center justify-center rounded-full border border-black/[0.04] shadow-soft-sm transition group-hover:scale-[1.03] ss:size-14 ${btn}`}
                   >
                     <Icon className="size-5 ss:size-6" strokeWidth={2} />
                   </span>
                 </motion.button>
               ))}
-            </div>
-          )}
+            </motion.div>
+          ) : null}
         </AnimatePresence>
 
         <motion.button
           type="button"
           onClick={() => setAdd((prev) => !prev)}
-          initial={{ opacity: 0, scale: 0.7 }}
-          animate={{ opacity: 1, scale: 1 }}
-          whileHover={{ scale: 1.08, rotate: add ? 0 : -8 }}
-          whileTap={{ scale: 0.92 }}
-          transition={{ type: "spring", stiffness: 400, damping: 22, delay: 0.25 }}
+          whileHover={reduce ? undefined : { scale: 1.05 }}
+          whileTap={reduce ? undefined : { scale: 0.94 }}
+          transition={{ duration: 0.2, ease: ndoEase }}
           aria-label={add ? "Close add menu" : "Open add menu"}
           aria-expanded={add}
-          className="relative z-[146] flex size-14 items-center justify-center rounded-full bg-soft-primary shadow-soft-float ss:size-16"
+          className="pointer-events-auto relative z-[146] flex size-14 items-center justify-center rounded-full bg-soft-primary shadow-soft-float ss:size-16"
         >
-          <motion.div
+          <motion.span
             animate={{ rotate: add ? 45 : 0 }}
-            transition={{ type: "spring", stiffness: 380, damping: 22 }}
+            transition={{
+              duration: reduce ? 0 : 0.28,
+              ease: ndoEase,
+            }}
+            className="flex"
           >
             <Plus className="size-7 text-white ss:size-8" strokeWidth={2.2} />
-          </motion.div>
+          </motion.span>
         </motion.button>
       </div>
-    </>
+    </>,
+    document.body
   );
 };
 

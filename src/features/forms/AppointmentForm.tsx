@@ -25,11 +25,35 @@ interface AppointmentFormProps {
   setActiveModal: (value: string) => void;
 }
 
-function toLocalInputValue(iso: string) {
+function pad2(n: number) {
+  return String(n).padStart(2, "0");
+}
+
+function splitLocalDateTime(iso: string): { date: string; time: string } {
   const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "";
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  if (Number.isNaN(d.getTime())) return { date: "", time: "" };
+  return {
+    date: `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`,
+    time: `${pad2(d.getHours())}:${pad2(d.getMinutes())}`,
+  };
+}
+
+/** Build a local Date from YYYY-MM-DD + HH:mm without UTC surprises. */
+function combineLocalDateTime(date: string, time: string): Date | null {
+  if (!date || !time) return null;
+  const [y, m, day] = date.split("-").map(Number);
+  const [hh, mm] = time.split(":").map(Number);
+  if (
+    !y ||
+    !m ||
+    !day ||
+    Number.isNaN(hh) ||
+    Number.isNaN(mm)
+  ) {
+    return null;
+  }
+  const d = new Date(y, m - 1, day, hh, mm, 0, 0);
+  return Number.isNaN(d.getTime()) ? null : d;
 }
 
 function whenLabel(iso: string) {
@@ -51,7 +75,8 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
 
   const [doctor, setDoctor] = useState("");
   const [location, setLocation] = useState("");
-  const [startsAt, setStartsAt] = useState("");
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
   const [notes, setNotes] = useState("");
   const [saving, setSaving] = useState(false);
 
@@ -62,13 +87,16 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
     if (!appointment) {
       setDoctor("");
       setLocation("");
-      setStartsAt("");
+      setDate("");
+      setTime("");
       setNotes("");
       return;
     }
     setDoctor(appointment.doctor);
     setLocation(appointment.location);
-    setStartsAt(toLocalInputValue(appointment.startsAt));
+    const split = splitLocalDateTime(appointment.startsAt);
+    setDate(split.date);
+    setTime(split.time);
     setNotes(appointment.notes);
   }, [open, appointment]);
 
@@ -86,12 +114,12 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
   const onSave = async (e: FormEvent) => {
     e.preventDefault();
     if (!userId) return;
-    if (!startsAt) {
+    if (!date || !time) {
       toast.error("Pick a date and time");
       return;
     }
-    const iso = new Date(startsAt).toISOString();
-    if (Number.isNaN(new Date(iso).getTime())) {
+    const local = combineLocalDateTime(date, time);
+    if (!local) {
       toast.error("Pick a valid date and time");
       return;
     }
@@ -102,7 +130,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
         userId,
         doctor,
         location,
-        startsAt: iso,
+        startsAt: local.toISOString(),
         notes,
       });
       toast.success("Appointment saved");
@@ -197,21 +225,43 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
             ) : null}
 
             <form onSubmit={onSave} className="space-y-3.5 px-5 py-5">
-              <div>
-                <label
-                  htmlFor="appt-when"
-                  className="mb-1 block text-[12px] font-medium text-soft-muted"
-                >
-                  Date &amp; time
-                </label>
-                <input
-                  id="appt-when"
-                  type="datetime-local"
-                  required
-                  value={startsAt}
-                  onChange={(e) => setStartsAt(e.target.value)}
-                  className="w-full rounded-xl border border-black/[0.06] bg-soft-canvas px-3.5 py-2.5 text-[14px] text-soft-ink outline-none focus:border-soft-primary/25 focus:bg-white focus:ring-4 focus:ring-soft-primary/[0.06]"
-                />
+              <div className="grid grid-cols-1 gap-3.5 ss:grid-cols-2">
+                <div>
+                  <label
+                    htmlFor="appt-date"
+                    className="mb-1.5 block text-[12px] font-medium text-soft-muted"
+                  >
+                    Date
+                  </label>
+                  <div className="flex h-[47px] items-center rounded-xl border border-black/[0.06] bg-white px-3.5 transition focus-within:border-soft-primary/25 focus-within:ring-4 focus-within:ring-soft-primary/[0.06]">
+                    <input
+                      id="appt-date"
+                      type="date"
+                      required
+                      value={date}
+                      onChange={(e) => setDate(e.target.value)}
+                      className="w-full bg-transparent text-[14px] text-soft-ink outline-none [color-scheme:light]"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label
+                    htmlFor="appt-time"
+                    className="mb-1.5 block text-[12px] font-medium text-soft-muted"
+                  >
+                    Time
+                  </label>
+                  <div className="flex h-[47px] items-center rounded-xl border border-black/[0.06] bg-white px-3.5 transition focus-within:border-soft-primary/25 focus-within:ring-4 focus-within:ring-soft-primary/[0.06]">
+                    <input
+                      id="appt-time"
+                      type="time"
+                      required
+                      value={time}
+                      onChange={(e) => setTime(e.target.value)}
+                      className="w-full bg-transparent text-[14px] text-soft-ink outline-none [color-scheme:light]"
+                    />
+                  </div>
+                </div>
               </div>
               <div>
                 <label

@@ -41,7 +41,7 @@ const Tracker: React.FC<TrackerProps> = ({
             <button
               key={item}
               onClick={() => setTracker(item)}
-              className={`relative z-10 w-full rounded-lg px-3 py-2 text-[14px] font-medium transition-colors duration-200 ss:px-4 ${
+              className={`ndo-press relative z-10 w-full rounded-lg px-3 py-2 text-[14px] font-medium ss:px-4 ${
                 tracker === item
                   ? "text-soft-ink"
                   : "text-soft-muted hover:text-soft-ink"

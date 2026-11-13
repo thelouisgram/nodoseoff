@@ -182,7 +182,7 @@ const DrugActionModals: React.FC<DrugActionModalsProps> = ({
                 <button
                   onClick={handleClose}
                   disabled={isProcessing}
-                  className="px-4 py-2 text-sm font-semibold border border-gray-100  text-soft-ink  rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="ndo-press rounded-lg border border-gray-100 px-4 py-2 text-sm font-semibold text-soft-ink hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Cancel
                 </button>
@@ -191,7 +191,7 @@ const DrugActionModals: React.FC<DrugActionModalsProps> = ({
                 <button
                   onClick={handleConfirmClick}
                   disabled={isProcessing}
-                  className={`rounded-xl px-4 py-2 text-sm font-semibold text-white shadow-soft-sm transition-colors disabled:cursor-not-allowed disabled:opacity-70 ${config.confirmClass}`}
+                  className={`ndo-press rounded-xl px-4 py-2 text-sm font-semibold text-white shadow-soft-sm disabled:cursor-not-allowed disabled:opacity-70 ${config.confirmClass}`}
                 >
                   {isProcessing ? (
                     <>

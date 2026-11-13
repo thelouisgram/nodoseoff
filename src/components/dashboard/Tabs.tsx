@@ -30,41 +30,37 @@ const Tabs: React.FC<TabsProps> = ({ item, activeTab, nav }) => {
     <button
       type="button"
       onClick={() => dispatch(setActiveTab(item.name))}
-      className={`group relative flex w-full items-center justify-center rounded-2xl px-1.5 py-1.5 transition-colors ${
-        nav ? "lg:justify-start lg:gap-3 lg:pr-3" : ""
-      } ${isActive ? "text-soft-primary" : "text-soft-muted hover:text-soft-ink"}`}
+      className={`ndo-press group relative flex w-full items-center justify-center rounded-2xl py-1.5 ${
+        nav ? "lg:justify-start lg:gap-3 lg:pl-1.5 lg:pr-3" : ""
+      } ${
+        isActive
+          ? "text-white"
+          : "text-soft-muted hover:bg-soft-primary-soft/70 hover:text-soft-primary"
+      }`}
       aria-current={isActive ? "page" : undefined}
       title={!nav ? label : undefined}
     >
-      <span
-        className={`relative z-[1] grid size-10 shrink-0 place-items-center rounded-xl transition-colors ${
-          isActive
-            ? "text-soft-primary"
-            : "text-soft-muted group-hover:bg-soft-canvas group-hover:text-soft-ink"
-        }`}
-      >
-        {isActive ? (
-          <motion.span
-            layoutId="sidebar-active"
-            className="absolute inset-0 rounded-xl bg-soft-primary-soft"
-            transition={{ type: "spring", stiffness: 420, damping: 30, mass: 0.7 }}
-          />
-        ) : null}
+      {isActive ? (
+        <motion.span
+          layoutId="sidebar-active"
+          aria-hidden
+          className="absolute inset-0 rounded-2xl bg-soft-primary"
+          transition={{ type: "spring", stiffness: 420, damping: 30, mass: 0.7 }}
+        />
+      ) : null}
+
+      <span className="relative z-[1] grid size-10 shrink-0 place-items-center">
         <Icon
-          className="relative z-[1] size-[19px]"
-          strokeWidth={1.75}
+          className="size-[19px]"
+          strokeWidth={isActive ? 2 : 1.75}
           absoluteStrokeWidth
         />
       </span>
 
       <span
-        className={`relative z-[1] min-w-0 truncate text-[14px] tracking-tight transition-all ${
+        className={`relative z-[1] min-w-0 flex-1 truncate text-left text-[14px] tracking-tight ${
           nav ? "hidden lg:inline" : "hidden"
-        } ${
-          isActive
-            ? "font-semibold text-soft-primary"
-            : "font-medium group-hover:font-semibold"
-        }`}
+        } ${isActive ? "font-semibold" : "font-medium"}`}
       >
         {label}
       </span>

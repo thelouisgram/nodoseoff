@@ -75,15 +75,13 @@ export default function HowItWorks() {
               <Fragment key={item.step}>
                 <m.div
                   variants={fadeUp}
-                  whileHover={{ y: -3 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 28 }}
                   className="min-w-0 flex-1 border-t border-white/25 pt-6"
                 >
                   <div className="flex items-center justify-between gap-3">
                     <p className="font-mono text-[13px] font-semibold tracking-wider text-white/55">
                       {item.step}
                     </p>
-                    <span className="flex size-8 items-center justify-center border border-white/20 bg-white/5 text-[#3dcfb6] transition-transform duration-300 hover:scale-110">
+                    <span className="flex size-8 items-center justify-center border border-white/20 bg-white/5 text-[#3dcfb6]">
                       <Icon className="size-3.5" strokeWidth={1.75} />
                     </span>
                   </div>

@@ -67,8 +67,6 @@ export default function Safety() {
               <m.div
                 key={point.title}
                 variants={fadeUp}
-                whileHover={{ y: -3 }}
-                transition={{ type: "spring", stiffness: 400, damping: 28 }}
                 className="bg-white p-6 ss:p-8"
               >
                 <Icon

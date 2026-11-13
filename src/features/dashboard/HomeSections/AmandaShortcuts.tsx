@@ -7,6 +7,7 @@ import {
   AMANDA_PREFILL_KEY,
   buildAmandaShortcuts,
 } from "@/utils/dashboard/homeInsights";
+import { uniqueDrugDisplayNames } from "@/utils/drugs";
 import { useAppDispatch } from "@/store";
 import { setActiveTab } from "@/store/appSlice";
 
@@ -17,7 +18,7 @@ type Props = {
 export default function AmandaShortcuts({ drugs }: Props) {
   const dispatch = useAppDispatch();
   const prompts = useMemo(
-    () => buildAmandaShortcuts(drugs.map((d) => d.drug)),
+    () => buildAmandaShortcuts(uniqueDrugDisplayNames(drugs)),
     [drugs]
   );
 
@@ -31,10 +32,13 @@ export default function AmandaShortcuts({ drugs }: Props) {
   };
 
   return (
-    <section className="mx-4 mb-4 ss:mx-8 md:mx-0">
+    <section className="mx-4 mb-3 ss:mx-8 md:mx-0">
       <div className="mb-2.5 flex items-center gap-2">
-        <Sparkles className="size-3.5 text-soft-primary" strokeWidth={2} />
-        <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-soft-muted">
+        <Sparkles
+          className="ndo-twinkle size-3.5 text-soft-primary"
+          strokeWidth={2}
+        />
+        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-soft-muted">
           Ask AMANDA 6
         </p>
       </div>
@@ -44,7 +48,7 @@ export default function AmandaShortcuts({ drugs }: Props) {
             key={prompt}
             type="button"
             onClick={() => openWithPrompt(prompt)}
-            className="max-w-[240px] shrink-0 rounded-full border border-soft-primary/15 bg-soft-primary-soft px-3.5 py-2 text-left text-[12px] font-medium leading-snug text-soft-primary transition hover:bg-soft-primary hover:text-white"
+            className="ndo-press max-w-[240px] shrink-0 rounded-full border border-soft-primary/15 bg-soft-primary-soft px-3.5 py-2 text-left text-[12px] font-medium leading-snug text-soft-primary hover:bg-soft-primary hover:text-white"
           >
             {prompt}
           </button>

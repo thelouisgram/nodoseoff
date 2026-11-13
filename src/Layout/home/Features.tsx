@@ -84,10 +84,13 @@ export default function Features() {
           viewport={viewOnce}
           className="relative flex flex-col justify-center px-4 pb-8 pt-2 ss:px-6 md:px-8 md:py-10 lg:px-10"
         >
-          <h2 className="max-w-[14ch] text-[2.2rem] font-extrabold leading-[1.05] tracking-tight text-soft-ink ss:text-[2.5rem] md:text-[2.75rem]">
-            What keeps you on dose.
+          <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-soft-primary">
+            Product
+          </p>
+          <h2 className="mt-3 max-w-[14ch] text-[2.2rem] font-extrabold leading-[1.05] tracking-tight text-soft-ink ss:text-[2.5rem] md:text-[2.75rem]">
+            What keeps you on dose
           </h2>
-          <p className="mt-4 max-w-sm text-[14px] leading-relaxed text-soft-muted ss:text-[15px]">
+          <p className="mt-3 max-w-sm text-[14px] leading-relaxed text-soft-muted ss:text-[15px]">
             Reminders, progress, reports, and AMANDA 6 — built for people who
             take medicine every day.
           </p>
@@ -106,20 +109,18 @@ export default function Features() {
               <m.article
                 key={feature.n}
                 variants={fadeUp}
-                whileHover={{ y: -2 }}
-                transition={{ type: "spring", stiffness: 420, damping: 28 }}
-                className={`group relative min-h-[200px] overflow-hidden px-5 py-8 ss:px-8 md:min-h-0 md:px-8 md:py-5 lg:px-10 ${feature.wash}`}
+                className={`relative min-h-[200px] overflow-hidden px-5 py-8 ss:px-8 md:min-h-0 md:px-8 md:py-5 lg:px-10 ${feature.wash}`}
               >
                 <span
                   aria-hidden
-                  className={`pointer-events-none absolute -right-1 top-1/2 -z-0 -translate-y-1/2 select-none font-extrabold leading-none transition-transform duration-500 group-hover:scale-105 ${feature.mark} text-[5.5rem] md:text-[6.5rem]`}
+                  className={`pointer-events-none absolute -right-1 top-1/2 -z-0 -translate-y-1/2 select-none font-extrabold leading-none ${feature.mark} text-[5.5rem] md:text-[6.5rem]`}
                 >
                   {feature.n}
                 </span>
 
                 <div className="relative z-[1] flex h-full max-w-md flex-col justify-center gap-3">
                   <span
-                    className={`flex size-10 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-105 ${feature.iconWell}`}
+                    className={`flex size-10 items-center justify-center rounded-xl ${feature.iconWell}`}
                   >
                     <Icon className="size-4" strokeWidth={1.85} />
                   </span>

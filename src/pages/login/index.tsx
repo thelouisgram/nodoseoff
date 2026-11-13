@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 import SeoHead from "@/components/seo/SeoHead";
+import InteractiveLogo from "@/components/ui/InteractiveLogo";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useRouter } from "next/router";
 import { useAuthSignIn } from "@/contexts/AuthContext";
@@ -85,15 +85,14 @@ const SignIn = () => {
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             className="w-full max-w-[420px]"
           >
-            <Link href="/" className="mb-8 flex justify-center">
-              <Image
-                src="/assets/logo/logo-with-name-blue.png"
+            <div className="mb-8 flex justify-center">
+              <InteractiveLogo
+                variant="blue"
                 width={160}
                 height={48}
-                alt="NoDoseOff logo"
-                className="h-10 w-auto"
+                imgClassName="h-10 w-auto"
               />
-            </Link>
+            </div>
 
             <SoftCard className="p-7 ss:p-9">
               <div className="mb-7">

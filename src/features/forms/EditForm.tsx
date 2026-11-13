@@ -459,7 +459,7 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                 className={`w-full py-3 px-4 rounded-soft-md font-semibold text-white transition-all flex items-center justify-center gap-2 ${
                   loading
                     ? "bg-soft-ink/50 cursor-not-allowed"
-                    : "bg-soft-ink hover:bg-soft-ink/90 active:scale-[0.98]"
+                    : "ndo-press bg-soft-ink hover:bg-soft-ink/90"
                 }`}
               >
                 {loading ? (

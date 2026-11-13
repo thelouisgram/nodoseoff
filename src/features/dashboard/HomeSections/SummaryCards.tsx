@@ -6,31 +6,17 @@ import {
   getNextUpcomingDose,
 } from "@/utils/dashboard/dashboard";
 import { calculateOverallCompliance } from "@/utils/dashboard/drugs";
+import { countUniqueDrugNames } from "@/utils/drugs";
 import { useDrugs, useSchedule } from "@/hooks/useDashboardData";
 import { useAppSelector } from "@/store";
 import { motion } from "framer-motion";
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.08, delayChildren: 0.04 },
-  },
-};
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 14 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { type: "spring" as const, stiffness: 280, damping: 24 },
-  },
-};
+import { useDashboardSectionMotion } from "@/components/landing/motion";
 
 const SummaryCards = () => {
   const { userId } = useAppSelector((state) => state.app);
   const { data: drugs = [] } = useDrugs(userId);
   const { data: schedule = [] } = useSchedule(userId);
+  const { stagger, rise } = useDashboardSectionMotion();
 
   const next = getNextUpcomingDose(schedule);
   const [countdown, setCountdown] = useState(() =>
@@ -44,11 +30,13 @@ const SummaryCards = () => {
     return () => window.clearInterval(id);
   }, [schedule]);
 
+  const ongoingCount = countUniqueDrugNames(drugs);
+
   const secondary = [
     {
       label: "Ongoing",
-      value: String(drugs.length),
-      hint: drugs.length === 1 ? "active medication" : "active medications",
+      value: String(ongoingCount),
+      hint: ongoingCount === 1 ? "active medication" : "active medications",
       icon: Pill,
     },
     {
@@ -61,14 +49,14 @@ const SummaryCards = () => {
 
   return (
     <motion.section
-      variants={containerVariants}
+      variants={stagger}
       initial="hidden"
-      animate="visible"
-      className="bar mb-6 grid gap-3 px-4 ss:mb-7 ss:grid-cols-2 ss:px-8 md:mb-8 md:grid-cols-12 md:px-0"
+      animate="show"
+      className="bar mb-4 grid gap-3 px-4 ss:mb-5 ss:grid-cols-2 ss:px-8 md:mb-6 md:grid-cols-12 md:px-0"
     >
       {/* Featured: label → drug name → time stacked underneath */}
       <motion.div
-        variants={cardVariants}
+        variants={rise}
         className="relative overflow-hidden rounded-2xl bg-soft-primary p-5 text-white shadow-soft-sm ss:col-span-2 md:col-span-6"
       >
         <div
@@ -114,7 +102,7 @@ const SummaryCards = () => {
         return (
           <motion.div
             key={card.label}
-            variants={cardVariants}
+            variants={rise}
             className="relative flex min-h-[148px] flex-col justify-between rounded-2xl border border-black/[0.05] bg-white p-5 shadow-soft-sm md:col-span-3"
           >
             <div className="flex items-start justify-between gap-2">

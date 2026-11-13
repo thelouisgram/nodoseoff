@@ -18,7 +18,11 @@ export async function POST(req: Request) {
   try {
     const userId = await requireUserId(req);
 
-    const body = (await req.json()) as { messages?: UIMessage[] };
+    const body = (await req.json()) as {
+      messages?: UIMessage[];
+      clientNow?: string;
+      timeZone?: string;
+    };
     const messages = body?.messages ?? [];
     if (!Array.isArray(messages) || messages.length === 0) {
       return Response.json({ error: "messages required" }, { status: 400 });
@@ -42,7 +46,15 @@ export async function POST(req: Request) {
       );
     }
 
-    const medsContext = await buildUserMedsContext(userId);
+    const clientNow =
+      typeof body.clientNow === "string" ? body.clientNow.slice(0, 40) : undefined;
+    const timeZone =
+      typeof body.timeZone === "string" ? body.timeZone.slice(0, 64) : undefined;
+
+    const medsContext = await buildUserMedsContext(userId, {
+      nowIso: clientNow,
+      timeZone,
+    });
     const system = `${DRUG_ASSISTANT_SYSTEM}\n\n${medsContext}`;
 
     const result = streamText({

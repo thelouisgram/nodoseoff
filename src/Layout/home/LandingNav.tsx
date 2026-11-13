@@ -1,11 +1,11 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArrowRight, Menu, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ndoEase } from "@/components/landing/motion";
+import InteractiveLogo from "@/components/ui/InteractiveLogo";
 
 const navLinks = [
   { href: "#features", label: "Features" },
@@ -61,16 +61,9 @@ export default function LandingNav() {
         }`}
       >
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 ss:px-6 lg:h-[4.5rem]">
-          <Link href="/" className="relative z-[110] shrink-0">
-            <Image
-              src="/assets/logo/logo-with-name-white.png"
-              alt="NoDoseOff"
-              width={168}
-              height={40}
-              priority
-              className="h-8 w-auto ss:h-9"
-            />
-          </Link>
+          <div className="relative z-[110] shrink-0">
+            <InteractiveLogo variant="white" priority />
+          </div>
 
           <nav className="hidden items-center gap-7 lg:flex">
             {navLinks.map((link) => (
@@ -87,13 +80,13 @@ export default function LandingNav() {
           <div className="hidden items-center gap-3 lg:flex">
             <Link
               href="/login"
-              className="px-3 py-2 text-[14px] font-semibold text-white/85 transition-colors hover:text-white"
+              className="ndo-press px-3 py-2 text-[14px] font-semibold text-white/85 hover:text-white"
             >
               Log in
             </Link>
             <Link
               href="/signup"
-              className="inline-flex items-center gap-1.5 bg-white px-5 py-2.5 text-[14px] font-semibold text-soft-primary transition-opacity hover:opacity-92"
+              className="ndo-cta ndo-cta-solid inline-flex items-center gap-1.5 px-5 py-2.5 text-[14px] font-semibold"
             >
               Get started
               <ArrowRight className="size-4" />
@@ -103,7 +96,7 @@ export default function LandingNav() {
           <button
             type="button"
             onClick={() => setMenuOpen((v) => !v)}
-            className="relative z-[110] flex size-10 items-center justify-center text-white lg:hidden"
+            className="ndo-press relative z-[110] flex size-10 items-center justify-center text-white lg:hidden"
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
           >
@@ -166,7 +159,7 @@ export default function LandingNav() {
                 <Link
                   href="/signup"
                   onClick={() => setMenuOpen(false)}
-                  className="ndo-press bg-white px-5 py-3.5 text-center text-[15px] font-semibold text-soft-primary"
+                  className="ndo-cta ndo-cta-solid px-5 py-3.5 text-center text-[15px] font-semibold"
                 >
                   Get started free
                 </Link>

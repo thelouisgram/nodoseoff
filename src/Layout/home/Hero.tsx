@@ -4,9 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Sparkles, Stethoscope } from "lucide-react";
 import { m, useLandingVariants } from "@/components/landing/motion";
+import HeroDoseCard from "./HeroDoseCard";
 
 export default function HeroSection() {
-  const { reduce, heroItem, heroStagger } = useLandingVariants();
+  const { heroItem, heroStagger } = useLandingVariants();
 
   return (
     <section
@@ -35,21 +36,21 @@ export default function HeroSection() {
           animate="show"
           className="max-w-xl text-left"
         >
-          <m.p
-            variants={heroItem}
-            className="mb-4 text-[13px] font-semibold uppercase tracking-[0.18em] text-white/70"
-          >
-            NoDoseOff
-          </m.p>
           <m.h1
             variants={heroItem}
-            className="text-[2.55rem] font-extrabold leading-[1.05] tracking-tight text-white ss:text-5xl md:text-[3.5rem]"
+            className="text-[2.75rem] font-extrabold leading-[0.98] tracking-tight text-white ss:text-[3.25rem] md:text-[3.75rem]"
           >
-            Never miss a dose again
+            NoDoseOff
           </m.h1>
           <m.p
             variants={heroItem}
-            className="mt-5 max-w-md text-[16px] leading-relaxed text-white/80 ss:text-[17px]"
+            className="mt-4 max-w-md text-[1.35rem] font-semibold leading-snug tracking-tight text-white/90 ss:text-[1.5rem] md:text-[1.65rem]"
+          >
+            Never miss a dose again
+          </m.p>
+          <m.p
+            variants={heroItem}
+            className="mt-3 max-w-md text-[15px] leading-relaxed text-white/75 ss:text-[16px]"
           >
             Smart reminders, adherence tracking, and{" "}
             <span className="font-semibold text-white">AMANDA 6</span> — so
@@ -61,16 +62,16 @@ export default function HeroSection() {
           >
             <Link
               href="/signup"
-              className="ndo-press inline-flex items-center justify-center gap-2 bg-white px-7 py-3.5 text-[15px] font-bold text-soft-primary transition-opacity hover:opacity-92"
+              className="ndo-cta ndo-cta-solid group inline-flex items-center justify-center gap-2 px-7 py-3.5 text-[15px] font-bold"
             >
               Start free
               <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5" />
             </Link>
             <Link
               href="#amanda"
-              className="ndo-press inline-flex items-center justify-center gap-2 border border-white/30 bg-white/10 px-7 py-3.5 text-[15px] font-semibold text-white transition-colors hover:bg-white/15"
+              className="ndo-cta ndo-cta-ghost inline-flex items-center justify-center gap-2 px-7 py-3.5 text-[15px] font-semibold"
             >
-              <Sparkles className="size-4" />
+              <Sparkles className="ndo-spark size-4" />
               Meet AMANDA 6
             </Link>
           </m.div>
@@ -79,31 +80,14 @@ export default function HeroSection() {
             className="mt-6 inline-flex items-center gap-2 text-[13px] font-medium text-white/75"
           >
             <Stethoscope
-              className="size-4 shrink-0 text-[#3dcfb6]"
+              className="ndo-nod size-4 shrink-0 text-[#3dcfb6]"
               strokeWidth={1.75}
             />
             Built &amp; designed by doctors
           </m.p>
         </m.div>
 
-        <m.div
-          initial={reduce ? false : { opacity: 0, y: 16, scale: 0.98 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{
-            delay: reduce ? 0 : 0.55,
-            duration: 0.55,
-            ease: [0.22, 1, 0.36, 1],
-          }}
-          className="pointer-events-none absolute bottom-24 right-4 hidden max-w-[220px] border border-white/20 bg-[#031428]/85 p-3.5 md:block lg:right-8"
-        >
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-[#3dcfb6]">
-            Live reminder
-          </p>
-          <p className="mt-1 text-[13px] font-semibold text-white">
-            Evening dose in 15m
-          </p>
-          <p className="text-[11px] text-white/65">Ask AMANDA 6 if unsure</p>
-        </m.div>
+        <HeroDoseCard />
       </div>
     </section>
   );

@@ -1,6 +1,13 @@
 "use client";
 
-import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  FormEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
 import {
@@ -18,6 +25,11 @@ import { toast } from "sonner";
 import ChatHistoryPanel from "./ChatHistoryPanel";
 import type { AiChatSummary } from "@/lib/ai/history";
 import { AMANDA_PREFILL_KEY } from "@/utils/dashboard/homeInsights";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  ndoEase,
+  useDashboardSectionMotion,
+} from "@/components/landing/motion";
 
 const ACTIVE_CHAT_KEY = "nodoseoff_ai_chat_id";
 
@@ -57,6 +69,13 @@ function buildSuggestions(drugNames: string[]): string[] {
   ].filter(Boolean);
 }
 
+function messageText(m: UIMessage): string {
+  return m.parts
+    .filter((p): p is { type: "text"; text: string } => p.type === "text")
+    .map((p) => p.text)
+    .join("");
+}
+
 export default function AiAssistant() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const persistEnabled = useRef(false);
@@ -70,6 +89,7 @@ export default function AiAssistant() {
   const [chatList, setChatList] = useState<AiChatSummary[]>([]);
   const [listLoading, setListLoading] = useState(false);
   const [switching, setSwitching] = useState(false);
+  const { reduce, stagger, rise } = useDashboardSectionMotion();
 
   const refreshUsage = useCallback(async () => {
     try {
@@ -152,6 +172,24 @@ export default function AiAssistant() {
       new DefaultChatTransport({
         api: "/api/ai/chat",
         headers: async (): Promise<Record<string, string>> => authHeaders(),
+        prepareSendMessagesRequest: ({
+          messages: chatMessages,
+          id,
+          body,
+          trigger,
+          messageId,
+        }) => ({
+          body: {
+            ...body,
+            id,
+            messages: chatMessages,
+            trigger,
+            messageId,
+            // Fresh device clock each send so AMANDA can answer countdowns.
+            clientNow: new Date().toISOString(),
+            timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          },
+        }),
       }),
     []
   );
@@ -403,19 +441,27 @@ export default function AiAssistant() {
   const hideComposer = outOfPrompts && messages.length === 0;
 
   return (
-    <div className="relative flex h-full w-full flex-col overflow-hidden bg-soft-canvas px-4 pb-[calc(5.25rem+env(safe-area-inset-bottom))] pt-6 font-jakarta text-soft-ink ss:px-8 md:px-12 md:pb-10 md:pt-10">
-      <div className="mb-2 flex items-center justify-between gap-3">
+    <motion.div
+      initial="hidden"
+      animate="show"
+      variants={stagger}
+      className="relative flex h-full w-full flex-col overflow-hidden bg-soft-canvas px-4 pb-[calc(5.25rem+env(safe-area-inset-bottom))] pt-6 font-jakarta text-soft-ink ss:px-8 md:px-12 md:pb-10 md:pt-10"
+    >
+      <motion.div
+        variants={rise}
+        className="relative z-10 mb-2 flex items-start justify-between gap-3"
+      >
         <SoftSectionHeader
-          className="mb-0 min-w-0 flex-1 [&_h1]:text-[22px] ss:[&_h1]:text-[28px] [&_p]:text-[13px] ss:[&_p]:text-[14px]"
+          className="mb-0 min-w-0 flex-1 [&_h1]:text-[22px] ss:[&_h1]:text-[28px] [&_p]:truncate [&_p]:text-[13px] ss:[&_p]:text-[14px]"
           title="AMANDA 6"
           subtitle="Meds, side effects, and adherence."
         />
-        <div className="flex shrink-0 items-center gap-1.5">
+        <div className="relative z-10 flex shrink-0 items-center gap-1.5 pt-0.5">
           <button
             type="button"
             onClick={() => void startNewChat()}
             disabled={busy || switching}
-            className="inline-flex items-center gap-1 rounded-lg border border-black/[0.06] bg-white px-2.5 py-1.5 text-[12px] font-semibold text-soft-ink shadow-soft-sm transition hover:bg-soft-canvas disabled:opacity-45"
+            className="ndo-press inline-flex items-center gap-1 rounded-lg border border-black/[0.06] bg-white px-2.5 py-1.5 text-[12px] font-semibold text-soft-ink shadow-soft-sm hover:bg-soft-canvas disabled:opacity-45"
           >
             <Plus className="size-3.5" strokeWidth={2.25} />
             New
@@ -423,15 +469,18 @@ export default function AiAssistant() {
           <button
             type="button"
             onClick={openHistory}
-            className="inline-flex items-center gap-1 rounded-lg bg-soft-primary px-2.5 py-1.5 text-[12px] font-semibold text-white shadow-soft-sm transition hover:bg-soft-primary/90"
+            className="ndo-press inline-flex items-center gap-1 rounded-lg bg-soft-primary px-2.5 py-1.5 text-[12px] font-semibold text-white shadow-soft-sm hover:bg-soft-primary/90"
           >
             <History className="size-3.5" strokeWidth={2.25} />
             History
           </button>
         </div>
-      </div>
+      </motion.div>
 
-      <div className="mb-2 flex items-center justify-between gap-3 text-[12px] text-soft-muted">
+      <motion.div
+        variants={rise}
+        className="mb-2 flex items-center justify-between gap-3 text-[12px] text-soft-muted"
+      >
         <p className="min-w-0 truncate">
           {usage?.drugNames?.length
             ? `${usage.drugNames.length} med${usage.drugNames.length === 1 ? "" : "s"} loaded`
@@ -444,9 +493,12 @@ export default function AiAssistant() {
         >
           {usage ? `${usage.remaining}/${usage.limit} today` : "…"}
         </p>
-      </div>
+      </motion.div>
 
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-black/[0.05] bg-white shadow-soft-sm">
+      <motion.div
+        variants={rise}
+        className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-black/[0.05] bg-white shadow-soft-sm"
+      >
         <div className="min-h-0 flex-1 space-y-3 overflow-y-auto p-4 ss:p-5">
           {!historyReady || switching ? (
             <div className="flex items-center gap-2 pt-6 text-[13px] text-soft-muted">
@@ -454,8 +506,16 @@ export default function AiAssistant() {
               {switching ? "Opening chat…" : "Loading chat…"}
             </div>
           ) : messages.length === 0 ? (
-            <div className="flex flex-col gap-4 pt-2">
-              <div className="flex max-w-md flex-col items-start text-left">
+            <motion.div
+              className="flex flex-col gap-4 pt-2"
+              initial="hidden"
+              animate="show"
+              variants={stagger}
+            >
+              <motion.div
+                variants={rise}
+                className="flex max-w-md flex-col items-start text-left"
+              >
                 <span className="mb-3 flex size-10 items-center justify-center rounded-xl bg-soft-primary-soft text-soft-primary">
                   <Sparkles className="size-5" strokeWidth={1.75} />
                 </span>
@@ -471,7 +531,7 @@ export default function AiAssistant() {
                     <button
                       type="button"
                       onClick={openHistory}
-                      className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-soft-primary px-3.5 py-2 text-[12px] font-semibold text-white shadow-soft-sm transition hover:bg-soft-primary/90"
+                      className="ndo-press mt-4 inline-flex items-center gap-1.5 rounded-lg bg-soft-primary px-3.5 py-2 text-[12px] font-semibold text-white shadow-soft-sm hover:bg-soft-primary/90"
                     >
                       <History className="size-3.5" strokeWidth={2.25} />
                       Open History
@@ -488,58 +548,69 @@ export default function AiAssistant() {
                     </p>
                   </>
                 )}
-              </div>
+              </motion.div>
 
               {!outOfPrompts ? (
                 <div className="grid w-full gap-2 ss:grid-cols-2">
-                  {suggestions.map((s) => (
-                    <button
+                  {suggestions.map((s, i) => (
+                    <motion.button
                       key={s}
                       type="button"
                       disabled={busy}
                       onClick={() => void ask(s)}
-                      className="rounded-xl border border-black/[0.05] bg-soft-canvas/70 px-3.5 py-3 text-left text-[13px] font-medium text-soft-ink transition hover:bg-soft-primary-soft disabled:cursor-not-allowed disabled:opacity-45"
+                      initial={reduce ? false : { opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{
+                        duration: reduce ? 0 : 0.28,
+                        delay: reduce ? 0 : 0.08 + i * 0.05,
+                        ease: ndoEase,
+                      }}
+                      className="ndo-press rounded-xl border border-black/[0.05] bg-soft-canvas/70 px-3.5 py-3 text-left text-[13px] font-medium text-soft-ink transition hover:bg-soft-primary-soft disabled:cursor-not-allowed disabled:opacity-45"
                     >
                       {s}
-                    </button>
+                    </motion.button>
                   ))}
                 </div>
               ) : null}
-            </div>
+            </motion.div>
           ) : (
-            messages.map((m) => {
-              const text = m.parts
-                .filter(
-                  (p): p is { type: "text"; text: string } => p.type === "text"
-                )
-                .map((p) => p.text)
-                .join("");
-              const isUser = m.role === "user";
-              return (
-                <div
-                  key={m.id}
-                  className={`flex ${isUser ? "justify-end" : "justify-start"}`}
-                >
-                  <div
-                    className={`max-w-[92%] rounded-2xl px-4 py-3 text-[14px] leading-relaxed ss:max-w-[75%] ${
-                      isUser
-                        ? "bg-soft-primary text-white"
-                        : "border border-black/[0.05] bg-soft-canvas text-soft-ink"
-                    }`}
+            <AnimatePresence initial={false}>
+              {messages.map((m) => {
+                const text = messageText(m);
+                const isUser = m.role === "user";
+                return (
+                  <motion.div
+                    key={m.id}
+                    layout
+                    initial={reduce ? false : { opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      duration: reduce ? 0 : 0.28,
+                      ease: ndoEase,
+                    }}
+                    className={`flex ${isUser ? "justify-end" : "justify-start"}`}
                   >
-                    {isUser ? (
-                      <p className="whitespace-pre-wrap">{text}</p>
-                    ) : (
-                      <div className="ai-md [&_a]:text-soft-primary [&_a]:underline [&_blockquote]:border-l-2 [&_blockquote]:border-soft-primary/30 [&_blockquote]:pl-3 [&_blockquote]:text-soft-muted [&_code]:rounded [&_code]:bg-black/[0.05] [&_code]:px-1 [&_code]:py-0.5 [&_code]:text-[12px] [&_h1]:mb-2 [&_h1]:mt-3 [&_h1]:text-[16px] [&_h1]:font-semibold [&_h2]:mb-2 [&_h2]:mt-3 [&_h2]:text-[15px] [&_h2]:font-semibold [&_h3]:mb-1.5 [&_h3]:mt-2.5 [&_h3]:text-[14px] [&_h3]:font-semibold [&_li]:my-0.5 [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:my-2 [&_p:first-child]:mt-0 [&_p:last-child]:mb-0 [&_strong]:font-semibold [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5">
-                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                          {text}
-                        </ReactMarkdown>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })
+                    <div
+                      className={`max-w-[92%] rounded-2xl px-4 py-3 text-[14px] leading-relaxed ss:max-w-[75%] ${
+                        isUser
+                          ? "bg-soft-primary text-white"
+                          : "border border-black/[0.05] bg-soft-canvas text-soft-ink"
+                      }`}
+                    >
+                      {isUser ? (
+                        <p className="whitespace-pre-wrap">{text}</p>
+                      ) : (
+                        <div className="ai-md [&_a]:text-soft-primary [&_a]:underline [&_blockquote]:border-l-2 [&_blockquote]:border-soft-primary/30 [&_blockquote]:pl-3 [&_blockquote]:text-soft-muted [&_code]:rounded [&_code]:bg-black/[0.05] [&_code]:px-1 [&_code]:py-0.5 [&_code]:text-[12px] [&_h1]:mb-2 [&_h1]:mt-3 [&_h1]:text-[16px] [&_h1]:font-semibold [&_h2]:mb-2 [&_h2]:mt-3 [&_h2]:text-[15px] [&_h2]:font-semibold [&_h3]:mb-1.5 [&_h3]:mt-2.5 [&_h3]:text-[14px] [&_h3]:font-semibold [&_li]:my-0.5 [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:my-2 [&_p:first-child]:mt-0 [&_p:last-child]:mb-0 [&_strong]:font-semibold [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5">
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                            {text}
+                          </ReactMarkdown>
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
           )}
           {(() => {
             const last = messages[messages.length - 1];
@@ -556,10 +627,14 @@ export default function AiAssistant() {
                 last?.role === "user" ||
                 (last?.role === "assistant" && !lastText.trim()));
             return waiting ? (
-              <div className="flex items-center gap-2 text-[13px] text-soft-muted">
+              <motion.div
+                initial={reduce ? false : { opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-center gap-2 text-[13px] text-soft-muted"
+              >
                 <Loader2 className="size-4 animate-spin" />
                 Thinking…
-              </div>
+              </motion.div>
             ) : null;
           })()}
           <div ref={bottomRef} />
@@ -617,7 +692,7 @@ export default function AiAssistant() {
             </div>
           </form>
         ) : null}
-      </div>
+      </motion.div>
 
       <ChatHistoryPanel
         open={historyOpen}
@@ -629,6 +704,6 @@ export default function AiAssistant() {
         onSelect={(id) => void openChat(id)}
         onDelete={(id) => void deleteChat(id)}
       />
-    </div>
+    </motion.div>
   );
 }

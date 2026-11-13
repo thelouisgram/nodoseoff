@@ -24,17 +24,17 @@ export default function WeekStreak({ schedule }: Props) {
   }, [schedule]);
 
   return (
-    <section className="mx-4 mb-4 rounded-2xl border border-black/[0.05] bg-white px-4 py-4 shadow-soft-sm ss:mx-8 md:mx-0">
+    <section className="mx-4 mb-3 rounded-2xl border border-black/[0.05] bg-white px-4 py-4 shadow-soft-sm ss:mx-8 md:mx-0">
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-soft-muted">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-soft-muted">
             This week
           </p>
-          <p className="mt-1 text-[15px] font-semibold text-soft-ink">
+          <p className="mt-1 text-[16px] font-bold tracking-tight text-soft-ink">
             {weekPct}% adherence
             {streak > 0 ? (
-              <span className="ml-2 inline-flex items-center gap-1 text-[13px] font-medium text-soft-peach-ink">
-                <Flame className="size-3.5" strokeWidth={2} />
+              <span className="ml-2 inline-flex items-center gap-1 text-[12px] font-medium text-soft-peach-ink">
+                <Flame className="ndo-flicker size-3.5" strokeWidth={2} />
                 {streak}-day streak
               </span>
             ) : null}

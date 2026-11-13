@@ -62,7 +62,7 @@ export default function Banner() {
             </div>
             <Link
               href="/signup"
-              className="ndo-press group inline-flex shrink-0 items-center gap-2 bg-white px-7 py-3.5 text-[15px] font-bold text-soft-primary transition-opacity hover:opacity-92"
+              className="ndo-cta ndo-cta-solid group inline-flex shrink-0 items-center gap-2 px-7 py-3.5 text-[15px] font-bold"
             >
               Get started free
               <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5" />

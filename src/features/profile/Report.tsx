@@ -8,10 +8,15 @@ import {
   useCompletedDrugs,
   useOtcDrugs,
   useHerbs,
+  useHealthJournal,
 } from "@/hooks/useDashboardData";
 import { toast } from "sonner";
-import { DrugProps } from "@/types/dashboard";
+import { DrugProps, HealthJournalEntry } from "@/types/dashboard";
 import { calculateOverallCompliance } from "@/utils/dashboard/drugs";
+import {
+  formatDrugNamesWithCourses,
+  uniqueDrugDisplayNames,
+} from "@/utils/drugs";
 import {
   Download,
   Pill,
@@ -20,6 +25,7 @@ import {
   ShoppingCart,
   Leaf,
   Loader2,
+  CircleAlert,
 } from "lucide-react";
 
 interface ReportProps {
@@ -35,6 +41,53 @@ function formatList(items: string[] | string | undefined | null): string {
   return s || "None recorded";
 }
 
+/** Clinician-facing side-effect summary from health journal logs. */
+function formatSideEffectsSummary(journal: HealthJournalEntry[]): string {
+  const effects = journal.filter(
+    (e) => e.kind === "side_effect" && String(e.symptom || "").trim()
+  );
+  if (effects.length === 0) return "None recorded";
+
+  const byKey = new Map<
+    string,
+    { symptom: string; drug: string; count: number; severities: number[] }
+  >();
+
+  for (const e of effects) {
+    const symptom = String(e.symptom || "").trim();
+    const drug = String(e.drug || "").trim();
+    const key = `${drug.toLowerCase()}::${symptom.toLowerCase()}`;
+    const prev = byKey.get(key) || {
+      symptom,
+      drug,
+      count: 0,
+      severities: [] as number[],
+    };
+    prev.count += 1;
+    if (e.severity != null && !Number.isNaN(Number(e.severity))) {
+      prev.severities.push(Number(e.severity));
+    }
+    byKey.set(key, prev);
+  }
+
+  return Array.from(byKey.values())
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 12)
+    .map((row) => {
+      const linked = row.drug ? ` (with ${row.drug})` : "";
+      const avg =
+        row.severities.length > 0
+          ? (
+              row.severities.reduce((s, n) => s + n, 0) / row.severities.length
+            ).toFixed(1)
+          : null;
+      const countLabel = `${row.count} log${row.count === 1 ? "" : "s"}`;
+      const severityLabel = avg ? `, avg severity ${avg}/5` : "";
+      return `${row.symptom}${linked}: ${countLabel}${severityLabel}`;
+    })
+    .join("; ");
+}
+
 const Report: React.FC<ReportProps> = ({ setTab }) => {
   const { userId } = useAppSelector((state) => state.app);
   const { data: drugs = [] } = useDrugs(userId);
@@ -44,22 +97,26 @@ const Report: React.FC<ReportProps> = ({ setTab }) => {
   const { data: completedDrugs = [] } = useCompletedDrugs(userId);
   const { data: otcDrugs = "" } = useOtcDrugs(userId);
   const { data: herbs = "" } = useHerbs(userId);
+  const { data: journal = [] } = useHealthJournal(userId);
 
   const userInfo = info?.[0] || { name: "", phone: "", email: "" };
   const { name, phone, email } = userInfo;
 
-  const currentDrugs = drugs.map((d) => d.drug);
-  const allergicDrugs = allergies
-    .map((d) => d?.drug)
-    .filter(Boolean) as string[];
+  // Collapse courses — never list "Paracetamol" four times for four regimens.
+  const currentDrugs = formatDrugNamesWithCourses(drugs);
+  const allergicDrugs = uniqueDrugDisplayNames(
+    allergies.filter((d): d is DrugProps => Boolean(d?.drug))
+  );
+  const sideEffectsSummary = formatSideEffectsSummary(journal);
 
   const filterRecentDrugs = (items: DrugProps[]) => {
     const sixMonthsAgo = new Date();
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-    return Array.from(
-      new Set(
-        items.filter((d) => new Date(d.end) >= sixMonthsAgo).map((d) => d.drug)
-      )
+    return formatDrugNamesWithCourses(
+      items.filter((d) => {
+        const end = new Date(d.end);
+        return !Number.isNaN(end.getTime()) && end >= sixMonthsAgo;
+      })
     );
   };
 
@@ -200,6 +257,12 @@ const Report: React.FC<ReportProps> = ({ setTab }) => {
       tone: "bg-[#FFE4EE] text-[#8A3D5A]",
     },
     {
+      title: "Side effects",
+      body: sideEffectsSummary,
+      icon: CircleAlert,
+      tone: "bg-[#FFF3E8] text-[#8A5530]",
+    },
+    {
       title: "Over-the-counter",
       body: formatList(otcDrugs),
       icon: ShoppingCart,
@@ -241,7 +304,7 @@ const Report: React.FC<ReportProps> = ({ setTab }) => {
           type="button"
           onClick={handleDownloadPDF}
           disabled={loading}
-          className="hidden h-11 items-center gap-2 rounded-xl bg-soft-primary px-4 text-[14px] font-semibold text-white shadow-soft-sm transition hover:bg-soft-primary/90 disabled:opacity-70 ss:inline-flex"
+          className="ndo-press hidden h-11 items-center gap-2 rounded-xl bg-soft-primary px-4 text-[14px] font-semibold text-white shadow-soft-sm hover:bg-soft-primary/90 disabled:opacity-70 ss:inline-flex"
         >
           {loading ? (
             <>

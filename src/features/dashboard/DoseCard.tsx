@@ -35,7 +35,6 @@ const DoseCard: React.FC<DoseCardProps> = ({ item, onUpdateCompleted }) => {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.28, ease: ndoEase }}
-      whileTap={{ scale: 0.985 }}
       className="flex w-full items-center justify-between rounded-xl border border-black/[0.05] bg-soft-canvas/70 px-3.5 py-3.5"
     >
       <div className="flex min-w-0 items-center gap-3">
@@ -43,7 +42,7 @@ const DoseCard: React.FC<DoseCardProps> = ({ item, onUpdateCompleted }) => {
           type="button"
           onClick={handleDoseClick}
           disabled={busy}
-          className={`flex size-9 shrink-0 items-center justify-center rounded-full border transition duration-200 ${
+          className={`ndo-press flex size-9 shrink-0 items-center justify-center rounded-full border ${
             item.completed
               ? "border-soft-mint-ink/25 bg-soft-mint text-soft-mint-ink"
               : "border-black/[0.12] bg-white text-transparent hover:border-soft-primary/40"

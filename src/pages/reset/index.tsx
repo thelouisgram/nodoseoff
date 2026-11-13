@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ChangeEvent, FormEvent, useMemo, useState } from "react";
-import Image from "next/image";
 import SeoHead from "@/components/seo/SeoHead";
+import InteractiveLogo from "@/components/ui/InteractiveLogo";
 import { Eye, EyeOff } from "lucide-react";
 import { authClient } from "@/lib/auth/client";
 import {
@@ -84,15 +84,14 @@ const ResetPassword = () => {
       <SoftPage>
         <div className="flex min-h-screen items-center justify-center p-5 ss:p-8">
           <div className="w-full max-w-[420px]">
-            <Link href="/" className="mb-8 flex justify-center">
-              <Image
-                src="/assets/logo/logo-with-name-blue.png"
+            <div className="mb-8 flex justify-center">
+              <InteractiveLogo
+                variant="blue"
                 width={160}
                 height={48}
-                alt="NoDoseOff logo"
-                className="h-10 w-auto"
+                imgClassName="h-10 w-auto"
               />
-            </Link>
+            </div>
 
             <SoftCard className="p-7 ss:p-9">
               <p className="mb-2 text-[13px] font-medium text-soft-muted">

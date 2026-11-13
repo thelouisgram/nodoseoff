@@ -16,7 +16,7 @@ const DrugsTab: React.FC<DrugsTabProps> = ({ setTab, tab }) => {
           <button
             key={index}
             onClick={() => setTab(item)}
-            className={`relative z-10 w-full rounded-lg px-3 py-2 text-[14px] font-medium capitalize transition-all duration-200 ss:px-4 ${
+            className={`ndo-press relative z-10 w-full rounded-lg px-3 py-2 text-[14px] font-medium capitalize ss:px-4 ${
               isActive
                 ? "text-soft-ink"
                 : "text-soft-muted hover:text-soft-ink"

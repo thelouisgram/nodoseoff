@@ -132,18 +132,20 @@ const DrugsListContainer = ({
 
       {filtered.length ? (
         <>
-          <DrugsListTitle tab={tab} />
-          <DrugsList
-            newData={data as GroupedDrug[] | AllergyProps[]}
-            tab={tab}
-            options={options}
-            setOptions={setOptions}
-            activeAction={activeAction}
-            setActiveAction={setActiveAction}
-            setActiveView={setActiveView}
-            activeView={activeView}
-            startIndex={(page - 1) * PER_PAGE}
-          />
+          <div className="bg-[linear-gradient(180deg,rgba(244,245,247,0.65)_0%,rgba(255,255,255,0)_100%)]">
+            <DrugsListTitle tab={tab} />
+            <DrugsList
+              newData={data as GroupedDrug[] | AllergyProps[]}
+              tab={tab}
+              options={options}
+              setOptions={setOptions}
+              activeAction={activeAction}
+              setActiveAction={setActiveAction}
+              setActiveView={setActiveView}
+              activeView={activeView}
+              startIndex={(page - 1) * PER_PAGE}
+            />
+          </div>
           <DrugsListPagination
             page={page}
             total={filtered.length}

@@ -22,6 +22,35 @@ function courseSortKey(course: DrugProps) {
   return (Number.isNaN(end) ? 0 : end) * 1e13 + (Number.isNaN(start) ? 0 : start);
 }
 
+/**
+ * Course system:
+ * - Storage may hold multiple regimen rows for the same drug name (refills/courses).
+ * - UI counts, reports, and patient-facing lists MUST collapse by normalized name.
+ * - Only course tables / details show every regimen separately.
+ */
+
+/** Unique ongoing drug names (courses of the same med count as one). */
+export function countUniqueDrugNames(drugs: DrugProps[]): number {
+  return groupDrugsByName(drugs).length;
+}
+
+/** One display name per drug; multi-course → "Paracetamol (4 courses)". */
+export function formatDrugNamesWithCourses(drugs: DrugProps[]): string[] {
+  return groupDrugsByName(drugs).map((g) => {
+    const name = (g.drug || "").trim();
+    if (!name) return "";
+    if (g.courseCount > 1) return `${name} (${g.courseCount} courses)`;
+    return name;
+  }).filter(Boolean);
+}
+
+/** Unique display names without course suffixes (case preserved from latest). */
+export function uniqueDrugDisplayNames(drugs: DrugProps[]): string[] {
+  return groupDrugsByName(drugs)
+    .map((g) => (g.drug || "").trim())
+    .filter(Boolean);
+}
+
 /** Collapse duplicate drug names into one row (latest course as summary). */
 export function groupDrugsByName(drugs: DrugProps[]): GroupedDrug[] {
   const map = new Map<string, DrugProps[]>();

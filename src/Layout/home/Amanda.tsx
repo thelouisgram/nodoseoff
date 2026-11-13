@@ -53,17 +53,18 @@ export default function Amanda() {
           whileInView="show"
           viewport={viewOnce}
         >
-          <div className="mb-5 inline-flex items-center gap-2 border border-white/20 bg-white/5 px-3 py-1.5 text-[12px] font-semibold tracking-wide text-white/85">
-            <span className="size-1.5 animate-pulse bg-[#3dcfb6]" />
-            AMANDA 6 · live in dashboard
-          </div>
-          <h2 className="text-[2rem] font-bold tracking-tight ss:text-[2.35rem]">
-            Meet AMANDA 6 — your medication AI
+          <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#3dcfb6]">
+            Assistant
+          </p>
+          <h2 className="mt-3 text-[2.15rem] font-extrabold tracking-tight ss:text-[2.5rem]">
+            AMANDA 6
           </h2>
-          <p className="mt-4 text-[15px] leading-relaxed text-white/70 ss:text-[16px]">
-            <span className="font-semibold text-white">AMANDA 6</span> is
-            NoDoseOff’s adherence &amp; medication assistant — answering
-            drug-related questions with your regimen in context.
+          <p className="mt-2 text-[1.05rem] font-semibold leading-snug text-white/90">
+            Your medication AI, live in the dashboard
+          </p>
+          <p className="mt-3 text-[15px] leading-relaxed text-white/70 ss:text-[16px]">
+            Ask drug-related questions with your regimen already in context —
+            side effects, timing, missed doses, and interactions.
           </p>
 
           <m.ul
@@ -95,10 +96,10 @@ export default function Amanda() {
 
           <Link
             href="/signup"
-            className="mt-9 inline-flex items-center gap-2 bg-white px-6 py-3.5 text-[14px] font-bold text-soft-primary transition-opacity hover:opacity-92"
+            className="ndo-cta ndo-cta-solid group mt-9 inline-flex items-center gap-2 px-6 py-3.5 text-[14px] font-bold"
           >
             Chat with AMANDA 6
-            <ArrowRight className="size-4" />
+            <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5" />
           </Link>
         </m.div>
 
@@ -120,7 +121,13 @@ export default function Amanda() {
               />
             </div>
             <div>
-              <p className="text-[15px] font-bold text-white">AMANDA 6</p>
+              <p className="flex items-center gap-2 text-[15px] font-bold text-white">
+                AMANDA 6
+                <span
+                  aria-hidden
+                  className="ndo-pulse-dot size-1.5 rounded-full bg-[#3dcfb6]"
+                />
+              </p>
               <p className="text-[12px] text-white/55">
                 Adherence &amp; Medication Assistant
               </p>

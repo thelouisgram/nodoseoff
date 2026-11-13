@@ -99,8 +99,8 @@ const Page = () => {
         className="relative flex h-[100dvh] w-full overflow-hidden bg-soft-canvas font-jakarta text-soft-ink"
       >
         <aside
-          className={`relative hidden shrink-0 flex-col border-r border-black/[0.05] bg-white px-2.5 py-5 transition-all duration-300 md:flex ${
-            nav ? "md:w-[88px] lg:w-[240px]" : "w-[88px]"
+          className={`relative hidden shrink-0 flex-col border-r border-black/[0.05] bg-white px-3 py-5 transition-[width] duration-300 ease-out md:flex ${
+            nav ? "md:w-[88px] lg:w-[244px]" : "w-[88px]"
           }`}
         >
           <SideBar

@@ -1,4 +1,15 @@
-import { clearAccessTokenCache, getAccessToken } from "@/lib/auth/client";
+import {
+  clearAccessTokenCache,
+  getAccessToken,
+  waitForAccessToken,
+} from "@/lib/auth/client";
+
+export class AuthRequiredError extends Error {
+  constructor(message = "Not signed in (missing access token)") {
+    super(message);
+    this.name = "AuthRequiredError";
+  }
+}
 
 export async function apiJson<T>(
   path: string,
@@ -10,9 +21,10 @@ export async function apiJson<T>(
   if (json !== undefined) {
     headers.set("Content-Type", "application/json");
   }
-  const token = await getAccessToken();
+  // Brief wait covers JWT mint race after session restore / OAuth.
+  const token = (await getAccessToken()) ?? (await waitForAccessToken(3, 200));
   if (!token) {
-    throw new Error("Not signed in (missing access token)");
+    throw new AuthRequiredError();
   }
   headers.set("Authorization", `Bearer ${token}`);
   const res = await fetch(path, {

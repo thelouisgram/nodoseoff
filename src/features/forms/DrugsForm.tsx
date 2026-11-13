@@ -622,10 +622,10 @@ const DrugsForm: React.FC<DrugFormProps> = ({
               <button
                 onClick={handleClick}
                 disabled={loading}
-                className={`w-full py-3 px-4 rounded-soft-md font-semibold text-white transition-all flex items-center justify-center gap-2 ${
+                className={`ndo-press flex w-full items-center justify-center gap-2 rounded-soft-md px-4 py-3 font-semibold text-white ${
                   loading
-                    ? "bg-soft-ink/50 cursor-not-allowed"
-                    : "bg-soft-primary shadow-soft-sm hover:bg-soft-primary/90 active:scale-[0.98]"
+                    ? "cursor-not-allowed bg-soft-ink/50"
+                    : "bg-soft-primary shadow-soft-sm hover:bg-soft-primary/90"
                 }`}
               >
                 {loading ? (

@@ -4,7 +4,9 @@ import OptionModal from "../../optionModal";
 import { useAppSelector, useAppDispatch } from "@/store";
 import { setActiveDrug, setActiveDrugId } from "@/store/appSlice";
 import { AnimatePresence, motion } from "framer-motion";
+import { ndoEase } from "@/components/landing/motion";
 import { DRUGS_GRID } from "./DrugsListTitle";
+import { ChevronRight } from "lucide-react";
 
 interface AllergyProps {
   drug: string;
@@ -58,7 +60,7 @@ const DrugsList: React.FC<DrugsListProps> = ({
     const allergies = newData as AllergyProps[];
 
     return (
-      <div className="flex flex-col">
+      <div className="flex flex-col" role="list">
         <AnimatePresence mode="popLayout">
           {allergies?.map((item, index) => {
             const isActive = activeDrugId === item.drug;
@@ -67,17 +69,22 @@ const DrugsList: React.FC<DrugsListProps> = ({
             return (
               <motion.div
                 key={rowKey}
-                initial={{ opacity: 0, y: 6 }}
+                role="listitem"
+                initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -4 }}
-                transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-                className="flex items-center justify-between border-b border-black/[0.05] bg-white px-4 py-3.5 text-sm last:border-0 ss:px-6"
+                transition={{
+                  duration: 0.28,
+                  ease: ndoEase,
+                  delay: Math.min(index * 0.035, 0.2),
+                }}
+                className="group relative flex items-center justify-between gap-3 border-b border-black/[0.04] px-4 py-3.5 last:border-0 ss:px-5"
               >
-                <div className="flex min-w-0 items-center gap-3">
-                  <span className="flex size-8 shrink-0 items-center justify-center rounded-[10px] bg-soft-canvas text-[12px] font-semibold text-soft-muted">
-                    {startIndex + index + 1}
+                <div className="flex min-w-0 items-center gap-3.5">
+                  <span className="w-5 shrink-0 text-right text-[11px] font-semibold tabular-nums text-soft-muted/80">
+                    {String(startIndex + index + 1).padStart(2, "0")}
                   </span>
-                  <span className="truncate font-semibold capitalize text-soft-ink">
+                  <span className="truncate text-[14px] font-semibold capitalize tracking-tight text-soft-ink">
                     {item.drug}
                   </span>
                 </div>
@@ -109,7 +116,7 @@ const DrugsList: React.FC<DrugsListProps> = ({
   const drugs = newData as GroupedDrug[];
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col" role="list">
       <AnimatePresence mode="popLayout">
         {drugs?.map((drug, index) => {
           const isActive =
@@ -127,9 +134,7 @@ const DrugsList: React.FC<DrugsListProps> = ({
             )
           );
           const frequency =
-            freqs.size > 1
-              ? "Varies"
-              : formatFrequency(drug.frequency);
+            freqs.size > 1 ? "Varies" : formatFrequency(drug.frequency);
 
           const routes = new Set(
             (drug.courses || [drug]).map((c) =>
@@ -148,70 +153,74 @@ const DrugsList: React.FC<DrugsListProps> = ({
           return (
             <motion.div
               key={rowKey}
-              initial={{ opacity: 0, y: 6 }}
+              role="listitem"
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+              transition={{
+                duration: 0.28,
+                ease: ndoEase,
+                delay: Math.min(index * 0.035, 0.2),
+              }}
               onClick={() => {
                 dispatch(setActiveDrug(drug.drug));
                 dispatch(setActiveDrugId(drug.drugId));
                 setActiveView("details");
               }}
-              className={`${DRUGS_GRID} cursor-pointer border-b border-black/[0.05] bg-white px-4 py-3.5 text-sm last:border-0 hover:bg-soft-canvas/80 ss:px-6`}
+              className={`${DRUGS_GRID} group cursor-pointer border-b border-black/[0.04] px-4 py-3.5 last:border-0 ss:px-5 ${
+                isActive ? "bg-soft-primary-soft/50" : "hover:bg-soft-canvas/70"
+              }`}
             >
-              <div className="flex min-w-0 items-center gap-3">
-                <span
-                  className={`flex size-8 shrink-0 items-center justify-center rounded-[10px] text-[12px] font-semibold ${
-                    isActive
-                      ? "bg-soft-primary text-soft-card"
-                      : "bg-soft-canvas text-soft-muted"
-                  }`}
-                >
-                  {startIndex + index + 1}
+              <div className="flex min-w-0 items-center gap-3.5">
+                <span className="w-5 shrink-0 text-right text-[11px] font-semibold tabular-nums text-soft-muted/80">
+                  {String(startIndex + index + 1).padStart(2, "0")}
                 </span>
                 <div className="min-w-0">
-                  <span className="block truncate font-semibold capitalize text-soft-ink">
+                  <p className="truncate text-[14px] font-semibold capitalize tracking-tight text-soft-ink">
                     {drug.drug}
-                  </span>
+                  </p>
+                  <p className="mt-0.5 truncate text-[12px] text-soft-muted ss:hidden">
+                    {[route !== "—" ? route : null, frequency, duration]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </p>
                   {courseCount > 1 ? (
-                    <span className="text-[11px] text-soft-muted">
+                    <p className="mt-0.5 hidden text-[11px] font-medium text-soft-primary ss:block">
                       {courseCount} courses
-                    </span>
+                    </p>
                   ) : null}
                 </div>
               </div>
 
-              <div className="hidden min-w-0 ss:block">
-                <span
-                  title={route}
-                  className="inline-block max-w-full truncate rounded-[10px] bg-soft-canvas px-2.5 py-1 text-[12px] font-medium capitalize text-soft-muted"
-                >
-                  {route}
-                </span>
-              </div>
+              <p
+                title={route}
+                className="hidden truncate text-[13px] capitalize text-soft-muted ss:block"
+              >
+                {route}
+              </p>
+
+              <p
+                title={duration}
+                className="hidden truncate text-[13px] text-soft-muted ss:block"
+              >
+                {duration}
+              </p>
 
               <div className="hidden min-w-0 ss:block">
-                <span
-                  title={duration}
-                  className="inline-block max-w-full truncate rounded-[10px] bg-soft-mint px-2.5 py-1 text-[12px] font-medium text-soft-mint-ink"
-                >
-                  {duration}
-                </span>
-              </div>
-
-              <div className="min-w-0">
-                <span
-                  title={frequency}
-                  className="inline-block max-w-full truncate rounded-[10px] bg-soft-primary-soft px-2.5 py-1 text-[12px] font-medium text-soft-primary"
-                >
+                <span className="inline-flex max-w-full truncate rounded-md bg-soft-primary/[0.07] px-2 py-0.5 text-[12px] font-semibold text-soft-primary">
                   {frequency}
                 </span>
               </div>
 
               <div
                 onClick={(e) => e.stopPropagation()}
-                className="relative flex justify-end"
+                className="relative flex items-center justify-end gap-0.5"
               >
+                <ChevronRight
+                  className="hidden size-4 text-soft-muted/50 transition group-hover:text-soft-primary ss:block"
+                  strokeWidth={2}
+                  aria-hidden
+                />
                 <OptionModal
                   options={options && isActive}
                   setOptions={setOptions}

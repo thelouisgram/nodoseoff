@@ -1,5 +1,5 @@
 import React from "react";
-import { Activity, Beaker, CheckCircle, Clock, LucideIcon } from "lucide-react";
+import { Beaker, CheckCircle, LucideIcon } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface DrugSummaryCardProps {
@@ -18,12 +18,6 @@ interface StatusConfig {
 }
 
 const statusMap: Record<string, StatusConfig> = {
-  ongoing: {
-    label: "Active",
-    text: "text-soft-mint-ink",
-    bg: "bg-soft-mint",
-    Icon: Activity,
-  },
   completed: {
     label: "Completed",
     text: "text-soft-primary",
@@ -44,12 +38,7 @@ const DrugSummaryCard: React.FC<DrugSummaryCardProps> = ({
   compliance,
   courseCount = 1,
 }) => {
-  const status = statusMap[tab] || {
-    label: tab,
-    text: "text-soft-muted",
-    bg: "bg-soft-canvas",
-    Icon: Clock,
-  };
+  const status = statusMap[tab];
 
   const complianceColor =
     compliance >= 80
@@ -72,19 +61,23 @@ const DrugSummaryCard: React.FC<DrugSummaryCardProps> = ({
       transition={{ duration: 0.4 }}
       className="w-full space-y-4 rounded-2xl border border-black/[0.05] bg-white p-5 shadow-soft-sm ss:w-1/2"
     >
-      <div className="flex flex-wrap items-center gap-2">
-        <span
-          className={`inline-flex items-center gap-1.5 rounded-[10px] px-2.5 py-1 text-[12px] font-semibold ${status.bg} ${status.text}`}
-        >
-          <status.Icon className="size-3.5" />
-          {status.label}
-        </span>
-        {courseCount > 1 ? (
-          <span className="rounded-[10px] bg-soft-canvas px-2.5 py-1 text-[12px] font-semibold text-soft-muted">
-            {courseCount} courses
-          </span>
-        ) : null}
-      </div>
+      {(status || courseCount > 1) && (
+        <div className="flex flex-wrap items-center gap-2">
+          {status ? (
+            <span
+              className={`inline-flex items-center gap-1.5 rounded-[10px] px-2.5 py-1 text-[12px] font-semibold ${status.bg} ${status.text}`}
+            >
+              <status.Icon className="size-3.5" />
+              {status.label}
+            </span>
+          ) : null}
+          {courseCount > 1 ? (
+            <span className="rounded-[10px] bg-soft-canvas px-2.5 py-1 text-[12px] font-semibold text-soft-muted">
+              {courseCount} courses
+            </span>
+          ) : null}
+        </div>
+      )}
 
       <div className="flex items-center justify-between text-sm">
         <div>

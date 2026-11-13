@@ -78,7 +78,7 @@ export default function DailyReports() {
           key={idx}
           onClick={() => setSelectedDate(date)}
           className={cn(
-            "relative flex h-12 flex-col items-center justify-center rounded-soft-sm border transition-all duration-200",
+            "ndo-press relative flex h-12 flex-col items-center justify-center rounded-soft-sm border",
             currentMonth
               ? "border-black/[0.05] bg-white text-soft-ink"
               : "border-transparent bg-transparent text-soft-muted/50",
@@ -134,13 +134,13 @@ export default function DailyReports() {
 
   return (
     <>
-      <div className="mb-4 mt-8 px-4 ss:px-8 md:mt-10 md:px-0">
-        <h3 className="text-[18px] font-semibold tracking-tight text-soft-ink">
+      <div className="mb-3 mt-2 px-4 ss:px-8 md:px-0">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-soft-muted">
+          Calendar
+        </p>
+        <h3 className="mt-1 text-[16px] font-bold tracking-tight text-soft-ink">
           Daily reports
         </h3>
-        <p className="mt-0.5 text-[13px] text-soft-muted">
-          See how your week has been going
-        </p>
       </div>
 
       <section className="flex flex-col gap-6 px-4 ss:px-6 ip:flex-row md:px-0">
@@ -148,7 +148,7 @@ export default function DailyReports() {
           <div className="mb-4 flex items-center justify-between">
             <button
               onClick={() => setViewMonth(viewMonth.subtract(1, "month"))}
-              className="rounded-soft-sm p-2 text-soft-ink transition hover:bg-white"
+              className="ndo-press rounded-soft-sm p-2 text-soft-ink hover:bg-soft-canvas"
             >
               <GrFormPrevious />
             </button>
@@ -192,7 +192,7 @@ export default function DailyReports() {
 
             <button
               onClick={() => setViewMonth(viewMonth.add(1, "month"))}
-              className="rounded-soft-sm p-2 text-soft-ink transition hover:bg-white"
+              className="ndo-press rounded-soft-sm p-2 text-soft-ink hover:bg-soft-canvas"
             >
               <GrFormNext />
             </button>

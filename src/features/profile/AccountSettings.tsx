@@ -24,61 +24,68 @@ const AccountSettings: React.FC<Settings> = ({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-md rounded-2xl border border-black/[0.05] bg-white shadow-soft-md"
+        className="w-full max-w-md overflow-hidden rounded-[22px] border border-soft-line bg-white shadow-soft-lg"
       >
-        <div className="flex items-center justify-between border-b border-black/[0.04] px-6 py-5">
-          <h2 className="text-xl font-semibold text-soft-ink">
-            Account settings
-          </h2>
+        <div className="flex items-start justify-between gap-4 border-b border-black/[0.05] px-6 py-5">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-soft-muted">
+              Security
+            </p>
+            <h2 className="mt-1 text-[20px] font-bold tracking-tight text-soft-ink">
+              Account settings
+            </h2>
+          </div>
           <button
             onClick={handleClose}
-            className="rounded-soft-sm p-1.5 text-soft-muted transition hover:bg-soft-canvas hover:text-soft-ink"
+            className="ndo-press -mr-1 -mt-1 grid size-9 shrink-0 place-items-center rounded-xl text-soft-muted hover:bg-soft-canvas hover:text-soft-ink"
             aria-label="Close"
           >
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
 
-        <div className="p-6">
-          <div className="space-y-3">
+        <div className="p-4 ss:p-5">
+          <div className="overflow-hidden rounded-[18px] border border-soft-line">
             <button
               onClick={() => setActiveModal("changePassword")}
-              className="group flex w-full items-center justify-between rounded-soft-lg border border-black/[0.04] bg-soft-canvas/40 p-4 transition hover:bg-soft-canvas"
+              className="group flex w-full items-center gap-3.5 border-b border-soft-line px-4 py-4 text-left transition-colors hover:bg-soft-primary-soft/45"
             >
-              <div className="flex items-center gap-3">
-                <div className="rounded-soft-sm bg-soft-blue p-2 text-soft-blue-ink">
-                  <Lock className="size-5" strokeWidth={1.75} />
-                </div>
-                <div className="text-left">
-                  <h3 className="text-sm font-medium text-soft-ink">
-                    Change password
-                  </h3>
-                  <p className="mt-0.5 text-xs text-soft-muted">
-                    Update your account password
-                  </p>
-                </div>
-              </div>
-              <ChevronRight className="size-5 text-soft-muted transition group-hover:text-soft-ink" />
+              <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-soft-primary-soft text-soft-primary">
+                <Lock className="size-[18px]" strokeWidth={1.75} />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-[15px] font-semibold text-soft-ink">
+                  Change password
+                </span>
+                <span className="mt-0.5 block text-[12.5px] text-soft-muted">
+                  Update your account password
+                </span>
+              </span>
+              <ChevronRight
+                className="size-4 shrink-0 text-soft-muted transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-soft-primary"
+                strokeWidth={2}
+              />
             </button>
 
             <button
               onClick={() => setActiveModal("deleteAccount")}
-              className="group flex w-full items-center justify-between rounded-soft-lg border border-red-100 bg-red-50/40 p-4 transition hover:bg-red-50"
+              className="group flex w-full items-center gap-3.5 px-4 py-4 text-left transition-colors hover:bg-[#FFF6F9]"
             >
-              <div className="flex items-center gap-3">
-                <div className="rounded-soft-sm bg-soft-pink p-2 text-soft-pink-ink">
-                  <Trash className="size-5" strokeWidth={1.75} />
-                </div>
-                <div className="text-left">
-                  <h3 className="text-sm font-medium text-soft-ink">
-                    Delete account
-                  </h3>
-                  <p className="mt-0.5 text-xs text-soft-muted">
-                    Permanently delete your account
-                  </p>
-                </div>
-              </div>
-              <ChevronRight className="size-5 text-soft-muted transition group-hover:text-soft-ink" />
+              <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-soft-pink text-soft-pink-ink">
+                <Trash className="size-[18px]" strokeWidth={1.75} />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-[15px] font-semibold text-soft-pink-ink">
+                  Delete account
+                </span>
+                <span className="mt-0.5 block text-[12.5px] text-soft-muted">
+                  Permanently delete your account
+                </span>
+              </span>
+              <ChevronRight
+                className="size-4 shrink-0 text-soft-muted transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-soft-pink-ink"
+                strokeWidth={2}
+              />
             </button>
           </div>
         </div>

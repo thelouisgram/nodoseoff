@@ -9,6 +9,7 @@ import {
   ScheduleItem,
 } from "../types/dashboard";
 import { apiJson } from "@/lib/api-client";
+import { waitForAccessToken } from "@/lib/auth/client";
 import { generateDrugId } from "@/utils/drugs";
 import { generateSchedule } from "../utils/dashboard/dashboard";
 import { uploadScheduleToServer, removePastDoses } from "../utils/dashboard/schedule";
@@ -690,21 +691,38 @@ async function flushScheduleWriteQueue(dispatch: AppDispatch) {
       const userId = batch[0]?.userId;
       if (!userId) continue;
 
-      const schedule = store.getState().dashboard.data?.schedule ?? [];
-      try {
-        await uploadScheduleToServer({ userId, schedule });
-        batch.forEach((entry) => entry.resolve());
-      } catch (error) {
+      const failBatch = (
+        message: string,
+        error?: unknown
+      ) => {
         const current = store.getState().dashboard.data?.schedule ?? [];
         dispatch(
           updateDashboardCache({
             schedule: revertDoseToggles(current, batch),
           })
         );
-        toast.error(
-          "Failed to update dose. Please check your network connection."
-        );
-        batch.forEach((entry) => entry.reject(error));
+        toast.error(message);
+        batch.forEach((entry) => entry.reject(error ?? new Error(message)));
+      };
+
+      // Session can be ready before JWT mint finishes — wait briefly.
+      const token = await waitForAccessToken();
+      if (!token) {
+        failBatch("Session expired. Please sign in again.");
+        continue;
+      }
+
+      const schedule = store.getState().dashboard.data?.schedule ?? [];
+      try {
+        await uploadScheduleToServer({ userId, schedule });
+        batch.forEach((entry) => entry.resolve());
+      } catch (error) {
+        const msg =
+          error instanceof Error &&
+          /missing access token|not signed in/i.test(error.message)
+            ? "Session expired. Please sign in again."
+            : "Failed to update dose. Please check your network connection.";
+        failBatch(msg, error);
       }
     }
   } finally {

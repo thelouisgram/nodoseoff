@@ -112,8 +112,8 @@ const FloatingAddActions: React.FC<FloatingAddActionsProps> = ({
           onClick={() => setAdd((prev) => !prev)}
           initial={{ opacity: 0, scale: 0.7 }}
           animate={{ opacity: 1, scale: 1 }}
-          whileHover={{ scale: 1.06 }}
-          whileTap={{ scale: 0.94 }}
+          whileHover={{ scale: 1.08, rotate: add ? 0 : -8 }}
+          whileTap={{ scale: 0.92 }}
           transition={{ type: "spring", stiffness: 400, damping: 22, delay: 0.25 }}
           aria-label={add ? "Close add menu" : "Open add menu"}
           aria-expanded={add}

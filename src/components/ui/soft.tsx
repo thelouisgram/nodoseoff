@@ -81,11 +81,11 @@ export function SoftButton({
       ? "bg-soft-primary text-white hover:bg-soft-primary/90 shadow-soft-sm"
       : variant === "secondary"
         ? "bg-white text-soft-ink border border-black/[0.08] hover:bg-soft-canvas shadow-soft-sm"
-        : "bg-transparent text-soft-muted hover:text-soft-ink";
+        : "bg-transparent text-soft-muted hover:bg-soft-canvas hover:text-soft-ink";
   return (
     <button
       {...props}
-      className={`inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3.5 text-[15px] font-semibold transition disabled:cursor-not-allowed disabled:opacity-55 ${styles} ${className}`}
+      className={`ndo-press inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3.5 text-[15px] font-semibold disabled:cursor-not-allowed disabled:opacity-55 ${styles} ${className}`}
     >
       {children}
     </button>

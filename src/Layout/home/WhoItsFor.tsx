@@ -64,16 +64,14 @@ export default function WhoItsFor() {
             <m.article
               key={item.title}
               variants={fadeUp}
-              whileHover={{ y: -4 }}
-              transition={{ type: "spring", stiffness: 360, damping: 28 }}
-              className="group relative min-h-[380px] overflow-hidden ss:min-h-[420px]"
+              className="relative min-h-[380px] overflow-hidden ss:min-h-[420px]"
             >
               <Image
                 src={item.image}
                 alt={item.alt}
                 fill
                 quality={75}
-                className="object-cover transition-transform duration-500 ease-out will-change-transform group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+                className="object-cover"
                 sizes="(max-width: 768px) 100vw, 50vw"
               />
               <div

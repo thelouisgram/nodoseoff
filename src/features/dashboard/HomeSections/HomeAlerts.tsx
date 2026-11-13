@@ -51,7 +51,7 @@ export default function HomeAlerts({ schedule, drugs, onCatchUp }: Props) {
                     <button
                       type="button"
                       onClick={() => void onCatchUp(dose)}
-                      className="shrink-0 rounded-lg bg-white px-2.5 py-1 text-[11px] font-semibold text-soft-primary shadow-soft-sm"
+                      className="ndo-press shrink-0 rounded-lg bg-white px-2.5 py-1 text-[11px] font-semibold text-soft-primary shadow-soft-sm"
                     >
                       Catch up
                     </button>

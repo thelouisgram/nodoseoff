@@ -71,12 +71,12 @@ export default function HomePulse() {
           <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-soft-primary">
             Overview
           </p>
-          <h2 className="mt-3 text-[2rem] font-bold tracking-tight text-soft-ink ss:text-[2.35rem]">
+          <h2 className="mt-3 text-[2.15rem] font-extrabold tracking-tight text-soft-ink ss:text-[2.5rem]">
             Your day, in one place
           </h2>
-          <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-soft-muted ss:text-[16px]">
-            Overview is the first screen after you sign in — next dose, weekly
-            streak, catch-ups, and a quick path into AMANDA 6.
+          <p className="mt-3 max-w-lg text-[15px] leading-relaxed text-soft-muted ss:text-[16px]">
+            After sign-in: next dose, weekly streak, catch-ups, and a quick path
+            into AMANDA 6.
           </p>
         </m.div>
 

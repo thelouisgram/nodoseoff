@@ -163,3 +163,21 @@ export async function getAccessToken(): Promise<string | null> {
 
   return inflightAccessToken;
 }
+
+/**
+ * Session can exist briefly before a JWT is minted (AuthListener retries).
+ * Wait a short window so background writes don't hard-fail mid-boot.
+ */
+export async function waitForAccessToken(
+  attempts = 5,
+  baseDelayMs = 300
+): Promise<string | null> {
+  for (let i = 0; i < attempts; i++) {
+    const token = await getAccessToken();
+    if (token) return token;
+    if (i < attempts - 1) {
+      await new Promise((r) => setTimeout(r, baseDelayMs * (i + 1)));
+    }
+  }
+  return null;
+}

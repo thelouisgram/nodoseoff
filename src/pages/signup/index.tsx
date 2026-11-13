@@ -14,8 +14,8 @@ import Loader from "@/components/dashboard/Loader";
 import { EyeOff, Eye } from "lucide-react";
 import { useAppDispatch } from "@/store";
 import { setIsAuthenticated, setUserId } from "@/store/appSlice";
-import Image from "next/image";
 import { motion } from "framer-motion";
+import InteractiveLogo from "@/components/ui/InteractiveLogo";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
 import {
   SoftButton,
@@ -166,15 +166,14 @@ const CreateAccount = () => {
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             className="w-full max-w-[440px]"
           >
-            <Link href="/" className="mb-8 flex justify-center">
-              <Image
-                src="/assets/logo/logo-with-name-blue.png"
+            <div className="mb-8 flex justify-center">
+              <InteractiveLogo
+                variant="blue"
                 width={160}
                 height={48}
-                alt="NoDoseOff logo"
-                className="h-10 w-auto"
+                imgClassName="h-10 w-auto"
               />
-            </Link>
+            </div>
 
             <SoftCard className="p-7 ss:p-9">
               <p className="mb-2 text-[13px] font-medium text-soft-muted">

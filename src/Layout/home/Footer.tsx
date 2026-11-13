@@ -1,8 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Instagram, Mail } from "lucide-react";
 import NewsletterForm from "@/components/landing/NewsletterForm";
 import { openCookieSettings } from "@/components/legal/CookieConsent";
+import InteractiveLogo from "@/components/ui/InteractiveLogo";
 
 const productLinks = [
   { href: "#features", label: "Features" },
@@ -35,15 +35,12 @@ export default function Footer() {
       <div className="mx-auto max-w-6xl px-4 py-16 ss:px-6">
         <div className="grid gap-12 md:grid-cols-[1.35fr_repeat(3,minmax(0,1fr))] md:gap-10">
           <div>
-            <Link href="/" className="inline-block">
-              <Image
-                src="/assets/logo/logo-with-name-white.png"
-                alt="NoDoseOff"
-                width={160}
-                height={40}
-                className="h-9 w-auto"
-              />
-            </Link>
+            <InteractiveLogo
+              variant="white"
+              imgClassName="h-9 w-auto"
+              width={160}
+              height={40}
+            />
             <p className="mt-5 max-w-sm text-[14px] leading-relaxed text-white/65">
               Medication tracking, dose reminders, adherence reports, and
               AMANDA 6 — your AI assistant for staying consistent on long-term
@@ -55,16 +52,16 @@ export default function Footer() {
                 target="_blank"
                 rel="noreferrer"
                 aria-label="NoDoseOff on Instagram"
-                className="flex size-10 items-center justify-center border border-white/15 text-white/80 transition hover:border-white/40 hover:text-white"
+                className="ndo-social ndo-social--ig"
               >
-                <Instagram size={18} />
+                <Instagram size={17} strokeWidth={1.75} />
               </Link>
               <Link
                 href="mailto:hello@nodoseoff.com"
                 aria-label="Email NoDoseOff"
-                className="flex size-10 items-center justify-center border border-white/15 text-white/80 transition hover:border-white/40 hover:text-white"
+                className="ndo-social ndo-social--mail"
               >
-                <Mail size={18} />
+                <Mail size={17} strokeWidth={1.75} />
               </Link>
             </div>
           </div>

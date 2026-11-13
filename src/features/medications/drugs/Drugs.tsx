@@ -29,6 +29,7 @@ import DrugsTab from "./DrugsTab";
 import FloatingAddActions from "./FloatingAddActions";
 import { useAppSelector } from "@/store";
 import { AnimatePresence, motion } from "framer-motion";
+import { useDashboardSectionMotion } from "@/components/landing/motion";
 
 interface DrugsProps {
   add: boolean;
@@ -61,6 +62,7 @@ const Drugs: React.FC<DrugsProps> = ({
   const [options, setOptions] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const { panel } = useDashboardSectionMotion();
 
   const deleteDrugMutation = useDeleteDrugMutation();
   const deleteCompletedDrugMutation = useDeleteCompletedDrugMutation();
@@ -174,10 +176,10 @@ const Drugs: React.FC<DrugsProps> = ({
         {activeView === "list" ? (
           <motion.div
             key="list"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3 }}
+            initial={panel.initial}
+            animate={panel.animate}
+            exit={panel.exit}
+            transition={panel.transition}
           >
             <DrugsHeader />
             <DrugsTab tab={tab} setTab={setTab} />
@@ -200,10 +202,10 @@ const Drugs: React.FC<DrugsProps> = ({
         ) : (
           <motion.div
             key="details"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3 }}
+            initial={panel.initial}
+            animate={panel.animate}
+            exit={panel.exit}
+            transition={panel.transition}
           >
             <DrugDetails
               activeView={activeView}

@@ -90,7 +90,7 @@ export default function UpNextStrip({ schedule, onMarkTaken }: Props) {
     <section
       className={`mx-4 mb-4 overflow-hidden rounded-2xl px-4 py-4 shadow-soft-sm ss:mx-8 md:mx-0 ${
         due
-          ? "border border-[#f0c9d4] bg-gradient-to-br from-[#fff5f8] to-white"
+          ? "border border-[#f0c9d4] bg-[#fff7fa]"
           : "border border-black/[0.05] bg-white"
       }`}
     >
@@ -116,7 +116,7 @@ export default function UpNextStrip({ schedule, onMarkTaken }: Props) {
           type="button"
           onClick={() => void mark()}
           disabled={loading}
-          className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-soft-primary px-3.5 py-2.5 text-[13px] font-semibold text-white shadow-soft-sm transition hover:bg-soft-primary/90 disabled:opacity-50 ss:flex-none"
+          className="ndo-press inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-soft-primary px-3.5 py-2.5 text-[13px] font-semibold text-white shadow-soft-sm hover:bg-soft-primary/90 disabled:opacity-50 ss:flex-none"
         >
           {loading ? (
             <Loader2 className="size-3.5 animate-spin" />
@@ -129,7 +129,7 @@ export default function UpNextStrip({ schedule, onMarkTaken }: Props) {
           type="button"
           onClick={snooze}
           disabled={loading}
-          className="inline-flex items-center justify-center rounded-xl border border-black/[0.08] bg-soft-canvas px-3.5 py-2.5 text-[13px] font-semibold text-soft-ink transition hover:bg-white disabled:opacity-50"
+          className="ndo-press inline-flex items-center justify-center rounded-xl border border-black/[0.08] bg-soft-canvas px-3.5 py-2.5 text-[13px] font-semibold text-soft-ink hover:bg-white disabled:opacity-50"
         >
           Snooze 15m
         </button>

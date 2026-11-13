@@ -206,7 +206,7 @@ const OptionModal: React.FC<OptionModal> = ({
               <button
                 key={index}
                 onClick={() => handleAction(button.action)}
-                className={`flex w-full items-center gap-3 px-4 ${paddingClass} text-[14px] font-medium tracking-tight text-soft-ink transition-colors ${finalHoverClass} ${borderRadiusClass}`}
+                className={`ndo-press flex w-full items-center gap-3 px-4 ${paddingClass} text-[14px] font-medium tracking-tight text-soft-ink ${finalHoverClass} ${borderRadiusClass}`}
               >
                 <Icon className={`size-4 ${button.iconColor}`} strokeWidth={1.75} />
                 {button.label}
@@ -229,7 +229,7 @@ const OptionModal: React.FC<OptionModal> = ({
           dispatch(setActiveDrugId(drugId));
           e.stopPropagation();
         }}
-        className="flex size-8 items-center justify-center rounded-full text-soft-muted transition-colors hover:bg-soft-canvas hover:text-soft-ink"
+        className="ndo-press flex size-8 items-center justify-center rounded-full text-soft-muted hover:bg-soft-canvas hover:text-soft-ink"
         aria-label="Drug options"
       >
         <MoreVertical className="size-5" strokeWidth={1.75} />

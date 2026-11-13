@@ -205,3 +205,47 @@ export function useListItemMotion(index = 0) {
     },
   };
 }
+
+/**
+ * Shared in-tab section motion — same fade + soft lift as page transitions.
+ * Use across Home / Drugs / Account / AMANDA for visual cohesion.
+ */
+export function useDashboardSectionMotion() {
+  const reduce = useReducedMotion();
+
+  const stagger: Variants = {
+    hidden: {},
+    show: {
+      transition: {
+        staggerChildren: reduce ? 0 : 0.06,
+        delayChildren: reduce ? 0 : 0.04,
+      },
+    },
+  };
+
+  const rise: Variants = reduce
+    ? {
+        hidden: { opacity: 1, y: 0 },
+        show: { opacity: 1, y: 0 },
+      }
+    : {
+        hidden: { opacity: 0, y: 10 },
+        show: {
+          opacity: 1,
+          y: 0,
+          transition: { duration: 0.32, ease: ndoEase },
+        },
+      };
+
+  /** Nested list ↔ details (same grammar as tab change, slightly softer). */
+  const panel = {
+    initial: reduce ? false : ({ opacity: 0, y: 10 } as const),
+    animate: { opacity: 1, y: 0 },
+    exit: reduce ? { opacity: 0 } : { opacity: 0, y: -6 },
+    transition: reduce
+      ? { duration: 0 }
+      : ({ duration: 0.28, ease: ndoEase } as Transition),
+  };
+
+  return { reduce, stagger, rise, panel };
+}

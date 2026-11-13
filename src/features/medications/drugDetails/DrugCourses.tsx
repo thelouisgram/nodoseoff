@@ -29,12 +29,12 @@ const DrugCourses: React.FC<DrugCoursesProps> = ({
   schedule,
   tab = "completed",
 }) => {
-  if (courses.length === 0) return null;
+  if (courses.length <= 1) return null;
 
   const subtitle =
     tab === "completed"
-      ? "Each finished regimen for this medication"
-      : "Each active regimen for this medication";
+      ? "Finished regimens of this medication"
+      : "Each separate start of this medication";
 
   return (
     <div className="mt-8">
@@ -43,12 +43,12 @@ const DrugCourses: React.FC<DrugCoursesProps> = ({
           Courses
         </p>
         <h3 className="mt-0.5 text-[16px] font-bold tracking-tight text-soft-ink">
-          {courses.length} regimen{courses.length === 1 ? "" : "s"}
+          {courses.length} regimens
         </h3>
         <p className="mt-0.5 text-[13px] text-soft-muted">{subtitle}</p>
       </div>
 
-      {/* Mobile: stacked journey rows */}
+      {/* Mobile */}
       <div className="space-y-3 ss:hidden">
         {courses.map((course, index) => {
           const compliance = calculateDrugCompliance(schedule, course.drugId);
@@ -63,6 +63,7 @@ const DrugCourses: React.FC<DrugCoursesProps> = ({
             ? convertedTimes(course.time).join(", ") || "—"
             : "—";
           const pct = compliance.compliance;
+          const empty = compliance.totalDoses === 0;
 
           return (
             <motion.article
@@ -94,24 +95,41 @@ const DrugCourses: React.FC<DrugCoursesProps> = ({
                     {times}
                   </p>
                 </div>
-                <span
-                  className={`shrink-0 rounded-md px-2 py-1 text-[12px] font-bold tabular-nums ${adherenceTone(pct)}`}
-                >
-                  {pct}%
-                </span>
+                {pct != null ? (
+                  <span
+                    className={`shrink-0 rounded-md px-2 py-1 text-[12px] font-bold tabular-nums ${adherenceTone(pct)}`}
+                  >
+                    {pct}%
+                  </span>
+                ) : (
+                  <span className="shrink-0 rounded-md bg-soft-canvas px-2 py-1 text-[12px] font-semibold text-soft-muted">
+                    —
+                  </span>
+                )}
               </div>
               <div className="mt-3">
                 <div className="h-1.5 overflow-hidden rounded-full bg-soft-canvas">
                   <div
-                    className={`h-full rounded-full transition-all ${barTone(pct)}`}
-                    style={{ width: `${Math.min(100, Math.max(0, pct))}%` }}
+                    className={`h-full rounded-full transition-all ${
+                      pct != null ? barTone(pct) : "bg-transparent"
+                    }`}
+                    style={{
+                      width: pct != null ? `${Math.min(100, pct)}%` : "0%",
+                    }}
                   />
                 </div>
                 <p className="mt-1.5 text-[11px] tabular-nums text-soft-muted">
-                  {compliance.completedDoses}/{compliance.totalDoses} taken
-                  {compliance.missedDoses
-                    ? ` · ${compliance.missedDoses} missed`
-                    : ""}
+                  {empty
+                    ? "No doses on this course yet"
+                    : `${compliance.completedDoses} of ${compliance.totalDoses} doses${
+                        compliance.missedDoses
+                          ? ` · ${compliance.missedDoses} missed`
+                          : ""
+                      }${
+                        compliance.remainingDoses
+                          ? ` · ${compliance.remainingDoses} left`
+                          : ""
+                      }`}
                 </p>
               </div>
             </motion.article>
@@ -131,7 +149,7 @@ const DrugCourses: React.FC<DrugCoursesProps> = ({
                   "Duration",
                   "Route",
                   "Schedule",
-                  "Taken",
+                  "Progress",
                   "Adherence",
                 ].map((label) => (
                   <th
@@ -160,6 +178,7 @@ const DrugCourses: React.FC<DrugCoursesProps> = ({
                   ? convertedTimes(course.time).join(", ") || "—"
                   : "—";
                 const pct = compliance.compliance;
+                const empty = compliance.totalDoses === 0;
 
                 return (
                   <tr
@@ -198,31 +217,52 @@ const DrugCourses: React.FC<DrugCoursesProps> = ({
                       </p>
                     </td>
                     <td className="px-4 py-4">
-                      <p className="text-[13px] font-semibold tabular-nums text-soft-ink">
-                        {compliance.completedDoses}/{compliance.totalDoses}
-                      </p>
-                      {compliance.missedDoses ? (
-                        <p className="mt-0.5 text-[11px] tabular-nums text-soft-muted">
-                          {compliance.missedDoses} missed
-                        </p>
-                      ) : null}
+                      {empty ? (
+                        <p className="text-[13px] text-soft-muted">No doses yet</p>
+                      ) : (
+                        <>
+                          <p className="text-[13px] font-semibold tabular-nums text-soft-ink">
+                            {compliance.completedDoses} of{" "}
+                            {compliance.totalDoses}
+                          </p>
+                          <p className="mt-0.5 text-[11px] tabular-nums text-soft-muted">
+                            {[
+                              compliance.missedDoses
+                                ? `${compliance.missedDoses} missed`
+                                : null,
+                              compliance.remainingDoses
+                                ? `${compliance.remainingDoses} left`
+                                : null,
+                            ]
+                              .filter(Boolean)
+                              .join(" · ") || "All accounted for"}
+                          </p>
+                        </>
+                      )}
                     </td>
                     <td className="px-4 py-4 last:pr-5">
-                      <div className="flex min-w-[110px] items-center gap-2.5">
-                        <div className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-soft-canvas">
-                          <div
-                            className={`h-full rounded-full ${barTone(pct)}`}
-                            style={{
-                              width: `${Math.min(100, Math.max(0, pct))}%`,
-                            }}
-                          />
-                        </div>
-                        <span
-                          className={`shrink-0 rounded-md px-1.5 py-0.5 text-[11px] font-bold tabular-nums ${adherenceTone(pct)}`}
-                        >
-                          {pct}%
+                      {pct == null ? (
+                        <span className="text-[13px] font-semibold text-soft-muted">
+                          —
                         </span>
-                      </div>
+                      ) : (
+                        <div className="flex min-w-[110px] items-center gap-2.5">
+                          <div className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-soft-canvas">
+                            <div
+                              className={`h-full rounded-full ${barTone(pct)}`}
+                              style={{
+                                width: `${Math.min(100, Math.max(0, pct))}%`,
+                              }}
+                            />
+                          </div>
+                          <span
+                            className={`shrink-0 rounded-md px-1.5 py-0.5 text-[11px] font-bold tabular-nums ${adherenceTone(pct)}`}
+                            title="Based on doses already due — upcoming doses don’t lower this"
+                          >
+                            {pct}%
+                          </span>
+                        </div>
+                      )}
                     </td>
                   </tr>
                 );
@@ -230,6 +270,10 @@ const DrugCourses: React.FC<DrugCoursesProps> = ({
             </tbody>
           </table>
         </div>
+        <p className="border-t border-black/[0.04] px-5 py-2.5 text-[11px] text-soft-muted">
+          Adherence is scored from doses already due. Upcoming doses aren’t
+          counted against you.
+        </p>
       </div>
     </div>
   );

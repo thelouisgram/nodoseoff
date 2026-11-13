@@ -85,6 +85,119 @@ export function sameDrugName(a: string, b: string) {
   return normalizeDrugName(a) === normalizeDrugName(b);
 }
 
+/** Inclusive YYYY-MM-DD range overlap (ISO dates compare lexicographically). */
+export function courseRangesOverlap(
+  a: { start?: string; end?: string },
+  b: { start?: string; end?: string }
+): boolean {
+  const aStart = String(a.start || "").slice(0, 10);
+  const aEnd = String(a.end || "").slice(0, 10);
+  const bStart = String(b.start || "").slice(0, 10);
+  const bEnd = String(b.end || "").slice(0, 10);
+  if (!aStart || !aEnd || !bStart || !bEnd) return false;
+  return aStart <= bEnd && bStart <= aEnd;
+}
+
+/** Day after a YYYY-MM-DD end date (UTC-safe via noon local parse). */
+export function dayAfter(isoDate: string): string {
+  const d = new Date(`${String(isoDate).slice(0, 10)}T12:00:00`);
+  if (Number.isNaN(d.getTime())) return String(isoDate).slice(0, 10);
+  d.setDate(d.getDate() + 1);
+  return d.toISOString().slice(0, 10);
+}
+
+export function dayBefore(isoDate: string): string {
+  const d = new Date(`${String(isoDate).slice(0, 10)}T12:00:00`);
+  if (Number.isNaN(d.getTime())) return String(isoDate).slice(0, 10);
+  d.setDate(d.getDate() - 1);
+  return d.toISOString().slice(0, 10);
+}
+
+/**
+ * Earliest start for a new course of this drug: the day after the latest
+ * ongoing end that would otherwise collide, or `today` when free.
+ */
+export function nextAvailableCourseStart(
+  ongoingForDrug: DrugProps[],
+  today = new Date().toISOString().slice(0, 10)
+): string {
+  let earliest = today;
+  for (const course of ongoingForDrug) {
+    const end = String(course.end || "").slice(0, 10);
+    if (!end) continue;
+    const next = dayAfter(end);
+    if (next > earliest) earliest = next;
+  }
+  return earliest;
+}
+
+export function findOverlappingCourse(
+  ongoingForDrug: DrugProps[],
+  candidate: { start?: string; end?: string; drugId?: string }
+): DrugProps | undefined {
+  return ongoingForDrug.find((course) => {
+    if (
+      candidate.drugId &&
+      course.drugId &&
+      course.drugId === candidate.drugId
+    ) {
+      return false;
+    }
+    return courseRangesOverlap(course, candidate);
+  });
+}
+
+/**
+ * Only one active course per drug name may run at a time.
+ * Prefer newest start → newest end → highest id; clip superseded ends.
+ */
+export function collapseOverlappingCourses<T extends DrugProps>(
+  drugs: T[]
+): { keep: T[]; superseded: T[] } {
+  const byName = new Map<string, T[]>();
+  for (const drug of drugs) {
+    const key = normalizeDrugName(drug.drug || "");
+    if (!key) continue;
+    const list = byName.get(key) ?? [];
+    list.push(drug);
+    byName.set(key, list);
+  }
+
+  const keep: T[] = [];
+  const superseded: T[] = [];
+
+  for (const group of byName.values()) {
+    const sorted = [...group].sort((a, b) => {
+      const startDiff =
+        Date.parse(String(b.start || "")) - Date.parse(String(a.start || ""));
+      if (startDiff !== 0) return startDiff;
+      const endDiff =
+        Date.parse(String(b.end || "")) - Date.parse(String(a.end || ""));
+      if (endDiff !== 0) return endDiff;
+      return (Number(b.id) || 0) - (Number(a.id) || 0);
+    });
+
+    const keptForName: T[] = [];
+    for (const course of sorted) {
+      const conflict = keptForName.find((k) =>
+        courseRangesOverlap(k, course)
+      );
+      if (!conflict) {
+        keptForName.push(course);
+        keep.push(course);
+        continue;
+      }
+      const clippedEnd = dayBefore(String(conflict.start || course.end));
+      const originalEnd = String(course.end || "").slice(0, 10);
+      const end =
+        clippedEnd && clippedEnd < originalEnd ? clippedEnd : originalEnd;
+      superseded.push({ ...course, end });
+    }
+  }
+
+  return { keep, superseded };
+}
+
 export function calculateTimePeriod(startDate: string, endDate: string): string {
   const start = new Date(startDate);
   const end = new Date(endDate);

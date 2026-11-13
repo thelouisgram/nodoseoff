@@ -28,15 +28,47 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     switch (action) {
       case "insertDrug": {
         const p = payload as Record<string, unknown>;
+        const drugName = String(p.drug || "").trim().toLowerCase();
+        const start = String(p.start ?? "").slice(0, 10);
+        const end = String(p.end ?? "").slice(0, 10);
+        if (!drugName || !start || !end) {
+          return res.status(400).json({ error: "Drug name, start, and end are required" });
+        }
+        if (end < start) {
+          return res.status(400).json({ error: "End date cannot be before start date" });
+        }
+
+        const existing = await sql`
+          SELECT drug, start, "end", "drugId"
+          FROM drugs
+          WHERE "userId" = ${userId}
+        `;
+        const overlap = (existing as Array<Record<string, unknown>>).find(
+          (row) => {
+            const name = String(row.drug || "").trim().toLowerCase();
+            if (name !== drugName) return false;
+            const aStart = String(row.start || "").slice(0, 10);
+            const aEnd = String(row.end || "").slice(0, 10);
+            if (!aStart || !aEnd) return false;
+            return start <= aEnd && aStart <= end;
+          }
+        );
+        if (overlap) {
+          return res.status(409).json({
+            error:
+              "This medication already has an active course in that date range. Wait until it ends, or start the next course the day after.",
+          });
+        }
+
         await sql`
           INSERT INTO drugs ("userId", drug, frequency, route, start, "end", time, reminder, "drugId")
           VALUES (
             ${userId},
-            ${String(p.drug)},
+            ${drugName},
             ${String(p.frequency ?? "")},
             ${String(p.route ?? "")},
-            ${String(p.start ?? "")},
-            ${String(p.end ?? "")},
+            ${start},
+            ${end},
             ${JSON.stringify(p.time ?? [])}::jsonb,
             ${Boolean(p.reminder)},
             ${String(p.drugId ?? "")}

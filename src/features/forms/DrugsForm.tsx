@@ -16,7 +16,11 @@ import {
   useAddDrugMutation,
 } from "@/hooks/useDashboardData";
 import { dose } from "@/utils/dashboard/dashboard";
-import { sameDrugName } from "@/utils/drugs";
+import {
+  findOverlappingCourse,
+  nextAvailableCourseStart,
+  sameDrugName,
+} from "@/utils/drugs";
 import dayjs from "dayjs";
 import { useAppSelector } from "@/store";
 import { motion, AnimatePresence } from "framer-motion";
@@ -155,7 +159,11 @@ const DrugsForm: React.FC<DrugFormProps> = ({
     const route = String(source.route || "")
       .trim()
       .toLowerCase();
-    const start = dayjs().format("YYYY-MM-DD");
+    // New course may not overlap any ongoing course of the same drug.
+    const ongoingSame = drugs.filter((d) =>
+      sameDrugName(d.drug, source.drug)
+    );
+    const start = nextAvailableCourseStart(ongoingSame);
     const rawDays = dayjs(source.end).diff(dayjs(source.start), "day");
     const prevDays =
       Number.isFinite(rawDays) && rawDays > 0 ? rawDays : 7;
@@ -307,21 +315,36 @@ const DrugsForm: React.FC<DrugFormProps> = ({
 
     const drugAlreadyExists =
       !isRefill &&
-      drugs.some(
-        (drug) => drug.drug.toLowerCase() === drugName
-      );
+      drugs.some((drug) => drug.drug.toLowerCase() === drugName);
 
     const allergicToDrug = allergies.some(
       (item) => item.drug.toLowerCase() === drugName
     );
 
     if (drugAlreadyExists) {
-      toast.error(`'${drugName}' already exists!`);
+      toast.error(
+        `'${drugName}' is already ongoing. Use Refill to start the next course after it ends.`
+      );
       return;
     }
 
     if (allergicToDrug) {
       toast.error(`'${drugName}' is a known drug allergy!`);
+      return;
+    }
+
+    const sameNameOngoing = drugs.filter((d) =>
+      sameDrugName(d.drug, drugName)
+    );
+    const overlap = findOverlappingCourse(sameNameOngoing, {
+      start: formData.start,
+      end: formData.end,
+    });
+    if (overlap) {
+      const next = nextAvailableCourseStart(sameNameOngoing);
+      toast.error(
+        `Only one active course of ${drugName} at a time. Earliest start for the next course is ${next}.`
+      );
       return;
     }
 
@@ -368,8 +391,19 @@ const DrugsForm: React.FC<DrugFormProps> = ({
       resetFormErrors();
     } catch (error) {
       console.error(error);
+      let message = "";
+      if (error instanceof Error) {
+        try {
+          const parsed = JSON.parse(error.message) as { error?: string };
+          message = parsed.error || error.message;
+        } catch {
+          message = error.message;
+        }
+      }
       toast.error(
-        "Error adding drug, Check Internet Connection and Try again!"
+        message && /active course|date range|overlap|medication already/i.test(message)
+          ? message
+          : "Error adding drug. Check your connection and try again."
       );
     } finally {
       setLoading(false);

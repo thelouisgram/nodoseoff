@@ -14,7 +14,8 @@ function summarizeCompliance(drugDoses: any[]) {
       completedDoses: 0,
       missedDoses: 0,
       remainingDoses: 0,
-      compliance: 0,
+      /** null = no doses to score yet (don’t show as 0%). */
+      compliance: null as number | null,
     };
   }
 
@@ -40,7 +41,7 @@ function summarizeCompliance(drugDoses: any[]) {
   const compliance =
     dosesAccountedFor > 0
       ? Math.round((completedDoses / dosesAccountedFor) * 100)
-      : 0;
+      : null;
 
   return {
     totalDoses,
@@ -52,8 +53,9 @@ function summarizeCompliance(drugDoses: any[]) {
 }
 
 export const calculateDrugCompliance = (schedule: any[], drugId: string) => {
+  const id = String(drugId || "").trim();
   return summarizeCompliance(
-    schedule.filter((dose) => dose.drugId === drugId)
+    schedule.filter((dose) => String(dose.drugId || "").trim() === id)
   );
 };
 

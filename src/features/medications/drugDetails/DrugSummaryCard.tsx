@@ -6,7 +6,8 @@ interface DrugSummaryCardProps {
   drug: string;
   tab: string;
   route: string;
-  compliance: number;
+  /** null when there are no past doses to score yet */
+  compliance: number | null;
   courseCount?: number;
 }
 
@@ -39,20 +40,25 @@ const DrugSummaryCard: React.FC<DrugSummaryCardProps> = ({
   courseCount = 1,
 }) => {
   const status = statusMap[tab];
+  const scored = compliance != null;
 
   const complianceColor =
-    compliance >= 80
-      ? "text-soft-mint-ink"
-      : compliance >= 60
-        ? "text-soft-peach-ink"
-        : "text-soft-pink-ink";
+    !scored
+      ? "text-soft-muted"
+      : compliance >= 80
+        ? "text-soft-mint-ink"
+        : compliance >= 60
+          ? "text-soft-peach-ink"
+          : "text-soft-pink-ink";
 
   const barColor =
-    compliance >= 80
-      ? "bg-soft-mint-ink"
-      : compliance >= 60
-        ? "bg-soft-peach-ink"
-        : "bg-soft-pink-ink";
+    !scored
+      ? "bg-soft-muted/30"
+      : compliance >= 80
+        ? "bg-soft-mint-ink"
+        : compliance >= 60
+          ? "bg-soft-peach-ink"
+          : "bg-soft-pink-ink";
 
   return (
     <motion.div
@@ -89,9 +95,11 @@ const DrugSummaryCard: React.FC<DrugSummaryCardProps> = ({
 
         <div className="text-right">
           <p className="text-[11px] text-soft-muted">
-            {tab === "completed" ? "Overall adherence" : "Compliance"}
+            {tab === "completed" ? "Overall adherence" : "Adherence so far"}
           </p>
-          <p className={`font-semibold ${complianceColor}`}>{compliance}%</p>
+          <p className={`font-semibold ${complianceColor}`}>
+            {scored ? `${compliance}%` : "—"}
+          </p>
         </div>
       </div>
 
@@ -99,10 +107,15 @@ const DrugSummaryCard: React.FC<DrugSummaryCardProps> = ({
         <motion.div
           className={`h-full rounded-full ${barColor}`}
           initial={{ width: 0 }}
-          animate={{ width: `${compliance}%` }}
+          animate={{ width: scored ? `${compliance}%` : "0%" }}
           transition={{ type: "spring", bounce: 0, duration: 1, delay: 0.2 }}
         />
       </div>
+      {!scored ? (
+        <p className="text-[12px] text-soft-muted">
+          No past doses to score yet — upcoming ones don’t count against you.
+        </p>
+      ) : null}
     </motion.div>
   );
 };

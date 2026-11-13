@@ -1,4 +1,19 @@
 import { getSql } from "@/lib/db";
+import { collapseOverlappingCourses } from "@/utils/drugs";
+import type { DrugProps } from "@/types/dashboard";
+
+function coerceTime(raw: unknown): string[] {
+  if (Array.isArray(raw)) return raw.map((t) => String(t || ""));
+  if (typeof raw === "string") {
+    try {
+      const parsed = JSON.parse(raw) as unknown;
+      if (Array.isArray(parsed)) return parsed.map((t) => String(t || ""));
+    } catch {
+      /* ignore */
+    }
+  }
+  return [];
+}
 
 export async function loadDashboardForUser(userId: string) {
   const sql = getSql();
@@ -55,16 +70,34 @@ export async function loadDashboardForUser(userId: string) {
   const twoDaysAgo = new Date(today);
   twoDaysAgo.setDate(today.getDate() - 2);
 
-  const activeDrugs: unknown[] = [];
-  const expiredDrugs: unknown[] = [];
+  const stillDatedActive: DrugProps[] = [];
+  const expiredDrugs: DrugProps[] = [];
 
   for (const drug of drugs) {
-    if (new Date(String(drug.end)) > twoDaysAgo) {
-      activeDrugs.push(drug);
+    const row = {
+      ...drug,
+      drug: String(drug.drug ?? ""),
+      start: String(drug.start ?? ""),
+      end: String(drug.end ?? ""),
+      frequency: String(drug.frequency ?? ""),
+      route: String(drug.route ?? ""),
+      reminder: Boolean(drug.reminder),
+      drugId: String(drug.drugId ?? ""),
+      time: coerceTime(drug.time),
+      id: typeof drug.id === "number" ? drug.id : undefined,
+    } satisfies DrugProps;
+
+    if (new Date(row.end) > twoDaysAgo) {
+      stillDatedActive.push(row);
     } else {
-      expiredDrugs.push(drug);
+      expiredDrugs.push(row);
     }
   }
+
+  // One active course per drug name — overlapping siblings move to completed.
+  const { keep: activeDrugs, superseded } =
+    collapseOverlappingCourses(stillDatedActive);
+  expiredDrugs.push(...superseded);
 
   // Merge + dedupe by drugId (fallback: id) so completed list keys stay unique.
   const completedByKey = new Map<string, unknown>();

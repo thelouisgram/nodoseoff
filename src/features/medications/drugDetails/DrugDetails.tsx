@@ -139,9 +139,19 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
   }
 
   const { frequency, time, start, end, reminder, route, drug } = latestCourse;
+
+  const earliestStart =
+    [...courses].sort(
+      (a, b) => Date.parse(a.start || "") - Date.parse(b.start || "")
+    )[0]?.start || start;
+  const latestEnd =
+    [...courses].sort(
+      (a, b) => Date.parse(b.end || "") - Date.parse(a.end || "")
+    )[0]?.end || end;
+
   const duration =
     courses.length > 1
-      ? `${courses.length} courses`
+      ? calculateTimePeriod(earliestStart, latestEnd)
       : calculateTimePeriod(start, end);
 
   const {
@@ -169,29 +179,18 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
           ? "Varies by course"
           : convertedTimes(time).join(", "),
     },
-    { name: "Duration", details: duration },
+    {
+      name: "Duration",
+      details: duration,
+    },
     { name: "Reminder", details: reminder ? "Yes" : "No" },
     {
       name: "Start Date",
-      details:
-        courses.length > 1
-          ? formatDate(
-              [...courses].sort(
-                (a, b) => Date.parse(a.start || "") - Date.parse(b.start || "")
-              )[0]?.start || start
-            )
-          : formatDate(start),
+      details: formatDate(earliestStart),
     },
     {
       name: "End Date",
-      details:
-        courses.length > 1
-          ? formatDate(
-              [...courses].sort(
-                (a, b) => Date.parse(b.end || "") - Date.parse(a.end || "")
-              )[0]?.end || end
-            )
-          : formatDate(end),
+      details: formatDate(latestEnd),
     },
     { name: "Total Doses", details: `${totalDoses}` },
     { name: "Completed Doses", details: `${completedDoses}` },
@@ -228,6 +227,8 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
         }
       />
 
+      <DrugCourses courses={courses} schedule={schedule} tab={tab} />
+
       {tab === "ongoing" && (
         <div className="mb-2 mt-8 w-full">
           <div className="rounded-2xl border border-black/[0.05] bg-white p-4 shadow-soft-sm ss:p-5 md:p-6">
@@ -236,7 +237,7 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
                 Doses
               </h2>
               <p className="mt-0.5 text-[13px] text-soft-muted">
-                Mark doses as you take them
+                Across all courses of this medication — mark as you take them
               </p>
             </div>
             <Tracker
@@ -250,11 +251,9 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
         </div>
       )}
 
-      <DrugCourses courses={courses} schedule={schedule} tab={tab} />
-
       <div className="mt-8">
         <h3 className="mb-3 px-1 text-[11px] font-bold uppercase tracking-widest text-soft-muted">
-          {courses.length > 1 ? "Combined details" : "Details"}
+          {courses.length > 1 ? "Across all courses" : "Details"}
         </h3>
         <DrugDetailsGrid details={details} />
       </div>

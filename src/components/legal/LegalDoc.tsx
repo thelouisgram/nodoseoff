@@ -54,7 +54,7 @@ export default function LegalDoc({
   children: ReactNode;
 }) {
   return (
-    <SoftPage>
+    <SoftPage whims>
       <SeoHead title={title} description={description} path={path} />
       <div className="mx-auto max-w-3xl px-4 py-12 ss:px-6 ss:py-16">
         <Link

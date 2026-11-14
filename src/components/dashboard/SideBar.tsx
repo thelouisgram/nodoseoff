@@ -211,7 +211,7 @@ const SideBar: React.FC<SideBarProps> = ({
         >
           <span className="grid size-10 shrink-0 place-items-center">
             <LogOut
-              className="size-[19px]"
+              className="ndo-arrow size-[19px]"
               strokeWidth={1.75}
               absoluteStrokeWidth
             />

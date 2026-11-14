@@ -4,7 +4,7 @@ import { SoftButton, SoftCard, SoftPage } from "@/components/ui/soft";
 
 export default function ServerErrorPage() {
   return (
-    <SoftPage>
+    <SoftPage whims>
       <SeoHead
         title="Something went wrong"
         description="NoDoseOff hit an unexpected error. Please try again shortly."

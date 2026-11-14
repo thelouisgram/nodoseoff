@@ -1,5 +1,7 @@
+"use client";
+
 import { useEffect, useState } from "react";
-import { AlarmClock, Pill, HeartPulse } from "lucide-react";
+import { AlarmClock, Check, HeartPulse, Loader2, Pill } from "lucide-react";
 import {
   calculateClosestDoseCountdown,
   formatDoseClock,
@@ -11,24 +13,50 @@ import { useDrugs, useSchedule } from "@/hooks/useDashboardData";
 import { useAppSelector } from "@/store";
 import { motion } from "framer-motion";
 import { useDashboardSectionMotion } from "@/components/landing/motion";
+import type { ScheduleItem } from "@/types/dashboard";
 
-const SummaryCards = () => {
+const MARK_WINDOW_MS = 5 * 60 * 1000;
+
+type Props = {
+  onMarkTaken?: (item: ScheduleItem) => Promise<void> | void;
+};
+
+const SummaryCards = ({ onMarkTaken }: Props) => {
   const { userId } = useAppSelector((state) => state.app);
   const { data: drugs = [] } = useDrugs(userId);
   const { data: schedule = [] } = useSchedule(userId);
   const { stagger, rise } = useDashboardSectionMotion();
 
   const next = getNextUpcomingDose(schedule);
+  const [now, setNow] = useState(() => Date.now());
   const [countdown, setCountdown] = useState(() =>
     calculateClosestDoseCountdown(schedule)
   );
+  const [marking, setMarking] = useState(false);
 
   useEffect(() => {
-    const tick = () => setCountdown(calculateClosestDoseCountdown(schedule));
+    const tick = () => {
+      setNow(Date.now());
+      setCountdown(calculateClosestDoseCountdown(schedule));
+    };
     tick();
     const id = window.setInterval(tick, 1000);
     return () => window.clearInterval(id);
   }, [schedule]);
+
+  const msUntil = next ? next.at.getTime() - now : Number.POSITIVE_INFINITY;
+  const showMarkTaken =
+    Boolean(next && onMarkTaken) && msUntil <= MARK_WINDOW_MS;
+
+  const mark = async () => {
+    if (!next || !onMarkTaken || marking) return;
+    setMarking(true);
+    try {
+      await onMarkTaken(next.dose);
+    } finally {
+      setMarking(false);
+    }
+  };
 
   const ongoingCount = countUniqueDrugNames(drugs);
   const adherence = calculateOverallCompliance(schedule);
@@ -72,10 +100,10 @@ const SummaryCards = () => {
       animate="show"
       className="mb-4 ss:mb-5 md:mb-6"
     >
-      {/* Mobile: one horizontal snap strip. Desktop: 3-up grid. */}
       <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1 [-ms-overflow-style:none] [scrollbar-width:none] ss:px-8 md:grid md:grid-cols-12 md:overflow-visible md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden">
         {cards.map((card) => {
           const Icon = card.icon;
+          const isNext = card.key === "next";
           return (
             <motion.div
               key={card.key}
@@ -137,6 +165,22 @@ const SummaryCards = () => {
                 >
                   {card.subtitle}
                 </p>
+
+                {isNext && showMarkTaken ? (
+                  <button
+                    type="button"
+                    onClick={() => void mark()}
+                    disabled={marking}
+                    className="ndo-press mt-3 inline-flex items-center gap-1.5 rounded-xl bg-white px-3.5 py-2 text-[13px] font-semibold text-soft-primary shadow-soft-sm hover:bg-white/90 disabled:opacity-60"
+                  >
+                    {marking ? (
+                      <Loader2 className="size-3.5 animate-spin" />
+                    ) : (
+                      <Check className="size-3.5" strokeWidth={2.5} />
+                    )}
+                    Mark taken
+                  </button>
+                ) : null}
               </div>
             </motion.div>
           );

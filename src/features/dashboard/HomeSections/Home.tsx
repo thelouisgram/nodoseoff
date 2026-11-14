@@ -97,7 +97,12 @@ const Home: React.FC<HomeProps> = ({
     <div className="relative h-[100dvh] w-full overflow-y-scroll bg-soft-canvas px-0 pb-24 pt-10 font-jakarta text-soft-ink md:px-12 md:py-16 md:pb-20">
       {/* Primary: who + what matters now */}
       <Header />
-      <SummaryCards />
+      <SummaryCards
+        onMarkTaken={async (item) => {
+          if (item.completed) return;
+          await updateCompleted(item);
+        }}
+      />
 
       <div className="mx-4 mb-3 ss:mx-8 md:mx-0">
         <div className="rounded-2xl border border-black/[0.05] bg-white p-4 shadow-soft-sm ss:p-5 md:p-6">

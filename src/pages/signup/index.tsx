@@ -158,7 +158,7 @@ const CreateAccount = () => {
         path="/signup"
       />
 
-      <SoftPage>
+      <SoftPage whims>
         <div className="flex min-h-screen items-center justify-center p-5 ss:p-8">
           <motion.div
             initial={{ opacity: 0, y: 18, scale: 0.985 }}

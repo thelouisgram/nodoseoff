@@ -3,7 +3,7 @@ import { SoftButton, SoftCard, SoftPage } from "@/components/ui/soft";
 
 export default function NotFoundView() {
   return (
-    <SoftPage>
+    <SoftPage whims>
       <div className="flex min-h-screen items-center justify-center px-4">
         <SoftCard className="max-w-md p-8 text-center">
           <p className="text-[13px] font-semibold uppercase tracking-widest text-soft-muted">

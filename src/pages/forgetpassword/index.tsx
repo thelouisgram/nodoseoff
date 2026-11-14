@@ -59,7 +59,7 @@ const ForgotPassword = () => {
         noIndex
       />
 
-      <SoftPage>
+      <SoftPage whims>
         <div className="flex min-h-screen items-center justify-center p-5 ss:p-8">
           <div className="w-full max-w-[420px]">
             <div className="mb-8 flex justify-center">

@@ -1,26 +1,29 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { ArrowRight, Menu, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ndoEase } from "@/components/landing/motion";
 import InteractiveLogo from "@/components/ui/InteractiveLogo";
+import { landingNavLinks } from "@/utils/landing-nav";
 
-const navLinks = [
-  { href: "#features", label: "Features" },
-  { href: "#overview", label: "Overview" },
-  { href: "#amanda", label: "AMANDA 6" },
-  { href: "#how-it-works", label: "How it works" },
-  { href: "#who", label: "Who it’s for" },
-  { href: "#mobile-app", label: "Mobile" },
-];
+type Props = {
+  /** overlay = home hero; solid = always navy bar (inner pages) */
+  tone?: "overlay" | "solid";
+};
 
-export default function LandingNav() {
+export default function LandingNav({ tone = "overlay" }: Props) {
+  const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [scrolled, setScrolled] = useState(tone === "solid");
 
   useEffect(() => {
+    if (tone === "solid") {
+      setScrolled(true);
+      return;
+    }
     let ticking = false;
     const onScroll = () => {
       if (ticking) return;
@@ -33,7 +36,7 @@ export default function LandingNav() {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [tone]);
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
@@ -42,7 +45,6 @@ export default function LandingNav() {
     };
   }, [menuOpen]);
 
-  // Close on resize to desktop
   useEffect(() => {
     const onResize = () => {
       if (window.innerWidth >= 1024) setMenuOpen(false);
@@ -51,11 +53,13 @@ export default function LandingNav() {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
+  const solidBar = tone === "solid" || scrolled || menuOpen;
+
   return (
     <>
       <header
         className={`fixed inset-x-0 top-0 z-[100] transition-[background-color,border-color,backdrop-filter] duration-200 ${
-          scrolled || menuOpen
+          solidBar
             ? "border-b border-white/10 bg-[#031428] backdrop-blur-md"
             : "border-b border-transparent bg-transparent"
         }`}
@@ -66,15 +70,23 @@ export default function LandingNav() {
           </div>
 
           <nav className="hidden items-center gap-7 lg:flex">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-[14px] font-medium text-white/80 transition-colors hover:text-white"
-              >
-                {link.label}
-              </Link>
-            ))}
+            {landingNavLinks.map((link) => {
+              const active = router.pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`ndo-nav-link text-[14px] font-medium ${
+                    active
+                      ? "text-white"
+                      : "text-white/80 hover:text-white"
+                  }`}
+                  aria-current={active ? "page" : undefined}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </nav>
 
           <div className="hidden items-center gap-3 lg:flex">
@@ -86,10 +98,10 @@ export default function LandingNav() {
             </Link>
             <Link
               href="/signup"
-              className="ndo-cta ndo-cta-solid inline-flex items-center gap-1.5 px-5 py-2.5 text-[14px] font-semibold"
+              className="ndo-cta ndo-cta-solid group inline-flex items-center gap-1.5 px-5 py-2.5 text-[14px] font-semibold"
             >
               Get started
-              <ArrowRight className="size-4" />
+              <ArrowRight className="ndo-arrow size-4" />
             </Link>
           </div>
 
@@ -126,42 +138,51 @@ export default function LandingNav() {
               className="flex min-h-0 flex-1 flex-col overflow-y-auto px-6 pb-8 pt-6"
             >
               <nav className="flex flex-col">
-                {navLinks.map((link, index) => (
-                  <motion.div
-                    key={link.href}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{
-                      duration: 0.28,
-                      ease: ndoEase,
-                      delay: 0.05 + index * 0.04,
-                    }}
-                  >
-                    <Link
-                      href={link.href}
-                      onClick={() => setMenuOpen(false)}
-                      className="block border-b border-white/10 py-4 text-[1.35rem] font-semibold tracking-tight text-white transition-colors hover:text-white/80"
+                {landingNavLinks.map((link, index) => {
+                  const active = router.pathname === link.href;
+                  return (
+                    <motion.div
+                      key={link.href}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{
+                        duration: 0.28,
+                        ease: ndoEase,
+                        delay: 0.05 + index * 0.04,
+                      }}
                     >
-                      {link.label}
-                    </Link>
-                  </motion.div>
-                ))}
+                      <Link
+                        href={link.href}
+                        onClick={() => setMenuOpen(false)}
+                        className={`block border-b border-white/10 py-4 text-[1.35rem] font-semibold tracking-tight transition-colors ${
+                          active
+                            ? "text-white"
+                            : "text-white/90 hover:text-white/80"
+                        }`}
+                        aria-current={active ? "page" : undefined}
+                      >
+                        {link.label}
+                      </Link>
+                    </motion.div>
+                  );
+                })}
               </nav>
 
               <div className="mt-8 flex flex-col gap-3">
                 <Link
                   href="/login"
                   onClick={() => setMenuOpen(false)}
-                  className="ndo-press border border-white/25 px-5 py-3.5 text-center text-[15px] font-semibold text-white"
+                  className="ndo-press rounded-xl border border-white/25 px-5 py-3.5 text-center text-[15px] font-semibold text-white"
                 >
                   Log in
                 </Link>
                 <Link
                   href="/signup"
                   onClick={() => setMenuOpen(false)}
-                  className="ndo-cta ndo-cta-solid px-5 py-3.5 text-center text-[15px] font-semibold"
+                  className="ndo-cta ndo-cta-solid group inline-flex items-center justify-center gap-1.5 px-5 py-3.5 text-center text-[15px] font-semibold"
                 >
                   Get started free
+                  <ArrowRight className="ndo-arrow size-4" />
                 </Link>
               </div>
             </motion.div>

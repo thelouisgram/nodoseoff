@@ -4,14 +4,11 @@ import Hero from "@/Layout/home/Hero";
 import Features from "@/Layout/home/Features";
 import HomePulse from "@/Layout/home/HomePulse";
 import Amanda from "@/Layout/home/Amanda";
-import AboutNodoseOff from "@/Layout/home/About";
 import HowItWorks from "@/Layout/home/HowItWorks";
-import WhoItsFor from "@/Layout/home/WhoItsFor";
-import Safety from "@/Layout/home/Safety";
-import MobileAppSoon from "@/Layout/home/MobileAppSoon";
 import Banner from "@/Layout/home/Banner";
 import Footer from "@/Layout/home/Footer";
 import SeoHead from "@/components/seo/SeoHead";
+import SiteWhims from "@/components/landing/SiteWhims";
 import { LandingMotion } from "@/components/landing/motion";
 
 const Home = () => {
@@ -28,20 +25,17 @@ const Home = () => {
     <LandingMotion>
       <SeoHead
         title="Medication Tracking & Dose Reminders"
-        description="Never miss a dose. Track long-term medications, get smart reminders, ask AMANDA 6, and generate adherence reports with NoDoseOff."
+        description="Never miss a dose. Medication tracking and reminders for cancer, autoimmune, ARV, diabetes, contraceptive, and Ozempic regimens — plus AMANDA 6 and adherence reports."
         path="/"
       />
       <LandingNav />
-      <main className="overflow-x-hidden bg-[#f3f7fb] font-sans text-soft-ink antialiased">
+      <SiteWhims />
+      <main className="relative z-[2] overflow-x-hidden bg-[#f3f7fb] font-sans text-soft-ink antialiased">
         <Hero />
         <Features />
         <HomePulse />
         <Amanda />
-        <AboutNodoseOff />
         <HowItWorks />
-        <WhoItsFor />
-        <Safety />
-        <MobileAppSoon />
         <Banner />
         <Footer />
       </main>

@@ -143,7 +143,10 @@ const FloatingAddActions: React.FC<FloatingAddActionsProps> = ({
                   <span
                     className={`flex size-12 items-center justify-center rounded-full border border-black/[0.04] shadow-soft-sm transition group-hover:scale-[1.03] ss:size-14 ${btn}`}
                   >
-                    <Icon className="size-5 ss:size-6" strokeWidth={2} />
+                    <Icon
+                      className="ndo-wiggle size-5 ss:size-6"
+                      strokeWidth={2}
+                    />
                   </span>
                 </motion.button>
               ))}

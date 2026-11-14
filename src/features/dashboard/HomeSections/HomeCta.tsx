@@ -51,10 +51,10 @@ export default function HomeCta({ drugs, setAdd, setActiveModal }: Props) {
               setAdd(false);
               setActiveModal("drugs");
             }}
-            className="ndo-cta ndo-cta-solid group/btn inline-flex shrink-0 items-center justify-center gap-2 self-start px-5 py-3 text-[14px] font-bold ss:self-center"
+            className="ndo-cta ndo-cta-solid group inline-flex shrink-0 items-center justify-center gap-2 self-start px-5 py-3 text-[14px] font-bold ss:self-center"
           >
             Add medication
-            <ArrowRight className="size-4 transition-transform duration-300 group-hover/btn:translate-x-0.5" />
+            <ArrowRight className="ndo-arrow size-4" />
           </button>
         </div>
       </div>

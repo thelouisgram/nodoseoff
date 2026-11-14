@@ -9,6 +9,5 @@ export function isDashboardTabActive(itemName: string, activeTab: string) {
 }
 
 export function dashboardTabLabel(name: string) {
-  if (name === "AMANDA 6") return "Amanda";
   return name;
 }

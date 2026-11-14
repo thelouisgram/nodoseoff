@@ -8,6 +8,7 @@ import {
   dashboardTabLabel,
   isDashboardTabActive,
 } from "@/utils/dashboard/nav";
+import AmandaMark from "@/Layout/marketing/AmandaMark";
 
 interface TabItem {
   name: string;
@@ -24,6 +25,7 @@ const MobileTabs: React.FC<TabsProps> = ({ item, activeTab }) => {
   const Icon = item.icon;
   const isActive = isDashboardTabActive(item.name, activeTab);
   const label = dashboardTabLabel(item.name);
+  const isAmanda = item.name === "AMANDA 6";
 
   return (
     <button
@@ -48,11 +50,19 @@ const MobileTabs: React.FC<TabsProps> = ({ item, activeTab }) => {
             transition={{ type: "spring", stiffness: 420, damping: 30, mass: 0.7 }}
           />
         ) : null}
-        <Icon
-          className="relative z-[1] size-[20px]"
-          strokeWidth={isActive ? 2 : 1.75}
-          absoluteStrokeWidth
-        />
+        {isAmanda ? (
+          <AmandaMark
+            compact
+            className="relative z-[1] size-[22px] [&_svg]:rounded-md [&_svg]:shadow-none"
+            onDark={isActive}
+          />
+        ) : (
+          <Icon
+            className="relative z-[1] size-[20px]"
+            strokeWidth={isActive ? 2 : 1.75}
+            absoluteStrokeWidth
+          />
+        )}
       </span>
       <span
         className={`relative z-[1] text-[11px] leading-none tracking-tight ${

@@ -1,7 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { BellRing, ChartColumnIncreasing, FileText, Sparkles } from "lucide-react";
+import Link from "next/link";
+import {
+  ArrowRight,
+  BellRing,
+  ChartColumnIncreasing,
+  FileText,
+  Sparkles,
+} from "lucide-react";
 import { m, useLandingVariants, viewOnce } from "@/components/landing/motion";
 
 const features = [
@@ -94,6 +101,13 @@ export default function Features() {
             Reminders, progress, reports, and AMANDA 6 — built for people who
             take medicine every day.
           </p>
+          <Link
+            href="/features"
+            className="ndo-press group mt-5 inline-flex items-center gap-1.5 text-[14px] font-semibold text-soft-primary"
+          >
+            All features
+            <ArrowRight className="ndo-arrow size-3.5" />
+          </Link>
         </m.div>
 
         <m.div

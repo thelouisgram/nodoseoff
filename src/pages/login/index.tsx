@@ -77,7 +77,7 @@ const SignIn = () => {
         path="/login"
       />
 
-      <SoftPage>
+      <SoftPage whims>
         <div className="min-h-screen flex items-center justify-center p-5 ss:p-8">
           <motion.div
             initial={{ opacity: 0, y: 18, scale: 0.985 }}

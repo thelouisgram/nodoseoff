@@ -1,9 +1,18 @@
 import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode } from "react";
+import SiteWhims from "@/components/landing/SiteWhims";
 
-export function SoftPage({ children }: { children: ReactNode }) {
+export function SoftPage({
+  children,
+  whims = false,
+}: {
+  children: ReactNode;
+  /** Floating doodles for marketing/auth — never dashboard/admin */
+  whims?: boolean;
+}) {
   return (
-    <div className="min-h-screen bg-soft-canvas font-jakarta text-soft-ink antialiased">
-      {children}
+    <div className="relative min-h-screen bg-soft-canvas font-jakarta text-soft-ink antialiased">
+      {whims ? <SiteWhims tone="soft" /> : null}
+      <div className="relative z-[2]">{children}</div>
     </div>
   );
 }

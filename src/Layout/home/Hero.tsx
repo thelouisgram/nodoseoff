@@ -65,11 +65,11 @@ export default function HeroSection() {
               className="ndo-cta ndo-cta-solid group inline-flex items-center justify-center gap-2 px-7 py-3.5 text-[15px] font-bold"
             >
               Start free
-              <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+              <ArrowRight className="ndo-arrow size-4" />
             </Link>
             <Link
-              href="#amanda"
-              className="ndo-cta ndo-cta-ghost inline-flex items-center justify-center gap-2 px-7 py-3.5 text-[15px] font-semibold"
+              href="/amanda"
+              className="ndo-cta ndo-cta-ghost group inline-flex items-center justify-center gap-2 px-7 py-3.5 text-[15px] font-semibold"
             >
               <Sparkles className="ndo-spark size-4" />
               Meet AMANDA 6

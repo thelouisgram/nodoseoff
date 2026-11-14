@@ -217,7 +217,7 @@ const DrugsList: React.FC<DrugsListProps> = ({
                 className="relative flex items-center justify-end gap-0.5"
               >
                 <ChevronRight
-                  className="hidden size-4 text-soft-muted/50 transition group-hover:text-soft-primary ss:block"
+                  className="ndo-chevron hidden size-4 text-soft-muted/50 group-hover:text-soft-primary ss:block"
                   strokeWidth={2}
                   aria-hidden
                 />

@@ -15,7 +15,6 @@ import {
   Loader2,
   Plus,
   SendHorizontal,
-  Sparkles,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -30,6 +29,27 @@ import {
   ndoEase,
   useDashboardSectionMotion,
 } from "@/components/landing/motion";
+import AmandaMark from "@/Layout/marketing/AmandaMark";
+
+function TypingDots() {
+  return (
+    <span className="inline-flex items-center gap-1 px-0.5 py-1" aria-hidden>
+      {[0, 1, 2].map((i) => (
+        <motion.span
+          key={i}
+          className="size-1.5 rounded-full bg-soft-primary/55"
+          animate={{ opacity: [0.35, 1, 0.35], y: [0, -2, 0] }}
+          transition={{
+            duration: 0.9,
+            repeat: Infinity,
+            delay: i * 0.14,
+            ease: "easeInOut",
+          }}
+        />
+      ))}
+    </span>
+  );
+}
 
 const ACTIVE_CHAT_KEY = "nodoseoff_ai_chat_id";
 
@@ -451,11 +471,14 @@ export default function AiAssistant() {
         variants={rise}
         className="relative z-10 mb-2 flex items-start justify-between gap-3"
       >
-        <SoftSectionHeader
-          className="mb-0 min-w-0 flex-1 [&_h1]:text-[22px] ss:[&_h1]:text-[28px] [&_p]:truncate [&_p]:text-[13px] ss:[&_p]:text-[14px]"
-          title="AMANDA 6"
-          subtitle="Meds, side effects, and adherence."
-        />
+        <div className="mb-0 flex min-w-0 flex-1 items-start gap-3">
+          <AmandaMark className="mt-0.5 size-10 shrink-0 ss:size-11" pulse />
+          <SoftSectionHeader
+            className="mb-0 min-w-0 flex-1 [&_h1]:text-[22px] ss:[&_h1]:text-[28px] [&_p]:truncate [&_p]:text-[13px] ss:[&_p]:text-[14px]"
+            title="AMANDA 6"
+            subtitle="Meds, side effects, and adherence."
+          />
+        </div>
         <div className="relative z-10 flex shrink-0 items-center gap-1.5 pt-0.5">
           <button
             type="button"
@@ -516,9 +539,7 @@ export default function AiAssistant() {
                 variants={rise}
                 className="flex max-w-md flex-col items-start text-left"
               >
-                <span className="mb-3 flex size-10 items-center justify-center rounded-xl bg-soft-primary-soft text-soft-primary">
-                  <Sparkles className="size-5" strokeWidth={1.75} />
-                </span>
+                <AmandaMark className="mb-3 size-10" />
                 {outOfPrompts ? (
                   <>
                     <h2 className="text-[16px] font-semibold tracking-tight text-soft-ink">

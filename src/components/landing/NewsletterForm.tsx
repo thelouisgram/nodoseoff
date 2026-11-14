@@ -49,7 +49,7 @@ export default function NewsletterForm({
 
   if (status === "success") {
     return (
-      <div className="flex items-start gap-2.5 border border-white/15 bg-white/5 px-3.5 py-3">
+      <div className="flex items-start gap-2.5 rounded-xl border border-white/15 bg-white/5 px-3.5 py-3">
         <Check className="mt-0.5 size-4 shrink-0 text-[#7dcea0]" strokeWidth={2} />
         <p className="text-[13px] leading-relaxed text-white/85">{message}</p>
       </div>
@@ -61,7 +61,7 @@ export default function NewsletterForm({
       <label htmlFor="newsletter-email" className="sr-only">
         Email for newsletter
       </label>
-      <div className="flex flex-col gap-2 ss:flex-row">
+      <div className="flex flex-col gap-2">
         <input
           id="newsletter-email"
           type="email"
@@ -73,20 +73,20 @@ export default function NewsletterForm({
             setEmail(e.target.value);
             if (status === "error") setStatus("idle");
           }}
-          placeholder="you@example.com"
-          className="min-w-0 flex-1 border border-white/15 bg-white/5 px-3.5 py-2.5 text-[14px] text-white outline-none placeholder:text-white/40 focus:border-white/40"
+          placeholder="Email address"
+          className="min-w-0 w-full rounded-xl border border-white/15 bg-white/5 px-3.5 py-2.5 text-[14px] text-white outline-none placeholder:text-white/40 focus:border-white/40"
         />
         <button
           type="submit"
           disabled={status === "loading"}
-          className="inline-flex shrink-0 items-center justify-center gap-1.5 border border-white/20 bg-white px-4 py-2.5 text-[13px] font-semibold text-[#0b1a2e] transition hover:bg-white/90 disabled:opacity-60"
+          className="ndo-press group inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-white/20 bg-white px-4 py-2.5 text-[13px] font-semibold text-[#0b1a2e] transition hover:bg-white/90 disabled:opacity-60"
         >
           {status === "loading" ? (
             <Loader2 className="size-4 animate-spin" strokeWidth={2} />
           ) : (
             <>
               Join
-              <ArrowRight className="size-3.5" strokeWidth={2} />
+              <ArrowRight className="ndo-arrow size-3.5" strokeWidth={2} />
             </>
           )}
         </button>

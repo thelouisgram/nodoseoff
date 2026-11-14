@@ -178,12 +178,12 @@ export default function HeroDoseCard() {
               : { rotate: [0, -2, 2, -1, 0] }
         }
         transition={{ duration: reduce ? 0 : taken ? 0.55 : 0.45, ease: "easeOut" }}
-        className="border border-white/20 bg-[#031428]/88 p-3.5 shadow-[0_12px_40px_-18px_rgba(0,0,0,0.65)] backdrop-blur-md"
+        className="overflow-hidden rounded-2xl border border-white/20 bg-[#031428]/88 p-3.5 shadow-[0_12px_40px_-18px_rgba(0,0,0,0.65)] backdrop-blur-md"
       >
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
             <p
-              className={`text-[10px] font-semibold uppercase tracking-wider ${
+              className={`text-[10px] font-semibold uppercase tracking-[0.16em] ${
                 taken ? "text-[#3dcfb6]" : "text-white/55"
               }`}
             >
@@ -205,7 +205,7 @@ export default function HeroDoseCard() {
                 ? undefined
                 : { duration: 2.4, repeat: Infinity, ease: "easeInOut" }
             }
-            className={`grid size-8 shrink-0 place-items-center ${
+            className={`grid size-8 shrink-0 place-items-center rounded-xl ${
               taken
                 ? "bg-[#3dcfb6] text-[#031428]"
                 : "bg-white/10 text-[#3dcfb6]"
@@ -228,7 +228,7 @@ export default function HeroDoseCard() {
             type="button"
             onClick={celebrate}
             disabled={taken}
-            className="ndo-press flex-1 bg-[#3dcfb6] px-2.5 py-1.5 text-[11px] font-bold text-[#031428] disabled:opacity-70"
+            className="ndo-press flex-1 rounded-xl bg-[#3dcfb6] px-2.5 py-1.5 text-[11px] font-bold text-[#031428] disabled:opacity-70"
           >
             {taken ? "Logged ✓" : "Mark taken"}
           </button>
@@ -236,11 +236,11 @@ export default function HeroDoseCard() {
             type="button"
             onClick={shuffle}
             disabled={taken}
-            className="ndo-press grid size-8 place-items-center border border-white/20 text-white/75 hover:bg-white/10 hover:text-white disabled:opacity-40"
+            className="ndo-press group grid size-8 place-items-center rounded-xl border border-white/20 text-white/75 hover:bg-white/10 hover:text-white disabled:opacity-40"
             aria-label="Show another dose"
             title="Another dose"
           >
-            <RefreshCw className="size-3.5" strokeWidth={2} />
+            <RefreshCw className="ndo-spin size-3.5" strokeWidth={2} />
           </button>
         </div>
       </m.div>

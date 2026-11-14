@@ -104,10 +104,10 @@ const Account: React.FC<AccountProps> = ({ setActiveModal }) => {
                 <button
                   type="button"
                   onClick={() => setActiveModal("profile")}
-                  className="ndo-press absolute -bottom-1 -right-1 grid size-8 place-items-center rounded-xl border border-black/[0.06] bg-white text-soft-primary shadow-soft-sm hover:bg-soft-canvas"
+                  className="ndo-press group absolute -bottom-1 -right-1 grid size-8 place-items-center rounded-xl border border-black/[0.06] bg-white text-soft-primary shadow-soft-sm hover:bg-soft-canvas"
                   aria-label="Edit profile photo"
                 >
-                  <Pencil className="size-3.5" strokeWidth={2} />
+                  <Pencil className="ndo-pencil size-3.5" strokeWidth={2} />
                 </button>
               </div>
 
@@ -127,9 +127,9 @@ const Account: React.FC<AccountProps> = ({ setActiveModal }) => {
             <button
               type="button"
               onClick={() => setActiveModal("profile")}
-              className="ndo-press inline-flex shrink-0 items-center justify-center gap-1.5 self-start rounded-xl border border-black/[0.06] bg-white px-3.5 py-2.5 text-[13px] font-semibold text-soft-ink shadow-soft-sm hover:bg-soft-canvas ss:self-center"
+              className="ndo-press group inline-flex shrink-0 items-center justify-center gap-1.5 self-start rounded-xl border border-black/[0.06] bg-white px-3.5 py-2.5 text-[13px] font-semibold text-soft-ink shadow-soft-sm hover:bg-soft-canvas ss:self-center"
             >
-              <Pencil className="size-3.5" strokeWidth={2} />
+              <Pencil className="ndo-pencil size-3.5" strokeWidth={2} />
               Edit profile
             </button>
           </div>
@@ -193,9 +193,9 @@ const Account: React.FC<AccountProps> = ({ setActiveModal }) => {
             <button
               type="button"
               onClick={logOut}
-              className="ndo-press flex w-full items-center justify-center gap-2 rounded-2xl border border-black/[0.06] bg-white px-4 py-3.5 text-[14px] font-semibold text-soft-ink shadow-soft-sm hover:bg-soft-canvas"
+              className="ndo-press group flex w-full items-center justify-center gap-2 rounded-2xl border border-black/[0.06] bg-white px-4 py-3.5 text-[14px] font-semibold text-soft-ink shadow-soft-sm hover:bg-soft-canvas"
             >
-              <LogOut className="size-4" strokeWidth={1.75} />
+              <LogOut className="ndo-arrow size-4" strokeWidth={1.75} />
               Log out
             </button>
           </motion.section>
@@ -274,7 +274,7 @@ function AccountRow({
     <button
       type="button"
       onClick={onClick}
-      className={`ndo-press flex w-full items-center gap-3 px-4 py-3.5 text-left ss:px-5 ${
+      className={`ndo-press group flex w-full items-center gap-3 px-4 py-3.5 text-left ss:px-5 ${
         last ? "" : "border-b border-black/[0.05]"
       } ${danger ? "hover:bg-[#fff7fa]" : "hover:bg-soft-canvas/80"}`}
     >
@@ -300,7 +300,7 @@ function AccountRow({
         ) : null}
       </span>
       <ChevronRight
-        className="size-4 shrink-0 text-soft-muted"
+        className="ndo-chevron size-4 shrink-0 text-soft-muted"
         strokeWidth={1.75}
       />
     </button>

@@ -3,16 +3,9 @@ import { Instagram, Mail } from "lucide-react";
 import NewsletterForm from "@/components/landing/NewsletterForm";
 import { openCookieSettings } from "@/components/legal/CookieConsent";
 import InteractiveLogo from "@/components/ui/InteractiveLogo";
+import { landingProductLinks } from "@/utils/landing-nav";
 
-const productLinks = [
-  { href: "#features", label: "Features" },
-  { href: "#overview", label: "Overview" },
-  { href: "#amanda", label: "AMANDA 6" },
-  { href: "#how-it-works", label: "How it works" },
-  { href: "#who", label: "Who it’s for" },
-  { href: "#safety", label: "Trust & safety" },
-  { href: "#mobile-app", label: "Mobile app" },
-];
+const productLinks = landingProductLinks;
 
 const accountLinks = [
   { href: "/signup", label: "Create account" },
@@ -22,7 +15,8 @@ const accountLinks = [
 ];
 
 const companyLinks = [
-  { href: "#about", label: "About NoDoseOff" },
+  { href: "/about", label: "About" },
+  { href: "/who-its-for", label: "Who it’s for" },
   { href: "/privacy", label: "Privacy Policy" },
   { href: "/terms", label: "Terms of Service" },
   { href: "/cookies", label: "Cookie Policy" },
@@ -118,7 +112,7 @@ export default function Footer() {
                 </li>
               ))}
             </ul>
-            <div className="mt-8 border border-white/15 p-4">
+            <div className="mt-8 rounded-2xl border border-white/15 p-4">
               <p className="text-[13px] font-semibold text-white">
                 Join the newsletter
               </p>

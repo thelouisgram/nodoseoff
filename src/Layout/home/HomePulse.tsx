@@ -88,10 +88,10 @@ export default function HomePulse() {
             viewport={viewOnce}
             className="relative mx-auto w-full max-w-md shrink-0 ss:mx-0 ss:w-[min(100%,420px)] ss:max-w-none md:w-[min(48%,460px)]"
           >
-            <div className="relative overflow-hidden rounded-[28px] border border-black/[0.06] bg-soft-canvas p-4 shadow-soft-md ss:p-5">
+            <div className="relative overflow-hidden rounded-2xl border border-black/[0.06] bg-soft-canvas p-4 shadow-soft-md ss:p-5">
               <div className="mb-4 flex items-end justify-between gap-3 px-1">
                 <div>
-                  <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-soft-muted">
+                  <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-soft-muted">
                     Today
                   </p>
                   <p className="mt-1 text-[20px] font-bold tracking-tight text-soft-ink">
@@ -134,7 +134,7 @@ export default function HomePulse() {
                 className="mt-3 rounded-2xl border border-black/[0.05] bg-white p-4 shadow-soft-sm"
               >
                 <div className="flex items-center justify-between gap-2">
-                  <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-soft-muted">
+                  <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-soft-muted">
                     This week
                   </p>
                   <span className="inline-flex items-center gap-1 text-[12px] font-semibold text-soft-peach-ink">

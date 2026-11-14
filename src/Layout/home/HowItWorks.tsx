@@ -1,7 +1,6 @@
 "use client";
 
-import { ArrowDown, ArrowRight, BellRing, ClipboardList, Pill } from "lucide-react";
-import { Fragment } from "react";
+import { BellRing, ClipboardList, Pill } from "lucide-react";
 import { m, useLandingVariants, viewOnce } from "@/components/landing/motion";
 
 const steps = [
@@ -50,13 +49,13 @@ export default function HowItWorks() {
           viewport={viewOnce}
           className="max-w-xl"
         >
-          <p className="text-[13px] font-semibold text-[#3dcfb6]">
-            Easy as 1–2–3
+          <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#3dcfb6]">
+            How it works
           </p>
-          <h2 className="mt-2 text-[2rem] font-bold tracking-tight ss:text-[2.35rem]">
+          <h2 className="mt-3 text-[2.15rem] font-extrabold tracking-tight ss:text-[2.5rem]">
             Three small steps. Big peace of mind.
           </h2>
-          <p className="mt-3 max-w-md text-[14px] text-white/60">
+          <p className="mt-3 max-w-md text-[15px] leading-relaxed text-white/70 ss:text-[16px]">
             Add your meds, catch the reminders, check your streak — then do it
             again tomorrow.
           </p>
@@ -67,47 +66,37 @@ export default function HowItWorks() {
           initial="hidden"
           whileInView="show"
           viewport={viewOnce}
-          className="mt-12 flex flex-col md:flex-row md:items-start"
+          className="mt-12 grid gap-4 md:grid-cols-3 md:gap-5"
         >
-          {steps.map((item, index) => {
+          {steps.map((item) => {
             const Icon = item.icon;
             return (
-              <Fragment key={item.step}>
-                <m.div
-                  variants={fadeUp}
-                  className="min-w-0 flex-1 border-t border-white/25 pt-6"
+              <m.div
+                key={item.step}
+                variants={fadeUp}
+                className="relative overflow-hidden rounded-2xl border border-white/15 bg-white/[0.06] p-5 ss:p-6"
+              >
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute -right-1 top-2 select-none text-[4.5rem] font-extrabold leading-none text-white/[0.08]"
                 >
-                  <div className="flex items-center justify-between gap-3">
-                    <p className="font-mono text-[13px] font-semibold tracking-wider text-white/55">
-                      {item.step}
-                    </p>
-                    <span className="flex size-8 items-center justify-center border border-white/20 bg-white/5 text-[#3dcfb6]">
-                      <Icon className="size-3.5" strokeWidth={1.75} />
-                    </span>
-                  </div>
-                  <h3 className="mt-3 text-[1.25rem] font-bold">{item.title}</h3>
+                  {item.step}
+                </span>
+                <div className="relative z-[1]">
+                  <span className="flex size-10 items-center justify-center rounded-xl border border-white/15 bg-white/10 text-[#3dcfb6]">
+                    <Icon className="size-4" strokeWidth={1.75} />
+                  </span>
+                  <p className="mt-4 text-[12px] font-semibold uppercase tracking-[0.16em] text-white/45">
+                    Step {item.step}
+                  </p>
+                  <h3 className="mt-2 text-[1.25rem] font-bold tracking-tight">
+                    {item.title}
+                  </h3>
                   <p className="mt-2 text-[14px] leading-relaxed text-white/75">
                     {item.desc}
                   </p>
-                </m.div>
-
-                {index < steps.length - 1 && (
-                  <>
-                    <div
-                      aria-hidden
-                      className="flex items-center justify-center py-3 text-[#3dcfb6]/70 md:hidden"
-                    >
-                      <ArrowDown className="size-4" strokeWidth={2} />
-                    </div>
-                    <div
-                      aria-hidden
-                      className="hidden shrink-0 items-center self-center px-3 text-[#3dcfb6]/75 md:flex lg:px-4"
-                    >
-                      <ArrowRight className="size-4" strokeWidth={2} />
-                    </div>
-                  </>
-                )}
-              </Fragment>
+                </div>
+              </m.div>
             );
           })}
         </m.div>

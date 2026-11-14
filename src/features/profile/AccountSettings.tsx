@@ -136,7 +136,7 @@ const AccountSettings: React.FC<Settings> = ({
                 </span>
               </span>
               <ChevronRight
-                className="size-4 shrink-0 text-soft-muted transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-soft-primary"
+                className="ndo-chevron size-4 shrink-0 text-soft-muted group-hover:text-soft-primary"
                 strokeWidth={2}
               />
             </button>
@@ -158,7 +158,7 @@ const AccountSettings: React.FC<Settings> = ({
                 </span>
               </span>
               <ChevronRight
-                className="size-4 shrink-0 text-soft-muted transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-soft-pink-ink"
+                className="ndo-chevron size-4 shrink-0 text-soft-muted group-hover:text-soft-pink-ink"
                 strokeWidth={2}
               />
             </button>

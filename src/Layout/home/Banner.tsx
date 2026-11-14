@@ -16,7 +16,7 @@ export default function Banner() {
           initial="hidden"
           whileInView="show"
           viewport={viewOnce}
-          className="relative overflow-hidden bg-soft-primary px-6 py-14 text-white ss:px-12 ss:py-16"
+          className="relative overflow-hidden rounded-2xl bg-soft-primary px-6 py-14 text-white ss:px-12 ss:py-16"
         >
           <div
             aria-hidden
@@ -30,7 +30,7 @@ export default function Banner() {
           <div className="relative flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
             <div className="max-w-2xl">
               <div className="mb-5 flex items-center">
-                <div className="relative z-[2] size-11 overflow-hidden border-2 border-white">
+                <div className="relative z-[2] size-11 overflow-hidden rounded-full border-2 border-white">
                   <Image
                     src="/assets/people/clinician.jpg"
                     alt="Clinician using NoDoseOff reports"
@@ -39,7 +39,7 @@ export default function Banner() {
                     sizes="44px"
                   />
                 </div>
-                <div className="relative z-[1] -ml-3 size-11 overflow-hidden border-2 border-white">
+                <div className="relative z-[1] -ml-3 size-11 overflow-hidden rounded-full border-2 border-white">
                   <Image
                     src="/assets/people/caregiver.jpg"
                     alt="Caregiver staying on top of doses"
@@ -52,7 +52,7 @@ export default function Banner() {
                   Patients &amp; caregivers, same calm routine
                 </p>
               </div>
-              <h2 className="text-[2rem] font-bold tracking-tight ss:text-[2.5rem]">
+              <h2 className="text-[2rem] font-extrabold tracking-tight ss:text-[2.5rem]">
                 Ready for fewer missed doses?
               </h2>
               <p className="mt-3 max-w-lg text-[15px] leading-relaxed text-white/75 ss:text-[16px]">
@@ -65,7 +65,7 @@ export default function Banner() {
               className="ndo-cta ndo-cta-solid group inline-flex shrink-0 items-center gap-2 px-7 py-3.5 text-[15px] font-bold"
             >
               Get started free
-              <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+              <ArrowRight className="ndo-arrow size-4" />
             </Link>
           </div>
         </m.div>

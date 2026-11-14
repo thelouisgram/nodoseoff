@@ -8,6 +8,7 @@ import {
   dashboardTabLabel,
   isDashboardTabActive,
 } from "@/utils/dashboard/nav";
+import AmandaMark from "@/Layout/marketing/AmandaMark";
 
 interface TabItem {
   name: string;
@@ -25,6 +26,7 @@ const Tabs: React.FC<TabsProps> = ({ item, activeTab, nav }) => {
   const Icon = item.icon;
   const isActive = isDashboardTabActive(item.name, activeTab);
   const label = dashboardTabLabel(item.name);
+  const isAmanda = item.name === "AMANDA 6";
 
   return (
     <button
@@ -50,11 +52,19 @@ const Tabs: React.FC<TabsProps> = ({ item, activeTab, nav }) => {
       ) : null}
 
       <span className="relative z-[1] grid size-10 shrink-0 place-items-center">
-        <Icon
-          className="size-[19px]"
-          strokeWidth={isActive ? 2 : 1.75}
-          absoluteStrokeWidth
-        />
+        {isAmanda ? (
+          <AmandaMark
+            compact
+            className="size-[22px] [&_svg]:rounded-md [&_svg]:shadow-none"
+            onDark={isActive}
+          />
+        ) : (
+          <Icon
+            className="size-[19px]"
+            strokeWidth={isActive ? 2 : 1.75}
+            absoluteStrokeWidth
+          />
+        )}
       </span>
 
       <span

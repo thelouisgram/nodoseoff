@@ -54,7 +54,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta name="theme-color" content="#002860" />
         <meta
           name="description"
-          content="Track medications, get smart dose reminders, and stay on top of long-term treatment with NoDoseOff."
+          content="Medication tracking and dose reminders for cancer patients, autoimmune disease, HIV ARVs, diabetes, contraceptives, Ozempic, and other long-term treatment — NoDoseOff."
         />
       </Head>
       <div className={`${manrope.variable} font-sans antialiased`}>

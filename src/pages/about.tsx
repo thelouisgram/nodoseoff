@@ -15,28 +15,28 @@ import { m, useLandingVariants, viewOnce } from "@/components/landing/motion";
  */
 const TEAM: TeamMember[] = [
   {
-    name: "Dr. Adeyeye Adesanoye",
+    name: "Dr. Adesanoye Adeyeye",
     role: "Founder and Chief Executive Officer",
     blurb: "",
     image: "/assets/team/01-adeyeye.jpg",
     initials: "AA",
   },
   {
-    name: "Dr. Agbo Catherine",
+    name: "Dr. Catherine Agbo",
     role: "Co-Founder and Chief Medical Officer",
     blurb: "",
     image: "/assets/team/02-casty.jpg",
-    initials: "AC",
+    initials: "CA",
   },
   {
-    name: "Dr. Ugwoke Chelsea",
+    name: "Dr. Chelsea Ugwoke",
     role: "Co-Founder and Chief Product Officer",
     blurb: "",
     image: "/assets/team/03-chelsea.jpg",
-    initials: "UC",
+    initials: "CU",
   },
   {
-    name: "Adeyeye Adeife Esq.",
+    name: "Adeife Adeyeye Esq.",
     role: "Chief Legal and Operating Officer",
     blurb: "",
     image: "/assets/team/04-adeife.png",
@@ -91,7 +91,7 @@ export default function AboutPage() {
               <div className="mt-5 space-y-4 text-[15px] leading-relaxed text-soft-muted ss:text-[16px]">
                 <p>
                   <span className="font-semibold text-soft-ink">
-                    Dr. Adeyeye Adesanoye
+                    Dr. Adesanoye Adeyeye
                   </span>{" "}
                   started building NoDoseOff in 2023 in medical school —
                   because sticky notes and phone alarms kept failing the people

@@ -179,6 +179,8 @@ export default function AboutPage() {
               </h2>
               <p className="mt-2 text-[15px] leading-relaxed text-soft-muted">
                 Building NoDoseOff for anyone on long-term medication.
+                NoDoseOff is a product of{" "}
+                <span className="font-semibold text-soft-ink">Vomerly</span>.
               </p>
             </div>
             <Link

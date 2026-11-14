@@ -8,6 +8,7 @@ import {
 import { X, Loader2, AlertCircle } from "lucide-react";
 import { useAppSelector } from "@/store";
 import { motion, AnimatePresence } from "framer-motion";
+import { sameDrugName } from "@/utils/drugs";
 
 interface AllergiesFormProps {
   setActiveModal: (value: string) => void;
@@ -49,8 +50,8 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
       return;
     }
 
-    const drugAlreadyExists = allergies.some(
-      (item) => item.drug.toLowerCase() === trimmedDrug.toLowerCase()
+    const drugAlreadyExists = allergies.some((item) =>
+      sameDrugName(item.drug, trimmedDrug)
     );
 
     if (drugAlreadyExists) {
@@ -123,8 +124,9 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
               <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl flex items-start gap-3">
                 <AlertCircle className="size-5 text-amber-600 flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-amber-800">
-                  Adding a drug to allergies will prevent it from being added to
-                  your medication schedule.
+                  Adding a drug to allergies will warn you before it can be
+                  added to your schedule — you can still override if a clinician
+                  needs you on it.
                 </p>
               </div>
 

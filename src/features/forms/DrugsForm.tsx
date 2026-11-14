@@ -17,14 +17,17 @@ import {
 } from "@/hooks/useDashboardData";
 import { dose } from "@/utils/dashboard/dashboard";
 import {
+  findMatchingAllergy,
   findOverlappingCourse,
+  isAllergicToDrug,
   nextAvailableCourseStart,
   sameDrugName,
+  sortCoursesRecentFirst,
 } from "@/utils/drugs";
 import dayjs from "dayjs";
 import { useAppSelector } from "@/store";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Loader2 } from "lucide-react";
+import { X, Loader2, AlertTriangle } from "lucide-react";
 
 interface DrugFormProps {
   setActiveModal: (value: string) => void;
@@ -57,6 +60,18 @@ const DrugsForm: React.FC<DrugFormProps> = ({
   const refillSeeded = useRef(false);
 
   const [loading, setLoading] = useState(false);
+  const [allergyWarning, setAllergyWarning] = useState<{
+    allergyLabel: string;
+    payload: {
+      drug: string;
+      frequency: string;
+      route: string;
+      start: string;
+      end: string;
+      time: string[];
+      reminder: boolean;
+    };
+  } | null>(null);
   const [formData, setFormData] = useState({
     drug: "",
     frequency: "",
@@ -148,13 +163,9 @@ const DrugsForm: React.FC<DrugFormProps> = ({
     const byId = pool.find(
       (d) => d.drugId && activeDrugId && d.drugId === activeDrugId
     );
-    const byName = pool
-      .filter((d) => sameDrugName(d.drug, activeDrug))
-      .sort((a, b) => {
-        const aEnd = Date.parse(a.end || "") || 0;
-        const bEnd = Date.parse(b.end || "") || 0;
-        return bEnd - aEnd;
-      })[0];
+    const byName = sortCoursesRecentFirst(
+      pool.filter((d) => sameDrugName(d.drug, activeDrug))
+    )[0];
     const source = byId || byName;
     if (!source) {
       // Wait until drug lists have loaded before failing
@@ -282,6 +293,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({
 
   const handleClose = () => {
     if (!loading) {
+      setAllergyWarning(null);
       setActiveModal("");
       resetFormData();
       resetFormErrors();
@@ -328,22 +340,12 @@ const DrugsForm: React.FC<DrugFormProps> = ({
     }
 
     const drugAlreadyExists =
-      !isRefill &&
-      drugs.some((drug) => drug.drug.toLowerCase() === drugName);
-
-    const allergicToDrug = allergies.some(
-      (item) => item.drug.toLowerCase() === drugName
-    );
+      !isRefill && drugs.some((drug) => sameDrugName(drug.drug, drugName));
 
     if (drugAlreadyExists) {
       toast.error(
         `'${drugName}' is already ongoing. Use Refill to start the next course after it ends.`
       );
-      return;
-    }
-
-    if (allergicToDrug) {
-      toast.error(`'${drugName}' is a known drug allergy!`);
       return;
     }
 
@@ -362,7 +364,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({
       return;
     }
 
-    void addDrug({
+    const payload = {
       drug: drugName,
       frequency,
       route,
@@ -370,35 +372,56 @@ const DrugsForm: React.FC<DrugFormProps> = ({
       end: formData.end,
       time: times,
       reminder: formData.reminder,
-    });
+    };
+
+    if (isAllergicToDrug(drugName, allergies)) {
+      setAllergyWarning({
+        allergyLabel: findMatchingAllergy(drugName, allergies) || drugName,
+        payload,
+      });
+      return;
+    }
+
+    void addDrug(payload);
   };
 
-  const addDrug = async (payload: {
-    drug: string;
-    frequency: string;
-    route: string;
-    start: string;
-    end: string;
-    time: string[];
-    reminder: boolean;
-  }) => {
+  const addDrug = async (
+    payload: {
+      drug: string;
+      frequency: string;
+      route: string;
+      start: string;
+      end: string;
+      time: string[];
+      reminder: boolean;
+    },
+    allergyOverride = false
+  ) => {
     setLoading(true);
 
     try {
       await addDrugMutation.mutateAsync({
         userId: userId!,
         ...payload,
+        allergyOverride,
         userInfo: {
           name: info[0]?.name || "",
           email: info[0]?.email || "",
         },
       });
 
-      toast.success(
-        isRefill
-          ? `${payload.drug.toUpperCase()} refill started!`
-          : `${payload.drug.toUpperCase()} added successfully!`
-      );
+      if (allergyOverride) {
+        toast.warning(
+          `${payload.drug.toUpperCase()} added with allergy override. Confirm with your clinician.`
+        );
+      } else {
+        toast.success(
+          isRefill
+            ? `${payload.drug.toUpperCase()} refill started!`
+            : `${payload.drug.toUpperCase()} added successfully!`
+        );
+      }
+      setAllergyWarning(null);
       refillSeeded.current = false;
       setActiveModal("");
       resetFormData();
@@ -415,7 +438,10 @@ const DrugsForm: React.FC<DrugFormProps> = ({
         }
       }
       toast.error(
-        message && /active course|date range|overlap|medication already/i.test(message)
+        message &&
+          /active course|date range|overlap|medication already|drug allergy|override/i.test(
+            message
+          )
           ? message
           : "Error adding drug. Check your connection and try again."
       );
@@ -644,24 +670,6 @@ const DrugsForm: React.FC<DrugFormProps> = ({
                   </div>
                 </div>
 
-                {/* Reminder Checkbox */}
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    id="reminder"
-                    name="reminder"
-                    checked={formData.reminder}
-                    onChange={handleInputChange}
-                    disabled={loading}
-                    className="w-4 h-4 text-blue-600 border-gray-300  rounded focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed bg-white"
-                  />
-                  <label
-                    htmlFor="reminder"
-                    className="text-sm font-medium text-soft-ink "
-                  >
-                    Add Reminder
-                  </label>
-                </div>
               </div>
             </form>
 
@@ -669,7 +677,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({
             <div className="px-6 py-4 border-t border-black/[0.04] flex-shrink-0">
               <button
                 onClick={handleClick}
-                disabled={loading}
+                disabled={loading || Boolean(allergyWarning)}
                 className={`ndo-press flex w-full items-center justify-center gap-2 rounded-soft-md px-4 py-3 font-semibold text-white ${
                   loading
                     ? "cursor-not-allowed bg-soft-ink/50"
@@ -689,6 +697,85 @@ const DrugsForm: React.FC<DrugFormProps> = ({
               </button>
             </div>
           </motion.div>
+
+          {allergyWarning ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[170] flex items-center justify-center bg-soft-ink/35 p-4 backdrop-blur-sm"
+              onClick={() => {
+                if (!loading) setAllergyWarning(null);
+              }}
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 12 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 12 }}
+                transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                onClick={(e) => e.stopPropagation()}
+                className="w-full max-w-sm rounded-2xl border border-black/[0.05] bg-white shadow-soft-md"
+                role="alertdialog"
+                aria-labelledby="allergy-override-title"
+                aria-describedby="allergy-override-desc"
+              >
+                <div className="flex items-start gap-3 border-b border-black/[0.04] px-5 py-4">
+                  <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-700">
+                    <AlertTriangle className="size-4" strokeWidth={2} />
+                  </span>
+                  <div className="min-w-0">
+                    <h3
+                      id="allergy-override-title"
+                      className="text-[16px] font-bold tracking-tight text-soft-ink"
+                    >
+                      Known allergy warning
+                    </h3>
+                    <p
+                      id="allergy-override-desc"
+                      className="mt-1.5 text-[13px] leading-relaxed text-soft-muted"
+                    >
+                      <span className="font-semibold capitalize text-soft-ink">
+                        {allergyWarning.payload.drug}
+                      </span>{" "}
+                      matches your allergy for{" "}
+                      <span className="font-semibold capitalize text-amber-800">
+                        {allergyWarning.allergyLabel}
+                      </span>
+                      . Only continue if a clinician still needs you on this
+                      medicine.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex justify-end gap-2 px-5 py-4">
+                  <button
+                    type="button"
+                    disabled={loading}
+                    onClick={() => setAllergyWarning(null)}
+                    className="ndo-press rounded-lg border border-black/[0.06] px-4 py-2 text-sm font-semibold text-soft-ink hover:bg-soft-canvas disabled:opacity-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    disabled={loading}
+                    onClick={() =>
+                      void addDrug(allergyWarning.payload, true)
+                    }
+                    className="ndo-press inline-flex items-center gap-1.5 rounded-xl bg-amber-600 px-4 py-2 text-sm font-semibold text-white shadow-soft-sm hover:bg-amber-700 disabled:opacity-70"
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="size-4 animate-spin" />
+                        Adding…
+                      </>
+                    ) : (
+                      "Add anyway"
+                    )}
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          ) : null}
         </motion.div>
       )}
     </AnimatePresence>

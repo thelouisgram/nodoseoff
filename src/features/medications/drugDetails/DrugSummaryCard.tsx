@@ -1,5 +1,5 @@
 import React from "react";
-import { Beaker, CheckCircle, LucideIcon } from "lucide-react";
+import { AlertTriangle, Beaker, CheckCircle, LucideIcon } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface DrugSummaryCardProps {
@@ -9,6 +9,8 @@ interface DrugSummaryCardProps {
   /** null when there are no past doses to score yet */
   compliance: number | null;
   courseCount?: number;
+  /** Ongoing med that is also on the allergy list (override). */
+  knownAllergy?: boolean;
 }
 
 interface StatusConfig {
@@ -38,6 +40,7 @@ const DrugSummaryCard: React.FC<DrugSummaryCardProps> = ({
   route,
   compliance,
   courseCount = 1,
+  knownAllergy = false,
 }) => {
   const status = statusMap[tab];
   const scored = compliance != null;
@@ -65,9 +68,13 @@ const DrugSummaryCard: React.FC<DrugSummaryCardProps> = ({
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="w-full space-y-4 rounded-2xl border border-black/[0.05] bg-white p-5 shadow-soft-sm ss:w-1/2"
+      className={`w-full space-y-4 rounded-2xl border p-5 shadow-soft-sm ss:w-1/2 ${
+        knownAllergy
+          ? "border-amber-200 bg-amber-50"
+          : "border-black/[0.05] bg-white"
+      }`}
     >
-      {(status || courseCount > 1) && (
+      {(status || courseCount > 1 || knownAllergy) && (
         <div className="flex flex-wrap items-center gap-2">
           {status ? (
             <span
@@ -77,6 +84,12 @@ const DrugSummaryCard: React.FC<DrugSummaryCardProps> = ({
               {status.label}
             </span>
           ) : null}
+          {knownAllergy ? (
+            <span className="inline-flex items-center gap-1.5 rounded-[10px] bg-amber-200/80 px-2.5 py-1 text-[12px] font-semibold text-amber-900">
+              <AlertTriangle className="size-3.5" strokeWidth={2.25} />
+              Allergy override
+            </span>
+          ) : null}
           {courseCount > 1 ? (
             <span className="rounded-[10px] bg-soft-canvas px-2.5 py-1 text-[12px] font-semibold text-soft-muted">
               {courseCount} courses
@@ -84,6 +97,12 @@ const DrugSummaryCard: React.FC<DrugSummaryCardProps> = ({
           ) : null}
         </div>
       )}
+      {knownAllergy ? (
+        <p className="text-[12px] leading-relaxed text-amber-900/80">
+          This medicine is on your allergy list and was added with a warning
+          override. Confirm with your clinician if unsure.
+        </p>
+      ) : null}
 
       <div className="flex items-center justify-between text-sm">
         <div>

@@ -423,24 +423,6 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                       />
                     </div>
                   </div>
-                {/* Reminder Checkbox */}
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    id="reminder"
-                    name="reminder"
-                    checked={formData.reminder}
-                    onChange={handleInputChange}
-                    disabled={loading}
-                    className="w-4 h-4 text-blue-600 border-gray-300  rounded focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed bg-white"
-                  />
-                  <label
-                    htmlFor="reminder"
-                    className="text-sm font-medium text-soft-ink "
-                  >
-                    Add Reminder
-                  </label>
-                </div>
               </div>
             </form>
 

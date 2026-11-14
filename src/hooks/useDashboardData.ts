@@ -157,6 +157,8 @@ interface AddDrugParams {
   end: string;
   time: string[];
   reminder: boolean;
+  /** Explicit confirm that a known allergy may still be added. */
+  allergyOverride?: boolean;
   userInfo: { name: string; email: string };
 }
 

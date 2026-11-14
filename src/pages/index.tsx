@@ -33,8 +33,8 @@ const Home = () => {
       <main className="relative z-[2] overflow-x-hidden bg-[#f3f7fb] font-sans text-soft-ink antialiased">
         <Hero />
         <Features />
-        <WhoItsFor />
         <Amanda />
+        <WhoItsFor />
         <HowItWorks />
         <Banner />
         <Footer />

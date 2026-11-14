@@ -3,6 +3,7 @@ import { requireUserId } from "@/lib/server/auth";
 import { getSql } from "@/lib/db";
 import { deleteCloudinaryAsset } from "@/lib/cloudinary";
 import { uploadProfileImage } from "@/lib/cloudinary";
+import { isAllergicToDrug, sameDrugName } from "@/utils/drugs";
 
 type MutationBody = {
   action: string;
@@ -38,6 +39,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           return res.status(400).json({ error: "End date cannot be before start date" });
         }
 
+        const allergyOverride = Boolean(p.allergyOverride);
+        const allergyRows = await sql`
+          SELECT drug FROM allergies WHERE "userId" = ${userId}
+        `;
+        if (
+          !allergyOverride &&
+          isAllergicToDrug(
+            drugName,
+            allergyRows as Array<{ drug?: string | null }>
+          )
+        ) {
+          return res.status(409).json({
+            error: `'${drugName}' is a known drug allergy. Confirm override if a clinician still needs you on it.`,
+          });
+        }
+
         const existing = await sql`
           SELECT drug, start, "end", "drugId"
           FROM drugs
@@ -45,8 +62,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         `;
         const overlap = (existing as Array<Record<string, unknown>>).find(
           (row) => {
-            const name = String(row.drug || "").trim().toLowerCase();
-            if (name !== drugName) return false;
+            if (!sameDrugName(String(row.drug || ""), drugName)) return false;
             const aStart = String(row.start || "").slice(0, 10);
             const aEnd = String(row.end || "").slice(0, 10);
             if (!aStart || !aEnd) return false;

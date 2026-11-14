@@ -165,8 +165,7 @@ const AccountSettings: React.FC<Settings> = ({
           </div>
 
           <p className="px-1 text-[12px] leading-relaxed text-soft-muted">
-            Turning reminders off updates every ongoing medication. You can still
-            change reminders on a single drug when you edit it.
+            This applies to every ongoing medication at once.
           </p>
         </div>
       </div>

@@ -8,6 +8,7 @@ import {
   useDrugs,
   useSchedule,
   useCompletedDrugs,
+  useAllergies,
   useToggleDoseCompletedMutation,
 } from "@/hooks/useDashboardData";
 import { DrugDetailsProps } from "@/types/drug";
@@ -22,7 +23,9 @@ import { Detail } from "@/types/drug";
 import {
   convertedTimes,
   calculateTimePeriod,
+  isAllergicToDrug,
   sameDrugName,
+  sortCoursesRecentFirst,
 } from "@/utils/drugs";
 import { useAppSelector } from "@/store";
 import { calculateDrugComplianceByIds } from "@/utils/dashboard/drugs";
@@ -47,6 +50,7 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
   const { data: drugs = [] } = useDrugs(userId);
   const { data: schedule = [] } = useSchedule(userId);
   const { data: completedDrugs = [] } = useCompletedDrugs(userId);
+  const { data: allergies = [] } = useAllergies(userId);
 
   const [tracker, setTracker] = useState("Today");
   const toggleDoseCompleted = useToggleDoseCompletedMutation();
@@ -83,11 +87,7 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
     const matches = drugsArray.filter((item) =>
       sameDrugName(item.drug, activeDrug)
     );
-    return [...matches].sort((a, b) => {
-      const aEnd = Date.parse(a.end || "") || 0;
-      const bEnd = Date.parse(b.end || "") || 0;
-      return bEnd - aEnd;
-    });
+    return sortCoursesRecentFirst(matches);
   }, [drugsArray, activeDrug]);
 
   // All course IDs in this tab only — never includes the other tab's regimens
@@ -138,7 +138,7 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
     return null;
   }
 
-  const { frequency, time, start, end, reminder, route, drug } = latestCourse;
+  const { frequency, time, start, end, route, drug } = latestCourse;
 
   const earliestStart =
     [...courses].sort(
@@ -183,7 +183,6 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
       name: "Duration",
       details: duration,
     },
-    { name: "Reminder", details: reminder ? "Yes" : "No" },
     {
       name: "Start Date",
       details: formatDate(earliestStart),
@@ -219,6 +218,9 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
         drug={drug ?? ""}
         tab={tab}
         courseCount={courses.length}
+        knownAllergy={
+          tab === "ongoing" && isAllergicToDrug(drug ?? "", allergies)
+        }
         route={
           courses.length > 1 &&
           new Set(courses.map((c) => (c.route || "").toLowerCase())).size > 1

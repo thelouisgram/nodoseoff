@@ -132,7 +132,7 @@ export interface DrugDetailsData {
   time: string[];
   start: string;
   end: string;
-  reminder: boolean;
+  reminder?: boolean;
   totalDoses: number;
   completedDoses: number;
   missedDoses: number;
@@ -140,7 +140,7 @@ export interface DrugDetailsData {
 }
 
 export function generateDrugDetails(data: DrugDetailsData): Detail[] {
-  const { frequency, time, start, end, reminder, totalDoses, completedDoses, missedDoses, remainingDoses } = data;
+  const { frequency, time, start, end, totalDoses, completedDoses, missedDoses, remainingDoses } = data;
   
   const duration = calculateTimePeriod(start, end);
 
@@ -156,10 +156,6 @@ export function generateDrugDetails(data: DrugDetailsData): Detail[] {
     { 
       name: "Treatment Duration", 
       details: duration 
-    },
-    { 
-      name: "Reminder Set", 
-      details: reminder ? "Yes" : "No" 
     },
     { 
       name: "Start Date", 

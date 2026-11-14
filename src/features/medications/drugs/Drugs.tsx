@@ -30,6 +30,7 @@ import FloatingAddActions from "./FloatingAddActions";
 import { useAppSelector } from "@/store";
 import { AnimatePresence, motion } from "framer-motion";
 import { useDashboardSectionMotion } from "@/components/landing/motion";
+import { sameDrugName } from "@/utils/drugs";
 
 interface DrugsProps {
   add: boolean;
@@ -123,7 +124,7 @@ const Drugs: React.FC<DrugsProps> = ({
       return;
     }
 
-    if (allergies.some((a) => a.drug === drug)) {
+    if (allergies.some((a) => sameDrugName(a.drug, drug))) {
       toast.error("Already an allergy");
       return;
     }

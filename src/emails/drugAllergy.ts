@@ -98,7 +98,7 @@ export function generateDrugAllergyEmail(
             </div>
 
             <p>Please share this information with your healthcare provider to ensure safe medication use.</p>
-            <p>You will be prevented from adding this drug moving forward to avoid allergic reactions.</p>
+            <p>You will be warned before adding this drug again. You can still override that warning if a clinician needs you on it.</p>
           </div>
           <div class="footer">
             <p>Need help? Contact our support team at <a href="mailto:nodoseoff@gmail.com">nodoseoff@gmail.com</a>.</p>

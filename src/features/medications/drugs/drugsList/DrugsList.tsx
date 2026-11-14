@@ -1,12 +1,18 @@
 import React, { SetStateAction } from "react";
-import { calculateTimePeriod, GroupedDrug, sameDrugName } from "@/utils/drugs";
+import {
+  calculateTimePeriod,
+  GroupedDrug,
+  isAllergicToDrug,
+  sameDrugName,
+} from "@/utils/drugs";
 import OptionModal from "../../optionModal";
 import { useAppSelector, useAppDispatch } from "@/store";
 import { setActiveDrug, setActiveDrugId } from "@/store/appSlice";
+import { useAllergies } from "@/hooks/useDashboardData";
 import { AnimatePresence, motion } from "framer-motion";
 import { ndoEase } from "@/components/landing/motion";
 import { DRUGS_GRID } from "./DrugsListTitle";
-import { ChevronRight } from "lucide-react";
+import { AlertTriangle, ChevronRight } from "lucide-react";
 
 interface AllergyProps {
   drug: string;
@@ -53,7 +59,10 @@ const DrugsList: React.FC<DrugsListProps> = ({
   activeView,
   startIndex = 0,
 }) => {
-  const { activeDrug, activeDrugId } = useAppSelector((state) => state.app);
+  const { activeDrug, activeDrugId, userId } = useAppSelector(
+    (state) => state.app
+  );
+  const { data: allergies = [] } = useAllergies(userId);
   const dispatch = useAppDispatch();
 
   if (tab === "allergies") {
@@ -149,6 +158,8 @@ const DrugsList: React.FC<DrugsListProps> = ({
                 : "—";
 
           const rowKey = `name-${drug.drug.toLowerCase()}-${startIndex + index}`;
+          const isAllergyMed =
+            tab === "ongoing" && isAllergicToDrug(drug.drug, allergies);
 
           return (
             <motion.div
@@ -167,25 +178,54 @@ const DrugsList: React.FC<DrugsListProps> = ({
                 dispatch(setActiveDrugId(drug.drugId));
                 setActiveView("details");
               }}
-              className={`${DRUGS_GRID} group cursor-pointer border-b border-black/[0.04] px-4 py-3.5 last:border-0 ss:px-5 ${
-                isActive ? "bg-soft-primary-soft/50" : "hover:bg-soft-canvas/70"
+              title={
+                isAllergyMed
+                  ? "On your allergy list — added with override"
+                  : undefined
+              }
+              className={`${DRUGS_GRID} group cursor-pointer border-b px-4 py-3.5 last:border-0 ss:px-5 ${
+                isAllergyMed
+                  ? "border-amber-200/80 bg-amber-50 hover:bg-amber-100/70"
+                  : isActive
+                    ? "border-black/[0.04] bg-soft-primary-soft/50"
+                    : "border-black/[0.04] hover:bg-soft-canvas/70"
               }`}
             >
               <div className="flex min-w-0 items-center gap-3.5">
-                <span className="w-5 shrink-0 text-right text-[11px] font-semibold tabular-nums text-soft-muted/80">
+                <span
+                  className={`w-5 shrink-0 text-right text-[11px] font-semibold tabular-nums ${
+                    isAllergyMed ? "text-amber-700/70" : "text-soft-muted/80"
+                  }`}
+                >
                   {String(startIndex + index + 1).padStart(2, "0")}
                 </span>
                 <div className="min-w-0">
-                  <p className="truncate text-[14px] font-semibold capitalize tracking-tight text-soft-ink">
-                    {drug.drug}
-                  </p>
-                  <p className="mt-0.5 truncate text-[12px] text-soft-muted ss:hidden">
+                  <div className="flex min-w-0 items-center gap-2">
+                    <p className="truncate text-[14px] font-semibold capitalize tracking-tight text-soft-ink">
+                      {drug.drug}
+                    </p>
+                    {isAllergyMed ? (
+                      <span className="inline-flex shrink-0 items-center gap-1 rounded-md bg-amber-200/80 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-900">
+                        <AlertTriangle className="size-2.5" strokeWidth={2.5} />
+                        Allergy
+                      </span>
+                    ) : null}
+                  </div>
+                  <p
+                    className={`mt-0.5 truncate text-[12px] ss:hidden ${
+                      isAllergyMed ? "text-amber-800/70" : "text-soft-muted"
+                    }`}
+                  >
                     {[route !== "—" ? route : null, frequency, duration]
                       .filter(Boolean)
                       .join(" · ")}
                   </p>
                   {courseCount > 1 ? (
-                    <p className="mt-0.5 hidden text-[11px] font-medium text-soft-primary ss:block">
+                    <p
+                      className={`mt-0.5 hidden text-[11px] font-medium ss:block ${
+                        isAllergyMed ? "text-amber-800" : "text-soft-primary"
+                      }`}
+                    >
                       {courseCount} courses
                     </p>
                   ) : null}
@@ -207,7 +247,13 @@ const DrugsList: React.FC<DrugsListProps> = ({
               </p>
 
               <div className="hidden min-w-0 ss:block">
-                <span className="inline-flex max-w-full truncate rounded-md bg-soft-primary/[0.07] px-2 py-0.5 text-[12px] font-semibold text-soft-primary">
+                <span
+                  className={`inline-flex max-w-full truncate rounded-md px-2 py-0.5 text-[12px] font-semibold ${
+                    isAllergyMed
+                      ? "bg-amber-200/70 text-amber-900"
+                      : "bg-soft-primary/[0.07] text-soft-primary"
+                  }`}
+                >
                   {frequency}
                 </span>
               </div>

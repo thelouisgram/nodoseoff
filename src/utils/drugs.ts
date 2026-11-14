@@ -12,14 +12,40 @@ export type GroupedDrug = DrugProps & {
   courseCount: number;
 };
 
-function normalizeDrugName(name: string) {
-  return name.trim().toLowerCase();
+/**
+ * Collapse free-text drug labels for identity checks.
+ * Strips strength/dose tokens so "ibuprofen" and "ibuprofen 40mg" match.
+ */
+export function normalizeDrugName(name: string) {
+  return name
+    .trim()
+    .toLowerCase()
+    .replace(
+      /\b\d+([.,]\d+)?\s*(mg|mcg|µg|ug|g|ml|l|iu|units?|%|mg\/ml)\b/gi,
+      " "
+    )
+    .replace(/[^a-z0-9\s/+-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 function courseSortKey(course: DrugProps) {
   const end = Date.parse(course.end || "");
   const start = Date.parse(course.start || "");
   return (Number.isNaN(end) ? 0 : end) * 1e13 + (Number.isNaN(start) ? 0 : start);
+}
+
+/** Newest course first: latest start, then latest end. */
+export function sortCoursesRecentFirst<T extends DrugProps>(courses: T[]): T[] {
+  return [...courses].sort((a, b) => {
+    const startDiff =
+      Date.parse(String(b.start || "")) - Date.parse(String(a.start || ""));
+    if (startDiff !== 0) return startDiff;
+    const endDiff =
+      Date.parse(String(b.end || "")) - Date.parse(String(a.end || ""));
+    if (endDiff !== 0) return endDiff;
+    return courseSortKey(b) - courseSortKey(a);
+  });
 }
 
 /**
@@ -65,9 +91,7 @@ export function groupDrugsByName(drugs: DrugProps[]): GroupedDrug[] {
 
   const grouped: GroupedDrug[] = [];
   for (const courses of map.values()) {
-    const sorted = [...courses].sort(
-      (a, b) => courseSortKey(b) - courseSortKey(a)
-    );
+    const sorted = sortCoursesRecentFirst(courses);
     const latest = sorted[0];
     grouped.push({
       ...latest,
@@ -83,6 +107,54 @@ export function groupDrugsByName(drugs: DrugProps[]): GroupedDrug[] {
 
 export function sameDrugName(a: string, b: string) {
   return normalizeDrugName(a) === normalizeDrugName(b);
+}
+
+/** True when a med name should be blocked by a recorded allergy. */
+export function drugMatchesAllergy(drugName: string, allergyName: string) {
+  const drug = normalizeDrugName(drugName);
+  const allergy = normalizeDrugName(allergyName);
+  if (!drug || !allergy) return false;
+  if (drug === allergy) return true;
+
+  const drugTokens = drug.split(" ").filter(Boolean);
+  const allergyTokens = allergy.split(" ").filter(Boolean);
+
+  // Allergy "ibuprofen" blocks "ibuprofen tablet" / "advil ibuprofen"
+  if (
+    allergyTokens.length === 1 &&
+    drugTokens.includes(allergyTokens[0])
+  ) {
+    return true;
+  }
+  // Allergy "ibuprofen tablet" still blocks plain "ibuprofen"
+  if (
+    drugTokens.length === 1 &&
+    allergyTokens.includes(drugTokens[0])
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
+export function isAllergicToDrug(
+  drugName: string,
+  allergies: Array<{ drug?: string | null }>
+) {
+  return allergies.some((item) =>
+    drugMatchesAllergy(drugName, String(item.drug || ""))
+  );
+}
+
+/** First matching allergy label for warnings (preserves stored spelling). */
+export function findMatchingAllergy(
+  drugName: string,
+  allergies: Array<{ drug?: string | null }>
+) {
+  const match = allergies.find((item) =>
+    drugMatchesAllergy(drugName, String(item.drug || ""))
+  );
+  return match?.drug?.trim() || "";
 }
 
 /** Inclusive YYYY-MM-DD range overlap (ISO dates compare lexicographically). */

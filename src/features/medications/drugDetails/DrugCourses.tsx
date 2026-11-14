@@ -1,6 +1,10 @@
 import React from "react";
 import { DrugProps, ScheduleItem } from "@/types/dashboard";
-import { calculateTimePeriod, convertedTimes } from "@/utils/drugs";
+import {
+  calculateTimePeriod,
+  convertedTimes,
+  sortCoursesRecentFirst,
+} from "@/utils/drugs";
 import { formatDate, frequencyToPlaceholder } from "@/utils/dashboard/dashboard";
 import { calculateDrugCompliance } from "@/utils/dashboard/drugs";
 import { motion } from "framer-motion";
@@ -31,6 +35,8 @@ const DrugCourses: React.FC<DrugCoursesProps> = ({
 }) => {
   if (courses.length <= 1) return null;
 
+  const ordered = sortCoursesRecentFirst(courses);
+
   const subtitle =
     tab === "completed"
       ? "Finished regimens of this medication"
@@ -43,14 +49,14 @@ const DrugCourses: React.FC<DrugCoursesProps> = ({
           Courses
         </p>
         <h3 className="mt-0.5 text-[16px] font-bold tracking-tight text-soft-ink">
-          {courses.length} regimens
+          {ordered.length} regimens
         </h3>
         <p className="mt-0.5 text-[13px] text-soft-muted">{subtitle}</p>
       </div>
 
       {/* Mobile */}
       <div className="space-y-3 ss:hidden">
-        {courses.map((course, index) => {
+        {ordered.map((course, index) => {
           const compliance = calculateDrugCompliance(schedule, course.drugId);
           const duration = calculateTimePeriod(course.start, course.end);
           const frequency =
@@ -162,7 +168,7 @@ const DrugCourses: React.FC<DrugCoursesProps> = ({
               </tr>
             </thead>
             <tbody>
-              {courses.map((course, index) => {
+              {ordered.map((course, index) => {
                 const compliance = calculateDrugCompliance(
                   schedule,
                   course.drugId

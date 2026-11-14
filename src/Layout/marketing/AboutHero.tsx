@@ -6,6 +6,7 @@ import { m, useLandingVariants } from "@/components/landing/motion";
 
 const FACTS = [
   { label: "Origin", value: "College of Medicine, Bingham University" },
+  { label: "Building since", value: "2023" },
   { label: "Team", value: "3 doctors · 1 lawyer" },
   { label: "Focus", value: "Long-term regimens" },
 ];

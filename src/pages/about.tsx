@@ -48,7 +48,7 @@ const BEATS = [
   {
     n: "01",
     title: "The spark",
-    text: "A marathon build in medical school — not a pitch deck, a problem that wouldn’t leave.",
+    text: "Building started in 2023 — a marathon in medical school, not a pitch deck, for a problem that wouldn’t leave.",
   },
   {
     n: "02",
@@ -93,9 +93,9 @@ export default function AboutPage() {
                   <span className="font-semibold text-soft-ink">
                     Dr. Adeyeye Adesanoye
                   </span>{" "}
-                  started NoDoseOff in medical school because sticky notes and
-                  phone alarms kept failing the people who needed consistency
-                  the most.
+                  started building NoDoseOff in 2023 in medical school —
+                  because sticky notes and phone alarms kept failing the people
+                  who needed consistency the most.
                 </p>
                 <p>
                   On the wards, the regimen is easy to write. Between visits,

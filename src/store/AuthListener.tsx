@@ -1,5 +1,10 @@
 import { useEffect, useRef } from "react";
-import { authClient, getAccessToken } from "@/lib/auth/client";
+import {
+  authClient,
+  fetchLiveSession,
+  getAccessToken,
+  invalidateClientSessionCache,
+} from "@/lib/auth/client";
 import { useAppDispatch } from "@/store";
 import { setAuthLoading, setAuthUser } from "@/store/authSlice";
 import { setIsAuthenticated, setUserId } from "@/store/appSlice";
@@ -14,6 +19,20 @@ type SessionUser = {
 
 const MAX_JWT_RETRIES = 4;
 const FOCUS_REFRESH_DEBOUNCE_MS = 2_000;
+
+const GUEST_AUTH_PATHS = [
+  "/login",
+  "/signup",
+  "/forgetpassword",
+  "/reset",
+  "/sso-callback",
+];
+
+function isGuestAuthPath(pathname: string): boolean {
+  return GUEST_AUTH_PATHS.some(
+    (p) => pathname === p || pathname.startsWith(`${p}/`)
+  );
+}
 
 export default function AuthListener() {
   const dispatch = useAppDispatch();
@@ -31,19 +50,32 @@ export default function AuthListener() {
       dispatch(setUserId(""));
       dispatch(setIsAuthenticated(false));
       dispatch(clearDashboardData());
+      try {
+        localStorage.removeItem("nodoseoff_ai_chat_id");
+      } catch {
+        /* ignore */
+      }
     };
 
     const applySession = async () => {
       try {
-        const result = await authClient.getSession();
+        // Always use the network — never Neon’s in-memory getSession cache.
+        const live = await fetchLiveSession();
         if (cancelled) return;
-        const sessionData = result?.data as
-          | { session?: unknown; user?: SessionUser }
-          | null
-          | undefined;
-        const user = sessionData?.user;
+
+        const user = live?.user as SessionUser | null | undefined;
 
         if (!user?.id) {
+          // Drop stale client cache so captcha focus can’t revive a past user.
+          if (isGuestAuthPath(window.location.pathname)) {
+            const cached = await authClient.getSession().catch(() => null);
+            const cachedId = (
+              cached?.data as { user?: { id?: string } } | null | undefined
+            )?.user?.id;
+            if (cachedId) {
+              void invalidateClientSessionCache();
+            }
+          }
           clearAuth();
           if (!cancelled) dispatch(setAuthLoading(false));
           return;
@@ -57,6 +89,8 @@ export default function AuthListener() {
         dispatch(setIsAuthenticated(true));
         if (!cancelled) dispatch(setAuthLoading(false));
 
+        // On guest pages a real session still means leave — but captcha must
+        // not invent one. Live cookies are authoritative above.
         const token = await getAccessToken();
         if (cancelled) return;
 
@@ -69,17 +103,11 @@ export default function AuthListener() {
             return;
           }
 
-          // Client session cache can outlive cleared cookies (e.g. raw
-          // sign-out). Confirm against the network before treating as signed-in.
-          const live = await fetch(
-            "/api/auth/get-session?disableCookieCache=true",
-            { credentials: "include", headers: { Accept: "application/json" } }
-          )
-            .then((r) => (r.ok ? r.json() : null))
-            .catch(() => null);
-          const liveUser = (live as { user?: SessionUser } | null)?.user;
-          if (!liveUser?.id) {
-            clearAuth();
+          // Cookies claimed a user but JWT never arrived — treat as signed out
+          // on guest pages so signup/login stay usable.
+          if (isGuestAuthPath(window.location.pathname)) {
+            await invalidateClientSessionCache();
+            if (!cancelled) clearAuth();
             return;
           }
 
@@ -118,6 +146,11 @@ export default function AuthListener() {
     void applySession();
 
     const onFocus = () => {
+      // reCAPTCHA / Google iframes blur+focus the window. Refreshing session
+      // from cache on that churn was logging people back into a prior account
+      // on the signup page.
+      if (isGuestAuthPath(window.location.pathname)) return;
+
       const now = Date.now();
       if (now - lastFocusRefreshAtRef.current < FOCUS_REFRESH_DEBOUNCE_MS) {
         return;

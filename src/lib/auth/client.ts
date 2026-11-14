@@ -139,6 +139,50 @@ async function fetchAccessTokenFresh(): Promise<string | null> {
   return null;
 }
 
+export type LiveSessionUser = {
+  id: string;
+  email?: string | null;
+  name?: string | null;
+};
+
+/**
+ * Network session only — bypasses Neon Auth's in-memory getSession cache.
+ * Captcha/Google iframes blur the window; AuthListener focus refresh must not
+ * resurrect a signed-out user from that client cache.
+ */
+export async function fetchLiveSession(): Promise<{
+  user: LiveSessionUser | null;
+  session: unknown;
+} | null> {
+  try {
+    const res = await fetch("/api/auth/get-session?disableCookieCache=true", {
+      method: "GET",
+      credentials: "include",
+      cache: "no-store",
+      headers: { Accept: "application/json" },
+    });
+    if (!res.ok) return null;
+    const body = (await res.json().catch(() => null)) as
+      | { user?: LiveSessionUser | null; session?: unknown }
+      | null;
+    if (!body || typeof body !== "object") return null;
+    const user = body.user?.id ? body.user : null;
+    return { user, session: body.session ?? null };
+  } catch {
+    return null;
+  }
+}
+
+/** Drop Neon client session cache (sign-out hooks) without navigating away. */
+export async function invalidateClientSessionCache(): Promise<void> {
+  try {
+    await authClient.signOut({ disableRedirect: true });
+  } catch {
+    /* already signed out / network error */
+  }
+  clearAccessTokenCache();
+}
+
 /** Prefer Better Auth JWT; never send opaque session ids as Bearer tokens. */
 export async function getAccessToken(): Promise<string | null> {
   const cached = readCachedAccessToken();

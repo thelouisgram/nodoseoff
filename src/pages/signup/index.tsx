@@ -1,13 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { ChangeEvent, FormEvent, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { useRouter } from "next/router";
 import { apiJson } from "@/lib/api-client";
 import SeoHead from "@/components/seo/SeoHead";
-import ReCAPTCHA from "react-google-recaptcha";
-import { sendMail } from "@/utils/sendEmail";
-import { generateWelcomeEmail } from "@/emails/welcomeMail";
 import { useAuthSignUp } from "@/contexts/AuthContext";
 import { useGuestOnlyRedirect } from "@/hooks/useGuestOnlyRedirect";
 import Loader from "@/components/dashboard/Loader";
@@ -17,8 +14,6 @@ import { setIsAuthenticated, setUserId } from "@/store/appSlice";
 import { motion } from "framer-motion";
 import InteractiveLogo from "@/components/ui/InteractiveLogo";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
-import { recaptchaSiteKey } from "@/lib/captcha";
-import { verifyCaptchaClient } from "@/lib/captcha-client";
 import { waitForAccessToken } from "@/lib/auth/client";
 import {
   SoftButton,
@@ -40,15 +35,12 @@ const CreateAccount = () => {
     password: "",
   });
 
-  const siteKey = recaptchaSiteKey();
-  const captchaRef = useRef<ReCAPTCHA>(null);
   const dispatch = useAppDispatch();
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [googleLoading, setGoogleLoading] = useState(false);
 
@@ -77,14 +69,6 @@ const CreateAccount = () => {
       setErrorMessage("Passwords do not match.");
       return;
     }
-    if (!siteKey) {
-      setErrorMessage("Captcha is not configured. Please try again later.");
-      return;
-    }
-    if (!captchaToken) {
-      setErrorMessage("Please complete the CAPTCHA verification.");
-      return;
-    }
     if (Object.values(formData).some((field) => field === "")) {
       setErrorMessage("Please fill in all fields.");
       return;
@@ -98,15 +82,6 @@ const CreateAccount = () => {
     setErrorMessage("");
 
     try {
-      const captcha = await verifyCaptchaClient(captchaToken);
-      if (!captcha.ok) {
-        setErrorMessage(captcha.error);
-        captchaRef.current?.reset();
-        setCaptchaToken("");
-        setLoading(false);
-        return;
-      }
-
       const { user: signedUpUser, error: signUpError } = await signUp(
         formData.email,
         formData.password,
@@ -117,8 +92,6 @@ const CreateAccount = () => {
         setErrorMessage(
           "Error signing up: " + (signUpError?.message || "Sign up failed.")
         );
-        captchaRef.current?.reset();
-        setCaptchaToken("");
         setLoading(false);
         return;
       }
@@ -145,13 +118,6 @@ const CreateAccount = () => {
         },
       });
 
-      try {
-        const { html, subject } = generateWelcomeEmail();
-        await sendMail(formData.email, html, subject);
-      } catch (mailError) {
-        console.warn("Welcome email failed:", mailError);
-      }
-
       router.push("/dashboard");
     } catch (error) {
       console.error("Unexpected error:", error);
@@ -168,8 +134,6 @@ const CreateAccount = () => {
           "Your account was created but we could not save your profile. Sign in and try again.";
       }
       setErrorMessage(friendly || "An unexpected error occurred. Please try again.");
-      captchaRef.current?.reset();
-      setCaptchaToken("");
     } finally {
       setLoading(false);
     }
@@ -309,22 +273,6 @@ const CreateAccount = () => {
                   </div>
                 )}
 
-                {siteKey ? (
-                  <div className="flex justify-center overflow-hidden rounded-soft-md">
-                    <ReCAPTCHA
-                      ref={captchaRef}
-                      sitekey={siteKey}
-                      onChange={(token) => setCaptchaToken(token || "")}
-                      onExpired={() => setCaptchaToken("")}
-                    />
-                  </div>
-                ) : (
-                  <p className="text-sm text-soft-pink-ink">
-                    Captcha is not configured. Add{" "}
-                    <code>NEXT_PUBLIC_CAPTCHA_SITE_KEY</code> to enable signup.
-                  </p>
-                )}
-
                 <p className="text-[12px] leading-relaxed text-soft-muted">
                   By creating an account you agree to our{" "}
                   <Link href="/terms" className="font-semibold text-soft-ink underline">
@@ -340,7 +288,7 @@ const CreateAccount = () => {
                 <SoftButton
                   type="submit"
                   className="w-full"
-                  disabled={loading || !ready || !siteKey}
+                  disabled={loading || !ready}
                 >
                   {loading ? (
                     <span className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />

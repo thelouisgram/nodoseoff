@@ -1,10 +1,8 @@
 import Link from "next/link";
 import SeoHead from "@/components/seo/SeoHead";
 import InteractiveLogo from "@/components/ui/InteractiveLogo";
-import { ChangeEvent, FormEvent, useRef, useState } from "react";
-import ReCAPTCHA from "react-google-recaptcha";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { toast } from "@/lib/notify";
-import { recaptchaSiteKey } from "@/lib/captcha";
 import {
   SoftButton,
   SoftCard,
@@ -18,18 +16,11 @@ const ForgotPassword = () => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [sent, setSent] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState("");
-  const captchaRef = useRef<ReCAPTCHA>(null);
-  const siteKey = recaptchaSiteKey();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!email) {
       setErrorMessage("Please enter your email address.");
-      return;
-    }
-    if (!captchaToken) {
-      setErrorMessage("Please complete the CAPTCHA verification.");
       return;
     }
 
@@ -45,7 +36,6 @@ const ForgotPassword = () => {
         },
         body: JSON.stringify({
           email: email.trim(),
-          captchaToken,
         }),
       });
       const body = (await res.json().catch(() => ({}))) as {
@@ -54,8 +44,6 @@ const ForgotPassword = () => {
       };
       if (!res.ok) {
         setErrorMessage(body.error || "Could not send reset email");
-        captchaRef.current?.reset();
-        setCaptchaToken("");
         return;
       }
       setSent(true);
@@ -65,8 +53,6 @@ const ForgotPassword = () => {
       );
     } catch (err: unknown) {
       setErrorMessage(err instanceof Error ? err.message : String(err));
-      captchaRef.current?.reset();
-      setCaptchaToken("");
     } finally {
       setLoading(false);
     }
@@ -139,23 +125,6 @@ const ForgotPassword = () => {
                     />
                   </div>
 
-                  {siteKey ? (
-                    <div className="flex justify-center overflow-hidden rounded-soft-md">
-                      <ReCAPTCHA
-                        ref={captchaRef}
-                        sitekey={siteKey}
-                        onChange={(token) => setCaptchaToken(token || "")}
-                        onExpired={() => setCaptchaToken("")}
-                      />
-                    </div>
-                  ) : (
-                    <p className="text-sm text-soft-pink-ink">
-                      Captcha is not configured. Add{" "}
-                      <code>NEXT_PUBLIC_CAPTCHA_SITE_KEY</code> to enable password
-                      reset.
-                    </p>
-                  )}
-
                   {errorMessage && (
                     <div className="rounded-soft-md border border-soft-pink bg-soft-pink px-4 py-3 text-sm text-soft-pink-ink">
                       {errorMessage}
@@ -165,7 +134,7 @@ const ForgotPassword = () => {
                   <SoftButton
                     type="submit"
                     className="w-full"
-                    disabled={loading || !siteKey}
+                    disabled={loading}
                   >
                     {loading ? "Sending…" : "Send reset link"}
                   </SoftButton>

@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { randomBytes, randomUUID } from "crypto";
 import { getSql } from "@/lib/db";
-import { verifyRecaptchaToken } from "@/lib/captcha";
 import { sendResendEmail } from "@/lib/email/resend";
 import {
   createRateLimitHeaders,
@@ -49,16 +48,9 @@ export default async function handler(
   const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
   const email =
     typeof body?.email === "string" ? body.email.trim().toLowerCase() : "";
-  const captchaToken =
-    typeof body?.captchaToken === "string" ? body.captchaToken : "";
 
   if (!email || !email.includes("@")) {
     return res.status(400).json({ error: "Please enter a valid email address." });
-  }
-
-  const captcha = await verifyRecaptchaToken(captchaToken);
-  if (!captcha.ok) {
-    return res.status(400).json({ error: captcha.error });
   }
 
   // Always return the same message to avoid email enumeration.

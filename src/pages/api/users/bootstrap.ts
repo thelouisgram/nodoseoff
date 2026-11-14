@@ -4,6 +4,7 @@ import {
   bootstrapUser,
   linkLegacyAccountsByEmail,
 } from "@/lib/server/dashboard-data";
+import { sendWelcomeIfNeeded } from "@/lib/notifications/welcome";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
@@ -56,7 +57,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         jwtEmail
       );
     }
-    return res.status(200).json({ ok: true, legacyLinked });
+
+    let welcomeSent = false;
+    try {
+      const welcome = await sendWelcomeIfNeeded({
+        userId: authUser.userId,
+        email: jwtEmail,
+        name: displayName,
+      });
+      welcomeSent = welcome.sent;
+    } catch (mailErr) {
+      console.warn("Welcome email skipped:", mailErr);
+    }
+
+    return res.status(200).json({ ok: true, legacyLinked, welcomeSent });
   } catch (e) {
     if (e instanceof Error && e.message === "UNAUTHORIZED") {
       return res.status(401).json({ error: "Unauthorized" });

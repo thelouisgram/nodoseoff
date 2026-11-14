@@ -4,6 +4,7 @@ import { toast } from "@/lib/notify";
 import { authClient } from "@/lib/auth/client";
 import { apiJson } from "@/lib/api-client";
 import { ChevronLeft, X, Loader2 } from "lucide-react";
+import { SoftButton, SoftInput } from "@/components/ui/soft";
 
 interface ChangePasswordProps {
   setActiveModal: (value: string) => void;
@@ -167,60 +168,53 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
 
             {hasPassword ? (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="mb-1.5 block text-sm font-medium text-soft-ink">
                   Current Password
                 </label>
-                <input
+                <SoftInput
                   type="password"
                   value={currentPassword}
                   onChange={(e: ChangeEvent<HTMLInputElement>) => {
                     setCurrentPassword(e.target.value);
                     if (errorMessage) setErrorMessage("");
                   }}
-                  className="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-600 text-gray-900"
                   required
                 />
               </div>
             ) : null}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="mb-1.5 block text-sm font-medium text-soft-ink">
                 {hasPassword ? "New Password" : "Password"}
               </label>
-              <input
+              <SoftInput
                 type="password"
                 value={password}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   setPassword(e.target.value);
                   if (errorMessage) setErrorMessage("");
                 }}
-                className="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-600 text-gray-900"
                 minLength={8}
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="mb-1.5 block text-sm font-medium text-soft-ink">
                 Confirm {hasPassword ? "New " : ""}Password
               </label>
-              <input
+              <SoftInput
                 type="password"
                 value={confirmPassword}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   setConfirmPassword(e.target.value);
                   if (errorMessage) setErrorMessage("");
                 }}
-                className="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-600 text-gray-900"
                 required
               />
             </div>
             {errorMessage && (
-              <p className="text-sm text-red-600">{errorMessage}</p>
+              <p className="text-sm text-soft-pink-ink">{errorMessage}</p>
             )}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition disabled:opacity-50 flex items-center justify-center gap-2"
-            >
+            <SoftButton type="submit" disabled={loading} className="w-full">
               {loading ? (
                 <>
                   <Loader2 size={18} className="animate-spin" />
@@ -231,7 +225,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
               ) : (
                 "Set Password"
               )}
-            </button>
+            </SoftButton>
           </form>
         )}
       </div>

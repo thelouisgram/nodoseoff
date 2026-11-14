@@ -42,6 +42,11 @@ export default async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Cron jobs authenticate via CRON_SECRET — skip IP rate limits.
+  if (pathname.startsWith("/api/cron/")) {
+    return NextResponse.next();
+  }
+
   if (pathname.startsWith("/api/")) {
     let rateLimitResult;
     const identifier = getRateLimitIdentifier(request);

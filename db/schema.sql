@@ -142,6 +142,22 @@ CREATE TABLE IF NOT EXISTS newsletter_subscribers (
 CREATE INDEX IF NOT EXISTS newsletter_subscribers_created_at_idx
   ON newsletter_subscribers (created_at DESC);
 
+-- Welcome email dedupe (safe to re-run)
+ALTER TABLE users ADD COLUMN IF NOT EXISTS welcome_email_sent_at TIMESTAMPTZ;
+
+-- Dose reminder send log (idempotent per user + dose key)
+CREATE TABLE IF NOT EXISTS dose_reminder_log (
+  id BIGSERIAL PRIMARY KEY,
+  "userId" TEXT NOT NULL REFERENCES users ("userId") ON DELETE CASCADE,
+  dose_key TEXT NOT NULL,
+  channel TEXT NOT NULL DEFAULT 'email',
+  sent_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CONSTRAINT dose_reminder_log_user_dose_unique UNIQUE ("userId", dose_key)
+);
+
+CREATE INDEX IF NOT EXISTS dose_reminder_log_sent_at_idx
+  ON dose_reminder_log (sent_at DESC);
+
 -- Privacy fields for lock-screen reminders (safe to re-run)
 ALTER TABLE drugs ADD COLUMN IF NOT EXISTS nickname TEXT NOT NULL DEFAULT '';
 ALTER TABLE drugs ADD COLUMN IF NOT EXISTS image TEXT NOT NULL DEFAULT '';

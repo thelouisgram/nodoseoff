@@ -7,4 +7,4 @@ Disallow: /sso-callback
 Disallow: /reset
 Disallow: /forgetpassword
 
-Sitemap: https://nodoseoff.vercel.app/sitemap.xml
+Sitemap: https://nodoseoff.com/sitemap.xml

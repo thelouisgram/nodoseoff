@@ -26,12 +26,5 @@ export default function SsoCallbackClient() {
     };
   }, [router]);
 
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
-      <Loader />
-      <p className="mt-4 text-sm text-gray-500 font-karla">
-        Completing sign-in…
-      </p>
-    </div>
-  );
+  return <Loader label="Completing sign-in…" />;
 }

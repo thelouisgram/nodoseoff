@@ -76,14 +76,17 @@ html.dark body {
   }
 }
 
-/* Full-page logo loader */
+/* Full-page logo loader — logomark pulse + orbit for dashboard/auth waits */
 @keyframes ndo-logo-breathe {
   0%,
   100% {
-    transform: scale(1);
+    transform: scale(1) rotate(0deg);
   }
-  50% {
-    transform: scale(1.045);
+  40% {
+    transform: scale(1.06) rotate(-2deg);
+  }
+  70% {
+    transform: scale(1.02) rotate(2deg);
   }
 }
 
@@ -96,6 +99,15 @@ html.dark body {
   50% {
     opacity: 1;
     transform: scale(1.08);
+  }
+}
+
+@keyframes ndo-logo-orbit {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
 
@@ -113,11 +125,29 @@ html.dark body {
 }
 
 .ndo-logo-loader__mark {
-  animation: ndo-logo-breathe 1.8s ease-in-out infinite;
+  animation: ndo-logo-breathe 1.9s ease-in-out infinite;
+  transform-origin: center;
 }
 
 .ndo-logo-loader__ring {
-  animation: ndo-logo-ring 1.8s ease-in-out infinite;
+  animation: ndo-logo-ring 1.9s ease-in-out infinite;
+}
+
+.ndo-logo-loader__orbit {
+  border-radius: 999px;
+  border: 2px solid transparent;
+  border-top-color: var(--soft-primary);
+  border-right-color: color-mix(in srgb, var(--soft-primary) 35%, transparent);
+  animation: ndo-logo-orbit 1.15s linear infinite;
+}
+
+.ndo-logo-loader--on-dark .ndo-logo-loader__orbit {
+  border-top-color: #3dcfb6;
+  border-right-color: rgba(61, 207, 182, 0.35);
+}
+
+.ndo-logo-loader--on-dark .ndo-logo-loader__ring {
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .ndo-logo-loader__dots i {
@@ -129,6 +159,10 @@ html.dark body {
   animation: ndo-logo-dot 1.1s ease-in-out infinite;
 }
 
+.ndo-logo-loader__dots--on-dark i {
+  background: #3dcfb6;
+}
+
 .ndo-logo-loader__dots i:nth-child(2) {
   animation-delay: 0.15s;
 }
@@ -137,10 +171,125 @@ html.dark body {
   animation-delay: 0.3s;
 }
 
+/* Disney-style alarm-clock vibrate */
+@keyframes ndo-logo-alarm-shake {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+  8% {
+    transform: translate(-3px, -2px) rotate(-10deg) scale(1.04);
+  }
+  16% {
+    transform: translate(3px, -1px) rotate(10deg) scale(1.05);
+  }
+  24% {
+    transform: translate(-3px, 1px) rotate(-8deg) scale(1.03);
+  }
+  32% {
+    transform: translate(3px, -2px) rotate(9deg) scale(1.05);
+  }
+  40% {
+    transform: translate(-2px, 0) rotate(-6deg) scale(1.02);
+  }
+  48% {
+    transform: translate(2px, -1px) rotate(6deg) scale(1.03);
+  }
+  56% {
+    transform: translate(-1px, 0) rotate(-3deg) scale(1.01);
+  }
+  64% {
+    transform: translate(1px, 0) rotate(3deg) scale(1.01);
+  }
+  72%,
+  100% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+}
+
+@keyframes ndo-logo-alarm-buzz-l {
+  0%,
+  70%,
+  100% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.6);
+  }
+  10%,
+  30%,
+  50% {
+    opacity: 0.85;
+    transform: translate(-6px, -4px) scale(1);
+  }
+  20%,
+  40%,
+  60% {
+    opacity: 0.35;
+    transform: translate(-10px, -2px) scale(1.1);
+  }
+}
+
+@keyframes ndo-logo-alarm-buzz-r {
+  0%,
+  70%,
+  100% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.6);
+  }
+  10%,
+  30%,
+  50% {
+    opacity: 0.85;
+    transform: translate(6px, -4px) scale(1);
+  }
+  20%,
+  40%,
+  60% {
+    opacity: 0.35;
+    transform: translate(10px, -2px) scale(1.1);
+  }
+}
+
+.ndo-logo-alarm {
+  overflow: visible;
+}
+
+.ndo-logo-alarm__mark {
+  transform-origin: 50% 60%;
+  animation: ndo-logo-alarm-shake 0.85s ease-in-out infinite;
+}
+
+.ndo-logo-alarm__buzz {
+  position: absolute;
+  top: 18%;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  border: 2px solid currentColor;
+  border-bottom-color: transparent;
+  border-left-color: transparent;
+  pointer-events: none;
+}
+
+.ndo-logo-alarm__buzz--l {
+  left: 6%;
+  transform: rotate(-40deg);
+  animation: ndo-logo-alarm-buzz-l 0.85s ease-in-out infinite;
+}
+
+.ndo-logo-alarm__buzz--r {
+  right: 6%;
+  transform: rotate(50deg);
+  animation: ndo-logo-alarm-buzz-r 0.85s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .ndo-logo-loader__mark,
   .ndo-logo-loader__ring,
-  .ndo-logo-loader__dots i {
+  .ndo-logo-loader__orbit,
+  .ndo-logo-loader__dots i,
+  .ndo-logo-alarm__mark,
+  .ndo-logo-alarm__buzz--l,
+  .ndo-logo-alarm__buzz--r {
     animation: none;
   }
 

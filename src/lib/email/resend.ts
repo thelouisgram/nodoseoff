@@ -2,8 +2,14 @@ import { Resend } from "resend";
 
 let client: Resend | null = null;
 
+function cleanEnv(value: string | undefined) {
+  return String(value || "")
+    .trim()
+    .replace(/^["']|["']$/g, "");
+}
+
 export function getResend(): Resend {
-  const key = process.env.RESEND_API_KEY?.trim();
+  const key = cleanEnv(process.env.RESEND_API_KEY);
   if (!key) {
     throw new Error("RESEND_API_KEY is not set");
   }
@@ -13,8 +19,8 @@ export function getResend(): Resend {
 
 export function resendFromAddress(): string {
   return (
-    process.env.RESEND_FROM_EMAIL?.trim() ||
-    "NoDoseOff <onboarding@resend.dev>"
+    cleanEnv(process.env.RESEND_FROM_EMAIL) ||
+    "NoDoseOff <hello@nodoseoff.com>"
   );
 }
 

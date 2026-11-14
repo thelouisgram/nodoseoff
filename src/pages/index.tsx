@@ -24,10 +24,13 @@ const Home = () => {
   return (
     <LandingMotion>
       <SeoHead
-        title="Medication Tracking & Dose Reminders"
-        description="Never miss a dose. Medication tracking and reminders for cancer, autoimmune, ARV, diabetes, contraceptive, and Ozempic regimens — plus AMANDA 6 and adherence reports."
+        title="NoDoseOff (No Dose Off) | Medication Tracking & AI"
+        description="NoDoseOff (No Dose Off) helps you never miss a dose: common drug tracking, medication reminders, adherence reports, and AMANDA 6 medication AI search for cancer, autoimmune, ARV, diabetes, contraceptive, and Ozempic regimens."
         path="/"
+        jsonLd
+        keywords="No Dose Off app, drug tracker, pill tracker, medication search AI, ask AI about medication"
       />
+
       <LandingNav />
       <SiteWhims />
       <main className="relative z-[2] overflow-x-hidden bg-[#f3f7fb] font-sans text-soft-ink antialiased">

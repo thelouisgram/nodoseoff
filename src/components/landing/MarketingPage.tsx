@@ -12,6 +12,8 @@ type Props = {
   description: string;
   path: string;
   children: ReactNode;
+  jsonLd?: boolean;
+  keywords?: string;
 };
 
 /** Shared chrome for marketing subpages (solid nav + footer). */
@@ -20,10 +22,18 @@ export default function MarketingPage({
   description,
   path,
   children,
+  jsonLd = false,
+  keywords,
 }: Props) {
   return (
     <LandingMotion>
-      <SeoHead title={title} description={description} path={path} />
+      <SeoHead
+        title={title}
+        description={description}
+        path={path}
+        jsonLd={jsonLd}
+        keywords={keywords}
+      />
       <LandingNav tone="solid" />
       <SiteWhims />
       <main className="relative z-[2] min-h-[100dvh] overflow-x-hidden bg-[#f3f7fb] font-sans text-soft-ink antialiased">

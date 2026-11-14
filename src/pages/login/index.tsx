@@ -75,7 +75,7 @@ const SignIn = () => {
   };
 
   if (authLoading || isRedirecting || !isGuest) {
-    return <Loader />;
+    return <Loader label="Checking your session…" />;
   }
 
   return (

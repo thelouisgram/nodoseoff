@@ -12,8 +12,8 @@ export default function WhoItsForPage() {
 
   return (
     <MarketingPage
-      title="Who it’s for"
-      description="NoDoseOff is for cancer patients, autoimmune patients, people on ARVs, diabetes medication, contraceptives, Ozempic, and anyone on long-term treatment who needs calm medication tracking and dose reminders."
+      title="Who No Dose Off Is For"
+      description="NoDoseOff (No Dose Off) is for cancer, autoimmune, ARV, diabetes, contraceptive, and Ozempic patients — and anyone who needs calm medication tracking, common drug tracking, and dose reminders."
       path="/who-its-for"
     >
       <PageHero

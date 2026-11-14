@@ -4,7 +4,7 @@ import SeoHead from "@/components/seo/SeoHead";
 
 const SsoCallbackClient = dynamic(
   () => import("@/components/auth/SsoCallbackClient"),
-  { ssr: false, loading: () => <Loader /> }
+  { ssr: false, loading: () => <Loader label="Completing sign-in…" /> }
 );
 
 export default function SsoCallbackPage() {

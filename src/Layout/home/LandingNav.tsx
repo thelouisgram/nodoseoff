@@ -64,7 +64,7 @@ export default function LandingNav({ tone = "overlay" }: Props) {
             : "border-b border-transparent bg-transparent"
         }`}
       >
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 ss:px-6 lg:h-[4.5rem]">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-5 ss:px-6 lg:py-6">
           <div className="relative z-[110] shrink-0">
             <InteractiveLogo variant="white" priority />
           </div>

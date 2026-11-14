@@ -79,9 +79,11 @@ export default function FeaturesPage() {
 
   return (
     <MarketingPage
-      title="Features"
-      description="Medication reminders and adherence tracking for cancer, autoimmune, ARV, diabetes, contraceptive, and Ozempic regimens — plus clinician reports and AMANDA 6."
+      title="Medication & Drug Tracking Features"
+      description="NoDoseOff features for common drug tracking, dose reminders, adherence reports, and AMANDA 6 medication AI — built for cancer, autoimmune, ARV, diabetes, contraceptive, and Ozempic regimens."
       path="/features"
+      jsonLd
+      keywords="drug tracking app, medication tracker features, common drug tracking, dose reminder app"
     >
       <PageHero
         eyebrow="Product"

@@ -66,7 +66,7 @@ const Page = () => {
   };
 
   if (authLoading || (isLoading && !isError)) {
-    return <Loader />;
+    return <Loader label="Getting your dashboard ready…" />;
   }
 
   if (isError) {

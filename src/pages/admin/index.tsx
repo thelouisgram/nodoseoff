@@ -1,12 +1,11 @@
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { toast } from "@/lib/notify";
 import { apiJson } from "@/lib/api-client";
 import { isAdminEmail } from "@/lib/admin-emails";
 import { useAuth } from "@/contexts/AuthContext";
 import SeoHead from "@/components/seo/SeoHead";
-import PageLoader from "@/components/ui/PageLoader";
+import Loader from "@/components/dashboard/Loader";
 import { SoftButton, SoftCard, SoftPage } from "@/components/ui/soft";
 
 type Tab = "overview" | "users" | "visits";
@@ -40,7 +39,6 @@ type VisitsPayload = {
 };
 
 export default function AdminPage() {
-  const router = useRouter();
   const { user, loading: authLoading } = useAuth();
   const [tab, setTab] = useState<Tab>("overview");
   const [checking, setChecking] = useState(true);
@@ -55,33 +53,30 @@ export default function AdminPage() {
     try {
       const me = await apiJson<{ isAdmin: boolean }>("/api/admin/me");
       setAllowed(me.isAdmin);
-      if (!me.isAdmin) {
-        toast.error("Admin access required");
-        router.replace("/dashboard");
-      }
+      // Non-admins stay on the loader forever — no redirect tip-off
     } catch {
       setAllowed(false);
-      router.replace("/login");
     } finally {
       setChecking(false);
     }
-  }, [router]);
+  }, []);
 
   useEffect(() => {
     if (authLoading) return;
     if (!user) {
-      router.replace("/login");
+      // Signed-out visitors also get the endless loader, not /login
+      setChecking(false);
+      setAllowed(false);
       return;
     }
-    // Fast client hint; server still enforces
+    // Fast client deny; server still enforces for real admins
     if (user.email && !isAdminEmail(user.email)) {
       setChecking(false);
       setAllowed(false);
-      router.replace("/dashboard");
       return;
     }
     void gate();
-  }, [authLoading, user, gate, router]);
+  }, [authLoading, user, gate]);
 
   const loadOverview = useCallback(async () => {
     setBusy(true);
@@ -133,7 +128,7 @@ export default function AdminPage() {
   };
 
   if (checking || authLoading || !allowed) {
-    return <PageLoader label="Opening admin…" />;
+    return <Loader label="Opening admin…" />;
   }
 
   return (

@@ -67,9 +67,10 @@ export default function AboutPage() {
 
   return (
     <MarketingPage
-      title="About"
-      description="NoDoseOff began at the College of Medicine, Bingham University — the story and team behind medication tracking for people on long-term treatment."
+      title="About NoDoseOff (No Dose Off)"
+      description="NoDoseOff — also searched as No Dose Off — began at the College of Medicine, Bingham University. The story behind medication tracking, drug tracking, and AMANDA 6 medication AI."
       path="/about"
+      jsonLd
     >
       <AboutHero />
 

@@ -1,7 +1,7 @@
 {
   "name": "NoDoseOff",
   "short_name": "NoDoseOff",
-  "description": "Medication tracking and dose reminders",
+  "description": "No Dose Off — medication tracking, common drug tracking, dose reminders, and AMANDA 6 medication AI search.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f4f7fc",

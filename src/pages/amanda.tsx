@@ -45,9 +45,12 @@ export default function AmandaPage() {
 
   return (
     <MarketingPage
-      title="AMANDA 6"
-      description="AMANDA 6 is NoDoseOff’s Adherence & Medication Assistant — educational answers grounded in your regimen."
+      title="AMANDA 6 Medication AI Search"
+      description="AMANDA 6 is NoDoseOff’s medication AI search — ask about interactions, missed doses, storage, and side effects with answers grounded in your regimen. From No Dose Off."
       path="/amanda"
+      jsonLd
+      keywords="medication AI search, AI medication assistant, ask AI about drugs, medication chatbot, AMANDA 6"
+
     >
       <section className="relative overflow-hidden bg-[#031428] pt-28 pb-16 text-white ss:pt-32 ss:pb-20">
         <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-4 ss:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-10">

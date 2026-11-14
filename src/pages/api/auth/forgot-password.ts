@@ -24,9 +24,9 @@ function appOriginFromRequest(req: NextApiRequest): string {
 }
 
 /**
- * Custom forgot-password that works for production Origins.
- * Misty-boat Neon Auth rejects non-localhost redirectTo URLs, so we mint a
- * Better Auth–compatible reset token ourselves and email a first-party link.
+ * Custom forgot/set-password email.
+ * Works for email/password users (reset) and Google-only users (first-time
+ * set — Better Auth createCredential on reset-password when missing).
  */
 export default async function handler(
   req: NextApiRequest,
@@ -63,7 +63,7 @@ export default async function handler(
 
   // Always return the same message to avoid email enumeration.
   const okMessage =
-    "If an account exists for that email, you will receive a reset link shortly.";
+    "If an account exists for that email, you will receive a link shortly.";
 
   try {
     const sql = getSql();
@@ -81,13 +81,21 @@ export default async function handler(
       return res.status(200).json({ ok: true, message: okMessage });
     }
 
-    // Prefer credential accounts — Google-only users can't reset a password.
     const accounts = await sql`
-      SELECT id FROM neon_auth.account
-      WHERE "userId" = ${user.id} AND "providerId" = 'credential'
-      LIMIT 1
+      SELECT "providerId", password
+      FROM neon_auth.account
+      WHERE "userId" = ${user.id}
     `;
-    if (!accounts[0]) {
+    const hasCredentialPassword = accounts.some(
+      (a) =>
+        a.providerId === "credential" &&
+        typeof a.password === "string" &&
+        a.password.length > 0
+    );
+    const hasGoogle = accounts.some((a) => a.providerId === "google");
+
+    // No auth accounts at all — nothing to recover.
+    if (accounts.length === 0) {
       return res.status(200).json({ ok: true, message: okMessage });
     }
 
@@ -115,15 +123,34 @@ export default async function handler(
     const origin = appOriginFromRequest(req);
     const resetUrl = `${origin}/reset?token=${encodeURIComponent(token)}`;
     const name = user.name?.trim() || "there";
+    const settingFirstPassword = !hasCredentialPassword;
+
+    const subject = settingFirstPassword
+      ? "Set a password for NoDoseOff"
+      : "Reset your NoDoseOff password";
+
+    const googleNote =
+      hasGoogle && settingFirstPassword
+        ? `<p>You signed up with Google — you can keep using Google sign-in, or set a password to also sign in with email.</p>`
+        : hasGoogle
+          ? `<p>You can still sign in with Google anytime.</p>`
+          : "";
 
     await sendResendEmail({
       to: user.email,
-      subject: "Reset your NoDoseOff password",
+      subject,
       html: `
         <p>Hi ${name},</p>
-        <p>We received a request to reset your NoDoseOff password.</p>
-        <p><a href="${resetUrl}">Choose a new password</a></p>
-        <p>This link expires in one hour. If you did not ask for a reset, you can ignore this email.</p>
+        ${
+          settingFirstPassword
+            ? `<p>Use the link below to create a password for your NoDoseOff account.</p>`
+            : `<p>We received a request to reset your NoDoseOff password.</p>`
+        }
+        ${googleNote}
+        <p><a href="${resetUrl}">${
+          settingFirstPassword ? "Set password" : "Choose a new password"
+        }</a></p>
+        <p>This link expires in one hour. If you did not ask for this, you can ignore this email.</p>
         <p style="color:#64748b;font-size:12px;word-break:break-all">${resetUrl}</p>
       `,
     });

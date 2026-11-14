@@ -4,7 +4,7 @@ import Loader from "@/components/dashboard/Loader";
 import SeoHead from "@/components/seo/SeoHead";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import { toast } from "@/lib/notify";
 import { useAuth } from "@/contexts/AuthContext";
 import SideBar from "@/components/dashboard/SideBar";
 import MobileSidebar from "@/components/dashboard/MobileSideBar";

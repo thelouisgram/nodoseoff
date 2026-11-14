@@ -98,10 +98,11 @@ const ResetPassword = () => {
                 Security
               </p>
               <h1 className="text-[28px] font-bold tracking-tight text-soft-ink">
-                Reset password
+                Set password
               </h1>
               <p className="mt-2 mb-7 text-[15px] leading-relaxed text-soft-muted">
-                Choose a new password for your account.
+                Choose a password for email sign-in. Google sign-in still works
+                if you used Google before.
               </p>
 
               {!token && !success ? (
@@ -182,7 +183,7 @@ const ResetPassword = () => {
                     disabled={loading || !token}
                     className="w-full"
                   >
-                    {loading ? "Updating…" : "Reset password"}
+                    {loading ? "Saving…" : "Save password"}
                   </SoftButton>
                 </form>
               )}

@@ -3,7 +3,7 @@
 import React, { FormEvent, useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { CircleAlert, Loader2, X } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@/lib/notify";
 import { useAppSelector } from "@/store";
 import {
   useCompletedDrugs,

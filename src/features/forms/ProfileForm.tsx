@@ -2,7 +2,7 @@
 import React, { useEffect, useState, FormEvent, ChangeEvent } from "react";
 import Image from "next/image";
 
-import { toast } from "sonner";
+import { toast } from "@/lib/notify";
 import {
   useUserInfo,
   useProfilePicture,

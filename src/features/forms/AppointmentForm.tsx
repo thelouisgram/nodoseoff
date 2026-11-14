@@ -11,7 +11,7 @@ import {
   X,
 } from "lucide-react";
 import { format, isPast, isToday, isTomorrow } from "date-fns";
-import { toast } from "sonner";
+import { toast } from "@/lib/notify";
 import { useAppSelector } from "@/store";
 import {
   useAppointment,

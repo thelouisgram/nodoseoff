@@ -3,7 +3,7 @@ import SeoHead from "@/components/seo/SeoHead";
 import InteractiveLogo from "@/components/ui/InteractiveLogo";
 import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
-import { toast } from "sonner";
+import { toast } from "@/lib/notify";
 import { recaptchaSiteKey } from "@/lib/captcha";
 import {
   SoftButton,
@@ -101,12 +101,13 @@ const ForgotPassword = () => {
                 Forgot password
               </h1>
               <p className="mt-2 mb-7 text-[15px] leading-relaxed text-soft-muted">
-                Enter your email and we&apos;ll send a calm reset link. If you
-                signed up with Google, use{" "}
+                Enter your email and we&apos;ll send a link to reset — or set —
+                a password. Google sign-up accounts can create one here too, or
+                keep using{" "}
                 <Link href="/login" className="font-semibold text-soft-ink underline">
                   Continue with Google
-                </Link>{" "}
-                instead.
+                </Link>
+                .
               </p>
 
               {sent ? (

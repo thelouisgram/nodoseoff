@@ -10,7 +10,7 @@ import {
   useHerbs,
   useHealthJournal,
 } from "@/hooks/useDashboardData";
-import { toast } from "sonner";
+import { toast } from "@/lib/notify";
 import { DrugProps, HealthJournalEntry } from "@/types/dashboard";
 import { calculateOverallCompliance } from "@/utils/dashboard/drugs";
 import {

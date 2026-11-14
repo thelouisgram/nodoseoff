@@ -3,7 +3,7 @@ import React, { useState } from "react";
 
 import { useUserInfo, useProfilePicture } from "@/hooks/useDashboardData";
 import Image from "next/image";
-import { toast } from "sonner";
+import { toast } from "@/lib/notify";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/router";
 import Report from "./Report";

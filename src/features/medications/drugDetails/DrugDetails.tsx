@@ -32,7 +32,7 @@ import { calculateDrugComplianceByIds } from "@/utils/dashboard/drugs";
 import { format } from "date-fns";
 import Tracker from "../../dashboard/Tracker";
 import { ScheduleItem } from "@/types/dashboard";
-import { toast } from "sonner";
+import { toast } from "@/lib/notify";
 
 const DrugDetails: React.FC<DrugDetailsProps> = ({
   activeView,

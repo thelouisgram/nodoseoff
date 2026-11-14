@@ -1,5 +1,5 @@
 import React, { FormEvent, useState } from "react";
-import { toast } from "sonner";
+import { toast } from "@/lib/notify";
 import {
   useAllergies,
   useUserInfo,

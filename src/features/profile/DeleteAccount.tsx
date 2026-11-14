@@ -1,6 +1,6 @@
 import React, { FormEvent, useState } from "react";
 import { AlertTriangle, Loader2, X } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@/lib/notify";
 import { useRouter } from "next/router";
 import { useAuth } from "@/contexts/AuthContext";
 import { authClient } from "@/lib/auth/client";

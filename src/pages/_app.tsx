@@ -1,6 +1,5 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
-import { Toaster, toast } from "sonner";
 import Head from "next/head";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
@@ -8,11 +7,13 @@ import { AuthProvider } from "../contexts/AuthContext";
 import { store, persistor } from "../store";
 import AuthListener from "../store/AuthListener";
 import { useEffect } from "react";
+import AppToaster from "@/components/ui/AppToaster";
 import ErrorBoundary from "@/components/ui/ErrorBoundary";
 import VisitBeacon from "@/components/analytics/VisitBeacon";
 import CookieConsent from "@/components/legal/CookieConsent";
 import { SoftButton, SoftCard, SoftPage } from "@/components/ui/soft";
 import { manrope } from "@/lib/fonts";
+import { toast } from "@/lib/notify";
 
 function ForceLightMode() {
   useEffect(() => {
@@ -58,7 +59,7 @@ export default function App({ Component, pageProps }: AppProps) {
         />
       </Head>
       <div className={`${manrope.variable} font-sans antialiased`}>
-        <Toaster position="top-center" richColors closeButton />
+        <AppToaster />
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>
             <ForceLightMode />

@@ -1,11 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Bell, Lock, Trash, X, ChevronRight, Loader2 } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@/lib/notify";
 import { useAppSelector } from "@/store";
 import { useDrugs, useUpdateRemindersMutation } from "@/hooks/useDashboardData";
+import { apiJson } from "@/lib/api-client";
 
 interface Settings {
   setActiveModal: (value: string) => void;
@@ -20,6 +21,22 @@ const AccountSettings: React.FC<Settings> = ({
   const { data: drugs = [] } = useDrugs(userId);
   const updateReminders = useUpdateRemindersMutation();
   const [saving, setSaving] = useState(false);
+  const [hasPassword, setHasPassword] = useState(true);
+
+  useEffect(() => {
+    if (activeModal !== "accountSettings" || !userId) return;
+    let cancelled = false;
+    void apiJson<{ hasPassword?: boolean }>("/api/users/password-status")
+      .then((data) => {
+        if (!cancelled) setHasPassword(Boolean(data.hasPassword));
+      })
+      .catch(() => {
+        if (!cancelled) setHasPassword(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [activeModal, userId]);
 
   const remindersOn = useMemo(() => {
     if (drugs.length === 0) return true;
@@ -129,10 +146,12 @@ const AccountSettings: React.FC<Settings> = ({
               </span>
               <span className="min-w-0 flex-1">
                 <span className="block text-[15px] font-semibold text-soft-ink">
-                  Change password
+                  {hasPassword ? "Change password" : "Set password"}
                 </span>
                 <span className="mt-0.5 block text-[12.5px] text-soft-muted">
-                  Update your account password
+                  {hasPassword
+                    ? "Update your account password"
+                    : "Add email sign-in (you signed up with Google)"}
                 </span>
               </span>
               <ChevronRight

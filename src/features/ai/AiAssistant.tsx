@@ -23,7 +23,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { SoftSectionHeader } from "@/components/ui/soft";
 import { getAccessToken } from "@/lib/auth/client";
-import { toast } from "sonner";
+import { toast } from "@/lib/notify";
 import ChatHistoryPanel from "./ChatHistoryPanel";
 import type { AiChatSummary } from "@/lib/ai/history";
 import { AMANDA_PREFILL_KEY } from "@/utils/dashboard/homeInsights";

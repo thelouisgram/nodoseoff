@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import { toast } from "sonner";
+import { toast } from "@/lib/notify";
 import { useDrugs, useUpdateDrugMutation } from "@/hooks/useDashboardData";
 import { dose } from "@/utils/dashboard/dashboard";
 import { X, Loader2, Calendar } from "lucide-react";

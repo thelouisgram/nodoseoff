@@ -34,6 +34,11 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          # Build-time public placeholders — real secrets live on Vercel
+          # Build-time placeholders only — real secrets live on Vercel Preview/Production
           NEXT_PUBLIC_APP_URL: https://dev.nodoseoff.com
           NEXT_PUBLIC_NEON_AUTH_URL: https://example.invalid/auth
+          NEON_AUTH_BASE_URL: https://example.invalid/auth
+          NEON_AUTH_COOKIE_SECRET: ci-build-placeholder-secret-not-for-prod
+          NEON_AUTH_JWKS_URL: https://example.invalid/auth/.well-known/jwks.json
+          DATABASE_URL: postgresql://ci:ci@127.0.0.1:5432/ci?sslmode=disable
+          AUTH_TRUSTED_ORIGINS: https://dev.nodoseoff.com,https://nodoseoff.com

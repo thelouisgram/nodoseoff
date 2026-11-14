@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import LandingNav from "@/Layout/home/LandingNav";
 import Hero from "@/Layout/home/Hero";
 import Features from "@/Layout/home/Features";
-import HomePulse from "@/Layout/home/HomePulse";
+import WhoItsFor from "@/Layout/home/WhoItsFor";
 import Amanda from "@/Layout/home/Amanda";
 import HowItWorks from "@/Layout/home/HowItWorks";
 import Banner from "@/Layout/home/Banner";
@@ -33,7 +33,7 @@ const Home = () => {
       <main className="relative z-[2] overflow-x-hidden bg-[#f3f7fb] font-sans text-soft-ink antialiased">
         <Hero />
         <Features />
-        <HomePulse />
+        <WhoItsFor />
         <Amanda />
         <HowItWorks />
         <Banner />

@@ -2,7 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    qualities: [75, 80, 100],
+    qualities: [70, 75, 80, 100],
+    formats: ["image/avif", "image/webp"],
+    minimumCacheTTL: 60 * 60 * 24 * 30,
     remotePatterns: [
       {
         protocol: "https",
@@ -23,6 +25,15 @@ const nextConfig = {
   },
   async headers() {
     return [
+      {
+        source: "/assets/hero/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
       {
         source: "/robots.txt",
         headers: [

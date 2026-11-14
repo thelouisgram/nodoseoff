@@ -67,12 +67,13 @@ export default function AmandaMark({
           </text>
         ) : mode === "face" ? (
           <>
-            <circle cx="24" cy="27" r="4" fill={ink} />
-            <circle cx="40" cy="27" r="4" fill={ink} />
+            {/* Sized to match Lucide nav icons at the same CSS size */}
+            <circle cx="20" cy="24" r="5.5" fill={ink} />
+            <circle cx="44" cy="24" r="5.5" fill={ink} />
             <path
-              d="M24 38c3.2 5.5 12.8 5.5 16 0"
+              d="M18 40c5 9.5 23 9.5 28 0"
               stroke={ink}
-              strokeWidth="3"
+              strokeWidth="4.5"
               strokeLinecap="round"
             />
           </>

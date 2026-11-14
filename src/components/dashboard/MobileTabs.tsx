@@ -54,7 +54,7 @@ const MobileTabs: React.FC<TabsProps> = ({ item, activeTab }) => {
           <AmandaMark
             variant="face"
             tone="current"
-            className="relative z-[1] size-[22px]"
+            className="relative z-[1] size-[20px]"
           />
         ) : (
           <Icon

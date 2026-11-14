@@ -56,7 +56,7 @@ const Tabs: React.FC<TabsProps> = ({ item, activeTab, nav }) => {
           <AmandaMark
             variant="face"
             tone="current"
-            className="size-[22px]"
+            className="size-[19px]"
           />
         ) : (
           <Icon

@@ -18,6 +18,7 @@ const DEFAULT_APP_ORIGINS = [
   "http://127.0.0.1:3000",
   "https://nodoseoff.com",
   "https://www.nodoseoff.com",
+  "https://dev.nodoseoff.com",
   "https://nodoseoff.vercel.app",
 ];
 

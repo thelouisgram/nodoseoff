@@ -8,6 +8,9 @@ import { X, Loader2, Calendar } from "lucide-react";
 import dayjs from "dayjs";
 import { useAppSelector } from "@/store";
 import { motion, AnimatePresence } from "framer-motion";
+import MedicationPrivacyFields, {
+  fileToBase64,
+} from "@/features/forms/MedicationPrivacyFields";
 
 interface DrugFormProps {
   setActiveModal: (value: string) => void;
@@ -42,7 +45,12 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
     time: [""],
     reminder: false,
     drugId: "",
+    nickname: "",
+    image: "",
+    imageUrl: "",
   });
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [clearImage, setClearImage] = useState(false);
 
   const [formErrors, setFormErrors] = useState({
     drug: "",
@@ -80,7 +88,12 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
         time: currentDrug.time || [],
         reminder: currentDrug.reminder || false,
         drugId: currentDrug.drugId || "",
+        nickname: String(currentDrug.nickname || "").trim(),
+        image: String(currentDrug.image || "").trim(),
+        imageUrl: String(currentDrug.imageUrl || "").trim(),
       });
+      setImageFile(null);
+      setClearImage(false);
     }
   }, [currentDrug]);
 
@@ -212,6 +225,13 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
     setLoading(true);
 
     try {
+      let imageBase64: string | undefined;
+      let imageFilename: string | undefined;
+      if (imageFile) {
+        imageBase64 = await fileToBase64(imageFile);
+        imageFilename = imageFile.name;
+      }
+
       await updateDrugMutation.mutateAsync({
         userId: userId!,
         activeDrug: activeDrug!,
@@ -223,10 +243,18 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
         end: formData.end,
         time: formData.time,
         reminder: formData.reminder,
+        nickname: formData.nickname.trim(),
+        image: clearImage ? "" : formData.image,
+        imageUrl: clearImage ? "" : formData.imageUrl,
+        imageBase64,
+        imageFilename,
+        clearImage: clearImage && !imageFile,
         todayDate: getCurrentDate(),
       });
 
       toast.success(`${formData.drug.toUpperCase()} updated successfully`);
+      setImageFile(null);
+      setClearImage(false);
       setActiveModal("");
       setFormErrors({
         drug: "",
@@ -423,6 +451,29 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
                       />
                     </div>
                   </div>
+
+                  <MedicationPrivacyFields
+                    nickname={formData.nickname}
+                    onNicknameChange={(value) =>
+                      setFormData((prev) => ({ ...prev, nickname: value }))
+                    }
+                    imageUrl={clearImage ? "" : formData.imageUrl}
+                    imageFile={imageFile}
+                    onImageFileChange={(file) => {
+                      setImageFile(file);
+                      if (file) setClearImage(false);
+                    }}
+                    onClearSavedImage={() => {
+                      setImageFile(null);
+                      setClearImage(true);
+                      setFormData((prev) => ({
+                        ...prev,
+                        image: "",
+                        imageUrl: "",
+                      }));
+                    }}
+                    disabled={loading}
+                  />
               </div>
             </form>
 

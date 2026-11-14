@@ -42,7 +42,8 @@ export const frequencyToPlaceholder: { [key: string]: string } = {
 };
 
 export const generateSchedule = (drugDetails: DrugProps) => {
-  const { drug, start, end, frequency, time, drugId } = drugDetails;
+  const { drug, start, end, frequency, time, drugId, nickname, imageUrl } =
+    drugDetails;
 
   const startDate = new Date(start);
   const endDate = new Date(end);
@@ -55,10 +56,15 @@ export const generateSchedule = (drugDetails: DrugProps) => {
     (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
   );
 
+  const nick = String(nickname || "").trim();
+  const thumb = String(imageUrl || "").trim();
+
   // Helper function to create schedule entry
   const createEntry = (date: Date, timeSlot: string) => ({
     id: uniqueIndex++,
     drug,
+    ...(nick ? { nickname: nick } : {}),
+    ...(thumb ? { imageUrl: thumb } : {}),
     date: date.toISOString().slice(0, 10),
     time: timeSlot,
     completed: false,

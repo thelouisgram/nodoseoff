@@ -197,7 +197,7 @@ export default function AboutPage() {
             initial="hidden"
             whileInView="show"
             viewport={viewOnce}
-            className="mt-10 grid gap-5 overflow-visible ss:grid-cols-2 lg:grid-cols-4 lg:gap-6"
+            className="mt-10 grid grid-cols-2 gap-3 overflow-visible ss:gap-5 lg:grid-cols-4 lg:gap-6"
           >
             {TEAM.map((member) => (
               <m.div

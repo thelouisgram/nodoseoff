@@ -5,6 +5,7 @@ import { AlertTriangle, Package } from "lucide-react";
 import type { DrugProps, ScheduleItem } from "@/types/dashboard";
 import { getEndingSoonDrugs, getMissedDoses } from "@/utils/dashboard/homeInsights";
 import { formatDoseClock } from "@/utils/dashboard/dashboard";
+import { drugDisplayName } from "@/utils/drugs";
 import { useAppDispatch } from "@/store";
 import { setActiveTab } from "@/store/appSlice";
 
@@ -42,7 +43,9 @@ export default function HomeAlerts({ schedule, drugs, onCatchUp }: Props) {
                     className="flex items-center justify-between gap-2"
                   >
                     <span className="min-w-0 truncate text-[13px] text-soft-ink">
-                      <span className="font-medium capitalize">{dose.drug}</span>
+                      <span className="font-medium capitalize">
+                        {drugDisplayName(dose)}
+                      </span>
                       <span className="text-soft-muted">
                         {" "}
                         · {formatDoseClock(dose.time)}
@@ -80,7 +83,7 @@ export default function HomeAlerts({ schedule, drugs, onCatchUp }: Props) {
                     className="flex items-center justify-between gap-2 text-[13px]"
                   >
                     <span className="min-w-0 truncate capitalize text-soft-ink">
-                      {drug.drug}
+                      {drugDisplayName(drug)}
                       <span className="text-soft-muted">
                         {" "}
                         ·{" "}

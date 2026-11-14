@@ -8,7 +8,7 @@ import {
   getNextUpcomingDose,
 } from "@/utils/dashboard/dashboard";
 import { calculateOverallCompliance } from "@/utils/dashboard/drugs";
-import { countUniqueDrugNames } from "@/utils/drugs";
+import { countUniqueDrugNames, drugDisplayName } from "@/utils/drugs";
 import { useDrugs, useSchedule } from "@/hooks/useDashboardData";
 import { useAppSelector } from "@/store";
 import { motion } from "framer-motion";
@@ -67,7 +67,7 @@ const SummaryCards = ({ onMarkTaken }: Props) => {
       featured: true,
       label: "Next dose",
       icon: AlarmClock,
-      title: next ? next.dose.drug : "None due",
+      title: next ? drugDisplayName(next.dose) : "None due",
       subtitle: next
         ? `${formatDoseClock(next.dose.time)}${
             countdown && countdown !== "00:00:00" ? ` · in ${countdown}` : ""

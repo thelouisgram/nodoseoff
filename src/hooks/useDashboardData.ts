@@ -157,6 +157,12 @@ interface AddDrugParams {
   end: string;
   time: string[];
   reminder: boolean;
+  nickname?: string;
+  image?: string;
+  imageUrl?: string;
+  imageBase64?: string;
+  imageFilename?: string;
+  clearImage?: boolean;
   /** Explicit confirm that a known allergy may still be added. */
   allergyOverride?: boolean;
   userInfo: { name: string; email: string };
@@ -169,16 +175,44 @@ export const useAddDrugMutation = () => {
       const frequency = String(params.frequency || "").trim().toUpperCase();
       const route = String(params.route || "").trim().toLowerCase();
       const drug = String(params.drug || "").trim().toLowerCase();
+      const nickname = String(params.nickname || "").trim();
       const time = Array.isArray(params.time)
         ? params.time.map((t) => String(t || "").trim()).filter(Boolean)
         : [];
-      const normalized = { ...params, drug, frequency, route, time };
+      const normalized = { ...params, drug, frequency, route, time, nickname };
       const drugId = generateDrugId(normalized.drug);
-      await runMutation("insertDrug", { ...normalized, drugId });
+      const result = (await runMutation("insertDrug", {
+        ...normalized,
+        drugId,
+      })) as {
+        nickname?: string;
+        image?: string;
+        imageUrl?: string;
+      };
+
+      const savedNickname = String(result.nickname ?? nickname).trim();
+      const savedImage = String(result.image ?? params.image ?? "").trim();
+      const savedImageUrl = String(
+        result.imageUrl ?? params.imageUrl ?? ""
+      ).trim();
+
+      const drugRow: DrugProps = {
+        drug: normalized.drug,
+        frequency: normalized.frequency,
+        route: normalized.route,
+        start: normalized.start,
+        end: normalized.end,
+        time: normalized.time,
+        reminder: normalized.reminder,
+        drugId,
+        ...(savedNickname ? { nickname: savedNickname } : {}),
+        ...(savedImage ? { image: savedImage } : {}),
+        ...(savedImageUrl ? { imageUrl: savedImageUrl } : {}),
+      };
 
       const currentData = store.getState().dashboard.data;
       const currentSchedule = currentData?.schedule || [];
-      const newScheduleItems = generateSchedule({ ...normalized, drugId });
+      const newScheduleItems = generateSchedule(drugRow);
       const updatedSchedule = [...currentSchedule, ...newScheduleItems];
 
       await uploadScheduleToServer({
@@ -201,24 +235,12 @@ export const useAddDrugMutation = () => {
 
       dispatch(
         updateDashboardCache({
-          activeDrugs: [
-            ...(currentData?.activeDrugs || []),
-            {
-              drug: normalized.drug,
-              frequency: normalized.frequency,
-              route: normalized.route,
-              start: normalized.start,
-              end: normalized.end,
-              time: normalized.time,
-              reminder: normalized.reminder,
-              drugId,
-            },
-          ],
+          activeDrugs: [...(currentData?.activeDrugs || []), drugRow],
           schedule: updatedSchedule,
         })
       );
 
-      return { ...normalized, drugId, updatedSchedule };
+      return { ...normalized, ...drugRow, updatedSchedule };
     },
   };
 };
@@ -234,6 +256,12 @@ interface UpdateDrugParams {
   end: string;
   time: string[];
   reminder: boolean;
+  nickname?: string;
+  image?: string;
+  imageUrl?: string;
+  imageBase64?: string;
+  imageFilename?: string;
+  clearImage?: boolean;
   todayDate: string;
 }
 
@@ -241,7 +269,19 @@ export const useUpdateDrugMutation = () => {
   const dispatch = useAppDispatch();
   return {
     mutateAsync: async (params: UpdateDrugParams) => {
-      await runMutation("updateDrug", params);
+      const result = (await runMutation("updateDrug", params)) as {
+        nickname?: string;
+        image?: string;
+        imageUrl?: string;
+      };
+
+      const savedNickname = String(
+        result.nickname ?? params.nickname ?? ""
+      ).trim();
+      const savedImage = String(result.image ?? params.image ?? "").trim();
+      const savedImageUrl = String(
+        result.imageUrl ?? params.imageUrl ?? ""
+      ).trim();
 
       const currentData = store.getState().dashboard.data;
       const currentSchedule = currentData?.schedule || [];
@@ -264,6 +304,8 @@ export const useUpdateDrugMutation = () => {
         ...params,
         drugId: params.activeDrugId,
         start: params.todayDate,
+        nickname: savedNickname,
+        imageUrl: savedImageUrl,
       });
 
       const scheduleWithPreservedStatus = newDoses.map((dose) => {
@@ -296,6 +338,9 @@ export const useUpdateDrugMutation = () => {
                   end: params.end,
                   time: params.time,
                   reminder: params.reminder,
+                  nickname: savedNickname || undefined,
+                  image: savedImage || undefined,
+                  imageUrl: savedImageUrl || undefined,
                 }
               : drug
           ),
@@ -385,6 +430,9 @@ export const useDeleteCompletedDrugMutation = () => {
 interface AddAllergyParams {
   userId: string;
   drug: string;
+  nickname?: string;
+  imageBase64?: string;
+  imageFilename?: string;
   userInfo?: { name: string; email: string };
 }
 
@@ -393,7 +441,8 @@ export const useAddAllergyMutation = () => {
   return {
     mutateAsync: async (params: AddAllergyParams) => {
       const drugId = generateDrugId(params.drug);
-      await runMutation("insertAllergy", {
+      const nickname = String(params.nickname || "").trim();
+      const result = (await runMutation("insertAllergy", {
         drug: params.drug,
         drugId,
         frequency: "",
@@ -402,7 +451,14 @@ export const useAddAllergyMutation = () => {
         end: "",
         time: [""],
         reminder: true,
-      });
+        nickname,
+        imageBase64: params.imageBase64,
+        imageFilename: params.imageFilename,
+      })) as { nickname?: string; image?: string; imageUrl?: string };
+
+      const savedNickname = String(result.nickname ?? nickname).trim();
+      const savedImage = String(result.image ?? "").trim();
+      const savedImageUrl = String(result.imageUrl ?? "").trim();
 
       if (params.userInfo?.email) {
         const { html, subject } = generateDrugAllergyEmail(
@@ -426,6 +482,9 @@ export const useAddAllergyMutation = () => {
               time: [""],
               reminder: true,
               drugId,
+              ...(savedNickname ? { nickname: savedNickname } : {}),
+              ...(savedImage ? { image: savedImage } : {}),
+              ...(savedImageUrl ? { imageUrl: savedImageUrl } : {}),
             },
           ],
         })

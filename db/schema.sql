@@ -20,7 +20,10 @@ CREATE TABLE IF NOT EXISTS drugs (
   "end" TEXT NOT NULL DEFAULT '',
   time JSONB NOT NULL DEFAULT '[]'::jsonb,
   reminder BOOLEAN NOT NULL DEFAULT true,
-  "drugId" TEXT NOT NULL DEFAULT ''
+  "drugId" TEXT NOT NULL DEFAULT '',
+  nickname TEXT NOT NULL DEFAULT '',
+  image TEXT NOT NULL DEFAULT '',
+  image_url TEXT NOT NULL DEFAULT ''
 );
 
 CREATE INDEX IF NOT EXISTS drugs_user_id_idx ON drugs ("userId");
@@ -35,7 +38,10 @@ CREATE TABLE IF NOT EXISTS allergies (
   "end" TEXT NOT NULL DEFAULT '',
   time JSONB NOT NULL DEFAULT '[]'::jsonb,
   reminder BOOLEAN NOT NULL DEFAULT true,
-  "drugId" TEXT NOT NULL DEFAULT ''
+  "drugId" TEXT NOT NULL DEFAULT '',
+  nickname TEXT NOT NULL DEFAULT '',
+  image TEXT NOT NULL DEFAULT '',
+  image_url TEXT NOT NULL DEFAULT ''
 );
 
 CREATE INDEX IF NOT EXISTS allergies_user_id_idx ON allergies ("userId");
@@ -135,3 +141,11 @@ CREATE TABLE IF NOT EXISTS newsletter_subscribers (
 
 CREATE INDEX IF NOT EXISTS newsletter_subscribers_created_at_idx
   ON newsletter_subscribers (created_at DESC);
+
+-- Privacy fields for lock-screen reminders (safe to re-run)
+ALTER TABLE drugs ADD COLUMN IF NOT EXISTS nickname TEXT NOT NULL DEFAULT '';
+ALTER TABLE drugs ADD COLUMN IF NOT EXISTS image TEXT NOT NULL DEFAULT '';
+ALTER TABLE drugs ADD COLUMN IF NOT EXISTS image_url TEXT NOT NULL DEFAULT '';
+ALTER TABLE allergies ADD COLUMN IF NOT EXISTS nickname TEXT NOT NULL DEFAULT '';
+ALTER TABLE allergies ADD COLUMN IF NOT EXISTS image TEXT NOT NULL DEFAULT '';
+ALTER TABLE allergies ADD COLUMN IF NOT EXISTS image_url TEXT NOT NULL DEFAULT '';

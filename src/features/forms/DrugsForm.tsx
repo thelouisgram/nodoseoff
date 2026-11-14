@@ -28,6 +28,9 @@ import dayjs from "dayjs";
 import { useAppSelector } from "@/store";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Loader2, AlertTriangle } from "lucide-react";
+import MedicationPrivacyFields, {
+  fileToBase64,
+} from "@/features/forms/MedicationPrivacyFields";
 
 interface DrugFormProps {
   setActiveModal: (value: string) => void;
@@ -70,6 +73,11 @@ const DrugsForm: React.FC<DrugFormProps> = ({
       end: string;
       time: string[];
       reminder: boolean;
+      nickname: string;
+      image?: string;
+      imageUrl?: string;
+      imageBase64?: string;
+      imageFilename?: string;
     };
   } | null>(null);
   const [formData, setFormData] = useState({
@@ -81,7 +89,12 @@ const DrugsForm: React.FC<DrugFormProps> = ({
     time: [""],
     reminder: true,
     drugId: "",
+    nickname: "",
+    image: "",
+    imageUrl: "",
   });
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [clearImage, setClearImage] = useState(false);
 
   const [formErrors, setFormErrors] = useState({
     drug: "",
@@ -116,7 +129,12 @@ const DrugsForm: React.FC<DrugFormProps> = ({
       time: [],
       reminder: remindersGloballyOn,
       drugId: "",
+      nickname: "",
+      image: "",
+      imageUrl: "",
     });
+    setImageFile(null);
+    setClearImage(false);
   };
 
   useEffect(() => {
@@ -210,7 +228,12 @@ const DrugsForm: React.FC<DrugFormProps> = ({
         source.reminder !== false &&
         (drugs.length === 0 || drugs.some((d) => d.reminder !== false)),
       drugId: "",
+      nickname: String(source.nickname || "").trim(),
+      image: String(source.image || "").trim(),
+      imageUrl: String(source.imageUrl || "").trim(),
     });
+    setImageFile(null);
+    setClearImage(false);
     resetFormErrors();
   }, [
     isRefill,
@@ -364,7 +387,7 @@ const DrugsForm: React.FC<DrugFormProps> = ({
       return;
     }
 
-    const payload = {
+    void buildAndAdd({
       drug: drugName,
       frequency,
       route,
@@ -372,17 +395,55 @@ const DrugsForm: React.FC<DrugFormProps> = ({
       end: formData.end,
       time: times,
       reminder: formData.reminder,
+      nickname: formData.nickname.trim(),
+      image: clearImage ? "" : formData.image,
+      imageUrl: clearImage ? "" : formData.imageUrl,
+    });
+  };
+
+  const buildAndAdd = async (
+    base: {
+      drug: string;
+      frequency: string;
+      route: string;
+      start: string;
+      end: string;
+      time: string[];
+      reminder: boolean;
+      nickname: string;
+      image?: string;
+      imageUrl?: string;
+    },
+    allergyOverride = false
+  ) => {
+    let imageBase64: string | undefined;
+    let imageFilename: string | undefined;
+    if (imageFile) {
+      try {
+        imageBase64 = await fileToBase64(imageFile);
+        imageFilename = imageFile.name;
+      } catch {
+        toast.error("Could not read that photo. Try another JPG or PNG.");
+        return;
+      }
+    }
+
+    const payload = {
+      ...base,
+      imageBase64,
+      imageFilename,
+      clearImage: clearImage && !imageFile,
     };
 
-    if (isAllergicToDrug(drugName, allergies)) {
+    if (!allergyOverride && isAllergicToDrug(base.drug, allergies)) {
       setAllergyWarning({
-        allergyLabel: findMatchingAllergy(drugName, allergies) || drugName,
+        allergyLabel: findMatchingAllergy(base.drug, allergies) || base.drug,
         payload,
       });
       return;
     }
 
-    void addDrug(payload);
+    void addDrug(payload, allergyOverride);
   };
 
   const addDrug = async (
@@ -394,6 +455,12 @@ const DrugsForm: React.FC<DrugFormProps> = ({
       end: string;
       time: string[];
       reminder: boolean;
+      nickname: string;
+      image?: string;
+      imageUrl?: string;
+      imageBase64?: string;
+      imageFilename?: string;
+      clearImage?: boolean;
     },
     allergyOverride = false
   ) => {
@@ -669,6 +736,29 @@ const DrugsForm: React.FC<DrugFormProps> = ({
                       />
                   </div>
                 </div>
+
+                <MedicationPrivacyFields
+                  nickname={formData.nickname}
+                  onNicknameChange={(value) =>
+                    setFormData((prev) => ({ ...prev, nickname: value }))
+                  }
+                  imageUrl={clearImage ? "" : formData.imageUrl}
+                  imageFile={imageFile}
+                  onImageFileChange={(file) => {
+                    setImageFile(file);
+                    if (file) setClearImage(false);
+                  }}
+                  onClearSavedImage={() => {
+                    setImageFile(null);
+                    setClearImage(true);
+                    setFormData((prev) => ({
+                      ...prev,
+                      image: "",
+                      imageUrl: "",
+                    }));
+                  }}
+                  disabled={loading}
+                />
 
               </div>
             </form>

@@ -9,6 +9,9 @@ import { X, Loader2, AlertCircle } from "lucide-react";
 import { useAppSelector } from "@/store";
 import { motion, AnimatePresence } from "framer-motion";
 import { sameDrugName } from "@/utils/drugs";
+import MedicationPrivacyFields, {
+  fileToBase64,
+} from "@/features/forms/MedicationPrivacyFields";
 
 interface AllergiesFormProps {
   setActiveModal: (value: string) => void;
@@ -26,10 +29,14 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
   const addAllergyMutation = useAddAllergyMutation();
 
   const [drug, setDrug] = useState("");
+  const [nickname, setNickname] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
 
   const resetFormData = () => {
     setDrug("");
+    setNickname("");
+    setImageFile(null);
   };
 
   const handleClose = () => {
@@ -63,9 +70,19 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
     setLoading(true);
 
     try {
+      let imageBase64: string | undefined;
+      let imageFilename: string | undefined;
+      if (imageFile) {
+        imageBase64 = await fileToBase64(imageFile);
+        imageFilename = imageFile.name;
+      }
+
       await addAllergyMutation.mutateAsync({
         userId: userId!,
         drug: trimmedDrug,
+        nickname: nickname.trim(),
+        imageBase64,
+        imageFilename,
         userInfo: {
           name: info[0]?.name || "",
           email: info[0]?.email || "",
@@ -151,6 +168,15 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
                   />
                 </div>
               </div>
+
+              <MedicationPrivacyFields
+                nickname={nickname}
+                onNicknameChange={setNickname}
+                imageFile={imageFile}
+                onImageFileChange={setImageFile}
+                disabled={loading}
+                compact
+              />
 
               {/* Submit Button */}
               <button

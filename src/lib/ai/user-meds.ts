@@ -1,5 +1,5 @@
 import { loadDashboardForUser } from "@/lib/server/dashboard-data";
-import { groupDrugsByName } from "@/utils/drugs";
+import { drugDisplayName, groupDrugsByName } from "@/utils/drugs";
 import type { DrugProps } from "@/types/dashboard";
 
 export type ClientClock = {
@@ -20,6 +20,7 @@ type MedRow = {
 
 type ScheduleRow = {
   drug?: unknown;
+  nickname?: unknown;
   date?: unknown;
   time?: unknown;
   completed?: unknown;
@@ -234,6 +235,7 @@ function buildScheduleClockBlock(
 
   type DoseMoment = {
     drug: string;
+    nickname: string;
     date: string;
     time: string;
     ms: number;
@@ -253,6 +255,7 @@ function buildScheduleClockBlock(
     if (!y || !mo || !d) continue;
     doses.push({
       drug: String(row.drug || "").trim() || "Unknown",
+      nickname: String(row.nickname || "").trim(),
       date,
       time: `${pad2(hour)}:${pad2(minute)}`,
       ms: wallClockMs(y, mo, d, hour, minute, 0),
@@ -286,23 +289,25 @@ function buildScheduleClockBlock(
 
   if (dueToday[0]) {
     const d = dueToday[0];
+    const label = drugDisplayName(d);
     const [hh, mm] = d.time.split(":").map(Number);
     const lateHuman = formatCountdownHuman(nowMs - d.ms);
     const when = formatClock12(hh, mm);
     lines.push(
-      `- Next dose (authoritative): ${d.drug} at ${when} today — DUE NOW (${lateHuman} past the scheduled time).`
+      `- Next dose (authoritative): ${label} at ${when} today — DUE NOW (${lateHuman} past the scheduled time).`
     );
-    readyAnswer = `READY_ANSWER: Your next medication is ${d.drug} at ${when} today. It is due now (${lateHuman} past the scheduled time).`;
+    readyAnswer = `READY_ANSWER: Your next medication is ${label} at ${when} today. It is due now (${lateHuman} past the scheduled time).`;
   } else if (upcoming[0]) {
     const d = upcoming[0];
+    const label = drugDisplayName(d);
     const [hh, mm] = d.time.split(":").map(Number);
     const remainHuman = formatCountdownHuman(d.ms - nowMs);
     const when = formatClock12(hh, mm);
     const dayLabel = d.date === localDate ? "today" : d.date;
     lines.push(
-      `- Next dose (authoritative): ${d.drug} at ${when} ${dayLabel} — time remaining: ${remainHuman}.`
+      `- Next dose (authoritative): ${label} at ${when} ${dayLabel} — time remaining: ${remainHuman}.`
     );
-    readyAnswer = `READY_ANSWER: Your next medication is ${d.drug} at ${when} ${dayLabel}. Time remaining: ${remainHuman}.`;
+    readyAnswer = `READY_ANSWER: Your next medication is ${label} at ${when} ${dayLabel}. Time remaining: ${remainHuman}.`;
   } else {
     lines.push("- Next dose (authoritative): none upcoming on the current schedule.");
   }
@@ -313,7 +318,7 @@ function buildScheduleClockBlock(
         .slice(0, 5)
         .map((d) => {
           const [hh, mm] = d.time.split(":").map(Number);
-          return `${d.drug} (${formatClock12(hh, mm)})`;
+          return `${drugDisplayName(d)} (${formatClock12(hh, mm)})`;
         })
         .join("; ")}.`
     );

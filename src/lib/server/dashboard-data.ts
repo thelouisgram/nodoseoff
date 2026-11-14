@@ -29,9 +29,9 @@ export async function loadDashboardForUser(userId: string) {
     journalResult,
   ] = await Promise.all([
       sql`SELECT name, phone, email, theme, profile_picture, profile_picture_url FROM users WHERE "userId" = ${userId} LIMIT 1`,
-      sql`SELECT id, drug, frequency, route, start, "end", time, reminder, "drugId" FROM drugs WHERE "userId" = ${userId}`,
+      sql`SELECT id, drug, frequency, route, start, "end", time, reminder, "drugId", nickname, image, image_url FROM drugs WHERE "userId" = ${userId}`,
       sql`SELECT "completedDrugs" FROM "completedDrugs" WHERE "userId" = ${userId} LIMIT 1`,
-      sql`SELECT drug, frequency, route, start, "end", time, reminder, "drugId" FROM allergies WHERE "userId" = ${userId}`,
+      sql`SELECT drug, frequency, route, start, "end", time, reminder, "drugId", nickname, image, image_url FROM allergies WHERE "userId" = ${userId}`,
       sql`SELECT "otcDrugs", herbs FROM "drugHistory" WHERE "userId" = ${userId} LIMIT 1`,
       sql`SELECT schedule FROM schedule WHERE "userId" = ${userId} LIMIT 1`,
       sql`SELECT doctor, location, starts_at, notes FROM appointments WHERE "userId" = ${userId} LIMIT 1`,
@@ -74,6 +74,9 @@ export async function loadDashboardForUser(userId: string) {
   const expiredDrugs: DrugProps[] = [];
 
   for (const drug of drugs) {
+    const nick = String(drug.nickname ?? "").trim();
+    const image = String(drug.image ?? "").trim();
+    const imageUrl = String(drug.image_url ?? "").trim();
     const row = {
       ...drug,
       drug: String(drug.drug ?? ""),
@@ -85,6 +88,9 @@ export async function loadDashboardForUser(userId: string) {
       drugId: String(drug.drugId ?? ""),
       time: coerceTime(drug.time),
       id: typeof drug.id === "number" ? drug.id : undefined,
+      ...(nick ? { nickname: nick } : {}),
+      ...(image ? { image } : {}),
+      ...(imageUrl ? { imageUrl } : {}),
     } satisfies DrugProps;
 
     if (new Date(row.end) > twoDaysAgo) {
@@ -167,7 +173,24 @@ export async function loadDashboardForUser(userId: string) {
     ],
     profilePicture,
     profilePictureUrl: profileUrl,
-    allergies: allergyRows,
+    allergies: (allergyRows as Array<Record<string, unknown>>).map((row) => {
+      const nick = String(row.nickname ?? "").trim();
+      const image = String(row.image ?? "").trim();
+      const imageUrl = String(row.image_url ?? "").trim();
+      return {
+        drug: String(row.drug ?? ""),
+        frequency: String(row.frequency ?? ""),
+        route: String(row.route ?? ""),
+        start: String(row.start ?? ""),
+        end: String(row.end ?? ""),
+        time: coerceTime(row.time),
+        reminder: Boolean(row.reminder ?? true),
+        drugId: String(row.drugId ?? ""),
+        ...(nick ? { nickname: nick } : {}),
+        ...(image ? { image } : {}),
+        ...(imageUrl ? { imageUrl } : {}),
+      } satisfies DrugProps;
+    }),
     herbs: historyRows[0]?.herbs ?? "",
     otcDrugs: historyRows[0]?.otcDrugs ?? "",
     schedule: scheduleRows[0]?.schedule ?? [],

@@ -2,13 +2,69 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { requireUserId } from "@/lib/server/auth";
 import { getSql } from "@/lib/db";
 import { deleteCloudinaryAsset } from "@/lib/cloudinary";
-import { uploadProfileImage } from "@/lib/cloudinary";
+import {
+  uploadMedicationImage,
+  uploadProfileImage,
+} from "@/lib/cloudinary";
 import { isAllergicToDrug, sameDrugName } from "@/utils/drugs";
 
 type MutationBody = {
   action: string;
   payload?: Record<string, unknown>;
 };
+
+async function resolveMedicationImage(
+  userId: string,
+  p: Record<string, unknown>,
+  existing?: { image?: string; image_url?: string }
+): Promise<{ nickname: string; image: string; imageUrl: string }> {
+  const nickname = String(p.nickname ?? "").trim().slice(0, 80);
+  let image = String(existing?.image ?? p.image ?? "").trim();
+  let imageUrl = String(
+    existing?.image_url ?? p.imageUrl ?? p.image_url ?? ""
+  ).trim();
+
+  if (p.clearImage) {
+    if (image) {
+      try {
+        await deleteCloudinaryAsset(image);
+      } catch {
+        /* best-effort */
+      }
+    }
+    image = "";
+    imageUrl = "";
+  }
+
+  const imageBase64 =
+    typeof p.imageBase64 === "string" ? p.imageBase64 : "";
+  if (imageBase64) {
+    if (imageBase64.length > 7_000_000) {
+      throw new Error("IMAGE_TOO_LARGE");
+    }
+    const filename = String(p.imageFilename || "med.jpg");
+    const lowerName = filename.toLowerCase();
+    if (!/\.(jpe?g|png|webp|gif)$/.test(lowerName)) {
+      throw new Error("UNSUPPORTED_IMAGE");
+    }
+    if (image) {
+      try {
+        await deleteCloudinaryAsset(image);
+      } catch {
+        /* best-effort */
+      }
+    }
+    const uploaded = await uploadMedicationImage(
+      userId,
+      imageBase64,
+      filename
+    );
+    image = uploaded.publicId;
+    imageUrl = uploaded.url;
+  }
+
+  return { nickname, image, imageUrl };
+}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
@@ -76,8 +132,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           });
         }
 
+        const media = await resolveMedicationImage(userId, p);
         await sql`
-          INSERT INTO drugs ("userId", drug, frequency, route, start, "end", time, reminder, "drugId")
+          INSERT INTO drugs ("userId", drug, frequency, route, start, "end", time, reminder, "drugId", nickname, image, image_url)
           VALUES (
             ${userId},
             ${drugName},
@@ -87,13 +144,31 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             ${end},
             ${JSON.stringify(p.time ?? [])}::jsonb,
             ${Boolean(p.reminder)},
-            ${String(p.drugId ?? "")}
+            ${String(p.drugId ?? "")},
+            ${media.nickname},
+            ${media.image},
+            ${media.imageUrl}
           )
         `;
-        break;
+        return res.status(200).json({
+          ok: true,
+          nickname: media.nickname,
+          image: media.image,
+          imageUrl: media.imageUrl,
+        });
       }
       case "updateDrug": {
         const p = payload as Record<string, unknown>;
+        const activeDrug = String(p.activeDrug);
+        const existingRows = await sql`
+          SELECT image, image_url FROM drugs
+          WHERE "userId" = ${userId} AND drug = ${activeDrug}
+          LIMIT 1
+        `;
+        const existing = existingRows[0] as
+          | { image?: string; image_url?: string }
+          | undefined;
+        const media = await resolveMedicationImage(userId, p, existing);
         await sql`
           UPDATE drugs SET
             drug = ${String(p.drug)},
@@ -102,10 +177,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             start = ${String(p.start ?? "")},
             "end" = ${String(p.end ?? "")},
             time = ${JSON.stringify(p.time ?? [])}::jsonb,
-            reminder = ${Boolean(p.reminder)}
-          WHERE "userId" = ${userId} AND drug = ${String(p.activeDrug)}
+            reminder = ${Boolean(p.reminder)},
+            nickname = ${media.nickname},
+            image = ${media.image},
+            image_url = ${media.imageUrl}
+          WHERE "userId" = ${userId} AND drug = ${activeDrug}
         `;
-        break;
+        return res.status(200).json({
+          ok: true,
+          nickname: media.nickname,
+          image: media.image,
+          imageUrl: media.imageUrl,
+        });
       }
       case "deleteDrug": {
         await sql`DELETE FROM drugs WHERE "userId" = ${userId} AND drug = ${String(payload.drug)}`;
@@ -134,8 +217,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
       case "insertAllergy": {
         const p = payload as Record<string, unknown>;
+        const media = await resolveMedicationImage(userId, p);
         await sql`
-          INSERT INTO allergies ("userId", drug, frequency, route, start, "end", time, reminder, "drugId")
+          INSERT INTO allergies ("userId", drug, frequency, route, start, "end", time, reminder, "drugId", nickname, image, image_url)
           VALUES (
             ${userId},
             ${String(p.drug)},
@@ -145,10 +229,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             ${String(p.end ?? "")},
             ${JSON.stringify(p.time ?? [])}::jsonb,
             ${Boolean(p.reminder ?? true)},
-            ${String(p.drugId ?? "")}
+            ${String(p.drugId ?? "")},
+            ${media.nickname},
+            ${media.image},
+            ${media.imageUrl}
           )
         `;
-        break;
+        return res.status(200).json({
+          ok: true,
+          nickname: media.nickname,
+          image: media.image,
+          imageUrl: media.imageUrl,
+        });
       }
       case "deleteAllergy": {
         await sql`DELETE FROM allergies WHERE "userId" = ${userId} AND drug = ${String(payload.drug)}`;
@@ -168,7 +260,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           `;
         }
         await sql`
-          INSERT INTO allergies ("userId", drug, frequency, route, start, "end", time, reminder, "drugId")
+          INSERT INTO allergies ("userId", drug, frequency, route, start, "end", time, reminder, "drugId", nickname, image, image_url)
           VALUES (
             ${userId},
             ${drug},
@@ -178,7 +270,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             ${String(target.end ?? "")},
             ${JSON.stringify(target.time ?? [])}::jsonb,
             true,
-            ${String(target.drugId ?? "")}
+            ${String(target.drugId ?? "")},
+            ${String(target.nickname ?? "")},
+            ${String(target.image ?? "")},
+            ${String(target.imageUrl ?? target.image_url ?? "")}
           )
         `;
         break;
@@ -362,13 +457,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   } catch (e) {
     console.error("mutation error", action, e);
     const message = e instanceof Error ? e.message : "Mutation failed";
+    if (message === "IMAGE_TOO_LARGE") {
+      return res.status(400).json({ error: "Image too large (max 5MB)" });
+    }
+    if (message === "UNSUPPORTED_IMAGE") {
+      return res.status(400).json({ error: "Unsupported image type" });
+    }
     const isCloudinary =
       action === "uploadProfilePicture" ||
+      action === "insertDrug" ||
+      action === "updateDrug" ||
+      action === "insertAllergy" ||
       message.includes("Cloudinary") ||
       message.includes("cloud_name");
     return res.status(isCloudinary ? 400 : 500).json({
       error: isCloudinary
-        ? "Profile upload failed. Please try a smaller JPG or PNG."
+        ? "Image upload failed. Please try a smaller JPG or PNG."
         : "Mutation failed",
     });
   }

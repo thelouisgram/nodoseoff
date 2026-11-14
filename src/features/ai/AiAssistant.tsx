@@ -13,8 +13,11 @@ import { DefaultChatTransport, type UIMessage } from "ai";
 import {
   History,
   Loader2,
+  Mic,
   Plus,
   SendHorizontal,
+  Volume2,
+  VolumeX,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -30,6 +33,11 @@ import {
   useDashboardSectionMotion,
 } from "@/components/landing/motion";
 import AmandaMark from "@/Layout/marketing/AmandaMark";
+import { useAppDispatch, useAppSelector } from "@/store";
+import { fetchDashboardData } from "@/store/dashboardSlice";
+import { useSpeechInput } from "@/hooks/useSpeechInput";
+import { useSpeechOutput } from "@/hooks/useSpeechOutput";
+import { isDashboardTabActive } from "@/utils/dashboard/nav";
 
 function TypingDots() {
   return (
@@ -54,10 +62,10 @@ function TypingDots() {
 const ACTIVE_CHAT_KEY = "nodoseoff_ai_chat_id";
 
 const FALLBACK_SUGGESTIONS = [
+  "Add rifampicin oral bd for 3 weeks",
   "Tips for remembering evening doses",
   "When should I call a doctor about a rash from a new drug?",
   "What should I ask my pharmacist about a new prescription?",
-  "How do I store medications safely at home?",
 ];
 
 type AiUsage = {
@@ -96,12 +104,37 @@ function messageText(m: UIMessage): string {
     .join("");
 }
 
+function messagesAddedMedication(msgs: UIMessage[]): boolean {
+  for (const m of msgs) {
+    for (const part of m.parts ?? []) {
+      if (
+        part.type === "tool-addMedication" ||
+        (typeof part.type === "string" &&
+          part.type.startsWith("tool-") &&
+          "toolName" in part &&
+          (part as { toolName?: string }).toolName === "addMedication")
+      ) {
+        const state = (part as { state?: string; output?: { ok?: boolean } })
+          .state;
+        const output = (part as { output?: { ok?: boolean } }).output;
+        if (state === "output-available" && output?.ok) return true;
+        if ("result" in part) {
+          const result = (part as { result?: { ok?: boolean } }).result;
+          if (result?.ok) return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+
 export default function AiAssistant() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const persistEnabled = useRef(false);
   const chatIdRef = useRef<string | null>(null);
   const prefillConsumed = useRef(false);
   const [input, setInput] = useState("");
+  const [interim, setInterim] = useState("");
   const [usage, setUsage] = useState<AiUsage | null>(null);
   const [historyReady, setHistoryReady] = useState(false);
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
@@ -110,6 +143,35 @@ export default function AiAssistant() {
   const [listLoading, setListLoading] = useState(false);
   const [switching, setSwitching] = useState(false);
   const { reduce, stagger, rise } = useDashboardSectionMotion();
+  const dispatch = useAppDispatch();
+  const userId = useAppSelector((s) => s.app.userId);
+  const activeTab = useAppSelector((s) => s.app.activeTab);
+  const amandaActive = isDashboardTabActive("AMANDA 6", activeTab);
+
+  const speechOut = useSpeechOutput();
+  const prefetchSpeechRef = useRef(speechOut.prefetch);
+  prefetchSpeechRef.current = speechOut.prefetch;
+  const speechIn = useSpeechInput({
+    onFinal: (chunk) => {
+      const piece = chunk.trim();
+      if (!piece) return;
+      setInput((prev) => {
+        const base = prev.trim();
+        return base ? `${base} ${piece}` : piece;
+      });
+      setInterim("");
+    },
+    onInterim: (chunk) => setInterim(chunk.trim()),
+  });
+
+  // AI stays mounted across tabs — mute speaker/mic whenever AMANDA isn’t visible.
+  useEffect(() => {
+    if (amandaActive) return;
+    speechOut.stop();
+    speechIn.stop();
+    setInterim("");
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only react to tab visibility
+  }, [amandaActive]);
 
   const refreshUsage = useCallback(async () => {
     try {
@@ -221,12 +283,69 @@ export default function AiAssistant() {
         if (persistEnabled.current) {
           void persistMessages(finished);
         }
+        if (messagesAddedMedication(finished) && userId) {
+          void dispatch(fetchDashboardData(userId));
+          void refreshUsage();
+          toast.success("Medication added to your schedule");
+        }
+        const last = [...finished].reverse().find((m) => m.role === "assistant");
+        const spoken = last ? messageText(last) : "";
+        if (spoken.trim()) {
+          void prefetchSpeechRef.current(spoken);
+        }
       },
     });
 
   const busy = status === "submitted" || status === "streaming";
   const remaining = usage?.remaining ?? null;
   const outOfPrompts = remaining === 0;
+
+  useEffect(() => {
+    if (busy) speechOut.stop();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- stop only when busy flips on
+  }, [busy]);
+
+  const toggleMic = () => {
+    if (!amandaActive) return;
+    if (!speechIn.supported) {
+      toast.error("Voice input isn’t supported in this browser. Try Chrome.");
+      return;
+    }
+    if (outOfPrompts || busy || !historyReady || switching) return;
+    if (speechIn.listening) {
+      speechIn.stop();
+      setInterim("");
+      return;
+    }
+    speechOut.stop();
+    const started = speechIn.start();
+    if (!started) {
+      toast.error("Couldn’t start the microphone. Check permissions.");
+    }
+  };
+
+  const toggleSpeak = async (id: string, text: string) => {
+    if (!amandaActive) return;
+    if (!speechOut.supported) {
+      toast.error("Spoken answers aren’t supported in this browser.");
+      return;
+    }
+    speechIn.stop();
+    setInterim("");
+    if (speechOut.speakingId === id || speechOut.loadingId === id) {
+      speechOut.stop();
+      return;
+    }
+    try {
+      const ok = await speechOut.speak(id, text);
+      if (!ok && speechOut.speakingId !== id) {
+        toast.error("Couldn’t play that answer. Check your sound and try again.");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Couldn’t play that answer. Check your sound and try again.");
+    }
+  };
 
   // Boot: restore last active chat or start empty
   useEffect(() => {
@@ -444,20 +563,25 @@ export default function AiAssistant() {
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    const text = input.trim();
+    speechIn.stop();
+    const text = `${input}${interim ? ` ${interim}` : ""}`.trim();
     if (!text || busy || outOfPrompts || !historyReady || switching) return;
     setInput("");
+    setInterim("");
+    speechOut.stop();
     await sendMessage({ text });
   };
 
   const ask = async (text: string) => {
     if (busy || outOfPrompts || !historyReady || switching) return;
+    speechIn.stop();
     setInput("");
+    setInterim("");
+    speechOut.stop();
     await sendMessage({ text });
   };
 
   const suggestions = buildSuggestions(usage?.drugNames ?? []);
-  const limit = usage?.limit ?? 5;
   const hideComposer = outOfPrompts && messages.length === 0;
 
   return (
@@ -507,15 +631,11 @@ export default function AiAssistant() {
         <p className="min-w-0 truncate">
           {usage?.drugNames?.length
             ? `${usage.drugNames.length} med${usage.drugNames.length === 1 ? "" : "s"} loaded`
-            : "No meds yet — add some in Drugs"}
+            : "No meds yet — ask AMANDA to add one, or use Drugs"}
         </p>
-        <p
-          className={`shrink-0 font-semibold tabular-nums ${
-            outOfPrompts ? "text-[#8a3d5a]" : "text-soft-ink"
-          }`}
-        >
-          {usage ? `${usage.remaining}/${usage.limit} today` : "…"}
-        </p>
+        {outOfPrompts ? (
+          <p className="shrink-0 font-semibold text-[#8a3d5a]">Resting today</p>
+        ) : null}
       </motion.div>
 
       <motion.div
@@ -543,11 +663,10 @@ export default function AiAssistant() {
                 {outOfPrompts ? (
                   <>
                     <h2 className="text-[16px] font-semibold tracking-tight text-soft-ink">
-                      Daily limit reached
+                      AMANDA is resting for today
                     </h2>
                     <p className="mt-1 text-[13px] leading-relaxed text-soft-muted">
-                      You’ve used all {limit} prompts today. Come back tomorrow,
-                      or reopen an earlier chat.
+                      Come back tomorrow, or reopen an earlier chat.
                     </p>
                     <button
                       type="button"
@@ -565,7 +684,8 @@ export default function AiAssistant() {
                     </h2>
                     <p className="mt-1 text-[13px] leading-relaxed text-soft-muted">
                       Educational only — confirm personal advice with a
-                      clinician. {limit} prompts/day.
+                      clinician. You can also ask her to add a med to your
+                      schedule.
                     </p>
                   </>
                 )}
@@ -599,6 +719,8 @@ export default function AiAssistant() {
               {messages.map((m) => {
                 const text = messageText(m);
                 const isUser = m.role === "user";
+                const speaking = speechOut.speakingId === m.id;
+                const loadingSpeech = speechOut.loadingId === m.id;
                 return (
                   <motion.div
                     key={m.id}
@@ -621,11 +743,47 @@ export default function AiAssistant() {
                       {isUser ? (
                         <p className="whitespace-pre-wrap">{text}</p>
                       ) : (
-                        <div className="ai-md [&_a]:text-soft-primary [&_a]:underline [&_blockquote]:border-l-2 [&_blockquote]:border-soft-primary/30 [&_blockquote]:pl-3 [&_blockquote]:text-soft-muted [&_code]:rounded [&_code]:bg-black/[0.05] [&_code]:px-1 [&_code]:py-0.5 [&_code]:text-[12px] [&_h1]:mb-2 [&_h1]:mt-3 [&_h1]:text-[16px] [&_h1]:font-semibold [&_h2]:mb-2 [&_h2]:mt-3 [&_h2]:text-[15px] [&_h2]:font-semibold [&_h3]:mb-1.5 [&_h3]:mt-2.5 [&_h3]:text-[14px] [&_h3]:font-semibold [&_li]:my-0.5 [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:my-2 [&_p:first-child]:mt-0 [&_p:last-child]:mb-0 [&_strong]:font-semibold [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5">
-                          <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                            {text}
-                          </ReactMarkdown>
-                        </div>
+                        <>
+                          <div className="ai-md [&_a]:text-soft-primary [&_a]:underline [&_blockquote]:border-l-2 [&_blockquote]:border-soft-primary/30 [&_blockquote]:pl-3 [&_blockquote]:text-soft-muted [&_code]:rounded [&_code]:bg-black/[0.05] [&_code]:px-1 [&_code]:py-0.5 [&_code]:text-[12px] [&_h1]:mb-2 [&_h1]:mt-3 [&_h1]:text-[16px] [&_h1]:font-semibold [&_h2]:mb-2 [&_h2]:mt-3 [&_h2]:text-[15px] [&_h2]:font-semibold [&_h3]:mb-1.5 [&_h3]:mt-2.5 [&_h3]:text-[14px] [&_h3]:font-semibold [&_li]:my-0.5 [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:my-2 [&_p:first-child]:mt-0 [&_p:last-child]:mb-0 [&_strong]:font-semibold [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5">
+                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                              {text}
+                            </ReactMarkdown>
+                          </div>
+                          {text.trim() ? (
+                            <div className="mt-2 flex justify-end border-t border-black/[0.04] pt-2">
+                              <button
+                                type="button"
+                                onClick={() => void toggleSpeak(m.id, text)}
+                                className={`ndo-press inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-[11px] font-semibold transition ${
+                                  speaking || loadingSpeech
+                                    ? "bg-soft-primary text-white"
+                                    : "text-soft-muted hover:bg-white hover:text-soft-primary"
+                                }`}
+                                aria-label={
+                                  speaking || loadingSpeech
+                                    ? "Stop speaking"
+                                    : "Hear answer"
+                                }
+                              >
+                                {loadingSpeech ? (
+                                  <Loader2
+                                    className="size-3.5 animate-spin"
+                                    strokeWidth={2.25}
+                                  />
+                                ) : speaking ? (
+                                  <VolumeX className="size-3.5" strokeWidth={2.25} />
+                                ) : (
+                                  <Volume2 className="size-3.5" strokeWidth={2.25} />
+                                )}
+                                {loadingSpeech
+                                  ? "Preparing…"
+                                  : speaking
+                                    ? "Stop"
+                                    : "Hear"}
+                              </button>
+                            </div>
+                          ) : null}
+                        </>
                       )}
                     </div>
                   </motion.div>
@@ -668,35 +826,81 @@ export default function AiAssistant() {
           >
             {outOfPrompts ? (
               <p className="mb-2 rounded-lg bg-[#ffe4ee] px-3 py-2 text-center text-[12px] font-medium text-[#8a3d5a]">
-                Daily limit reached — back tomorrow for {limit} more.
+                AMANDA is resting for today — try again tomorrow.
+              </p>
+            ) : null}
+            {speechIn.listening ? (
+              <p className="mb-2 text-center text-[12px] font-medium text-soft-primary">
+                Listening… tap the mic again when you’re done
+                {interim ? (
+                  <span className="mt-1 block truncate text-soft-muted">
+                    {interim}
+                  </span>
+                ) : null}
               </p>
             ) : null}
             <div className="flex items-end gap-2 rounded-xl border border-black/[0.06] bg-soft-canvas/60 p-1.5 focus-within:border-soft-primary/25 focus-within:bg-white focus-within:ring-4 focus-within:ring-soft-primary/[0.06]">
               <textarea
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
+                value={
+                  speechIn.listening && interim
+                    ? `${input}${input.trim() ? " " : ""}${interim}`
+                    : input
+                }
+                onChange={(e) => {
+                  setInterim("");
+                  setInput(e.target.value);
+                }}
                 rows={1}
                 disabled={outOfPrompts || !historyReady || switching}
                 placeholder={
                   outOfPrompts
-                    ? "Limit reached — try again tomorrow"
-                    : usage?.drugNames?.length
-                      ? "Ask about your meds…"
-                      : "Ask about a drug or side effect…"
+                    ? "Back tomorrow…"
+                    : speechIn.listening
+                      ? "Speak your question…"
+                      : usage?.drugNames?.length
+                        ? "Ask about your meds…"
+                        : "Ask about a drug, or add one…"
                 }
                 className="max-h-28 min-h-[40px] flex-1 resize-none bg-transparent px-2 py-2 text-[14px] text-soft-ink outline-none placeholder:text-soft-muted disabled:cursor-not-allowed disabled:opacity-60"
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
+                    speechIn.stop();
                     void onSubmit(e);
                   }
                 }}
               />
               <button
+                type="button"
+                onClick={toggleMic}
+                disabled={outOfPrompts || busy || !historyReady || switching}
+                className={`flex size-10 shrink-0 items-center justify-center rounded-lg transition disabled:cursor-not-allowed disabled:opacity-45 ${
+                  speechIn.listening
+                    ? "bg-[#ffe4ee] text-[#8a3d5a] shadow-soft-sm"
+                    : "text-soft-muted hover:bg-white hover:text-soft-primary"
+                }`}
+                aria-label={
+                  speechIn.listening ? "Stop voice note" : "Record voice note"
+                }
+                aria-pressed={speechIn.listening}
+                title={
+                  speechIn.supported
+                    ? speechIn.listening
+                      ? "Stop recording"
+                      : "Record a voice note"
+                    : "Voice input not supported here"
+                }
+              >
+                <Mic
+                  className={`size-4 ${speechIn.listening ? "animate-pulse" : ""}`}
+                  strokeWidth={2.25}
+                />
+              </button>
+              <button
                 type="submit"
                 disabled={
                   busy ||
-                  !input.trim() ||
+                  !(input.trim() || interim.trim()) ||
                   outOfPrompts ||
                   !historyReady ||
                   switching

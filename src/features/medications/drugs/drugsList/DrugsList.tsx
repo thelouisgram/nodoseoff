@@ -1,6 +1,7 @@
 import React, { SetStateAction } from "react";
 import {
   calculateTimePeriod,
+  drugDisplayName,
   GroupedDrug,
   isAllergicToDrug,
   sameDrugName,
@@ -16,6 +17,8 @@ import { AlertTriangle, ChevronRight } from "lucide-react";
 
 interface AllergyProps {
   drug: string;
+  nickname?: string;
+  imageUrl?: string;
 }
 
 interface DrugsListProps {
@@ -93,9 +96,24 @@ const DrugsList: React.FC<DrugsListProps> = ({
                   <span className="w-5 shrink-0 text-right text-[11px] font-semibold tabular-nums text-soft-muted/80">
                     {String(startIndex + index + 1).padStart(2, "0")}
                   </span>
-                  <span className="truncate text-[14px] font-semibold capitalize tracking-tight text-soft-ink">
-                    {item.drug}
-                  </span>
+                  {item.imageUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={item.imageUrl}
+                      alt=""
+                      className="size-9 shrink-0 rounded-lg object-cover"
+                    />
+                  ) : null}
+                  <div className="min-w-0">
+                    <span className="block truncate text-[14px] font-semibold capitalize tracking-tight text-soft-ink">
+                      {drugDisplayName(item)}
+                    </span>
+                    {item.nickname?.trim() ? (
+                      <span className="mt-0.5 block truncate text-[12px] capitalize text-soft-muted">
+                        {item.drug}
+                      </span>
+                    ) : null}
+                  </div>
                 </div>
 
                 <div
@@ -199,10 +217,18 @@ const DrugsList: React.FC<DrugsListProps> = ({
                 >
                   {String(startIndex + index + 1).padStart(2, "0")}
                 </span>
+                {drug.imageUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={drug.imageUrl}
+                    alt=""
+                    className="size-9 shrink-0 rounded-lg object-cover"
+                  />
+                ) : null}
                 <div className="min-w-0">
                   <div className="flex min-w-0 items-center gap-2">
                     <p className="truncate text-[14px] font-semibold capitalize tracking-tight text-soft-ink">
-                      {drug.drug}
+                      {drugDisplayName(drug)}
                     </p>
                     {isAllergyMed ? (
                       <span className="inline-flex shrink-0 items-center gap-1 rounded-md bg-amber-200/80 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-900">
@@ -211,6 +237,15 @@ const DrugsList: React.FC<DrugsListProps> = ({
                       </span>
                     ) : null}
                   </div>
+                  {drug.nickname?.trim() ? (
+                    <p
+                      className={`mt-0.5 truncate text-[12px] capitalize ${
+                        isAllergyMed ? "text-amber-800/70" : "text-soft-muted"
+                      }`}
+                    >
+                      {drug.drug}
+                    </p>
+                  ) : null}
                   <p
                     className={`mt-0.5 truncate text-[12px] ss:hidden ${
                       isAllergyMed ? "text-amber-800/70" : "text-soft-muted"

@@ -2,6 +2,7 @@ import React, { SetStateAction } from "react";
 import OptionModal from "../optionModal";
 import { useAppSelector, useAppDispatch } from "@/store";
 import { setActiveDrug, setActiveDrugId } from "@/store/appSlice";
+import { drugDisplayName } from "@/utils/drugs";
 
 interface Props {
   options: boolean;
@@ -10,6 +11,8 @@ interface Props {
   setOptions: React.Dispatch<React.SetStateAction<boolean>>;
   tab: string;
   drug: string;
+  nickname?: string;
+  imageUrl?: string;
   activeAction: string;
   setActiveAction: (value: string) => void;
 }
@@ -23,11 +26,15 @@ const DrugDetailsHeader: React.FC<Props> = ({
   setOptions,
   tab,
   drug,
+  nickname,
+  imageUrl,
   activeAction,
   setActiveAction,
 }) => {
   const { activeDrugId } = useAppSelector((state) => state.app);
   const dispatch = useAppDispatch();
+  const title = drugDisplayName({ drug, nickname });
+  const hasNick = Boolean(nickname?.trim());
 
   const handleBreadcrumbClick = (level: "list") => {
     if (level === "list") {
@@ -49,15 +56,30 @@ const DrugDetailsHeader: React.FC<Props> = ({
         </button>
         <span className="mx-1">/</span>
         <span className="text-gray-800 font-semibold capitalize">
-          {drug}
+          {title}
         </span>
       </nav>
 
       {/* Title and Options */}
-      <div className="w-full flex justify-between items-center">
-        <h1 className="text-3xl ss:text-4xl font-extrabold capitalize text-slate-800 pb-1">
-          {drug}
-        </h1>
+      <div className="w-full flex items-start justify-between gap-3">
+        <div className="flex min-w-0 items-start gap-3">
+          {imageUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={imageUrl}
+              alt=""
+              className="mt-1 size-14 shrink-0 rounded-2xl object-cover shadow-soft-sm"
+            />
+          ) : null}
+          <div className="min-w-0">
+            <h1 className="text-3xl ss:text-4xl font-extrabold capitalize text-slate-800 pb-1">
+              {title}
+            </h1>
+            {hasNick ? (
+              <p className="text-sm capitalize text-soft-muted">{drug}</p>
+            ) : null}
+          </div>
+        </div>
         <OptionModal
           activeView={activeView}
           setActiveView={setActiveView}

@@ -9,6 +9,7 @@ import {
   getDueTodayDoses,
 } from "@/utils/dashboard/homeInsights";
 import { getNextUpcomingDose } from "@/utils/dashboard/dashboard";
+import { drugDisplayName } from "@/utils/drugs";
 
 type Props = {
   schedule: ScheduleItem[];
@@ -103,7 +104,7 @@ export default function UpNextStrip({ schedule, onMarkTaken }: Props) {
           {due ? "Due now" : "Up next"}
         </p>
         <h3 className="mt-1 truncate text-[18px] font-bold capitalize tracking-tight text-soft-ink">
-          {dose.drug}
+          {drugDisplayName(dose)}
         </h3>
         <p className="mt-0.5 flex items-center gap-1.5 text-[13px] text-soft-muted">
           <Clock3 className="size-3.5 shrink-0" strokeWidth={1.75} />

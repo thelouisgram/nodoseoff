@@ -68,13 +68,17 @@ const DrugsListContainer = ({
     return [];
   }, [tab, drugs, completedGrouped, allergies]);
 
-  const filtered = useMemo(
-    () =>
-      tabData.filter((d) =>
-        d.drug.toLowerCase().includes(search.toLowerCase())
-      ),
-    [tabData, search]
-  );
+  const filtered = useMemo(() => {
+    const q = search.toLowerCase().trim();
+    if (!q) return tabData;
+    return tabData.filter((d) => {
+      const name = String(d.drug || "").toLowerCase();
+      const nick = String(
+        (d as { nickname?: string }).nickname || ""
+      ).toLowerCase();
+      return name.includes(q) || nick.includes(q);
+    });
+  }, [tabData, search]);
 
   useEffect(() => {
     setPage(pageMemory.current[tab] || 1);

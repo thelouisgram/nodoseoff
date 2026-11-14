@@ -1,6 +1,6 @@
 import { getSql } from "@/lib/db";
 
-export const AI_DAILY_PROMPT_LIMIT = 5;
+export const AI_DAILY_PROMPT_LIMIT = 10;
 
 function utcDay(): string {
   return new Date().toISOString().slice(0, 10);

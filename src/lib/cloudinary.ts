@@ -31,6 +31,27 @@ export async function uploadProfileImage(
   return { publicId: result.public_id, url: result.secure_url };
 }
 
+export async function uploadMedicationImage(
+  userId: string,
+  fileBase64: string,
+  filename: string
+): Promise<{ publicId: string; url: string }> {
+  const cld = ensureCloudinary();
+  const folder =
+    process.env.CLOUDINARY_MEDS_FOLDER || "nodoseoff/medications";
+  const result = await cld.uploader.upload(
+    `data:application/octet-stream;base64,${fileBase64}`,
+    {
+      folder,
+      public_id: `${userId}/${Date.now()}-${filename.replace(/\s+/g, "_")}`,
+      overwrite: true,
+      resource_type: "image",
+      transformation: [{ width: 600, height: 600, crop: "limit" }],
+    }
+  );
+  return { publicId: result.public_id, url: result.secure_url };
+}
+
 export async function deleteCloudinaryAsset(publicId: string) {
   if (!publicId) return;
   const cld = ensureCloudinary();

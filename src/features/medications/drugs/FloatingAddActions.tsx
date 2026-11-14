@@ -46,6 +46,11 @@ const ACTIONS = [
   },
 ] as const;
 
+/** Distance from FAB: last row sits on the button, so it opens first. */
+function delayFromFab(index: number, total: number, step: number) {
+  return (total - 1 - index) * step;
+}
+
 const FloatingAddActions: React.FC<FloatingAddActionsProps> = ({
   add,
   setAdd,
@@ -62,6 +67,7 @@ const FloatingAddActions: React.FC<FloatingAddActionsProps> = ({
   if (activeModal !== "" || !mounted) return null;
 
   const handleClose = () => setAdd(false);
+  const total = ACTIONS.length;
 
   return createPortal(
     <>
@@ -72,7 +78,7 @@ const FloatingAddActions: React.FC<FloatingAddActionsProps> = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: reduce ? 0 : 0.2, ease: ndoEase }}
+            transition={{ duration: reduce ? 0 : 0.22, ease: ndoEase }}
             className="fixed inset-0 z-[143] bg-soft-ink/25 backdrop-blur-sm"
             onClick={handleClose}
           />
@@ -84,52 +90,59 @@ const FloatingAddActions: React.FC<FloatingAddActionsProps> = ({
           {add ? (
             <motion.div
               key="fab-actions"
-              initial="hidden"
-              animate="show"
-              exit="exit"
-              variants={{
-                hidden: {},
-                show: {
-                  transition: {
-                    staggerChildren: reduce ? 0 : 0.045,
-                    delayChildren: reduce ? 0 : 0.02,
-                  },
-                },
-                exit: {
-                  transition: {
-                    staggerChildren: reduce ? 0 : 0.03,
-                    staggerDirection: -1,
-                  },
-                },
+              initial={
+                reduce
+                  ? { opacity: 0 }
+                  : { opacity: 0, scale: 0.72, y: 18 }
+              }
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={
+                reduce
+                  ? { opacity: 0 }
+                  : { opacity: 0, scale: 0.78, y: 14 }
+              }
+              transition={{
+                duration: reduce ? 0 : 0.32,
+                ease: ndoEase,
               }}
+              style={{ transformOrigin: "bottom right" }}
               className="pointer-events-auto mb-3 flex flex-col items-end gap-2.5"
             >
-              {ACTIONS.map(({ id, label, Icon, btn }) => (
+              {ACTIONS.map(({ id, label, Icon, btn }, index) => (
                 <motion.button
                   key={id}
                   type="button"
-                  variants={{
-                    hidden: reduce
+                  initial={
+                    reduce
                       ? { opacity: 0 }
-                      : { opacity: 0, y: 10, scale: 0.96 },
-                    show: {
-                      opacity: 1,
-                      y: 0,
-                      scale: 1,
-                      transition: {
-                        duration: 0.28,
-                        ease: ndoEase,
-                      },
+                      : { opacity: 0, scale: 0.45, x: 18, y: 22 }
+                  }
+                  animate={{
+                    opacity: 1,
+                    scale: 1,
+                    x: 0,
+                    y: 0,
+                    transition: {
+                      duration: 0.3,
+                      ease: ndoEase,
+                      delay: reduce ? 0 : delayFromFab(index, total, 0.05),
                     },
-                    exit: reduce
+                  }}
+                  exit={
+                    reduce
                       ? { opacity: 0 }
                       : {
                           opacity: 0,
-                          y: 8,
-                          scale: 0.96,
-                          transition: { duration: 0.18, ease: ndoEase },
-                        },
-                  }}
+                          scale: 0.5,
+                          x: 14,
+                          y: 16,
+                          transition: {
+                            duration: 0.18,
+                            ease: ndoEase,
+                            delay: reduce ? 0 : index * 0.03,
+                          },
+                        }
+                  }
                   style={{ transformOrigin: "bottom right" }}
                   onClick={() => {
                     setAdd(false);
@@ -157,9 +170,19 @@ const FloatingAddActions: React.FC<FloatingAddActionsProps> = ({
         <motion.button
           type="button"
           onClick={() => setAdd((prev) => !prev)}
-          whileHover={reduce ? undefined : { scale: 1.05 }}
+          animate={
+            reduce
+              ? undefined
+              : {
+                  scale: add ? 1.06 : 1,
+                  boxShadow: add
+                    ? "0 14px 32px rgba(0, 40, 96, 0.28)"
+                    : "0 10px 24px rgba(0, 40, 96, 0.18)",
+                }
+          }
+          whileHover={reduce ? undefined : { scale: add ? 1.08 : 1.05 }}
           whileTap={reduce ? undefined : { scale: 0.94 }}
-          transition={{ duration: 0.2, ease: ndoEase }}
+          transition={{ duration: 0.22, ease: ndoEase }}
           aria-label={add ? "Close add menu" : "Open add menu"}
           aria-expanded={add}
           className="pointer-events-auto relative z-[146] flex size-14 items-center justify-center rounded-full bg-soft-primary shadow-soft-float ss:size-16"

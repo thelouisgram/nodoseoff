@@ -3,6 +3,7 @@ import { Check, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { ScheduleItem } from "@/types/dashboard";
 import { ndoEase } from "@/components/landing/motion";
+import { drugDisplayName } from "@/utils/drugs";
 
 interface DoseCardProps {
   item: ScheduleItem;
@@ -19,6 +20,7 @@ const formatTime = (time: string): string => {
 
 const DoseCard: React.FC<DoseCardProps> = ({ item, onUpdateCompleted }) => {
   const [busy, setBusy] = React.useState(false);
+  const label = drugDisplayName(item);
 
   const handleDoseClick = () => {
     // Per-card debounce only — other doses stay clickable concurrently.
@@ -47,7 +49,7 @@ const DoseCard: React.FC<DoseCardProps> = ({ item, onUpdateCompleted }) => {
               ? "border-soft-mint-ink/25 bg-soft-mint text-soft-mint-ink"
               : "border-black/[0.12] bg-white text-transparent hover:border-soft-primary/40"
           }`}
-          aria-label={`Mark ${item.drug} as ${
+          aria-label={`Mark ${label} as ${
             item.completed ? "not taken" : "taken"
           }`}
         >
@@ -65,9 +67,18 @@ const DoseCard: React.FC<DoseCardProps> = ({ item, onUpdateCompleted }) => {
           ) : null}
         </button>
 
+        {item.imageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={item.imageUrl}
+            alt=""
+            className="size-9 shrink-0 rounded-lg object-cover"
+          />
+        ) : null}
+
         <div className="flex min-w-0 flex-col">
           <p className="truncate text-[14px] font-semibold capitalize text-soft-ink">
-            {item.drug}
+            {label}
           </p>
           <span className="mt-0.5 text-[12px] text-soft-muted">
             Time: {formatTime(item.time)}

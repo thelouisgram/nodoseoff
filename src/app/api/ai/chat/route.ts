@@ -1,5 +1,6 @@
 import {
   convertToModelMessages,
+  stepCountIs,
   streamText,
   type UIMessage,
 } from "ai";
@@ -9,8 +10,9 @@ import {
   formatAiProviderError,
   getLanguageModel,
 } from "@/lib/ai/neon";
-import { AI_DAILY_PROMPT_LIMIT, consumeAiPrompt } from "@/lib/ai/quota";
+import { consumeAiPrompt } from "@/lib/ai/quota";
 import { buildUserMedsContext } from "@/lib/ai/user-meds";
+import { createAmandaTools } from "@/lib/ai/add-medication";
 
 export const maxDuration = 60;
 
@@ -32,16 +34,11 @@ export async function POST(req: Request) {
     if (!quota) {
       return Response.json(
         {
-          error: `Daily AI limit reached (${AI_DAILY_PROMPT_LIMIT} prompts/day). Try again tomorrow.`,
-          limit: AI_DAILY_PROMPT_LIMIT,
+          error: "AMANDA is resting for today. Try again tomorrow.",
           remaining: 0,
         },
         {
           status: 429,
-          headers: {
-            "X-AI-Prompt-Limit": String(AI_DAILY_PROMPT_LIMIT),
-            "X-AI-Prompt-Remaining": "0",
-          },
         }
       );
     }
@@ -61,15 +58,12 @@ export async function POST(req: Request) {
       model: getLanguageModel(),
       system,
       messages: await convertToModelMessages(messages.slice(-20)),
+      tools: createAmandaTools(userId),
+      stopWhen: stepCountIs(4),
       maxOutputTokens: 1200,
     });
 
     return result.toUIMessageStreamResponse({
-      headers: {
-        "X-AI-Prompt-Limit": String(quota.limit),
-        "X-AI-Prompt-Remaining": String(quota.remaining),
-        "X-AI-Prompt-Used": String(quota.used),
-      },
       sendReasoning: false,
       onError: (error) => formatAiProviderError(error),
     });

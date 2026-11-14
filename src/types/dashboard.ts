@@ -8,6 +8,10 @@ export interface ReportsProps {
 export interface ScheduleItem {
    id: number;
    drug: string;
+   /** Private label used on reminders / lock screen when set */
+   nickname?: string;
+   /** Cloudinary URL for thumbnail in schedule UI */
+   imageUrl?: string;
    date: string;
    time: string;
    completed: boolean;
@@ -24,6 +28,12 @@ export interface ScheduleItem {
   start: string;
   time: string[];
   drugId: string;
+  /** Optional private label — shown on reminders instead of the real name */
+  nickname?: string;
+  /** Cloudinary public id */
+  image?: string;
+  /** Cloudinary secure URL */
+  imageUrl?: string;
 }
 
 /** Next clinician appointment saved from the Home tab */

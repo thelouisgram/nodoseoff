@@ -109,6 +109,16 @@ export function sameDrugName(a: string, b: string) {
   return normalizeDrugName(a) === normalizeDrugName(b);
 }
 
+/** Nickname when set (privacy for reminders); otherwise the real drug name. */
+export function drugDisplayName(d: {
+  drug?: string;
+  nickname?: string;
+}) {
+  const nick = String(d.nickname || "").trim();
+  if (nick) return nick;
+  return String(d.drug || "").trim();
+}
+
 /** True when a med name should be blocked by a recorded allergy. */
 export function drugMatchesAllergy(drugName: string, allergyName: string) {
   const drug = normalizeDrugName(drugName);

@@ -52,9 +52,9 @@ const MobileTabs: React.FC<TabsProps> = ({ item, activeTab }) => {
         ) : null}
         {isAmanda ? (
           <AmandaMark
-            compact
-            className="relative z-[1] size-[22px] [&_svg]:rounded-md [&_svg]:shadow-none"
-            onDark={isActive}
+            variant="face"
+            tone="current"
+            className="relative z-[1] size-[22px]"
           />
         ) : (
           <Icon

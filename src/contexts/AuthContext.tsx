@@ -8,11 +8,21 @@ import { setIsAuthenticated, setUserId, resetAppState } from "@/store/appSlice";
 import { clearDashboardData } from "@/store/dashboardSlice";
 
 /**
- * Clear Neon Auth cookies without importing server-only createNeonAuth.
- * (Pages Router + server actions was bundling cookie secrets into the client.)
+ * Clear Neon Auth cookies + client session cache.
+ * Must go through authClient.signOut so Neon Auth invalidates its in-memory
+ * session cache. A raw /api/auth/sign-out fetch clears cookies but leaves
+ * getSession() returning the previous user → dashboard + /token 401 loops.
  */
 async function clearRemoteSession() {
-  const res = await fetch("/api/auth/sign-out", {
+  try {
+    await authClient.signOut({ disableRedirect: true });
+    return;
+  } catch (err) {
+    console.warn("authClient.signOut failed:", err);
+  }
+
+  // Fallback if the client method throws — still clear cookies server-side.
+  await fetch("/api/auth/sign-out", {
     method: "POST",
     credentials: "include",
     headers: {
@@ -20,18 +30,9 @@ async function clearRemoteSession() {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ disableRedirect: true }),
-  }).catch((err) => {
-    console.warn("sign-out fetch failed:", err);
-    return null;
+  }).catch((fetchErr) => {
+    console.warn("sign-out fetch failed:", fetchErr);
   });
-
-  if (res?.ok) return;
-
-  try {
-    await authClient.signOut({ disableRedirect: true });
-  } catch (err) {
-    console.warn("authClient.signOut failed:", err);
-  }
 }
 
 /** Session state for the whole app. */
@@ -61,10 +62,22 @@ export function useAuth() {
 
 /** Email/password + Google sign-in — use on login (and signup Google). */
 export function useAuthSignIn() {
+  const dispatch = useAppDispatch();
+
   const signInWithPassword = async (email: string, password: string) => {
-    const { error } = await authClient.signIn.email({ email, password });
+    clearAccessTokenCache();
+    const { data, error } = await authClient.signIn.email({ email, password });
     if (error) {
       throw new Error(error.message || "Sign in failed");
+    }
+    const user = (data as { user?: { id?: string; email?: string | null } } | null)
+      ?.user;
+    const id = user?.id;
+    if (id) {
+      await authClient.getSession().catch(() => null);
+      dispatch(setAuthUser({ id, email: user?.email || email }));
+      dispatch(setUserId(id));
+      dispatch(setIsAuthenticated(true));
     }
   };
 
@@ -93,6 +106,7 @@ export function useAuthSignUp() {
   const { signInWithGoogle } = useAuthSignIn();
 
   const signUpWithPassword = async (email: string, password: string, name?: string) => {
+    clearAccessTokenCache();
     const { data, error } = await authClient.signUp.email({
       email,
       password,
@@ -103,6 +117,8 @@ export function useAuthSignUp() {
     }
     const id = (data as { user?: { id?: string } } | null)?.user?.id;
     if (id) {
+      // Prime client session from cookies so getSession isn't a stale cache hit.
+      await authClient.getSession().catch(() => null);
       dispatch(setAuthUser({ id, email }));
       dispatch(setUserId(id));
       dispatch(setIsAuthenticated(true));

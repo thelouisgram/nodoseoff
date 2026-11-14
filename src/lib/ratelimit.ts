@@ -119,16 +119,33 @@ export const strictLimiter = new SlidingWindowLimiter(
   60 * 60 * 1000
 );
 
+type NextApiHeaders = Record<string, string | string[] | undefined>;
+
+function headerValue(
+  headers: Headers | NextApiHeaders,
+  name: string
+): string | null {
+  if (typeof (headers as Headers).get === "function") {
+    return (headers as Headers).get(name);
+  }
+  const raw =
+    (headers as NextApiHeaders)[name] ??
+    (headers as NextApiHeaders)[name.toLowerCase()];
+  if (Array.isArray(raw)) return raw[0] ?? null;
+  return typeof raw === "string" ? raw : null;
+}
+
+/** Works with App Router `NextRequest` and Pages API `req.headers`. */
 export function getRateLimitIdentifier(
-  request: NextRequest,
+  request: NextRequest | { headers: Headers | NextApiHeaders },
   userId?: string
 ): RateLimitIdentifier {
   if (userId) return `user:${userId}`;
 
-  const forwarded = request.headers.get("x-forwarded-for");
+  const forwarded = headerValue(request.headers, "x-forwarded-for");
   if (forwarded) return forwarded.split(",")[0]?.trim() || "anonymous";
 
-  const realIp = request.headers.get("x-real-ip");
+  const realIp = headerValue(request.headers, "x-real-ip");
   if (realIp) return realIp;
 
   return "anonymous";

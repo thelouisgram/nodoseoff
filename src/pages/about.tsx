@@ -36,7 +36,7 @@ const TEAM: TeamMember[] = [
     initials: "UC",
   },
   {
-    name: "Barr. Adeyeye Adeife",
+    name: "Adeyeye Adeife Esq.",
     role: "Chief Legal and Operating Officer",
     blurb: "",
     image: "/assets/team/04-adeife.png",

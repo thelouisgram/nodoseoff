@@ -54,9 +54,9 @@ const Tabs: React.FC<TabsProps> = ({ item, activeTab, nav }) => {
       <span className="relative z-[1] grid size-10 shrink-0 place-items-center">
         {isAmanda ? (
           <AmandaMark
-            compact
-            className="size-[22px] [&_svg]:rounded-md [&_svg]:shadow-none"
-            onDark={isActive}
+            variant="face"
+            tone="current"
+            className="size-[22px]"
           />
         ) : (
           <Icon

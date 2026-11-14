@@ -1,19 +1,34 @@
 "use client";
 
-/** Compact A6 avatar for chat threads and tight UI. */
+/** A6 avatar — lettermark, face, or badge (face + A6). */
 export default function AmandaMark({
   className = "size-12",
   pulse = false,
   onDark = false,
-  /** Nav-sized: lettermark only, no face detail */
+  /**
+   * `brand` — navy/white badge (chat, marketing)
+   * `current` — inherits text color like Lucide nav icons (sidebar)
+   */
+  tone = "brand",
+  /**
+   * `letter` — A6 only (tight slots)
+   * `face` — smiley only (sidebar / mobile dock)
+   * `badge` — smiley + A6 (chat / marketing)
+   */
+  variant,
+  /** @deprecated use variant="letter" */
   compact = false,
 }: {
   className?: string;
   pulse?: boolean;
   onDark?: boolean;
+  tone?: "brand" | "current";
+  variant?: "letter" | "face" | "badge";
   compact?: boolean;
 }) {
-  const ink = onDark ? "#002860" : "#FFFFFF";
+  const mode = variant ?? (compact ? "letter" : "badge");
+  const inherit = tone === "current";
+  const ink = inherit ? "currentColor" : onDark ? "#002860" : "#FFFFFF";
   const ground = onDark ? "#FFFFFF" : "#002860";
 
   return (
@@ -24,18 +39,20 @@ export default function AmandaMark({
       {pulse ? (
         <span
           className={`absolute inset-[-14%] animate-pulse rounded-2xl blur-md ${
-            onDark ? "bg-white/20" : "bg-soft-primary/20"
+            onDark || inherit ? "bg-white/20" : "bg-soft-primary/20"
           }`}
         />
       ) : null}
       <svg
         viewBox="0 0 64 64"
-        className="relative size-full overflow-hidden rounded-2xl shadow-soft-sm"
+        className={`relative size-full overflow-hidden ${
+          inherit ? "" : "rounded-2xl shadow-soft-sm"
+        }`}
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <rect width="64" height="64" rx="16" fill={ground} />
-        {compact ? (
+        {inherit ? null : <rect width="64" height="64" rx="16" fill={ground} />}
+        {mode === "letter" ? (
           <text
             x="32"
             y="42"
@@ -48,6 +65,17 @@ export default function AmandaMark({
           >
             A6
           </text>
+        ) : mode === "face" ? (
+          <>
+            <circle cx="24" cy="27" r="4" fill={ink} />
+            <circle cx="40" cy="27" r="4" fill={ink} />
+            <path
+              d="M24 38c3.2 5.5 12.8 5.5 16 0"
+              stroke={ink}
+              strokeWidth="3"
+              strokeLinecap="round"
+            />
+          </>
         ) : (
           <>
             <circle cx="24" cy="24" r="3.2" fill={ink} />

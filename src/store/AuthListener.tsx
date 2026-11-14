@@ -66,9 +66,24 @@ export default function AuthListener() {
             window.setTimeout(() => {
               if (!cancelled) void applySession();
             }, 500 * jwtAttempts);
-          } else {
-            console.warn("Session present but JWT unavailable after retries");
+            return;
           }
+
+          // Client session cache can outlive cleared cookies (e.g. raw
+          // sign-out). Confirm against the network before treating as signed-in.
+          const live = await fetch(
+            "/api/auth/get-session?disableCookieCache=true",
+            { credentials: "include", headers: { Accept: "application/json" } }
+          )
+            .then((r) => (r.ok ? r.json() : null))
+            .catch(() => null);
+          const liveUser = (live as { user?: SessionUser } | null)?.user;
+          if (!liveUser?.id) {
+            clearAuth();
+            return;
+          }
+
+          console.warn("Session present but JWT unavailable after retries");
           return;
         }
 

@@ -10,6 +10,7 @@ import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
 import { SignUpLink } from "@/components/auth/SignUpLink";
 import { useGuestOnlyRedirect } from "@/hooks/useGuestOnlyRedirect";
 import Loader from "@/components/dashboard/Loader";
+import { waitForAccessToken } from "@/lib/auth/client";
 import {
   SoftButton,
   SoftCard,
@@ -43,6 +44,14 @@ const SignIn = () => {
     setErrorMessage("");
     try {
       await signIn(formData.email, formData.password);
+      const jwt = await waitForAccessToken(8, 250);
+      if (!jwt) {
+        setErrorMessage(
+          "Signed in, but secure session is still starting. Please try again in a moment."
+        );
+        setFormSubmitting(false);
+        return;
+      }
       await router.replace("/dashboard");
     } catch (error: unknown) {
       const message =

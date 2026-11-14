@@ -1,9 +1,10 @@
 import Link from "next/link";
 import SeoHead from "@/components/seo/SeoHead";
 import InteractiveLogo from "@/components/ui/InteractiveLogo";
-import { ChangeEvent, FormEvent, useState } from "react";
-import { authClient } from "@/lib/auth/client";
+import { ChangeEvent, FormEvent, useRef, useState } from "react";
+import ReCAPTCHA from "react-google-recaptcha";
 import { toast } from "sonner";
+import { recaptchaSiteKey } from "@/lib/captcha";
 import {
   SoftButton,
   SoftCard,
@@ -17,6 +18,9 @@ const ForgotPassword = () => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [sent, setSent] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState("");
+  const captchaRef = useRef<ReCAPTCHA>(null);
+  const siteKey = recaptchaSiteKey();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -24,27 +28,45 @@ const ForgotPassword = () => {
       setErrorMessage("Please enter your email address.");
       return;
     }
+    if (!captchaToken) {
+      setErrorMessage("Please complete the CAPTCHA verification.");
+      return;
+    }
 
     setLoading(true);
     setErrorMessage("");
 
     try {
-      const redirectTo =
-        typeof window !== "undefined"
-          ? `${window.location.origin}/reset`
-          : "/reset";
-      const { error } = await authClient.requestPasswordReset({
-        email: email.trim(),
-        redirectTo,
+      const res = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email.trim(),
+          captchaToken,
+        }),
       });
-      if (error) {
-        setErrorMessage(error.message || "Could not send reset email");
+      const body = (await res.json().catch(() => ({}))) as {
+        error?: string;
+        message?: string;
+      };
+      if (!res.ok) {
+        setErrorMessage(body.error || "Could not send reset email");
+        captchaRef.current?.reset();
+        setCaptchaToken("");
         return;
       }
       setSent(true);
-      toast.success("Password reset email sent. Please check your inbox.");
+      toast.success(
+        body.message ||
+          "Password reset email sent. Please check your inbox."
+      );
     } catch (err: unknown) {
       setErrorMessage(err instanceof Error ? err.message : String(err));
+      captchaRef.current?.reset();
+      setCaptchaToken("");
     } finally {
       setLoading(false);
     }
@@ -79,7 +101,12 @@ const ForgotPassword = () => {
                 Forgot password
               </h1>
               <p className="mt-2 mb-7 text-[15px] leading-relaxed text-soft-muted">
-                Enter your email and we&apos;ll send a calm reset link.
+                Enter your email and we&apos;ll send a calm reset link. If you
+                signed up with Google, use{" "}
+                <Link href="/login" className="font-semibold text-soft-ink underline">
+                  Continue with Google
+                </Link>{" "}
+                instead.
               </p>
 
               {sent ? (
@@ -111,13 +138,34 @@ const ForgotPassword = () => {
                     />
                   </div>
 
+                  {siteKey ? (
+                    <div className="flex justify-center overflow-hidden rounded-soft-md">
+                      <ReCAPTCHA
+                        ref={captchaRef}
+                        sitekey={siteKey}
+                        onChange={(token) => setCaptchaToken(token || "")}
+                        onExpired={() => setCaptchaToken("")}
+                      />
+                    </div>
+                  ) : (
+                    <p className="text-sm text-soft-pink-ink">
+                      Captcha is not configured. Add{" "}
+                      <code>NEXT_PUBLIC_CAPTCHA_SITE_KEY</code> to enable password
+                      reset.
+                    </p>
+                  )}
+
                   {errorMessage && (
                     <div className="rounded-soft-md border border-soft-pink bg-soft-pink px-4 py-3 text-sm text-soft-pink-ink">
                       {errorMessage}
                     </div>
                   )}
 
-                  <SoftButton type="submit" className="w-full" disabled={loading}>
+                  <SoftButton
+                    type="submit"
+                    className="w-full"
+                    disabled={loading || !siteKey}
+                  >
                     {loading ? "Sending…" : "Send reset link"}
                   </SoftButton>
 

@@ -1,4 +1,5 @@
 import { formatDate } from "../utils/dashboard/dashboard";
+import { escapeHtml } from "@/lib/html-escape";
 
 interface DrugAddedEmailResponse {
   subject: string;
@@ -13,6 +14,17 @@ export function generateDrugAddedEmail(
   route: string,
   time: string[]
 ): DrugAddedEmailResponse {
+  const safeName = escapeHtml(fullName.split(" ")[0] || "there");
+  const safeDrug = escapeHtml(
+    drugName.charAt(0).toUpperCase() + drugName.slice(1).toLowerCase()
+  );
+  const safeRoute = escapeHtml(
+    route.charAt(0).toUpperCase() + route.slice(1).toLowerCase()
+  );
+  const safeTime = escapeHtml(time.join(", "));
+  const safeStart = escapeHtml(formatDate(startDate));
+  const safeStop = escapeHtml(formatDate(stopDate));
+
   // Email subject
   const subject = `New Medication Added: ${drugName.charAt(0).toUpperCase() + drugName.slice(1)}`;
 
@@ -113,15 +125,15 @@ export function generateDrugAddedEmail(
             <img src="https://nodoseoff.vercel.app/logoName.png" alt="NoDoseOff Logo" class="logo">
           </div>
           <div class="content">
-            <p>Hi  ${fullName.split(' ')[0]},</p>
+            <p>Hi  ${safeName},</p>
             <p>You have successfully added a new medication to your NoDoseOff schedule.</p>
 
             <div class="details">
-              <p><strong>Medication:</strong> ${drugName.charAt(0).toUpperCase() + drugName.slice(1).toLowerCase()}</p>
-              <p><strong>From:</strong> ${formatDate(startDate)}</p>
-             <p><strong>To:</strong> ${formatDate(stopDate)}</p>
-              <p><strong>Time:</strong> ${time.join(', ')}</p>
-              <p><strong>Route of Administration:</strong> ${route.charAt(0).toUpperCase() + route.slice(1).toLowerCase()}</p>
+              <p><strong>Medication:</strong> ${safeDrug}</p>
+              <p><strong>From:</strong> ${safeStart}</p>
+             <p><strong>To:</strong> ${safeStop}</p>
+              <p><strong>Time:</strong> ${safeTime}</p>
+              <p><strong>Route of Administration:</strong> ${safeRoute}</p>
             </div>
 
             <p>Stay consistent with your medication and keep track of your health effortlessly with NoDoseOff.</p>

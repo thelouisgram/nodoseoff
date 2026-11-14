@@ -1,9 +1,7 @@
-/** Shared admin allowlist (not a secret). Override via env. */
-const DEFAULT_ADMIN_EMAILS = [
-  "hadesanoye01@gmail.com",
-  "nodoseoff@gmail.com",
-];
-
+/**
+ * Server admin allowlist. Prefer `ADMIN_EMAILS` only (never ship in the client bundle).
+ * Falls back to NEXT_PUBLIC_ADMIN_EMAILS for local/dev if still present.
+ */
 function parseEmailList(raw?: string | null): string[] {
   if (!raw?.trim()) return [];
   return raw
@@ -13,13 +11,14 @@ function parseEmailList(raw?: string | null): string[] {
 }
 
 export function getAdminEmails(): string[] {
-  const fromEnv =
-    typeof process !== "undefined"
-      ? parseEmailList(
-          process.env.ADMIN_EMAILS || process.env.NEXT_PUBLIC_ADMIN_EMAILS
-        )
-      : [];
-  return fromEnv.length > 0 ? fromEnv : DEFAULT_ADMIN_EMAILS;
+  if (typeof process === "undefined") return [];
+  // Server: ADMIN_EMAILS is authoritative (fail closed if unset).
+  // Client: NEXT_PUBLIC_ADMIN_EMAILS is UI-only; /api/admin/me is the real gate.
+  const raw =
+    typeof window === "undefined"
+      ? process.env.ADMIN_EMAILS || process.env.NEXT_PUBLIC_ADMIN_EMAILS
+      : process.env.NEXT_PUBLIC_ADMIN_EMAILS;
+  return parseEmailList(raw);
 }
 
 export function isAdminEmail(email?: string | null): boolean {

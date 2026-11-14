@@ -18,7 +18,8 @@
     "@neondatabase/auth": "latest",
     "@neondatabase/serverless": "^1.2.0",
     "@reduxjs/toolkit": "^2.11.2",
-    "@vercel/analytics": "^1.5.0",
+    "@vercel/analytics": "^2.0.1",
+    "@vercel/speed-insights": "^2.1.0",
     "ai": "^7.0.165",
     "cloudinary": "^2.11.0",
     "date-fns": "^3.0.1",
@@ -40,6 +41,7 @@
     "react-modal": "^3.16.1",
     "react-redux": "^9.2.0",
     "redux-persist": "^6.0.0",
+    "rehype-sanitize": "^6.0.0",
     "remark-gfm": "^4.0.1",
     "resend": "^4.1.2",
     "sonner": "^1.2.4"

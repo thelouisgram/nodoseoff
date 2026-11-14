@@ -127,7 +127,8 @@ export default function AuthListener() {
               email,
               phone: "",
               onlyIfMissing: true,
-              linkLegacy: true,
+              // Disabled by default — merging by email alone is an account-takeover risk.
+              linkLegacy: false,
             },
           }).catch((err) => {
             console.warn("Bootstrap skipped:", err);

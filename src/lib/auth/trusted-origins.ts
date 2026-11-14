@@ -60,12 +60,17 @@ export function isAllowedAppOrigin(origin: string | null): boolean {
   if (process.env.NODE_ENV !== "production" && isLocalDevOrigin(normalized)) {
     return true;
   }
-  // Vercel preview deployments for this project
+  // Vercel preview deployments for this project (exact production + team suffix only)
   try {
     const host = new URL(normalized).hostname;
+    if (host === "nodoseoff.vercel.app") return true;
+    // Match Vercel’s git preview pattern: nodoseoff-git-<branch>-<team>.vercel.app
+    // (avoids any random nodoseoff-*.vercel.app project name)
     if (
       host.endsWith(".vercel.app") &&
-      (host.startsWith("nodoseoff-") || host === "nodoseoff.vercel.app")
+      /^nodoseoff-git-[a-z0-9-]+-thelouisgrams-projects\.vercel\.app$/i.test(
+        host
+      )
     ) {
       return true;
     }

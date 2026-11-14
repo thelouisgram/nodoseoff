@@ -13,19 +13,42 @@ type MutationBody = {
   payload?: Record<string, unknown>;
 };
 
+function medsFolderPrefix(): string {
+  return process.env.CLOUDINARY_MEDS_FOLDER || "nodoseoff/medications";
+}
+
+/** Only allow deleting Cloudinary assets owned by this user under the meds folder. */
+function isOwnedMedicationPublicId(userId: string, publicId: string): boolean {
+  const prefix = `${medsFolderPrefix()}/${userId}/`;
+  return publicId.startsWith(prefix) && !publicId.includes("..");
+}
+
+function isAllowedMedicationImageUrl(url: string): boolean {
+  if (!url) return true;
+  try {
+    const u = new URL(url);
+    if (u.protocol !== "https:") return false;
+    if (u.hostname !== "res.cloudinary.com") return false;
+    const cloud = process.env.CLOUDINARY_CLOUD_NAME;
+    if (cloud && !u.pathname.startsWith(`/${cloud}/`)) return false;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 async function resolveMedicationImage(
   userId: string,
   p: Record<string, unknown>,
   existing?: { image?: string; image_url?: string }
 ): Promise<{ nickname: string; image: string; imageUrl: string }> {
   const nickname = String(p.nickname ?? "").trim().slice(0, 80);
-  let image = String(existing?.image ?? p.image ?? "").trim();
-  let imageUrl = String(
-    existing?.image_url ?? p.imageUrl ?? p.image_url ?? ""
-  ).trim();
+  // Never trust client-supplied image / imageUrl — only stored row or fresh upload.
+  let image = String(existing?.image ?? "").trim();
+  let imageUrl = String(existing?.image_url ?? "").trim();
 
   if (p.clearImage) {
-    if (image) {
+    if (image && isOwnedMedicationPublicId(userId, image)) {
       try {
         await deleteCloudinaryAsset(image);
       } catch {
@@ -47,7 +70,7 @@ async function resolveMedicationImage(
     if (!/\.(jpe?g|png|webp|gif)$/.test(lowerName)) {
       throw new Error("UNSUPPORTED_IMAGE");
     }
-    if (image) {
+    if (image && isOwnedMedicationPublicId(userId, image)) {
       try {
         await deleteCloudinaryAsset(image);
       } catch {
@@ -61,6 +84,10 @@ async function resolveMedicationImage(
     );
     image = uploaded.publicId;
     imageUrl = uploaded.url;
+  }
+
+  if (imageUrl && !isAllowedMedicationImageUrl(imageUrl)) {
+    imageUrl = "";
   }
 
   return { nickname, image, imageUrl };

@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth/server";
 import {
+  authLimiter,
   emailLimiter,
   strictLimiter,
   apiLimiter,
@@ -37,8 +38,28 @@ export default async function proxy(request: NextRequest) {
     return neonAuthMiddleware(request);
   }
 
-  // Neon Auth proxy — do not rate-limit (OAuth/session/token chatter).
+  // Neon Auth proxy — throttle credential paths; leave OAuth/session chatter freer.
   if (pathname.startsWith("/api/auth")) {
+    const sensitiveAuth =
+      pathname.includes("/sign-in") ||
+      pathname.includes("/sign-up") ||
+      pathname.includes("/forget-password") ||
+      pathname.includes("/forgot-password") ||
+      pathname.includes("/request-password") ||
+      pathname.includes("/send-verification");
+    if (sensitiveAuth) {
+      const identifier = getRateLimitIdentifier(request);
+      const rateLimitResult = await authLimiter.limit(identifier);
+      if (!rateLimitResult.success) {
+        return handleRateLimitResponse(rateLimitResult);
+      }
+      const response = NextResponse.next();
+      const headers = createRateLimitHeaders(rateLimitResult);
+      Object.entries(headers).forEach(([key, value]) => {
+        if (value !== undefined) response.headers.set(key, value);
+      });
+      return response;
+    }
     return NextResponse.next();
   }
 

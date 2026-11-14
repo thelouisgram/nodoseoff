@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import AppToaster from "@/components/ui/AppToaster";
 import ErrorBoundary from "@/components/ui/ErrorBoundary";
 import VisitBeacon from "@/components/analytics/VisitBeacon";
+import VercelTelemetry from "@/components/analytics/VercelTelemetry";
 import CookieConsent from "@/components/legal/CookieConsent";
 import { SoftButton, SoftCard, SoftPage } from "@/components/ui/soft";
 import { manrope } from "@/lib/fonts";
@@ -66,6 +67,7 @@ export default function App({ Component, pageProps }: AppProps) {
             <UnhandledRejectionToaster />
             <AuthListener />
             <VisitBeacon />
+            <VercelTelemetry />
             <CookieConsent />
             <AuthProvider>
               <ErrorBoundary

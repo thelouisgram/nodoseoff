@@ -50,8 +50,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       { onlyIfMissing: Boolean(onlyIfMissing) }
     );
 
+    // Opt-in only: auto-merge by email can absorb another account's PHI.
     let legacyLinked = 0;
-    if (linkLegacy !== false) {
+    if (linkLegacy === true) {
       legacyLinked = await linkLegacyAccountsByEmail(
         authUser.userId,
         jwtEmail

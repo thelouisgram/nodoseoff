@@ -1,12 +1,23 @@
 import { requireUserId } from "@/lib/server/auth";
 import { synthesizeAmandaSpeech } from "@/lib/ai/tts";
 import { clipTextForSpeech } from "@/lib/ai/speech-text";
+import { consumeAiPrompt } from "@/lib/ai/quota";
 
 export const maxDuration = 60;
 
 export async function POST(req: Request) {
   try {
-    await requireUserId(req);
+    const userId = await requireUserId(req);
+    const quota = await consumeAiPrompt(userId);
+    if (!quota) {
+      return Response.json(
+        {
+          error: "AMANDA is resting for today. Try again tomorrow.",
+          remaining: 0,
+        },
+        { status: 429 }
+      );
+    }
 
     const body = (await req.json()) as { text?: string };
     // Short spoken clip → much faster TTS than reading the whole reply

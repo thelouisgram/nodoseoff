@@ -8,6 +8,7 @@ import {
   getRateLimitIdentifier,
 } from "@/lib/ratelimit";
 import { appTrustedOrigins, isAllowedAppOrigin } from "@/lib/auth/trusted-origins";
+import { escapeHtml } from "@/lib/html-escape";
 
 const TOKEN_TTL_MS = 60 * 60 * 1000; // 1 hour (matches Better Auth default)
 
@@ -114,7 +115,8 @@ export default async function handler(
 
     const origin = appOriginFromRequest(req);
     const resetUrl = `${origin}/reset?token=${encodeURIComponent(token)}`;
-    const name = user.name?.trim() || "there";
+    const name = escapeHtml(user.name?.trim() || "there");
+    const safeResetUrl = escapeHtml(resetUrl);
     const settingFirstPassword = !hasCredentialPassword;
 
     const subject = settingFirstPassword
@@ -139,11 +141,11 @@ export default async function handler(
             : `<p>We received a request to reset your NoDoseOff password.</p>`
         }
         ${googleNote}
-        <p><a href="${resetUrl}">${
+        <p><a href="${safeResetUrl}">${
           settingFirstPassword ? "Set password" : "Choose a new password"
         }</a></p>
         <p>This link expires in one hour. If you did not ask for this, you can ignore this email.</p>
-        <p style="color:#64748b;font-size:12px;word-break:break-all">${resetUrl}</p>
+        <p style="color:#64748b;font-size:12px;word-break:break-all">${safeResetUrl}</p>
       `,
     });
 

@@ -142,8 +142,19 @@ export function getRateLimitIdentifier(
 ): RateLimitIdentifier {
   if (userId) return `user:${userId}`;
 
+  // Prefer platform-set IP (not client-forgeable first XFF hop).
+  const vercelForwarded = headerValue(request.headers, "x-vercel-forwarded-for");
+  if (vercelForwarded) {
+    return vercelForwarded.split(",")[0]?.trim() || "anonymous";
+  }
+
   const forwarded = headerValue(request.headers, "x-forwarded-for");
-  if (forwarded) return forwarded.split(",")[0]?.trim() || "anonymous";
+  if (forwarded) {
+    const hops = forwarded.split(",").map((h) => h.trim()).filter(Boolean);
+    // Rightmost hop is typically appended by the trusted proxy.
+    const ip = hops[hops.length - 1];
+    if (ip) return ip;
+  }
 
   const realIp = headerValue(request.headers, "x-real-ip");
   if (realIp) return realIp;

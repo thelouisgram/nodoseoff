@@ -2,24 +2,39 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useReducedMotion } from "framer-motion";
 import { ArrowRight, Sparkles, Stethoscope } from "lucide-react";
 import { m, useLandingVariants } from "@/components/landing/motion";
 import HeroDoseCard from "./HeroDoseCard";
 
+/** Shared cover framing — both layers use the same box, size, and position. */
+const HERO_OBJECT =
+  "object-cover object-[70%_center] md:object-[72%_center]";
+
 export default function HeroSection() {
   const { heroItem, heroStagger } = useLandingVariants();
   const reduce = useReducedMotion();
+  const [photoLoaded, setPhotoLoaded] = useState(false);
   const [photoReady, setPhotoReady] = useState(false);
+
+  useEffect(() => {
+    if (!photoLoaded) return;
+    if (reduce) {
+      setPhotoReady(true);
+      return;
+    }
+    const id = window.setTimeout(() => setPhotoReady(true), 650);
+    return () => window.clearTimeout(id);
+  }, [photoLoaded, reduce]);
 
   return (
     <section
       id="home"
       className="landing-section-critical relative h-[100dvh] overflow-hidden bg-[#031428] 2xl:h-[860px]"
     >
-      <div className="absolute inset-0 transform-gpu" aria-hidden>
-        {/* Sketch → photo dissolve (blur + soft scale) */}
+      <div className="absolute inset-0 transform-gpu overflow-hidden" aria-hidden>
+        {/* Sketch → photo: identical full-bleed seat, dissolve only */}
         <m.div
           className="absolute inset-0"
           initial={false}
@@ -27,11 +42,11 @@ export default function HeroSection() {
             reduce
               ? { opacity: photoReady ? 0 : 1 }
               : photoReady
-                ? { opacity: 0, scale: 1.06, filter: "blur(14px)" }
-                : { opacity: 1, scale: 1.02, filter: "blur(0px)" }
+                ? { opacity: 0, filter: "blur(8px)" }
+                : { opacity: 1, filter: "blur(0px)" }
           }
           transition={{
-            duration: reduce ? 0.01 : 1.35,
+            duration: reduce ? 0.01 : 1.45,
             ease: [0.22, 1, 0.36, 1],
           }}
         >
@@ -41,7 +56,7 @@ export default function HeroSection() {
             fill
             priority
             quality={70}
-            className="object-cover object-[72%_center] md:object-[78%_center]"
+            className={HERO_OBJECT}
             sizes="100vw"
           />
         </m.div>
@@ -53,13 +68,13 @@ export default function HeroSection() {
             reduce
               ? { opacity: photoReady ? 1 : 0 }
               : photoReady
-                ? { opacity: 1, scale: 1.04, filter: "blur(0px)" }
-                : { opacity: 0, scale: 1.1, filter: "blur(18px)" }
+                ? { opacity: 1, filter: "blur(0px)" }
+                : { opacity: 0, filter: "blur(10px)" }
           }
           transition={{
             duration: reduce ? 0.01 : 1.55,
             ease: [0.16, 1, 0.3, 1],
-            delay: reduce || !photoReady ? 0 : 0.08,
+            delay: reduce || !photoReady ? 0 : 0.04,
           }}
         >
           <Image
@@ -68,20 +83,17 @@ export default function HeroSection() {
             fill
             priority
             quality={75}
-            onLoad={() => setPhotoReady(true)}
-            className={`object-cover object-[50%_center] md:object-[68%_center] ${
-              photoReady ? "landing-hero-media" : ""
-            }`}
+            onLoad={() => setPhotoLoaded(true)}
+            className={`${HERO_OBJECT} ${photoReady ? "landing-hero-media" : ""}`}
             sizes="100vw"
           />
         </m.div>
 
-        <div className="absolute inset-0 bg-black/35" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#031428]/97 via-[#031428]/85 to-[#031428]/55 md:via-[#031428]/78 md:to-[#031428]/45" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#031428]/80 via-[#031428]/30 to-[#031428]/50" />
+        <div className="absolute inset-0 bg-black/30" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#031428]/97 via-[#031428]/82 to-[#031428]/40 md:via-[#031428]/75 md:to-[#031428]/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#031428]/75 via-[#031428]/25 to-[#031428]/45" />
       </div>
 
-      {/* Floating accents after photo is ready */}
       {photoReady ? (
         <div aria-hidden className="pointer-events-none absolute inset-0 z-[1] overflow-hidden">
           <m.svg

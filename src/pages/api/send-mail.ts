@@ -53,7 +53,19 @@ export default async function handler(
     return;
   }
 
+  // Block obvious script/event-handler injection in free-form HTML.
+  if (/<script[\s>]|javascript:|on\w+\s*=/i.test(html)) {
+    res.status(400).json({ error: "HTML contains disallowed content" });
+    return;
+  }
+
   try {
+    const senderCap = await emailLimiter.limit(`mail-sender:${authUser.userId}`);
+    if (!senderCap.success) {
+      res.status(429).json({ error: "Too many emails. Try again later." });
+      return;
+    }
+
     const rate = await emailLimiter.limit(
       `mail:${authUser.userId}:${to.toLowerCase()}`
     );

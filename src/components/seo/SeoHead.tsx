@@ -123,7 +123,8 @@ export default function SeoHead({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(structuredData),
+            // Escape `<` so values cannot break out of the script tag.
+            __html: JSON.stringify(structuredData).replace(/</g, "\\u003c"),
           }}
         />
       ) : null}

@@ -9,11 +9,11 @@ export function generateDoseReminderEmail(params: {
       .trim()
       .split(/\s+/)[0] || "there";
 
-  const labels = params.doses.map((d) => d.label).filter(Boolean);
+  const count = params.doses.length;
   const subject =
-    labels.length === 1
-      ? `Dose time: ${labels[0]}`
-      : `Dose time: ${labels.length} medications`;
+    count === 1
+      ? `Today’s dose: ${params.doses[0]?.label || "medication"}`
+      : `Today’s doses: ${count} medications`;
 
   const list = params.doses
     .map(
@@ -24,18 +24,18 @@ export function generateDoseReminderEmail(params: {
 
   const html = emailShell({
     title: subject,
-    ctaLabel: "Mark as taken",
+    ctaLabel: "Open dashboard",
     ctaHref: `${appBaseUrl()}/dashboard`,
     bodyHtml: `
-      <p style="margin:0 0 14px;font-size:16px;line-height:1.55">Hi ${escapeHtml(first)},</p>
+      <p style="margin:0 0 14px;font-size:16px;line-height:1.55">Good morning ${escapeHtml(first)},</p>
       <p style="margin:0 0 14px;font-size:15px;line-height:1.55;color:#374151">
-        It’s time for your dose${params.doses.length > 1 ? "s" : ""}.
+        Here’s your medication schedule for today:
       </p>
       <ul style="margin:0 0 16px;padding-left:18px;font-size:15px;line-height:1.6;color:#0B1A2E">
         ${list}
       </ul>
       <p style="margin:0;font-size:13px;line-height:1.5;color:#6B7280">
-        Reminders are emailed for now. When the mobile app ships, these will move to push notifications.
+        You’ll get this morning summary once a day. When the mobile app ships, reminders can move to push notifications.
       </p>
     `,
   });

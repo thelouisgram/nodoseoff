@@ -61,22 +61,18 @@ function normalizeTime(time: string): string {
   return `${String(Number(m[1])).padStart(2, "0")}:${m[2]}`;
 }
 
-function doseKey(item: ScheduleRow): string {
-  return [
-    String(item.date || ""),
-    normalizeTime(String(item.time || "")),
-    String(item.drugId || ""),
-    String(item.id ?? ""),
-  ].join("|");
+/** One morning digest email per user per calendar day. */
+function dailyDigestKey(date: string): string {
+  return `daily|${date}`;
 }
 
 /**
- * Find due incomplete doses and email (or later push) reminders.
- * Window: dose time within the last `windowMinutes` (default 10).
+ * Morning digest: email each user their incomplete doses for today.
+ * Intended to run once daily at 6:00 in DOSE_REMINDER_TIMEZONE
+ * (Vercel cron uses UTC — Africa/Lagos 06:00 = 05:00 UTC).
  */
 export async function processDueDoseReminders(options?: {
   now?: Date;
-  windowMinutes?: number;
 }): Promise<{
   scanned: number;
   matched: number;
@@ -89,8 +85,7 @@ export async function processDueDoseReminders(options?: {
     return { scanned: 0, matched: 0, sent: 0, skipped: 0, channel };
   }
 
-  const windowMinutes = options?.windowMinutes ?? 10;
-  const { date: today, minutes: nowMinutes } = localNowParts(options?.now);
+  const { date: today } = localNowParts(options?.now);
   const sql = getSql();
 
   const rows = await sql`
@@ -130,44 +125,48 @@ export async function processDueDoseReminders(options?: {
     if (reminderIds.size === 0) continue;
 
     const schedule = (Array.isArray(row.schedule) ? row.schedule : []) as ScheduleRow[];
-    const due = schedule.filter((item) => {
-      if (!item || item.completed) return false;
-      if (String(item.date || "") !== today) return false;
-      if (!reminderIds.has(String(item.drugId || ""))) return false;
-      const doseMinutes = parseTimeToMinutes(String(item.time || ""));
-      if (doseMinutes == null) return false;
-      const delta = nowMinutes - doseMinutes;
-      return delta >= 0 && delta < windowMinutes;
-    });
+    const todaysDoses = schedule
+      .filter((item) => {
+        if (!item || item.completed) return false;
+        if (String(item.date || "") !== today) return false;
+        if (!reminderIds.has(String(item.drugId || ""))) return false;
+        return parseTimeToMinutes(String(item.time || "")) != null;
+      })
+      .sort((a, b) => {
+        const am = parseTimeToMinutes(String(a.time || "")) ?? 0;
+        const bm = parseTimeToMinutes(String(b.time || "")) ?? 0;
+        return am - bm;
+      });
 
-    if (due.length === 0) continue;
-    matched += due.length;
+    if (todaysDoses.length === 0) continue;
+    matched += todaysDoses.length;
 
-    const fresh: ScheduleRow[] = [];
-    for (const item of due) {
-      const key = doseKey(item);
-      const claimed = await sql`
-        INSERT INTO dose_reminder_log ("userId", dose_key, channel)
-        VALUES (${userId}, ${key}, ${channel})
-        ON CONFLICT ("userId", dose_key) DO NOTHING
-        RETURNING id
-      `;
-      if (claimed.length) fresh.push(item);
-      else skipped += 1;
+    const digestKey = dailyDigestKey(today);
+    const claimed = await sql`
+      INSERT INTO dose_reminder_log ("userId", dose_key, channel)
+      VALUES (${userId}, ${digestKey}, ${channel})
+      ON CONFLICT ("userId", dose_key) DO NOTHING
+      RETURNING id
+    `;
+    if (!claimed.length) {
+      skipped += 1;
+      continue;
     }
 
-    if (fresh.length === 0) continue;
-
     if (channel === "push") {
-      console.info("[dose-reminders] push not implemented yet", userId, fresh.length);
-      skipped += fresh.length;
+      console.info(
+        "[dose-reminders] push not implemented yet",
+        userId,
+        todaysDoses.length
+      );
+      skipped += todaysDoses.length;
       continue;
     }
 
     try {
       const { subject, html } = generateDoseReminderEmail({
         name: String(row.name || ""),
-        doses: fresh.map((item) => ({
+        doses: todaysDoses.map((item) => ({
           label: drugDisplayName(item),
           time: normalizeTime(String(item.time || "")),
         })),
@@ -176,12 +175,11 @@ export async function processDueDoseReminders(options?: {
       sent += 1;
     } catch (err) {
       console.error("[dose-reminders] send failed:", userId, err);
-      // Allow retry next cron tick
-      const keys = fresh.map((item) => doseKey(item));
+      // Allow manual/retry re-run the same day
       await sql`
         DELETE FROM dose_reminder_log
         WHERE "userId" = ${userId}
-          AND dose_key = ANY(${keys})
+          AND dose_key = ${digestKey}
       `;
     }
   }

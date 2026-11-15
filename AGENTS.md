@@ -7,3 +7,9 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+## Modern Web Guidance
+
+Before implementing or changing HTML/CSS/client-side UI, run `modern-web-guidance` (`search` → `retrieve`). Skill path: `.agents/skills/modern-web-guidance/`. Cursor rule: `.cursor/rules/modern-web-guidance.mdc`.
+
+**Browser Support:** Allow Newly Available features with feature detection and graceful degradation; keep custom fallbacks ≤ 20 lines and avoid new polyfill dependencies unless already used in the repo.

@@ -20,6 +20,8 @@ const DEFAULT_APP_ORIGINS = [
   "https://www.nodoseoff.com",
   "https://dev.nodoseoff.com",
   "https://nodoseoff.vercel.app",
+  // Expo / React Native deep-link origins (NodoseOff mobile)
+  "nodoseoffmobile://",
 ];
 
 export function appTrustedOrigins(): Set<string> {
@@ -57,7 +59,13 @@ export function isAllowedAppOrigin(origin: string | null): boolean {
   if (!origin) return false;
   const normalized = origin.replace(/\/$/, "");
   if (appTrustedOrigins().has(normalized)) return true;
-  if (process.env.NODE_ENV !== "production" && isLocalDevOrigin(normalized)) {
+  // Always allow loopback / LAN Expo origins (mobile web + simulators),
+  // even when this API is running in production.
+  if (isLocalDevOrigin(normalized)) {
+    return true;
+  }
+  // Expo scheme (React Native deep link)
+  if (/^nodoseoffmobile:\/\//i.test(normalized)) {
     return true;
   }
   // Vercel preview deployments for this project (exact production + team suffix only)

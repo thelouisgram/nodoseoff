@@ -2,8 +2,11 @@ import Head from "next/head";
 import {
   DEFAULT_DESCRIPTION,
   DEFAULT_KEYWORDS,
+  OG_IMAGE_HEIGHT,
+  OG_IMAGE_WIDTH,
   SITE_ALTERNATE_NAMES,
   SITE_NAME,
+  defaultOgImagePath,
   siteUrl,
 } from "@/lib/seo/site";
 
@@ -23,7 +26,7 @@ export default function SeoHead({
   title,
   description = DEFAULT_DESCRIPTION,
   path = "/",
-  image = "/og-image.jpg",
+  image = defaultOgImagePath(),
   noIndex = false,
   keywords,
   jsonLd = false,
@@ -31,6 +34,7 @@ export default function SeoHead({
   const base = siteUrl();
   const url = `${base}${path.startsWith("/") ? path : `/${path}`}`;
   const imageUrl = image.startsWith("http") ? image : `${base}${image}`;
+  const imageAlt = `${SITE_NAME} — Never miss a dose again`;
   const fullTitle = title.includes(SITE_NAME)
     ? title
     : `${title} | ${SITE_NAME}`;
@@ -134,14 +138,16 @@ export default function SeoHead({
       <meta property="og:description" content={description} />
       <meta property="og:url" content={url} />
       <meta property="og:image" content={imageUrl} />
-      <meta property="og:image:width" content="1200" />
-      <meta property="og:image:height" content="630" />
-      <meta property="og:image:alt" content={`${SITE_NAME} — medication tracking`} />
+      <meta property="og:image:type" content="image/jpeg" />
+      <meta property="og:image:width" content={String(OG_IMAGE_WIDTH)} />
+      <meta property="og:image:height" content={String(OG_IMAGE_HEIGHT)} />
+      <meta property="og:image:alt" content={imageAlt} />
 
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={imageUrl} />
+      <meta name="twitter:image:alt" content={imageAlt} />
 
       {structuredData ? (
         <script

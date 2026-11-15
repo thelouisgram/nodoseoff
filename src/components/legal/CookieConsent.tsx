@@ -15,6 +15,13 @@ export default function CookieConsent() {
   const [analytics, setAnalytics] = useState(true);
 
   useEffect(() => {
+    // Never interrupt the mobile Google OAuth hand-off sheet.
+    if (
+      typeof window !== "undefined" &&
+      window.location.pathname.startsWith("/mobile-auth")
+    ) {
+      return;
+    }
     const existing = readCookieConsent();
     if (!existing) {
       setView("banner");

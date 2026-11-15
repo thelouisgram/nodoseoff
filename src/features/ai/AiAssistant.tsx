@@ -881,6 +881,9 @@ export default function AiAssistant() {
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
+                    // IME composition: Enter confirms candidates — don't send yet
+                    const native = e.nativeEvent;
+                    if (native.isComposing || native.keyCode === 229) return;
                     speechIn.stop();
                     void onSubmit(e);
                   }

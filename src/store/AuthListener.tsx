@@ -26,6 +26,7 @@ const GUEST_AUTH_PATHS = [
   "/forgetpassword",
   "/reset",
   "/sso-callback",
+  "/mobile-auth",
 ];
 
 function isGuestAuthPath(pathname: string): boolean {

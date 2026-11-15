@@ -1,0 +1,19 @@
+---
+description: Mandate Google Chrome modern-web-guidance for HTML/CSS/client JS before coding UI
+alwaysApply: true
+---
+
+# Modern Web Guidance (project-wide)
+
+For **any** HTML/CSS, client-side JS, UI component, form, a11y, animation, or CWV/performance task:
+
+1. **Search first** with `npx -y modern-web-guidance@latest search "<2–5 word query>"` before writing or changing UI code.
+2. **Retrieve** matching guide IDs with `npx -y modern-web-guidance@latest retrieve "<id>"` and apply them (adapt to React/Next without dropping the modern feature).
+3. **Do not** invent patterns from training data when a guide exists — web platform APIs move faster than model weights.
+4. For open-ended modernization only: `npx -y modern-web-guidance@latest legacy-scan <path> --json`.
+
+Skill lives at `.agents/skills/modern-web-guidance/SKILL.md`.
+
+**Skip** for pure backend (SQL, API routes), CI/Docker/Git, or trivial renames/tooling.
+
+**Browser support:** Prefer Baseline Widely available features. Allow Newly Available features when feature-detected with graceful degradation and ≤20 lines of fallback (no new polyfill deps unless already in the repo).

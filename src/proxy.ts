@@ -17,6 +17,7 @@ const publicPaths = [
   "/forgetpassword",
   "/reset",
   "/sso-callback",
+  "/mobile-auth",
 ];
 
 const neonAuthMiddleware = auth.middleware({ loginUrl: "/login" });

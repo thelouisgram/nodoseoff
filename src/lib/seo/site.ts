@@ -39,3 +39,13 @@ export function siteUrl() {
     process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://nodoseoff.com";
   return raw.replace(/\/$/, "");
 }
+
+/** Default Open Graph / Twitter share image (1200×630). Bump `v` when the asset changes so crawlers refetch. */
+export const OG_IMAGE_PATH = "/og-image.jpg";
+export const OG_IMAGE_VERSION = "20261115";
+export const OG_IMAGE_WIDTH = 1200;
+export const OG_IMAGE_HEIGHT = 630;
+
+export function defaultOgImagePath() {
+  return `${OG_IMAGE_PATH}?v=${OG_IMAGE_VERSION}`;
+}

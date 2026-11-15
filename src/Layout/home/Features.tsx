@@ -124,18 +124,20 @@ export default function Features() {
               <m.article
                 key={feature.n}
                 variants={fadeUp}
-                className={`relative min-h-[200px] overflow-hidden px-5 py-8 ss:px-8 md:min-h-0 md:px-8 md:py-5 lg:px-10 ${feature.wash}`}
+                whileHover={{ y: -2 }}
+                transition={{ type: "spring", stiffness: 420, damping: 28 }}
+                className={`ndo-expand-card group relative min-h-[200px] overflow-hidden px-5 py-8 ss:px-8 md:min-h-0 md:px-8 md:py-5 lg:px-10 ${feature.wash}`}
               >
                 <span
                   aria-hidden
-                  className={`pointer-events-none absolute -right-1 top-1/2 -z-0 -translate-y-1/2 select-none font-extrabold leading-none ${feature.mark} text-[5.5rem] md:text-[6.5rem]`}
+                  className={`ndo-scroll-mark pointer-events-none absolute -right-1 top-1/2 -z-0 -translate-y-1/2 select-none font-extrabold leading-none ${feature.mark} text-[5.5rem] md:text-[6.5rem]`}
                 >
                   {feature.n}
                 </span>
 
                 <div className="relative z-[1] flex h-full max-w-md flex-col justify-center gap-3">
                   <span
-                    className={`flex size-10 items-center justify-center rounded-xl ${feature.iconWell}`}
+                    className={`flex size-10 items-center justify-center rounded-xl transition-transform duration-300 ease-out group-hover:scale-110 group-hover:-rotate-3 ${feature.iconWell}`}
                   >
                     <Icon className="size-4" strokeWidth={1.85} />
                   </span>

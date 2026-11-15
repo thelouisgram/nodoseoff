@@ -227,14 +227,33 @@ export default function HeroDoseCard() {
         </p>
 
         <div className="mt-3 flex items-center gap-2">
-          <button
+          <m.button
             type="button"
             onClick={celebrate}
             disabled={taken}
-            className="ndo-press flex-1 rounded-xl bg-[#3dcfb6] px-2.5 py-1.5 text-[11px] font-bold text-[#031428] disabled:opacity-70"
+            className={`ndo-press flex-1 overflow-hidden rounded-xl px-2.5 py-1.5 text-[11px] font-bold disabled:opacity-100 ${
+              taken
+                ? "bg-[#031428] text-[#3dcfb6] ring-1 ring-[#3dcfb6]/50"
+                : "bg-[#3dcfb6] text-[#031428]"
+            }`}
           >
-            {taken ? "Logged ✓" : "Mark taken"}
-          </button>
+            <m.span
+              key={taken ? "done" : "idle"}
+              initial={reduce ? false : { y: 8, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+              className="inline-flex w-full items-center justify-center gap-1"
+            >
+              {taken ? (
+                <>
+                  <Check className="size-3.5" strokeWidth={2.5} />
+                  Logged
+                </>
+              ) : (
+                "Mark taken"
+              )}
+            </m.span>
+          </m.button>
           <button
             type="button"
             onClick={shuffle}

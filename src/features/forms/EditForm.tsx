@@ -7,7 +7,8 @@ import { dose } from "@/utils/dashboard/dashboard";
 import { X, Loader2, Calendar } from "lucide-react";
 import dayjs from "dayjs";
 import { useAppSelector } from "@/store";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { dashboardModalMotion } from "@/components/dashboard/modalMotion";
 import MedicationPrivacyFields, {
   fileToBase64,
 } from "@/features/forms/MedicationPrivacyFields";
@@ -35,6 +36,8 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
   const [loading, setLoading] = useState(false);
 
   const updateDrugMutation = useUpdateDrugMutation();
+  const reduce = useReducedMotion();
+  const { overlayTransition, sheetTransition } = dashboardModalMotion(reduce);
 
   const [formData, setFormData] = useState({
     drug: "",
@@ -288,17 +291,21 @@ const EditForm: React.FC<DrugFormProps> = ({ activeModal, setActiveModal }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          transition={overlayTransition}
           onClick={handleClose}
-          className="fixed inset-0 bg-soft-ink/25 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 z-[150] flex items-center justify-center bg-soft-ink/30 p-4 backdrop-blur-[6px]"
         >
-          {/* Modal Card */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            initial={
+              reduce ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 10 }
+            }
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            exit={
+              reduce ? { opacity: 0 } : { opacity: 0, scale: 0.97, y: 8 }
+            }
+            transition={sheetTransition}
             onClick={(e) => e.stopPropagation()}
-            className="flex max-h-[80vh] w-full flex-col rounded-2xl border border-black/[0.05] bg-white shadow-soft-md ss:max-w-lg"
+            className="relative z-[160] flex max-h-[80vh] w-full flex-col rounded-2xl border border-black/[0.05] bg-white shadow-soft-md ss:max-w-lg"
           >
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-5 border-b border-black/[0.04] flex-shrink-0">

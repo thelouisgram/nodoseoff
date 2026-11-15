@@ -61,13 +61,18 @@ const SideBar: React.FC<SideBarProps> = ({
           nav ? "lg:mb-7 lg:flex-row lg:justify-between lg:gap-2" : ""
         }`}
       >
-        <div className={`flex shrink-0 ${nav ? "lg:hidden" : ""}`}>
+        <div
+          className={`flex shrink-0 items-center justify-center ${
+            nav ? "lg:hidden" : ""
+          }`}
+        >
           <InteractiveLogo
             variant="mark-blue"
             priority
-            width={205}
-            height={212}
-            imgClassName="h-7 w-auto"
+            width={28}
+            height={28}
+            className="size-7"
+            imgClassName="size-7 object-contain"
           />
         </div>
 

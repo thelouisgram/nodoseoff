@@ -58,7 +58,7 @@ export default function Amanda() {
             </p>
             <p className="mt-3 max-w-md text-[15px] leading-relaxed text-white/65 ss:text-[16px]">
               Missed a dose? Food with that BP med? A weird side effect at
-              11pm? Ask — calm answers from{" "}
+              11pm? Ask — clear answers from{" "}
               <span className="font-semibold text-white/85">your</span> regimen,
               not a generic web dump.
             </p>

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { FormEvent, useEffect, useMemo, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { CircleAlert, Loader2, X } from "lucide-react";
 import { toast } from "@/lib/notify";
 import { useAppSelector } from "@/store";
@@ -10,7 +10,7 @@ import {
   useDrugs,
   useInsertHealthJournalMutation,
 } from "@/hooks/useDashboardData";
-import { ndoEase } from "@/components/landing/motion";
+import { dashboardModalMotion } from "@/components/dashboard/modalMotion";
 
 const COMMON_SYMPTOMS = [
   "Nausea",
@@ -38,6 +38,8 @@ const SideEffectsForm: React.FC<SideEffectsFormProps> = ({
   const { data: drugs = [] } = useDrugs(userId);
   const { data: completed = [] } = useCompletedDrugs(userId);
   const insert = useInsertHealthJournalMutation();
+  const reduce = useReducedMotion();
+  const { overlayTransition, sheetTransition } = dashboardModalMotion(reduce);
 
   const [symptom, setSymptom] = useState("");
   const [severity, setSeverity] = useState(3);
@@ -120,17 +122,21 @@ const SideEffectsForm: React.FC<SideEffectsFormProps> = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.2, ease: ndoEase }}
+          transition={overlayTransition}
           onClick={handleClose}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-soft-ink/25 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-[150] flex items-center justify-center bg-soft-ink/30 p-4 backdrop-blur-[6px]"
         >
           <motion.div
-            initial={{ opacity: 0, scale: 0.96, y: 16 }}
+            initial={
+              reduce ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 10 }
+            }
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.96, y: 12 }}
-            transition={{ duration: 0.28, ease: ndoEase }}
+            exit={
+              reduce ? { opacity: 0 } : { opacity: 0, scale: 0.97, y: 8 }
+            }
+            transition={sheetTransition}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-md overflow-hidden rounded-2xl border border-black/[0.05] bg-white shadow-soft-float"
+            className="relative z-[160] w-full max-w-md overflow-hidden rounded-2xl border border-black/[0.05] bg-white shadow-soft-float"
           >
             <div className="flex items-center justify-between border-b border-black/[0.05] px-5 py-4">
               <div className="flex items-center gap-2.5">

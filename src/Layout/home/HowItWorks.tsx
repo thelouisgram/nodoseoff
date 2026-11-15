@@ -12,8 +12,8 @@ const steps = [
   },
   {
     step: "02",
-    title: "Get timely reminders",
-    desc: "Receive prompts when a dose is due, then mark it taken in one tap.",
+    title: "Get medication reminders",
+    desc: "Receive a med reminder when a dose is due, then mark it taken in one tap.",
     icon: BellRing,
   },
   {

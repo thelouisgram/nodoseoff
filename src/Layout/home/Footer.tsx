@@ -26,8 +26,23 @@ const companyLinks = [
 export default function Footer() {
   return (
     <footer className="border-t border-soft-line bg-[#0b1a2e] text-white">
-      <div className="mx-auto max-w-6xl px-4 py-16 ss:px-6">
-        <div className="grid gap-12 md:grid-cols-[1.35fr_repeat(3,minmax(0,1fr))] md:gap-10">
+      <div className="mx-auto max-w-6xl px-4 py-12 ss:px-6 ss:py-14">
+        {/* Slim newsletter band — keeps link columns short */}
+        <div className="mb-10 flex flex-col gap-4 border-b border-white/10 pb-8 ss:mb-12 ss:flex-row ss:items-end ss:justify-between ss:gap-8">
+          <div className="min-w-0 max-w-md">
+            <p className="text-[13px] font-semibold text-white">
+              Join the newsletter
+            </p>
+            <p className="mt-1 text-[12px] leading-relaxed text-white/55">
+              Adherence tips and product updates — unsubscribe anytime.
+            </p>
+          </div>
+          <div className="w-full max-w-md shrink-0">
+            <NewsletterForm source="footer" compact />
+          </div>
+        </div>
+
+        <div className="grid gap-10 md:grid-cols-[1.35fr_repeat(3,minmax(0,1fr))] md:gap-10">
           <div>
             <InteractiveLogo
               variant="white"
@@ -112,17 +127,6 @@ export default function Footer() {
                 </li>
               ))}
             </ul>
-            <div className="mt-8 rounded-2xl border border-white/15 p-4">
-              <p className="text-[13px] font-semibold text-white">
-                Join the newsletter
-              </p>
-              <p className="mt-1 text-[12px] leading-relaxed text-white/60">
-                Adherence tips, product updates, and calm reminders — no spam.
-              </p>
-              <div className="mt-3">
-                <NewsletterForm source="footer" />
-              </div>
-            </div>
           </div>
         </div>
       </div>

@@ -22,16 +22,16 @@ export default function HeroSection() {
     >
       <div className="absolute inset-0 overflow-hidden" aria-hidden>
         <Image
-          src="/assets/hero/old-man.webp"
+          src="/assets/hero/old-man.jpg"
           alt="An older man smiling while checking his phone at an outdoor cafe"
           fill
           priority
           fetchPriority="high"
-          quality={70}
+          quality={95}
           placeholder="blur"
           blurDataURL={HERO_BLUR}
           className="object-cover object-[38%_28%] md:object-[72%_center] landing-hero-media"
-          sizes="(max-width: 768px) 100vw, (max-width: 1280px) 1200px, 1600px"
+          sizes="(max-width: 768px) 100vw, (max-width: 1280px) 1400px, 1920px"
         />
 
         <div className="absolute inset-0 bg-black/30" />
@@ -83,9 +83,9 @@ export default function HeroSection() {
             variants={heroItem}
             className="mx-auto mt-3 max-w-md text-[15px] leading-relaxed text-white/75 ss:text-[16px] md:mx-0"
           >
-            Smart reminders, adherence tracking, and{" "}
-            <span className="font-semibold text-white">AMANDA 6</span> — so
-            long-term treatment stays on schedule.
+            A reliable med reminder app and medication tracker — plus{" "}
+            <span className="font-semibold text-white">AMANDA 6</span>, your
+            medication AI — so long-term treatment stays on schedule.
           </m.p>
           <m.div
             variants={heroItem}

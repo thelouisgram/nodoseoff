@@ -15,8 +15,8 @@ const features = [
   {
     n: "01",
     icon: BellRing,
-    title: "Reminders that find you",
-    desc: "Morning, midday, night — a clear tap the moment each dose is due.",
+    title: "Medication reminders that find you",
+    desc: "Pill reminder and med reminder alerts for morning, midday, and night — a clear tap when each dose is due.",
     wash: "bg-[#dff5ee]",
     ink: "text-[#0a3d36]",
     iconWell: "bg-[#b7e6d6] text-[#0a3d36]",
@@ -94,12 +94,13 @@ export default function Features() {
           <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-soft-primary">
             Product
           </p>
-          <h2 className="mt-3 max-w-[14ch] text-[2.2rem] font-extrabold leading-[1.05] tracking-tight text-soft-ink ss:text-[2.5rem] md:text-[2.75rem]">
+          <h2 className="mt-3 max-w-[16ch] text-[2.2rem] font-extrabold leading-[1.05] tracking-tight text-soft-ink ss:text-[2.5rem] md:text-[2.75rem]">
             What keeps you on dose
           </h2>
           <p className="mt-3 max-w-sm text-[14px] leading-relaxed text-soft-muted ss:text-[15px]">
-            Reminders, progress, reports, and AMANDA 6 — built for people who
-            take medicine every day.
+            Medication reminders, a medication tracker, adherence reports, and
+            AMANDA 6 medication AI — a medication app with an AI assistant for
+            people who take medicine every day.
           </p>
           <Link
             href="/features"

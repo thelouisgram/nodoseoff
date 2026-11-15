@@ -24,6 +24,9 @@ const DOSES: Dose[] = [
   { drug: "Gabapentin 300mg", when: "Night", hint: "Often taken at bedtime" },
 ];
 
+/** Fixed initial dose — Math.random() in useState caused SSR/client hydration mismatches. */
+const INITIAL_DOSE = DOSES[4];
+
 function pickDose(exclude?: string): Dose {
   const pool = exclude
     ? DOSES.filter((d) => d.drug !== exclude)
@@ -98,7 +101,7 @@ function playHoverSound(ctx: AudioContext) {
 
 export default function HeroDoseCard() {
   const reduce = useReducedMotion();
-  const [dose, setDose] = useState<Dose>(() => pickDose());
+  const [dose, setDose] = useState<Dose>(INITIAL_DOSE);
   const [taken, setTaken] = useState(false);
   const [wiggle, setWiggle] = useState(0);
   const audioRef = useRef<AudioContext | null>(null);

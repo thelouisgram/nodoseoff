@@ -45,6 +45,50 @@ function UnhandledRejectionToaster() {
 }
 
 export default function App({ Component, pageProps }: AppProps) {
+  // Must render during PersistGate "loading" too — loading={null} made SSR/crawlers
+  // see an empty <body> (no title, SeoHead, or page HTML).
+  const appTree = (
+    <>
+      <ForceLightMode />
+      <UnhandledRejectionToaster />
+      <AuthListener />
+      <VisitBeacon />
+      <VercelTelemetry />
+      <CookieConsent />
+      <AuthProvider>
+        <ErrorBoundary
+          label="root"
+          fallback={({ reset }) => (
+            <SoftPage>
+              <div className="flex min-h-screen items-center justify-center px-4">
+                <SoftCard className="max-w-md p-8 text-center">
+                  <h1 className="text-[28px] font-bold tracking-tight text-soft-ink">
+                    Something went wrong
+                  </h1>
+                  <p className="mt-2 text-[14px] text-soft-muted">
+                    The app hit an unexpected error.
+                  </p>
+                  <SoftButton
+                    type="button"
+                    className="mt-6 w-full"
+                    onClick={() => {
+                      reset();
+                      window.location.reload();
+                    }}
+                  >
+                    Reload
+                  </SoftButton>
+                </SoftCard>
+              </div>
+            </SoftPage>
+          )}
+        >
+          <Component {...pageProps} />
+        </ErrorBoundary>
+      </AuthProvider>
+    </>
+  );
+
   return (
     <>
       <Head>
@@ -62,44 +106,8 @@ export default function App({ Component, pageProps }: AppProps) {
       <div className={`${manrope.variable} font-sans antialiased`}>
         <AppToaster />
         <Provider store={store}>
-          <PersistGate loading={null} persistor={persistor}>
-            <ForceLightMode />
-            <UnhandledRejectionToaster />
-            <AuthListener />
-            <VisitBeacon />
-            <VercelTelemetry />
-            <CookieConsent />
-            <AuthProvider>
-              <ErrorBoundary
-                label="root"
-                fallback={({ reset }) => (
-                  <SoftPage>
-                    <div className="flex min-h-screen items-center justify-center px-4">
-                      <SoftCard className="max-w-md p-8 text-center">
-                        <h1 className="text-[28px] font-bold tracking-tight text-soft-ink">
-                          Something went wrong
-                        </h1>
-                        <p className="mt-2 text-[14px] text-soft-muted">
-                          The app hit an unexpected error.
-                        </p>
-                        <SoftButton
-                          type="button"
-                          className="mt-6 w-full"
-                          onClick={() => {
-                            reset();
-                            window.location.reload();
-                          }}
-                        >
-                          Reload
-                        </SoftButton>
-                      </SoftCard>
-                    </div>
-                  </SoftPage>
-                )}
-              >
-                <Component {...pageProps} />
-              </ErrorBoundary>
-            </AuthProvider>
+          <PersistGate loading={appTree} persistor={persistor}>
+            {appTree}
           </PersistGate>
         </Provider>
       </div>

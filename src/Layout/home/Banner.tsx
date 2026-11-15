@@ -56,8 +56,9 @@ export default function Banner() {
                 Ready for fewer missed doses?
               </h2>
               <p className="mt-3 max-w-lg text-[15px] leading-relaxed text-white/75 ss:text-[16px]">
-                Create a free account, add your medications, and let AMANDA 6
-                help you stay steady.
+                Create a free account, set medication reminders, track doses,
+                and ask AMANDA 6 — your medication AI — whenever something is
+                unclear.
               </p>
             </div>
             <Link

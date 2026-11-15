@@ -7,8 +7,11 @@ type Status = "idle" | "loading" | "success" | "error";
 
 export default function NewsletterForm({
   source = "footer",
+  compact = false,
 }: {
   source?: string;
+  /** Single-row email + join for slim footer bands */
+  compact?: boolean;
 }) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
@@ -49,21 +52,27 @@ export default function NewsletterForm({
 
   if (status === "success") {
     return (
-      <div className="flex items-start gap-2.5 rounded-xl border border-white/15 bg-white/5 px-3.5 py-3">
-        <Check className="mt-0.5 size-4 shrink-0 text-[#7dcea0]" strokeWidth={2} />
-        <p className="text-[13px] leading-relaxed text-white/85">{message}</p>
+      <div className="flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-3.5 py-2.5">
+        <Check className="size-4 shrink-0 text-[#7dcea0]" strokeWidth={2} />
+        <p className="text-[13px] leading-snug text-white/85">{message}</p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-2.5">
-      <label htmlFor="newsletter-email" className="sr-only">
+    <form onSubmit={onSubmit} className={compact ? "space-y-1.5" : "space-y-2.5"}>
+      <label htmlFor={`newsletter-email-${source}`} className="sr-only">
         Email for newsletter
       </label>
-      <div className="flex flex-col gap-2">
+      <div
+        className={
+          compact
+            ? "flex items-stretch gap-2"
+            : "flex flex-col gap-2"
+        }
+      >
         <input
-          id="newsletter-email"
+          id={`newsletter-email-${source}`}
           type="email"
           name="email"
           required
@@ -74,12 +83,20 @@ export default function NewsletterForm({
             if (status === "error") setStatus("idle");
           }}
           placeholder="Email address"
-          className="min-w-0 w-full rounded-xl border border-white/15 bg-white/5 px-3.5 py-2.5 text-[14px] text-white outline-none placeholder:text-white/40 focus:border-white/40"
+          className={
+            compact
+              ? "min-w-0 flex-1 rounded-xl border border-white/15 bg-white/5 px-3.5 py-2.5 text-[14px] text-white outline-none placeholder:text-white/40 focus:border-white/40"
+              : "min-w-0 w-full rounded-xl border border-white/15 bg-white/5 px-3.5 py-2.5 text-[14px] text-white outline-none placeholder:text-white/40 focus:border-white/40"
+          }
         />
         <button
           type="submit"
           disabled={status === "loading"}
-          className="ndo-press group inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-white/20 bg-white px-4 py-2.5 text-[13px] font-semibold text-[#0b1a2e] transition hover:bg-white/90 disabled:opacity-60"
+          className={
+            compact
+              ? "ndo-press group inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl border border-white/20 bg-white px-4 py-2.5 text-[13px] font-semibold text-[#0b1a2e] transition hover:bg-white/90 disabled:opacity-60"
+              : "ndo-press group inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-white/20 bg-white px-4 py-2.5 text-[13px] font-semibold text-[#0b1a2e] transition hover:bg-white/90 disabled:opacity-60"
+          }
         >
           {status === "loading" ? (
             <Loader2 className="size-4 animate-spin" strokeWidth={2} />
@@ -93,7 +110,7 @@ export default function NewsletterForm({
       </div>
       {status === "error" && message ? (
         <p className="text-[12px] text-[#f0a8b8]">{message}</p>
-      ) : (
+      ) : compact ? null : (
         <p className="text-[11px] leading-relaxed text-white/45">
           Tips on sticking with treatment. Unsubscribe anytime.
         </p>

@@ -6,10 +6,12 @@ import WhoItsFor from "@/Layout/home/WhoItsFor";
 import Amanda from "@/Layout/home/Amanda";
 import HowItWorks from "@/Layout/home/HowItWorks";
 import Banner from "@/Layout/home/Banner";
+import Faq, { HOME_FAQS } from "@/Layout/home/Faq";
 import Footer from "@/Layout/home/Footer";
 import SeoHead from "@/components/seo/SeoHead";
 import SiteWhims from "@/components/landing/SiteWhims";
 import { LandingMotion } from "@/components/landing/motion";
+import Head from "next/head";
 
 const Home = () => {
   useEffect(() => {
@@ -21,15 +23,36 @@ const Home = () => {
     };
   }, []);
 
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: HOME_FAQS.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer,
+      },
+    })),
+  };
+
   return (
     <LandingMotion>
       <SeoHead
-        title="NoDoseOff (No Dose Off) | Medication Tracking & AI"
-        description="NoDoseOff (No Dose Off) helps you never miss a dose: common drug tracking, medication reminders, adherence reports, and AMANDA 6 medication AI search for cancer, autoimmune, ARV, diabetes, contraceptive, and Ozempic regimens."
+        title="NoDoseOff | Med Reminder App + AMANDA 6 Medication AI"
+        description="NoDoseOff is a free med reminder app and medication tracker with AMANDA 6 — your medication AI assistant. Set medication reminders, track doses, and ask AMANDA 6 about your regimen."
         path="/"
         jsonLd
-        keywords="No Dose Off app, drug tracker, pill tracker, medication search AI, ask AI about medication"
+        keywords="AMANDA 6, AMANDA 6 AI, medication AI, AI medication assistant, medication AI search, med reminder app, medication tracker, pill reminder, medication chatbot, No Dose Off"
       />
+      <Head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(faqJsonLd).replace(/</g, "\\u003c"),
+          }}
+        />
+      </Head>
 
       <LandingNav />
       <SiteWhims />
@@ -39,6 +62,7 @@ const Home = () => {
         <Amanda />
         <WhoItsFor />
         <HowItWorks />
+        <Faq />
         <Banner />
         <Footer />
       </main>

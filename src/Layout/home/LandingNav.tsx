@@ -5,6 +5,8 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { ArrowRight, Menu, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
+import MagneticCta from "@/components/landing/MagneticCta";
+import RollLink from "@/components/landing/RollLink";
 import { ndoEase } from "@/components/landing/motion";
 import InteractiveLogo from "@/components/ui/InteractiveLogo";
 import { landingNavLinks } from "@/utils/landing-nav";
@@ -70,23 +72,14 @@ export default function LandingNav({ tone = "overlay" }: Props) {
           </div>
 
           <nav className="hidden items-center gap-7 lg:flex">
-            {landingNavLinks.map((link) => {
-              const active = router.pathname === link.href;
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`ndo-nav-link text-[14px] font-medium ${
-                    active
-                      ? "text-white"
-                      : "text-white/80 hover:text-white"
-                  }`}
-                  aria-current={active ? "page" : undefined}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
+            {landingNavLinks.map((link) => (
+              <RollLink
+                key={link.href}
+                href={link.href}
+                label={link.label}
+                active={router.pathname === link.href}
+              />
+            ))}
           </nav>
 
           <div className="hidden items-center gap-3 lg:flex">
@@ -96,13 +89,14 @@ export default function LandingNav({ tone = "overlay" }: Props) {
             >
               Log in
             </Link>
-            <Link
+            <MagneticCta
               href="/signup"
+              strength={8}
               className="ndo-cta ndo-cta-solid group inline-flex items-center gap-1.5 px-5 py-2.5 text-[14px] font-semibold"
             >
               Get started
               <ArrowRight className="ndo-arrow size-4" />
-            </Link>
+            </MagneticCta>
           </div>
 
           <button

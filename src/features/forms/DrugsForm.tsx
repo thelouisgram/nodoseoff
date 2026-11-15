@@ -26,8 +26,9 @@ import {
 } from "@/utils/drugs";
 import dayjs from "dayjs";
 import { useAppSelector } from "@/store";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { X, Loader2, AlertTriangle } from "lucide-react";
+import { dashboardModalMotion } from "@/components/dashboard/modalMotion";
 import MedicationPrivacyFields, {
   fileToBase64,
 } from "@/features/forms/MedicationPrivacyFields";
@@ -59,6 +60,11 @@ const DrugsForm: React.FC<DrugFormProps> = ({
   const { data: info = [] } = useUserInfo(userId);
 
   const addDrugMutation = useAddDrugMutation();
+  const reduceMotion = useReducedMotion();
+  const {
+    overlayTransition,
+    sheetTransition,
+  } = dashboardModalMotion(reduceMotion);
   const isRefill = activeModal === "refill";
   const refillSeeded = useRef(false);
 
@@ -533,15 +539,24 @@ const DrugsForm: React.FC<DrugFormProps> = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          transition={overlayTransition}
           onClick={handleClose}
           className="fixed inset-0 z-[150] flex items-center justify-center bg-soft-ink/25 p-4 backdrop-blur-sm"
         >
           {/* Modal Card */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            initial={
+              reduceMotion
+                ? { opacity: 0 }
+                : { opacity: 0, scale: 0.96, y: 10 }
+            }
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            exit={
+              reduceMotion
+                ? { opacity: 0 }
+                : { opacity: 0, scale: 0.97, y: 8 }
+            }
+            transition={sheetTransition}
             onClick={(e) => e.stopPropagation()}
             className="relative z-[160] flex max-h-[80vh] w-full flex-col rounded-2xl border border-black/[0.05] bg-white shadow-soft-md ss:max-w-lg"
           >
@@ -793,16 +808,25 @@ const DrugsForm: React.FC<DrugFormProps> = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
+              transition={overlayTransition}
               className="fixed inset-0 z-[170] flex items-center justify-center bg-soft-ink/35 p-4 backdrop-blur-sm"
               onClick={() => {
                 if (!loading) setAllergyWarning(null);
               }}
             >
               <motion.div
-                initial={{ opacity: 0, scale: 0.95, y: 12 }}
+                initial={
+                  reduceMotion
+                    ? { opacity: 0 }
+                    : { opacity: 0, scale: 0.96, y: 10 }
+                }
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: 12 }}
-                transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                exit={
+                  reduceMotion
+                    ? { opacity: 0 }
+                    : { opacity: 0, scale: 0.97, y: 8 }
+                }
+                transition={sheetTransition}
                 onClick={(e) => e.stopPropagation()}
                 className="w-full max-w-sm rounded-2xl border border-black/[0.05] bg-white shadow-soft-md"
                 role="alertdialog"

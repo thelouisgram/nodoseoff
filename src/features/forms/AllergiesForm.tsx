@@ -7,11 +7,12 @@ import {
 } from "@/hooks/useDashboardData";
 import { X, Loader2, AlertCircle } from "lucide-react";
 import { useAppSelector } from "@/store";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { sameDrugName } from "@/utils/drugs";
 import MedicationPrivacyFields, {
   fileToBase64,
 } from "@/features/forms/MedicationPrivacyFields";
+import { dashboardModalMotion } from "@/components/dashboard/modalMotion";
 
 interface AllergiesFormProps {
   setActiveModal: (value: string) => void;
@@ -27,6 +28,8 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
   const { data: info = [] } = useUserInfo(userId);
 
   const addAllergyMutation = useAddAllergyMutation();
+  const reduce = useReducedMotion();
+  const { overlayTransition, sheetTransition } = dashboardModalMotion(reduce);
 
   const [drug, setDrug] = useState("");
   const [nickname, setNickname] = useState("");
@@ -109,17 +112,21 @@ const AllergiesForm: React.FC<AllergiesFormProps> = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          transition={overlayTransition}
           onClick={handleClose}
-          className="fixed inset-0 bg-soft-ink/25 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 z-[150] flex items-center justify-center bg-soft-ink/30 p-4 backdrop-blur-[6px]"
         >
-          {/* Modal Card */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            initial={
+              reduce ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 10 }
+            }
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            exit={
+              reduce ? { opacity: 0 } : { opacity: 0, scale: 0.97, y: 8 }
+            }
+            transition={sheetTransition}
             onClick={(e) => e.stopPropagation()}
-            className="flex w-full max-w-md flex-col rounded-2xl border border-black/[0.05] bg-white shadow-soft-md"
+            className="relative z-[160] flex w-full max-w-md flex-col rounded-2xl border border-black/[0.05] bg-white shadow-soft-md"
           >
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-5 border-b border-black/[0.04] flex-shrink-0">

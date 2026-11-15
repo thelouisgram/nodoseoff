@@ -1,7 +1,7 @@
 "use client";
 
 import React, { FormEvent, useEffect, useMemo, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   CalendarPlus,
   Loader2,
@@ -18,7 +18,7 @@ import {
   useDeleteAppointmentMutation,
   useUpsertAppointmentMutation,
 } from "@/hooks/useDashboardData";
-import { ndoEase } from "@/components/landing/motion";
+import { dashboardModalMotion } from "@/components/dashboard/modalMotion";
 
 interface AppointmentFormProps {
   activeModal: string;
@@ -72,6 +72,8 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
   const { data: appointment } = useAppointment(userId);
   const upsert = useUpsertAppointmentMutation();
   const remove = useDeleteAppointmentMutation();
+  const reduce = useReducedMotion();
+  const { overlayTransition, sheetTransition } = dashboardModalMotion(reduce);
 
   const [doctor, setDoctor] = useState("");
   const [location, setLocation] = useState("");
@@ -162,17 +164,21 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.2, ease: ndoEase }}
+          transition={overlayTransition}
           onClick={handleClose}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-soft-ink/25 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-[150] flex items-center justify-center bg-soft-ink/30 p-4 backdrop-blur-[6px]"
         >
           <motion.div
-            initial={{ opacity: 0, scale: 0.96, y: 16 }}
+            initial={
+              reduce ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 10 }
+            }
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.96, y: 12 }}
-            transition={{ duration: 0.28, ease: ndoEase }}
+            exit={
+              reduce ? { opacity: 0 } : { opacity: 0, scale: 0.97, y: 8 }
+            }
+            transition={sheetTransition}
             onClick={(e) => e.stopPropagation()}
-            className="max-h-[min(90dvh,640px)] w-full max-w-md overflow-y-auto rounded-2xl border border-black/[0.05] bg-white shadow-soft-float"
+            className="relative z-[160] max-h-[min(90dvh,640px)] w-full max-w-md overflow-y-auto rounded-2xl border border-black/[0.05] bg-white shadow-soft-float"
           >
             <div className="sticky top-0 z-[1] flex items-center justify-between border-b border-black/[0.05] bg-white px-5 py-4">
               <div className="flex items-center gap-2.5">

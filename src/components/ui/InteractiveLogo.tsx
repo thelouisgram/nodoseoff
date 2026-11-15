@@ -114,6 +114,8 @@ export default function InteractiveLogo({
         width={width ?? asset.width}
         height={height ?? asset.height}
         priority={priority}
+        fetchPriority={priority ? "high" : undefined}
+        loading={priority ? "eager" : undefined}
         className={`select-none ${imgClassName}`}
         draggable={false}
       />

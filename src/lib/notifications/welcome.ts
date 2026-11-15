@@ -21,13 +21,21 @@ export async function sendWelcomeIfNeeded(params: {
   if (!email) return { sent: false };
 
   const sql = getSql();
-  const claimed = await sql`
-    UPDATE users
-    SET welcome_email_sent_at = NOW()
-    WHERE "userId" = ${params.userId}
-      AND welcome_email_sent_at IS NULL
-    RETURNING "userId"
-  `;
+  let claimed: { userId: string }[];
+  try {
+    const rows = await sql`
+      UPDATE users
+      SET welcome_email_sent_at = NOW()
+      WHERE "userId" = ${params.userId}
+        AND welcome_email_sent_at IS NULL
+      RETURNING "userId"
+    `;
+    claimed = rows as { userId: string }[];
+  } catch (err) {
+    // Schema lag (e.g. column not migrated yet) — don't break login/bootstrap.
+    console.warn("[welcome] claim skipped:", err);
+    return { sent: false };
+  }
   if (!claimed.length) return { sent: false };
 
   const channel = activeNotificationChannel();

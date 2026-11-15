@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useReducedMotion } from "framer-motion";
 import { ArrowRight, Sparkles, Stethoscope } from "lucide-react";
+import MagneticCta from "@/components/landing/MagneticCta";
+import WordRoll from "@/components/landing/WordRoll";
 import { m, useLandingVariants } from "@/components/landing/motion";
 import HeroDoseCard from "./HeroDoseCard";
 
@@ -77,7 +78,7 @@ export default function HeroSection() {
             variants={heroItem}
             className="mx-auto mt-4 max-w-md text-[1.35rem] font-semibold leading-snug tracking-tight text-white/90 ss:text-[1.5rem] md:mx-0 md:text-[1.65rem]"
           >
-            Never miss a dose again
+            <WordRoll text="Never miss a dose again" delay={0.22} />
           </m.p>
           <m.p
             variants={heroItem}
@@ -91,20 +92,20 @@ export default function HeroSection() {
             variants={heroItem}
             className="mt-8 flex flex-col items-stretch gap-3 ss:flex-row ss:items-center ss:justify-center md:justify-start"
           >
-            <Link
+            <MagneticCta
               href="/signup"
-              className="ndo-cta ndo-cta-solid group inline-flex items-center justify-center gap-2 px-7 py-3.5 text-[15px] font-bold"
+              className="ndo-cta ndo-cta-solid group inline-flex w-full items-center justify-center gap-2 px-7 py-3.5 text-[15px] font-bold ss:w-auto"
             >
               Start free
               <ArrowRight className="ndo-arrow size-4" />
-            </Link>
-            <Link
+            </MagneticCta>
+            <MagneticCta
               href="/amanda"
-              className="ndo-cta ndo-cta-ghost group inline-flex items-center justify-center gap-2 px-7 py-3.5 text-[15px] font-semibold"
+              className="ndo-cta ndo-cta-ghost group inline-flex w-full items-center justify-center gap-2 px-7 py-3.5 text-[15px] font-semibold ss:w-auto"
             >
               <Sparkles className="ndo-spark size-4" />
               Meet AMANDA 6
-            </Link>
+            </MagneticCta>
           </m.div>
           <m.p
             variants={heroItem}

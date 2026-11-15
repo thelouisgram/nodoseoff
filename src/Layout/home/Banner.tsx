@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import MagneticCta from "@/components/landing/MagneticCta";
 import { m, useLandingVariants, viewOnce } from "@/components/landing/motion";
 
 export default function Banner() {
@@ -49,7 +49,7 @@ export default function Banner() {
                   />
                 </div>
                 <p className="ml-4 text-[12px] font-medium text-white/70">
-                  Patients &amp; caregivers, same calm routine
+                  Patients &amp; caregivers, same reliable routine
                 </p>
               </div>
               <h2 className="text-[2rem] font-extrabold tracking-tight ss:text-[2.5rem]">
@@ -61,13 +61,13 @@ export default function Banner() {
                 unclear.
               </p>
             </div>
-            <Link
+            <MagneticCta
               href="/signup"
               className="ndo-cta ndo-cta-solid group inline-flex shrink-0 items-center gap-2 px-7 py-3.5 text-[15px] font-bold"
             >
               Get started free
               <ArrowRight className="ndo-arrow size-4" />
-            </Link>
+            </MagneticCta>
           </div>
         </m.div>
       </div>

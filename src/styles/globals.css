@@ -404,20 +404,27 @@ html.dark body {
   .ndo-cta-solid:hover:not(:disabled) {
     background-color: #3dcfb6;
     color: #031428;
-    transform: translateY(-4px) scale(1.05) rotate(-1deg);
-    box-shadow: 0 18px 36px -12px rgba(61, 207, 182, 0.65);
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 14px 28px -12px rgba(61, 207, 182, 0.55);
   }
 
   .ndo-cta-ghost:hover:not(:disabled) {
     background-color: rgba(255, 255, 255, 0.95);
     color: var(--soft-primary);
     border-color: transparent;
-    transform: translateY(-4px) scale(1.05) rotate(1deg);
-    box-shadow: 0 18px 36px -14px rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 14px 28px -14px rgba(255, 255, 255, 0.45);
+  }
+
+  /* Magnetic CTAs own transform — keep color/shadow morph only */
+  .ndo-cta-magnetic.ndo-cta-solid:hover:not(:disabled),
+  .ndo-cta-magnetic.ndo-cta-ghost:hover:not(:disabled),
+  .ndo-cta-magnetic.ndo-cta:hover:active:not(:disabled) {
+    transform: none;
   }
 
   .ndo-cta:hover:active:not(:disabled) {
-    transform: scale(0.95) translateY(0) rotate(0deg);
+    transform: scale(0.97) translateY(0);
   }
 
   .ndo-social:hover {
@@ -461,6 +468,84 @@ html.dark body {
 @media (hover: hover) and (pointer: fine) {
   .ndo-nav-link:hover {
     transform: translateY(-3px) scale(1.08) rotate(-2deg);
+  }
+}
+
+/* Roll links — dual-line swap on hover (DesignBookmark-inspired) */
+.ndo-roll-link {
+  display: inline-flex;
+  height: 1.25em;
+  overflow: hidden;
+  line-height: 1.25;
+}
+
+.ndo-roll-link__inner {
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ndo-roll-link__line {
+  display: block;
+  height: 1.25em;
+  white-space: nowrap;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ndo-roll-link:hover .ndo-roll-link__inner,
+  .ndo-roll-link:focus-visible .ndo-roll-link__inner {
+    transform: translateY(-1.25em);
+  }
+
+  .ndo-roll-link:hover {
+    color: #ffffff;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ndo-roll-link__inner {
+    transition: none;
+  }
+
+  .ndo-roll-link:hover .ndo-roll-link__inner,
+  .ndo-roll-link:focus-visible .ndo-roll-link__inner {
+    transform: none;
+  }
+}
+
+/* Feature expand cards — soft lift + wash intensify */
+.ndo-expand-card {
+  transition:
+    filter 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ndo-expand-card:hover {
+    filter: saturate(1.06) brightness(1.02);
+    box-shadow: inset 0 0 0 1px rgba(11, 26, 46, 0.04);
+  }
+}
+
+/* Scroll-driven mark fade — progressive enhancement */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .ndo-scroll-mark {
+      animation: ndo-mark-in linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 35%;
+    }
+  }
+}
+
+@keyframes ndo-mark-in {
+  from {
+    opacity: 0.35;
+    transform: translateY(-42%) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
   }
 }
 

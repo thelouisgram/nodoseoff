@@ -1,7 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { AlarmClock, Check, HeartPulse, Loader2, Pill } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import {
+  AlarmClock,
+  CalendarDays,
+  Check,
+  HeartPulse,
+  Loader2,
+  Pill,
+} from "lucide-react";
 import {
   calculateClosestDoseCountdown,
   formatDoseClock,
@@ -9,13 +16,44 @@ import {
 } from "@/utils/dashboard/dashboard";
 import { calculateOverallCompliance } from "@/utils/dashboard/drugs";
 import { countUniqueDrugNames, drugDisplayName } from "@/utils/drugs";
-import { useDrugs, useSchedule } from "@/hooks/useDashboardData";
+import {
+  useAppointment,
+  useDrugs,
+  useSchedule,
+} from "@/hooks/useDashboardData";
 import { useAppSelector } from "@/store";
 import { motion } from "framer-motion";
 import { useDashboardSectionMotion } from "@/components/landing/motion";
 import type { ScheduleItem } from "@/types/dashboard";
 
 const MARK_WINDOW_MS = 5 * 60 * 1000;
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+function daysUntilAppointment(startsAt: string, nowMs: number): number | null {
+  const at = new Date(startsAt);
+  if (Number.isNaN(at.getTime()) || at.getTime() < nowMs) return null;
+  const today = new Date(nowMs);
+  today.setHours(0, 0, 0, 0);
+  const day = new Date(at);
+  day.setHours(0, 0, 0, 0);
+  return Math.round((day.getTime() - today.getTime()) / DAY_MS);
+}
+
+function formatAppointmentCountdown(days: number): string {
+  if (days <= 0) return "Today";
+  if (days === 1) return "in 1 day";
+  return `in ${days} days`;
+}
+
+function formatAppointmentDay(startsAt: string): string {
+  const d = new Date(startsAt);
+  if (Number.isNaN(d.getTime())) return "—";
+  return d.toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
 
 type Props = {
   onMarkTaken?: (item: ScheduleItem) => Promise<void> | void;
@@ -25,6 +63,7 @@ const SummaryCards = ({ onMarkTaken }: Props) => {
   const { userId } = useAppSelector((state) => state.app);
   const { data: drugs = [] } = useDrugs(userId);
   const { data: schedule = [] } = useSchedule(userId);
+  const { data: appointment = null } = useAppointment(userId);
   const { stagger, rise } = useDashboardSectionMotion();
 
   const next = getNextUpcomingDose(schedule);
@@ -61,6 +100,13 @@ const SummaryCards = ({ onMarkTaken }: Props) => {
   const ongoingCount = countUniqueDrugNames(drugs);
   const adherence = calculateOverallCompliance(schedule);
 
+  const upcomingAppt = useMemo(() => {
+    if (!appointment?.startsAt) return null;
+    const days = daysUntilAppointment(appointment.startsAt, now);
+    if (days == null) return null;
+    return { appointment, days };
+  }, [appointment, now]);
+
   const cards = [
     {
       key: "next",
@@ -74,6 +120,21 @@ const SummaryCards = ({ onMarkTaken }: Props) => {
           }`
         : "No upcoming doses scheduled",
     },
+    ...(upcomingAppt
+      ? [
+          {
+            key: "appointment",
+            featured: false,
+            label: "Next appointment",
+            icon: CalendarDays,
+            title:
+              upcomingAppt.appointment.doctor?.trim() ||
+              upcomingAppt.appointment.location?.trim() ||
+              "Clinic visit",
+            subtitle: `${formatAppointmentDay(upcomingAppt.appointment.startsAt)} · ${formatAppointmentCountdown(upcomingAppt.days)}`,
+          },
+        ]
+      : []),
     {
       key: "ongoing",
       featured: false,
@@ -91,7 +152,7 @@ const SummaryCards = ({ onMarkTaken }: Props) => {
       title: `${adherence}%`,
       subtitle: "overall adherence",
     },
-  ] as const;
+  ];
 
   return (
     <motion.section

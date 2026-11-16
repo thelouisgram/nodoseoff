@@ -604,6 +604,9 @@ interface UpdateProfileParams {
   userId: string;
   name: string;
   phone: string;
+  age?: number | null;
+  gender?: string;
+  dx?: string;
 }
 
 export const useUpdateProfileMutation = () => {
@@ -615,7 +618,16 @@ export const useUpdateProfileMutation = () => {
       dispatch(
         updateDashboardCache({
           userInfo: (currentData?.userInfo || []).map((info, index) =>
-            index === 0 ? { ...info, name: params.name, phone: params.phone } : info
+            index === 0
+              ? {
+                  ...info,
+                  name: params.name,
+                  phone: params.phone,
+                  age: params.age ?? null,
+                  gender: params.gender ?? "",
+                  dx: params.dx ?? "",
+                }
+              : info
           ),
         })
       );

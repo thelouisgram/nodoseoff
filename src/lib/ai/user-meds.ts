@@ -361,6 +361,22 @@ export async function buildUserMedsContext(
       "Patient medication context from their NoDoseOff dashboard (use this when they say “my drugs”, “my meds”, or ask without naming a drug):",
     ];
 
+    const profile = data.userInfo?.[0] as
+      | { age?: number | null; gender?: string; dx?: string }
+      | undefined;
+    const age =
+      profile?.age == null || Number.isNaN(Number(profile.age))
+        ? ""
+        : String(profile.age);
+    const gender = String(profile?.gender || "").trim();
+    const dx = String(profile?.dx || "").trim();
+    if (age || gender || dx) {
+      lines.push("Clinical profile:");
+      if (age) lines.push(`- Age: ${age}`);
+      if (gender) lines.push(`- Gender: ${gender}`);
+      if (dx) lines.push(`- Diagnosis (Dx): ${dx}`);
+    }
+
     if (active.length === 0) {
       lines.push("- Active medications: none on file.");
     } else {

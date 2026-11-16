@@ -306,8 +306,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         break;
       }
       case "updateProfile": {
+        const name = String(payload.name ?? "").trim().slice(0, 120);
+        const phone = String(payload.phone ?? "").trim().slice(0, 40);
+        const gender = String(payload.gender ?? "").trim().slice(0, 40);
+        const dx = String(payload.dx ?? "").trim().slice(0, 500);
+        const rawAge = payload.age;
+        let age: number | null = null;
+        if (rawAge !== null && rawAge !== undefined && rawAge !== "") {
+          const parsed = Number(rawAge);
+          if (!Number.isFinite(parsed) || !Number.isInteger(parsed)) {
+            return res.status(400).json({ error: "Age must be a whole number" });
+          }
+          if (parsed < 0 || parsed > 150) {
+            return res.status(400).json({ error: "Age must be between 0 and 150" });
+          }
+          age = parsed;
+        }
         await sql`
-          UPDATE users SET name = ${String(payload.name)}, phone = ${String(payload.phone)}
+          UPDATE users
+          SET
+            name = ${name},
+            phone = ${phone},
+            age = ${age},
+            gender = ${gender},
+            dx = ${dx}
           WHERE "userId" = ${userId}
         `;
         break;

@@ -27,13 +27,27 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
   const { data: info = [] } = useUserInfo(userId);
   const { data: profilePicture = "" } = useProfilePicture(userId);
 
-  const { name = "", phone = "", email = "" } = info[0] || {};
+  const {
+    name = "",
+    phone = "",
+    email = "",
+    age = null,
+    gender = "",
+    dx = "",
+  } = info[0] || {};
   const updateProfileMutation = useUpdateProfileMutation();
   const uploadPictureMutation = useUploadProfilePictureMutation();
 
   const [loading, setLoading] = useState(false);
 
-  const [formData, setFormData] = useState({ name, phone, email });
+  const [formData, setFormData] = useState({
+    name,
+    phone,
+    email,
+    age: age == null ? "" : String(age),
+    gender: gender || "",
+    dx: dx || "",
+  });
 
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarURL, setAvatarURL] = useState<string | null>(null);
@@ -75,7 +89,14 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
     if (!loading) {
       setActiveModal("");
       resetAvatarPreview();
-      setFormData({ name, phone, email });
+      setFormData({
+        name,
+        phone,
+        email,
+        age: age == null ? "" : String(age),
+        gender: gender || "",
+        dx: dx || "",
+      });
     }
   };
 
@@ -84,12 +105,34 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
     setLoading(true);
 
     try {
-      // Update Name and Phone
-      if (formData.name !== name || formData.phone !== phone) {
+      const nextAge =
+        formData.age.trim() === ""
+          ? null
+          : Number.parseInt(formData.age.trim(), 10);
+      if (
+        nextAge !== null &&
+        (!Number.isFinite(nextAge) || nextAge < 0 || nextAge > 150)
+      ) {
+        toast.error("Enter a valid age between 0 and 150");
+        setLoading(false);
+        return;
+      }
+
+      const profileChanged =
+        formData.name !== name ||
+        formData.phone !== phone ||
+        nextAge !== (age ?? null) ||
+        formData.gender !== (gender || "") ||
+        formData.dx !== (dx || "");
+
+      if (profileChanged) {
         await updateProfileMutation.mutateAsync({
           userId: userId!,
           name: formData.name,
           phone: formData.phone,
+          age: nextAge,
+          gender: formData.gender,
+          dx: formData.dx,
         });
       }
 
@@ -119,7 +162,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
     handleSubmit(syntheticEvent);
   };
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -249,6 +294,67 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                         disabled
                       />
                     </div>
+                  </div>
+
+                  <div className="grid gap-6 ss:grid-cols-2">
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold text-slate-700">
+                        Age
+                      </label>
+                      <div className="w-full h-[47px] px-4 border border-gray-200 rounded-xl bg-gray-50/50 focus-within:ring-2 focus-within:ring-blue-500 transition-all flex items-center">
+                        <input
+                          type="number"
+                          name="age"
+                          min={0}
+                          max={150}
+                          inputMode="numeric"
+                          value={formData.age}
+                          onChange={handleInputChange}
+                          className="w-full h-full bg-transparent border-none outline-none p-0 text-slate-800"
+                          placeholder="Years"
+                          disabled={loading}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold text-slate-700">
+                        Gender
+                      </label>
+                      <div className="w-full h-[47px] px-4 border border-gray-200 rounded-xl bg-gray-50/50 focus-within:ring-2 focus-within:ring-blue-500 transition-all flex items-center">
+                        <select
+                          name="gender"
+                          value={formData.gender}
+                          onChange={handleInputChange}
+                          className="w-full h-full bg-transparent border-none outline-none p-0 text-slate-800"
+                          disabled={loading}>
+                          <option value="">Select</option>
+                          <option value="Female">Female</option>
+                          <option value="Male">Male</option>
+                          <option value="Non-binary">Non-binary</option>
+                          <option value="Prefer not to say">
+                            Prefer not to say
+                          </option>
+                          <option value="Other">Other</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-slate-700">
+                      Diagnosis (Dx)
+                    </label>
+                    <textarea
+                      name="dx"
+                      value={formData.dx}
+                      onChange={handleInputChange}
+                      rows={3}
+                      maxLength={500}
+                      placeholder="Primary diagnosis or condition"
+                      disabled={loading}
+                      className="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3 text-slate-800 outline-none transition-all focus:ring-2 focus:ring-blue-500"
+                    />
                   </div>
                 </div>
               </div>

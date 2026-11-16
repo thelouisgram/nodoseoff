@@ -7,7 +7,11 @@ CREATE TABLE IF NOT EXISTS users (
   email TEXT NOT NULL DEFAULT '',
   theme TEXT NOT NULL DEFAULT 'light',
   profile_picture TEXT NOT NULL DEFAULT '',
-  profile_picture_url TEXT NOT NULL DEFAULT ''
+  profile_picture_url TEXT NOT NULL DEFAULT '',
+  age INTEGER,
+  gender TEXT NOT NULL DEFAULT '',
+  dx TEXT NOT NULL DEFAULT '',
+  CONSTRAINT users_age_range_check CHECK (age IS NULL OR (age >= 0 AND age <= 150))
 );
 
 CREATE TABLE IF NOT EXISTS drugs (
@@ -144,6 +148,14 @@ CREATE INDEX IF NOT EXISTS newsletter_subscribers_created_at_idx
 
 -- Welcome email dedupe (safe to re-run)
 ALTER TABLE users ADD COLUMN IF NOT EXISTS welcome_email_sent_at TIMESTAMPTZ;
+
+-- Clinical profile details (safe to re-run)
+ALTER TABLE users ADD COLUMN IF NOT EXISTS age INTEGER;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS gender TEXT NOT NULL DEFAULT '';
+ALTER TABLE users ADD COLUMN IF NOT EXISTS dx TEXT NOT NULL DEFAULT '';
+ALTER TABLE users DROP CONSTRAINT IF EXISTS users_age_range_check;
+ALTER TABLE users ADD CONSTRAINT users_age_range_check
+  CHECK (age IS NULL OR (age >= 0 AND age <= 150));
 
 -- Dose reminder send log (idempotent per user + dose key)
 CREATE TABLE IF NOT EXISTS dose_reminder_log (

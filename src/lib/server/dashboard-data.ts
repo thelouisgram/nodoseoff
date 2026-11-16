@@ -28,7 +28,7 @@ export async function loadDashboardForUser(userId: string) {
     appointmentRows,
     journalResult,
   ] = await Promise.all([
-      sql`SELECT name, phone, email, theme, profile_picture, profile_picture_url FROM users WHERE "userId" = ${userId} LIMIT 1`,
+      sql`SELECT name, phone, email, theme, profile_picture, profile_picture_url, age, gender, dx FROM users WHERE "userId" = ${userId} LIMIT 1`,
       sql`SELECT id, drug, frequency, route, start, "end", time, reminder, "drugId", nickname, image, image_url FROM drugs WHERE "userId" = ${userId}`,
       sql`SELECT "completedDrugs" FROM "completedDrugs" WHERE "userId" = ${userId} LIMIT 1`,
       sql`SELECT drug, frequency, route, start, "end", time, reminder, "drugId", nickname, image, image_url FROM allergies WHERE "userId" = ${userId}`,
@@ -169,6 +169,12 @@ export async function loadDashboardForUser(userId: string) {
         phone: user.phone,
         email: user.email,
         theme: user.theme,
+        age:
+          user.age == null || user.age === ""
+            ? null
+            : Number(user.age),
+        gender: String(user.gender ?? ""),
+        dx: String(user.dx ?? ""),
       },
     ],
     profilePicture,
